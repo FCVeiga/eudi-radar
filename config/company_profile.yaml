@@ -1,0 +1,25 @@
+# company_profile.yaml
+# Editable without touching agent code. This is verified company information
+# ONLY — agents/consortium.py and agents/ranking.py must never alter this
+# file based on assumptions or inference (spec section 37).
+
+COMPANY:
+  name: ""
+  country: ""
+  website: ""
+  registration_number: ""
+
+CERTIFICATIONS: []
+PRODUCTS: []
+TECHNOLOGIES: []
+REFERENCES: []
+TEAM: []
+
+FINANCIAL_CAPACITY:
+  annual_turnover: null
+  currency: ""
+  years_of_accounts: null
+  professional_indemnity_insurance: null
+
+COUNTRY_PRESENCE: []
+PARTNERS: []

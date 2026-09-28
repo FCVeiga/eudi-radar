@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Opportunity Radar — Biometrid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0F1B2D; --surface: #17283F; --surface-2: #1E3350; --line: #2A3D57;
+    --parchment: #EDE6D6; --muted: #93A6BC; --brass: #C9A227; --teal: #4C9A7B; --rust: #C0562F;
+    --text-dim: #C7D0DC;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: var(--navy); scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    background: var(--navy); color: var(--parchment); font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px; line-height: 1.5; min-height: 100vh;
+    padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+  .serif { font-family: 'Spectral', serif; }
+  a { color: inherit; text-decoration: none; }
+
+  .app { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+
+  /* Sidebar */
+  .rail { background: #0B1420; border-right: 1px solid var(--line); padding: 28px 20px; display: flex; flex-direction: column; gap: 32px; position: sticky; top: 0; height: 100vh; }
+  .brand-mark { font-family: 'Spectral', serif; font-size: 20px; font-weight: 600; }
+  .brand-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .nav-group { display: flex; flex-direction: column; gap: 2px; }
+  .nav-label { font-size: 11px; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.03em; }
+  .nav-item { padding: 8px 10px; border-radius: 4px; cursor: pointer; color: var(--muted); font-size: 13.5px; border-left: 2px solid transparent; transition: background 0.15s, color 0.15s; }
+  .nav-item:hover { background: var(--surface); color: var(--parchment); }
+  .nav-item.active { color: var(--parchment); border-left-color: var(--brass); background: var(--surface); }
+  .rail-footer { margin-top: auto; font-size: 11.5px; color: var(--muted); }
+  .rail-footer .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); display: inline-block; margin-right: 6px; }
+
+  /* Main */
+  .main { padding: 32px 40px; max-width: 1180px; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .hero { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+  .hero h1 { font-family: 'Spectral', serif; font-size: 27px; font-weight: 600; }
+  .hero-sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
+  .back-link { font-size: 12.5px; color: var(--muted); cursor: pointer; margin-bottom: 16px; display: inline-block; }
+  .back-link:hover { color: var(--brass); }
+
+  .sample-note { background: var(--surface); border-left: 3px solid var(--brass); padding: 10px 16px; font-size: 12px; color: var(--muted); margin-bottom: 24px; border-radius: 0 3px 3px 0; }
+  .sample-note strong { color: var(--parchment); }
+
+  /* Tags */
+  .tag { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em; padding: 2px 8px; border-radius: 10px; white-space: nowrap; display: inline-block; }
+  .tag.regulation { background: rgba(201,162,39,0.18); color: var(--brass); }
+  .tag.govdecision { background: rgba(76,154,123,0.18); color: var(--teal); }
+  .tag.tender { background: rgba(192,86,47,0.18); color: #E08B65; }
+  .tag.grant { background: rgba(76,154,123,0.18); color: var(--teal); }
+  .tag.lsp { background: rgba(147,166,188,0.18); color: var(--muted); }
+  .tag.rfi { background: rgba(201,162,39,0.18); color: var(--brass); }
+  .tag.linkedin { background: rgba(90,140,200,0.18); color: #7FAEE0; }
+  .tag.twitter { background: rgba(147,166,188,0.18); color: var(--muted); }
+  .tag.unverified { border: 1px dashed var(--rust); color: #E08B65; background: none; }
+  .tag.intl { border: 1px solid var(--line); color: var(--muted); background: none; }
+  .tag.natl { border: 1px solid var(--line); color: var(--muted); background: none; }
+
+  /* News list */
+  .news-item { background: var(--surface); border-radius: 3px; padding: 16px 18px; margin-bottom: 8px; cursor: pointer; display: flex; justify-content: space-between; gap: 20px; }
+  .news-item:hover { background: var(--surface-2); }
+  .news-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  .news-meta { font-size: 11.5px; color: var(--muted); }
+  .news-meta .region { margin-left: 8px; }
+  .news-excerpt { font-size: 12.5px; color: var(--text-dim); margin-top: 6px; max-width: 620px; }
+  .news-date { font-size: 11px; color: var(--muted); white-space: nowrap; font-family: 'IBM Plex Mono', monospace; }
+
+  .news-layout { display: grid; grid-template-columns: 1fr 260px; gap: 20px; align-items: start; }
+  .tracked-panel { background: var(--surface); border-radius: 3px; padding: 18px 20px; position: sticky; top: 32px; }
+  .tracked-panel h3 { font-family: 'Spectral', serif; font-size: 14px; margin-bottom: 4px; }
+  .tracked-panel .sidebar-sub { font-size: 11px; color: var(--muted); margin-bottom: 14px; }
+  .tracked-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 12px; }
+  .tracked-item:last-child { border-bottom: none; }
+  .tracked-name { color: var(--parchment); }
+  .tracked-cat { font-size: 10px; color: var(--muted); text-transform: uppercase; }
+  .tracked-inactive { opacity: 0.5; }
+  .manage-note { font-size: 11px; color: var(--muted); margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); }
+
+  /* News detail */
+  .detail-block { background: var(--surface); border-radius: 3px; padding: 24px 28px; margin-bottom: 16px; }
+  .detail-block h2 { font-family: 'Spectral', serif; font-size: 16px; margin-bottom: 10px; }
+  .detail-block p { font-size: 13px; color: var(--text-dim); margin-bottom: 10px; }
+  .impact-block { border-left: 3px solid var(--teal); }
+  .impact-block h2 { color: var(--teal); }
+  .source-link { font-size: 12px; color: var(--brass); }
+
+  /* Opportunity cards */
+  .opp-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .opp-card { background: var(--surface); border-radius: 3px; padding: 18px 20px; cursor: pointer; border-top: 3px solid var(--muted); }
+  .opp-card.p0 { border-top-color: var(--rust); }
+  .opp-card.p1 { border-top-color: var(--brass); }
+  .opp-card:hover { background: var(--surface-2); }
+  .opp-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+  .opp-card-title { font-size: 14.5px; font-weight: 600; }
+  .opp-card-country { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .opp-tags { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+  .opp-card-scores { display: flex; gap: 20px; margin-top: 12px; }
+  .mini-score { flex: 1; }
+  .mini-score-label { font-size: 10px; color: var(--muted); margin-bottom: 4px; }
+  .mini-score-bar { height: 5px; background: var(--surface-2); border-radius: 3px; overflow: hidden; }
+  .mini-score-fill { height: 100%; }
+  .mini-score-fill.rel { background: var(--brass); }
+  .mini-score-fill.fit { background: var(--teal); }
+  .mini-score-val { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); float: right; }
+  .opp-card-meta-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+  .opp-card-left { flex: 1; min-width: 0; }
+  .opp-card-value { font-family: 'Spectral', serif; font-size: 19px; font-weight: 700; color: var(--brass); white-space: nowrap; text-align: right; line-height: 1.2; }
+  .opp-card-value .value-label { display: block; font-family: 'IBM Plex Sans', sans-serif; font-size: 9.5px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 2px; }
+  .opp-card-deadline { font-size: 11.5px; color: var(--muted); margin-top: 12px; font-family: 'IBM Plex Mono', monospace; }
+
+  /* Opportunity detail */
+  .opp-detail-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .score-panel { display: flex; gap: 32px; background: var(--surface); border-radius: 3px; padding: 20px 24px; margin-bottom: 20px; }
+  .score-panel .stat-num { font-family: 'Spectral', serif; font-size: 28px; font-weight: 600; color: var(--brass); }
+  .score-panel .stat-num.fit { color: var(--teal); }
+  .score-panel .stat-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .req-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+  .req-row:last-child { border-bottom: none; }
+  .req-cat { color: var(--muted); font-size: 10.5px; text-transform: uppercase; }
+  .badge-match { font-size: 10.5px; padding: 2px 8px; border-radius: 10px; }
+  .badge-match.match { background: rgba(76,154,123,0.18); color: var(--teal); }
+  .badge-match.partner { background: rgba(201,162,39,0.18); color: var(--brass); }
+  .badge-match.unknown { background: rgba(147,166,188,0.15); color: var(--muted); }
+  .badge-match.no_match { background: rgba(192,86,47,0.18); color: #E08B65; }
+
+  /* Database table */
+  .filters { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+  .filter-chip { padding: 6px 14px; font-size: 12px; border: 1px solid var(--line); border-radius: 16px; color: var(--muted); cursor: pointer; }
+  .filter-chip.active { background: var(--parchment); color: var(--navy); border-color: var(--parchment); }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 10.5px; text-transform: uppercase; color: var(--muted); padding: 10px 12px; border-bottom: 1px solid var(--line); letter-spacing: 0.03em; }
+  td { padding: 12px; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+  tr.data-row:hover { background: var(--surface); cursor: pointer; }
+  .table-wrap { background: var(--surface); border-radius: 3px; overflow: hidden; padding: 4px 12px; }
+  .score-inline { font-family: 'IBM Plex Mono', monospace; }
+
+  /* Opportunity detail — two column layout */
+  .opp-detail-grid { display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: start; }
+  .opp-detail-main { min-width: 0; }
+  .opp-sidebar { background: var(--surface); border-radius: 3px; padding: 20px; position: sticky; top: 32px; }
+  .opp-sidebar h3 { font-family: 'Spectral', serif; font-size: 14px; margin-bottom: 4px; }
+  .opp-sidebar .sidebar-sub { font-size: 11px; color: var(--muted); margin-bottom: 14px; }
+
+  .download-btn { width: 100%; padding: 10px 0; border-radius: 4px; border: 1px solid var(--brass); background: transparent; color: var(--brass); font-weight: 600; font-size: 12.5px; cursor: pointer; margin-bottom: 16px; }
+  .download-btn:hover { background: rgba(201,162,39,0.12); }
+  .doc-download { font-size: 10.5px; color: var(--brass); cursor: pointer; white-space: nowrap; }
+  .doc-download:hover { text-decoration: underline; }
+
+  .doc-item { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 12px; }
+  .doc-item:last-child { border-bottom: none; }
+  .doc-name { color: var(--parchment); }
+  .doc-type { font-size: 10px; color: var(--muted); text-transform: uppercase; }
+  .doc-status { font-size: 10px; padding: 2px 7px; border-radius: 8px; white-space: nowrap; }
+  .doc-status.analysed { background: rgba(76,154,123,0.18); color: var(--teal); }
+
+  .req-category-block { margin-bottom: 18px; }
+  .req-category-title { font-family: 'Spectral', serif; font-size: 14px; margin-bottom: 8px; color: var(--brass); }
+  .req-table { width: 100%; border-collapse: collapse; }
+  .req-table th { text-align: left; font-size: 10px; text-transform: uppercase; color: var(--muted); padding: 6px 8px; border-bottom: 1px solid var(--line); }
+  .req-table td { padding: 8px; font-size: 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .req-empty { font-size: 12px; color: var(--muted); padding: 10px 8px; font-style: italic; }
+  .mand-yes { color: var(--rust); font-size: 11px; }
+  .mand-no { color: var(--muted); font-size: 11px; }
+
+  /* Landscape map */
+  .map-legend { display: flex; gap: 20px; margin-bottom: 14px; font-size: 12px; color: var(--muted); }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+  .legend-dot.full { background: var(--teal); }
+  .legend-dot.partial { background: var(--brass); }
+  .legend-dot.none { background: var(--line); }
+
+  .map-container { position: relative; background: var(--surface); border-radius: 4px; padding: 16px; }
+  #world-map { width: 100%; }
+  #world-map svg { width: 100%; height: auto; display: block; }
+  #world-map path { stroke: var(--navy); stroke-width: 0.5; cursor: pointer; transition: opacity 0.1s; }
+  #world-map path.data-none { fill: var(--line); }
+  #world-map path.data-partial { fill: var(--brass); opacity: 0.75; }
+  #world-map path.data-full { fill: var(--teal); opacity: 0.75; }
+  #world-map path:hover { opacity: 1; stroke: var(--parchment); stroke-width: 1; }
+  #world-map .map-loading { color: var(--muted); font-size: 12.5px; padding: 60px; text-align: center; }
+
+  .map-tooltip {
+    position: absolute; display: none; background: var(--surface-2); border: 1px solid var(--line);
+    border-radius: 4px; padding: 12px 14px; font-size: 12px; max-width: 260px; pointer-events: none;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.45); z-index: 20;
+  }
+  .map-tooltip .tt-country { font-family: 'Spectral', serif; font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+  .map-tooltip .tt-section-label { font-size: 10px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.03em; margin: 8px 0 4px; }
+  .map-tooltip .tt-section-label:first-of-type { margin-top: 0; }
+  .map-tooltip a { color: var(--brass); }
+  .map-tooltip a:hover { text-decoration: underline; }
+  .map-tooltip .tt-empty { color: var(--muted); font-style: italic; }
+  .map-tooltip ul { list-style: none; padding: 0; margin: 0; }
+  .map-tooltip li { margin-bottom: 3px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="rail">
+    <div>
+      <div class="brand-mark">Opportunity Radar</div>
+      <div class="brand-sub">Digital ID / Wallet Intelligence</div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">PAGES</div>
+      <div class="nav-item active" data-page="news">News</div>
+      <div class="nav-item" data-page="opportunities">Opportunities</div>
+      <div class="nav-item" data-page="database">Database</div>
+      <div class="nav-item" data-page="landscape">Landscape</div>
+    </div>
+    <div class="rail-footer">
+      <div><span class="dot"></span>Last run: 2026-09-03</div>
+      <div style="margin-top:4px;">Mock data — layout review</div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- NEWS LIST -->
+    <div class="page active" id="page-news">
+      <div class="hero">
+        <div><h1>News</h1><div class="hero-sub">Regulation, government decisions &amp; tracked social accounts</div></div>
+      </div>
+      <div class="sample-note"><strong>Sample content.</strong> Items below illustrate layout only — regulatory feed and social monitoring aren't live yet.</div>
+      <div class="news-layout">
+        <div id="news-list"></div>
+        <div id="tracked-panel-slot"></div>
+      </div>
+    </div>
+
+    <!-- NEWS DETAIL -->
+    <div class="page" id="page-news-detail">
+      <div class="back-link" onclick="showPage('news')">← Back to News</div>
+      <div id="news-detail-content"></div>
+    </div>
+
+    <!-- OPPORTUNITIES LIST -->
+    <div class="page" id="page-opportunities">
+      <div class="hero">
+        <div><h1>Opportunities</h1><div class="hero-sub">Relevance &gt; 50% and Fit &gt; 50% only</div></div>
+      </div>
+      <div class="sample-note"><strong>Fit scores are illustrative</strong> — Biometrid's company profile isn't loaded yet, so fit numbers below are placeholders for layout review, not real assessments.</div>
+      <div class="opp-grid" id="opp-grid"></div>
+    </div>
+
+    <!-- OPPORTUNITY DETAIL -->
+    <div class="page" id="page-opp-detail">
+      <div class="back-link" onclick="showPage('opportunities')">← Back to Opportunities</div>
+      <div id="opp-detail-content"></div>
+    </div>
+
+    <!-- DATABASE -->
+    <div class="page" id="page-database">
+      <div class="hero">
+        <div><h1>Database</h1><div class="hero-sub">Full record of tenders, grants, pilots &amp; RFIs analysed</div></div>
+      </div>
+      <div class="filters" id="type-filters"></div>
+      <div class="filters" id="region-filters"></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Title</th><th>Region</th><th>Type</th><th>Scope</th><th>Status</th><th>Value</th><th>Relevance</th><th>Fit</th><th>Deadline</th><th>Project Ends</th></tr>
+          </thead>
+          <tbody id="db-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- LANDSCAPE -->
+    <div class="page" id="page-landscape">
+      <div class="hero">
+        <div><h1>Landscape</h1><div class="hero-sub">National digital identity trust frameworks &amp; wallet-space companies by country</div></div>
+      </div>
+      <div class="sample-note"><strong>Sample content.</strong> Coverage is illustrative — populated for a handful of countries to review layout. Links are placeholders pending real sourcing.</div>
+      <div class="map-legend">
+        <span class="legend-item"><span class="legend-dot full"></span>System + companies logged</span>
+        <span class="legend-item"><span class="legend-dot partial"></span>Partial data</span>
+        <span class="legend-item"><span class="legend-dot none"></span>No data yet</span>
+      </div>
+      <div class="map-container">
+        <div id="world-map"></div>
+        <div class="map-tooltip" id="map-tooltip"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+<script>
+const NEWS = [
+  { id: 'n1', title: 'European Commission publishes updated eIDAS Implementing Regulation on PID attestation', region: 'Europe', category: 'regulation',
+    date: '2026-08-14', source: 'Official Journal of the EU', excerpt: 'Sample — updated technical rules for Person Identification Data issuance under the EUDI framework.',
+    summary: 'Sample summary: the Commission adopted an implementing act refining PID attribute schemas and issuance rules for national wallet providers ahead of the 2027 eIDAS 2.0 compliance deadline.',
+    impact: 'Sample impact note: if Biometrid provides PID issuance components, this narrows the compliant attribute set — worth a technical compliance review before any national RFP references the updated schema.' },
+  { id: 'n2', title: 'France allocates €18M in 2027 draft budget for national wallet rollout', region: 'Europe', category: 'govdecision',
+    date: '2026-08-02', source: 'French National Assembly budget documents', excerpt: 'Sample — draft budget line signals a funding-identified status transition for France.',
+    summary: 'Sample summary: France\'s draft 2027 budget includes a dedicated line for EUDI Wallet national implementation, per the pipeline-intelligence tracker\'s status model.',
+    impact: 'Sample impact note: this is a classic pre-procurement signal (Status 2→3). Recommend identifying the responsible French authority and beginning early positioning/partner conversations now, 6-12 months ahead of expected tender.' },
+  { id: 'n3', title: 'Kenya cabinet approves national digital ID interoperability framework', region: 'Africa', category: 'govdecision',
+    date: '2026-07-22', source: 'Kenya Gazette / cabinet dispatch', excerpt: 'Sample — cabinet-level decision on Maisha Namba interoperability standards.',
+    summary: 'Sample summary: Kenya\'s cabinet approved a framework requiring interoperability between Maisha Namba and future digital wallet/credential systems.',
+    impact: 'Sample impact note: an interoperability mandate often precedes a vendor RFI for integration services — flag Kenya for closer country-level monitoring over the next quarter.' },
+  { id: 'n4', title: '[SAMPLE] EU Commission official posts on LinkedIn about ARF v2.5 timeline slipping to Q1 2027', region: 'Europe', category: 'linkedin',
+    date: '2026-08-20', source: 'LinkedIn — tracked account: DG CONNECT official (sample)', excerpt: 'Sample — unofficial post suggesting the Architecture Reference Framework update is delayed.',
+    summary: 'Sample summary: a DG CONNECT official posted that the next ARF minor revision is now expected Q1 2027 rather than Q4 2026, citing unresolved feedback on wallet-to-wallet interaction flows.',
+    impact: 'Sample impact note: unverified — this is a personal LinkedIn post, not an official Commission statement. Flagged for verification against the official EUDI Wallet portal before treating the new date as fact.',
+    unverified: true },
+  { id: 'n5', title: '[SAMPLE] Competitor announces wallet certification milestone on X/Twitter', region: 'Europe', category: 'twitter',
+    date: '2026-08-18', source: 'Twitter/X — tracked account: @ExampleCompetitor (sample)', excerpt: 'Sample — competitor claims to have passed an interoperability test event.',
+    summary: 'Sample summary: a tracked competitor account posted about successfully completing an EUDI Wallet interoperability plugtest, without naming which member state or LSP the test was run under.',
+    impact: 'Sample impact note: competitive signal worth tracking — if confirmed, this competitor is ahead on certification readiness. Recommend checking the relevant LSP\'s plugtest results for confirmation.',
+    unverified: true },
+];
+
+const REQ_CATEGORIES = [
+  { key: 'certifications', label: 'Certifications' },
+  { key: 'references', label: 'Project References' },
+  { key: 'humanResources', label: 'Human Resources' },
+  { key: 'technical', label: 'Technical' },
+  { key: 'other', label: 'Other' },
+];
+
+const OPPS = [
+  { id: 'o1', title: 'Estonia — RIA EUDI Wallet Service Provider Procurement', country: 'Estonia', region: 'Europe',
+    type: 'tender', scope: 'natl', status: 'Closed — in evaluation', relevance: 88, fit: null,
+    value: '€21.65M', deadline: '2026-06-29', projectEnd: '2031 (5-year operate & maintain term)',
+    authority: 'Information System Authority (RIA)', real: true,
+    analysis: {
+      classification: 'National tender (not part of an EU-wide framework) — direct wallet build-and-operate procurement.',
+      description: 'Sample framing (documents not yet extracted): the tender covers design, build, certification support and 5-year operation of Estonia\'s national EUDI Wallet, including PID issuance integration, relying-party onboarding tooling, and WSCA-compliant secure storage. Exact scope will be confirmed once source documents are extracted below.',
+      why: 'Direct EUDI Wallet build-and-operate contract; deadline has passed, currently in evaluation. Residual value: subcontracting under the eventual awardee, or positioning for the 5-year operate/maintain phase.',
+      eligibility: 'Sample: minimum 3 years relevant digital identity delivery experience; EU/EEA-registered entity or consortium.',
+      documents: [
+        { name: 'Contract Notice', type: 'CONTRACT_NOTICE', url: '#' },
+        { name: 'Technical Specifications', type: 'TECHNICAL_SPECIFICATIONS', url: '#' },
+        { name: 'Selection Criteria', type: 'SELECTION_CRITERIA', url: '#' },
+        { name: 'Draft Contract', type: 'CONTRACT', url: '#' },
+      ],
+      requirementsByCategory: {
+        certifications: [
+          { text: 'ISO 27001 — information security management', threshold: 'Valid certificate, scope covering identity systems', mandatory: true, match: 'match' },
+          { text: 'ISO 9001 — quality management', threshold: 'Valid certificate', mandatory: false, match: 'match' },
+        ],
+        references: [
+          { text: 'National-scale digital identity deployment', threshold: '2+ references, 500K+ users each, last 5 years', mandatory: true, match: 'unknown' },
+          { text: 'eIDAS-notified or equivalent scheme experience', threshold: '1+ reference', mandatory: false, match: 'unknown' },
+        ],
+        humanResources: [
+          { text: 'Project Manager', threshold: '5+ yrs general, 3+ yrs identity-specific, PMP or equivalent', mandatory: true, match: 'unknown' },
+          { text: 'Lead Wallet/Backend Engineer', threshold: 'OpenID4VCI/VP production experience', mandatory: true, match: 'unknown' },
+          { text: 'Security Architect', threshold: 'WSCA / HSM integration experience', mandatory: true, match: 'unknown' },
+          { text: 'Estonian-speaking Support Lead', threshold: 'Native/fluent Estonian, onsite availability', mandatory: true, match: 'partner' },
+        ],
+        technical: [
+          { text: 'OpenID4VCI / OpenID4VP support', threshold: 'Production implementation, not PoC', mandatory: true, match: 'unknown' },
+          { text: 'ISO 18013-5 mDL compatibility', threshold: 'Demonstrable interoperability test results', mandatory: false, match: 'unknown' },
+          { text: 'WSCA-compliant secure element support', threshold: 'Remote HSM or secure element, FIPS 140-3 or equivalent', mandatory: true, match: 'unknown' },
+        ],
+        other: [
+          { text: 'Data residency within EU/EEA', threshold: 'All personal data hosted in-region', mandatory: true, match: 'match' },
+          { text: 'Subcontracting disclosure', threshold: 'Full subcontractor chain disclosed at bid time', mandatory: true, match: 'match' },
+        ],
+      },
+      consortium: 'Likely requires a local Estonian partner for language/support presence — sample recommendation pending real profile match.',
+      sources: ['Estonia RIA procurement notice (May 2026)'],
+    }},
+  { id: 'o2', title: '[SAMPLE] Nigeria — NIMC Digital ID Modernisation RFI', country: 'Nigeria', region: 'Africa',
+    type: 'rfi', scope: 'natl', status: 'Open', relevance: 71, fit: 62,
+    value: 'Not disclosed', deadline: '2026-10-15', projectEnd: 'TBD — indicative 2028 (post-RFI)',
+    authority: 'National Identity Management Commission (NIMC)', real: false,
+    analysis: {
+      classification: 'National RFI — pre-tender market sounding for biometric/digital ID modernisation.',
+      description: 'Sample: NIMC is sounding the market on modernising its national biometric ID database and exploring wallet-based credential issuance for citizen services, ahead of a formal tender expected in 2027.',
+      why: 'Sample: RFI stage means specifications are still influenceable — high-value moment to shape requirements toward Biometrid\'s biometric capabilities.',
+      eligibility: 'Sample: open market sounding, no formal eligibility criteria published yet.',
+      documents: [
+        { name: 'RFI Document', type: 'OTHER', url: '#' },
+      ],
+      requirementsByCategory: {
+        certifications: [],
+        references: [
+          { text: 'Large-scale (10M+ user) biometric ID reference', threshold: 'Indicative only — RFI stage', mandatory: false, match: 'match' },
+        ],
+        humanResources: [],
+        technical: [
+          { text: 'Biometric deduplication at national scale', threshold: 'Indicative only — RFI stage', mandatory: false, match: 'match' },
+        ],
+        other: [],
+      },
+      consortium: 'Sample: local Nigerian systems-integrator partner recommended for delivery presence.',
+      sources: ['Illustrative placeholder — no live source'],
+    }},
+  { id: 'o3', title: '[SAMPLE] World Bank — Colombia Digital ID Modernisation Loan Project', country: 'Colombia', region: 'Latin America',
+    type: 'grant', scope: 'intl', status: 'Open', relevance: 65, fit: 55,
+    value: 'US$40M (loan-financed)', deadline: '2026-11-30', projectEnd: '2030 (indicative project closing date)',
+    authority: 'World Bank / MinTIC Colombia', real: false,
+    analysis: {
+      classification: 'International development-bank financed project — World Bank procurement rules apply, not national procurement law.',
+      description: 'Sample: loan-financed programme to modernise Colombia\'s civil registry and digital identity infrastructure, including a citizen-facing digital wallet component (Carpeta Ciudadana integration).',
+      why: 'Sample: development-bank financed projects often have more standardised, internationally-accessible procurement than national tenders.',
+      eligibility: 'Sample: World Bank procurement eligibility — open to international bidders, standard World Bank exclusion criteria apply.',
+      documents: [
+        { name: 'Project Appraisal Document', type: 'PROGRAMME', url: '#' },
+        { name: 'Procurement Plan', type: 'OTHER', url: '#' },
+      ],
+      requirementsByCategory: {
+        certifications: [],
+        references: [
+          { text: 'Cross-border digital ID deployment reference', threshold: '1+ reference, multi-country', mandatory: true, match: 'partner' },
+        ],
+        humanResources: [
+          { text: 'Spanish-speaking Project Lead', threshold: 'Fluent Spanish, onsite availability in Colombia', mandatory: true, match: 'unknown' },
+        ],
+        technical: [],
+        other: [
+          { text: 'World Bank exclusion/eligibility declaration', threshold: 'Standard World Bank ESPD-equivalent form', mandatory: true, match: 'unknown' },
+        ],
+      },
+      consortium: 'Sample: consider partnering with a LatAm-based systems integrator for language/local presence.',
+      sources: ['Illustrative placeholder — no live source'],
+    }},
+  { id: 'o4', title: '[SAMPLE] EU — WE BUILD LSP Open Call for New Partners', country: 'EU-wide', region: 'Europe',
+    type: 'lsp', scope: 'intl', status: 'Open call', relevance: 79, fit: 58,
+    value: 'Consortium co-funding', deadline: '2026-09-30', projectEnd: '2027 (LSP programme end date)',
+    authority: 'European Commission / WE BUILD consortium', real: false,
+    analysis: {
+      classification: 'EU Large Scale Pilot open call — consortium partnership, not a standard tender.',
+      description: 'Sample: WE BUILD is opening its consortium to additional technology partners to extend pilot use cases (e.g. age verification, mobile driving licence) across participating member states ahead of the 2027 eIDAS 2.0 deadline.',
+      why: 'Sample: LSP participation provides direct visibility into national wallet architecture decisions before they become procurements.',
+      eligibility: 'Sample: must join as a consortium partner under WE BUILD\'s existing coordination structure.',
+      documents: [
+        { name: 'Open Call Announcement', type: 'OTHER', url: '#' },
+        { name: 'Consortium Agreement Template', type: 'ANNEX', url: '#' },
+      ],
+      requirementsByCategory: {
+        certifications: [],
+        references: [],
+        humanResources: [],
+        technical: [
+          { text: 'SD-JWT VC / OpenID4VCI implementation experience', threshold: 'Production or advanced pilot experience', mandatory: true, match: 'match' },
+        ],
+        other: [
+          { text: 'Existing EU legal entity for consortium agreement', threshold: 'Registered EU entity required', mandatory: true, match: 'unknown' },
+        ],
+      },
+      consortium: 'Sample: direct consortium application, no separate partner needed if EU entity status confirmed.',
+      sources: ['Illustrative placeholder — no live source'],
+    }},
+];
+
+// Mirrors config/tracked_accounts.yaml structure — in production this list
+// is read from that file / the database, not hardcoded here.
+const TRACKED_ACCOUNTS = [
+  { name: 'DG CONNECT official (sample)', platform: 'linkedin', category: 'Regulator', active: true },
+  { name: '@ExampleCompetitor (sample)', platform: 'twitter', category: 'Competitor', active: true },
+  { name: 'OpenWallet Foundation (sample)', platform: 'linkedin', category: 'Standards Body', active: true },
+  { name: '@EU_Commission (sample)', platform: 'twitter', category: 'Regulator', active: false },
+];
+
+function categoryTag(cat) {
+  const map = { regulation: ['regulation', 'Regulation'], govdecision: ['govdecision', 'Gov Decision'],
+    linkedin: ['linkedin', 'LinkedIn'], twitter: ['twitter', 'Twitter/X'] };
+  return map[cat] || [cat, cat];
+}
+
+function tagHtml(type) {
+  const map = { tender: 'Tender', grant: 'Grant', lsp: 'LSP', rfi: 'RFI' };
+  return `<span class="tag ${type}">${map[type] || type}</span>`;
+}
+function scopeTag(scope) {
+  return `<span class="tag ${scope}">${scope === 'intl' ? 'International' : 'National'}</span>`;
+}
+
+function renderNewsList() {
+  const el = document.getElementById('news-list');
+  el.innerHTML = NEWS.map(n => {
+    const [cls, label] = categoryTag(n.category);
+    return `
+    <div class="news-item" onclick="openNews('${n.id}')">
+      <div>
+        <span class="tag ${cls}">${label}</span>
+        ${n.unverified ? '<span class="tag unverified">Unverified</span>' : ''}
+        <div class="news-title" style="margin-top:6px;">${n.title}</div>
+        <div class="news-meta">${n.region}</div>
+        <div class="news-excerpt">${n.excerpt}</div>
+        <div class="news-source">Source: ${n.source}</div>
+      </div>
+      <div class="news-date">${n.date}</div>
+    </div>
+  `;
+  }).join('');
+}
+
+function renderTrackedPanel() {
+  const el = document.getElementById('tracked-panel-slot');
+  el.innerHTML = `
+    <div class="tracked-panel">
+      <h3>Tracked Accounts</h3>
+      <div class="sidebar-sub">LinkedIn &amp; Twitter/X accounts monitored for this feed</div>
+      ${TRACKED_ACCOUNTS.map(a => `
+        <div class="tracked-item ${a.active ? '' : 'tracked-inactive'}">
+          <div>
+            <div class="tracked-name">${a.name}</div>
+            <div class="tracked-cat">${a.category} · ${a.platform === 'linkedin' ? 'LinkedIn' : 'Twitter/X'}</div>
+          </div>
+          ${!a.active ? '<span class="tag" style="border:1px solid var(--line);color:var(--muted);">Inactive</span>' : ''}
+        </div>
+      `).join('')}
+      <div class="manage-note">Managed via <span class="mono">config/tracked_accounts.yaml</span> — not editable from this preview.</div>
+    </div>
+  `;
+}
+
+function openNews(id) {
+  const n = NEWS.find(x => x.id === id);
+  const [cls, label] = categoryTag(n.category);
+  document.getElementById('news-detail-content').innerHTML = `
+    <div class="hero"><div>
+      <span class="tag ${cls}">${label}</span>
+      ${n.unverified ? '<span class="tag unverified">Unverified</span>' : ''}
+      <h1 style="margin-top:10px;">${n.title}</h1>
+      <div class="hero-sub">${n.region} — ${n.date}</div>
+    </div></div>
+    <div class="detail-block"><h2>Summary</h2><p>${n.summary}</p></div>
+    <div class="detail-block impact-block"><h2>Biometrid Impact Note</h2><p>${n.impact}</p></div>
+    <div class="detail-block"><h2>Source</h2><p class="source-link mono">${n.source}</p>
+      ${n.unverified ? '<p style="margin-top:6px;color:var(--muted);">This came from a tracked social account, not a primary source — treat as unconfirmed until cross-checked.</p>' : ''}
+    </div>
+  `;
+  showPage('news-detail');
+}
+
+function priorityClass(rel) { return rel >= 85 ? 'p0' : rel >= 70 ? 'p1' : ''; }
+
+function renderOppCards() {
+  const el = document.getElementById('opp-grid');
+  const qualifying = OPPS.filter(o => o.relevance > 50 && (o.fit === null || o.fit > 50));
+  el.innerHTML = qualifying.map(o => `
+    <div class="opp-card ${priorityClass(o.relevance)}" onclick="openOpp('${o.id}')">
+      <div class="opp-card-top">
+        <div class="opp-card-title">${o.title}</div>
+      </div>
+      <div class="opp-card-meta-row">
+        <div class="opp-card-left">
+          <div class="opp-card-country">${o.country}${o.real ? '' : ' · sample'}</div>
+          <div class="opp-tags">${tagHtml(o.type)}${scopeTag(o.scope)}</div>
+        </div>
+        <div class="opp-card-value"><span class="value-label">Value</span>${o.value}</div>
+      </div>
+      <div class="opp-card-scores">
+        <div class="mini-score">
+          <div class="mini-score-label">RELEVANCE <span class="mini-score-val">${o.relevance}</span></div>
+          <div class="mini-score-bar"><div class="mini-score-fill rel" style="width:${o.relevance}%"></div></div>
+        </div>
+        <div class="mini-score">
+          <div class="mini-score-label">FIT <span class="mini-score-val">${o.fit ?? '—'}</span></div>
+          <div class="mini-score-bar"><div class="mini-score-fill fit" style="width:${o.fit ?? 0}%; ${o.fit === null ? 'opacity:0.3' : ''}"></div></div>
+        </div>
+      </div>
+      <div class="opp-card-deadline">Deadline ${o.deadline} · Ends ${o.projectEnd}</div>
+    </div>
+  `).join('');
+}
+
+function matchLabel(m) {
+  return m === 'match' ? 'Match' : m === 'partner' ? 'Partner needed' : m === 'no_match' ? 'No match' : 'Unknown';
+}
+
+function renderReqCategory(label, rows) {
+  if (!rows || rows.length === 0) {
+    return `<div class="req-category-block">
+      <div class="req-category-title">${label}</div>
+      <div class="req-empty">No ${label.toLowerCase()} requirements identified in this opportunity.</div>
+    </div>`;
+  }
+  return `<div class="req-category-block">
+    <div class="req-category-title">${label}</div>
+    <table class="req-table">
+      <thead><tr><th style="width:38%;">Requirement</th><th style="width:32%;">Threshold / Detail</th><th style="width:12%;">Mandatory</th><th style="width:18%;">Match</th></tr></thead>
+      <tbody>
+        ${rows.map(r => `
+          <tr>
+            <td>${r.text}</td>
+            <td>${r.threshold}</td>
+            <td>${r.mandatory ? '<span class="mand-yes">Mandatory</span>' : '<span class="mand-no">Optional</span>'}</td>
+            <td><span class="badge-match ${r.match}">${matchLabel(r.match)}</span></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function downloadDoc(name) {
+  // Mock only — a real deployment streams the file from storage/opportunities/<id>/
+  alert(`Downloading "${name}"… (mock — wire to real document storage on deploy)`);
+}
+
+function downloadAllDocs(id) {
+  const o = OPPS.find(x => x.id === id);
+  alert(`Downloading all ${o.analysis.documents.length} documents for "${o.title}" as a .zip… (mock)`);
+}
+
+function renderDocSidebar(o) {
+  const docs = o.analysis.documents;
+  return `
+    <div class="opp-sidebar">
+      <h3>Tender Documents</h3>
+      <div class="sidebar-sub">${docs.length} document${docs.length !== 1 ? 's' : ''} on file — already read by our agents, available for you to download</div>
+      <button class="download-btn" onclick="downloadAllDocs('${o.id}')">Download all (.zip)</button>
+      ${docs.map(d => `
+        <div class="doc-item">
+          <div>
+            <div class="doc-name">${d.name}</div>
+            <div class="doc-type">${d.type.replace(/_/g, ' ')}</div>
+          </div>
+          <span class="doc-download" onclick="downloadDoc('${d.name}')">Download ↓</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function openOpp(id) {
+  const o = OPPS.find(x => x.id === id);
+  const a = o.analysis;
+
+  document.getElementById('opp-detail-content').innerHTML = `
+    <div class="opp-detail-head">
+      <div>
+        <div class="opp-tags" style="margin-bottom:10px;">${tagHtml(o.type)}${scopeTag(o.scope)}</div>
+        <h1 class="serif" style="font-size:24px;">${o.title}</h1>
+        <div class="hero-sub">${o.authority} — ${o.country}${o.real ? '' : ' (sample)'}</div>
+      </div>
+    </div>
+    <div class="score-panel">
+      <div><div class="stat-num">${o.relevance}</div><div class="stat-label">Relevance</div></div>
+      <div><div class="stat-num fit">${o.fit ?? '—'}</div><div class="stat-label">Fit for Biometrid</div></div>
+      <div><div class="stat-num" style="color:var(--parchment);font-size:19px;">${o.value}</div><div class="stat-label">Value</div></div>
+      <div><div class="stat-num mono" style="color:var(--parchment);font-size:16px;">${o.deadline}</div><div class="stat-label">Deadline</div></div>
+      <div><div class="stat-num mono" style="color:var(--parchment);font-size:16px;">${o.projectEnd}</div><div class="stat-label">Project Ends</div></div>
+    </div>
+
+    <div class="opp-detail-grid">
+      <div class="opp-detail-main">
+        <div class="detail-block"><h2>Classification</h2><p>${a.classification}</p></div>
+        <div class="detail-block"><h2>Project Description</h2><p>${a.description}</p></div>
+        <div class="detail-block"><h2>Why It Matters</h2><p>${a.why}</p></div>
+        <div class="detail-block"><h2>Eligibility</h2><p>${a.eligibility}</p></div>
+
+        <div class="detail-block">
+          <h2>Requirements &amp; Match Status</h2>
+          ${REQ_CATEGORIES.map(c => renderReqCategory(c.label, a.requirementsByCategory[c.key])).join('')}
+        </div>
+
+        <div class="detail-block"><h2>Consortium Recommendation</h2><p>${a.consortium}</p></div>
+        <div class="detail-block"><h2>Sources</h2><p class="mono">${a.sources.join(' · ')}</p></div>
+      </div>
+
+      <div id="opp-sidebar-slot">${renderDocSidebar(o)}</div>
+    </div>
+  `;
+  showPage('opp-detail');
+}
+
+function renderDatabase() {
+  const typeFilters = ['all', 'tender', 'grant', 'lsp', 'rfi'];
+  const regionFilters = ['all', 'Europe', 'Africa', 'Latin America'];
+  let activeType = 'all', activeRegion = 'all';
+
+  function draw() {
+    document.getElementById('type-filters').innerHTML = typeFilters.map(t =>
+      `<div class="filter-chip ${t === activeType ? 'active' : ''}" onclick="setDbFilter('type','${t}')">${t === 'all' ? 'All types' : t.toUpperCase()}</div>`
+    ).join('');
+    document.getElementById('region-filters').innerHTML = regionFilters.map(r =>
+      `<div class="filter-chip ${r === activeRegion ? 'active' : ''}" onclick="setDbFilter('region','${r}')">${r === 'all' ? 'All regions' : r}</div>`
+    ).join('');
+
+    const rows = OPPS.filter(o =>
+      (activeType === 'all' || o.type === activeType) &&
+      (activeRegion === 'all' || o.region === activeRegion)
+    );
+    document.getElementById('db-table-body').innerHTML = rows.map(o => `
+      <tr class="data-row" onclick="openOpp('${o.id}')">
+        <td>${o.title}${o.real ? '' : ' <span class="mono" style="color:var(--muted);font-size:10px;">(sample)</span>'}</td>
+        <td>${o.region}</td>
+        <td>${tagHtml(o.type)}</td>
+        <td>${scopeTag(o.scope)}</td>
+        <td>${o.status}</td>
+        <td class="mono">${o.value}</td>
+        <td class="score-inline">${o.relevance}</td>
+        <td class="score-inline">${o.fit ?? '—'}</td>
+        <td class="mono">${o.deadline}</td>
+        <td class="mono">${o.projectEnd}</td>
+      </tr>
+    `).join('');
+  }
+
+  window.setDbFilter = (kind, val) => {
+    if (kind === 'type') activeType = val; else activeRegion = val;
+    draw();
+  };
+  draw();
+}
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navMap = { 'news': 0, 'news-detail': 0, 'opportunities': 1, 'opp-detail': 1, 'database': 2, 'landscape': 3 };
+  document.querySelectorAll('.nav-item')[navMap[name]]?.classList.add('active');
+  if (name === 'landscape' && !window.__mapRendered) {
+    renderWorldMap();
+    window.__mapRendered = true;
+  }
+}
+
+// ---- Landscape: national ID systems + wallet-space companies (sample) ----
+const LANDSCAPE_DATA = {
+  'Estonia': {
+    idSystems: [{ name: 'Estonian eID scheme (eIDAS-notified)', url: '#' }],
+    companies: [{ name: '[Sample] Cybernetica Wallet Solutions', url: '#' }],
+  },
+  'Germany': {
+    idSystems: [{ name: 'Personalausweis / AusweisApp2 (eIDAS-notified)', url: '#' }],
+    companies: [{ name: '[Sample] Deutsche ID Systeme GmbH', url: '#' }, { name: '[Sample] Bundesdruckerei Wallet Unit', url: '#' }],
+  },
+  'France': {
+    idSystems: [{ name: 'France Identité (eIDAS-notified)', url: '#' }],
+    companies: [{ name: '[Sample] IN Groupe Digital Identity', url: '#' }],
+  },
+  'Netherlands': {
+    idSystems: [{ name: 'DigiD / eIDAS Node NL', url: '#' }],
+    companies: [],
+  },
+  'Spain': {
+    idSystems: [{ name: 'Cl@ve (eIDAS-notified)', url: '#' }],
+    companies: [{ name: '[Sample] Indra Digital Identity', url: '#' }],
+  },
+  'Sweden': {
+    idSystems: [{ name: 'Sverige-ID (in development — DIGG roadmap)', url: '#' }],
+    companies: [],
+  },
+  'Bulgaria': {
+    idSystems: [{ name: 'Draft EUDI Wallet law (pre-authority stage)', url: '#' }],
+    companies: [],
+  },
+  'Nigeria': {
+    idSystems: [{ name: 'National Identity Number (NIN) / NIMC scheme', url: '#' }],
+    companies: [{ name: '[Sample] Lagos Biometric Systems Ltd', url: '#' }],
+  },
+  'Kenya': {
+    idSystems: [{ name: 'Maisha Namba national digital ID', url: '#' }],
+    companies: [],
+  },
+  'Colombia': {
+    idSystems: [{ name: 'Carpeta Ciudadana (MinTIC)', url: '#' }],
+    companies: [{ name: '[Sample] Andina Identity Solutions', url: '#' }],
+  },
+  'Brazil': {
+    idSystems: [{ name: 'gov.br digital identity platform', url: '#' }],
+    companies: [{ name: '[Sample] Brasil ID Tech', url: '#' }],
+  },
+};
+
+function landscapeStatusClass(entry) {
+  if (!entry) return 'data-none';
+  const hasSystems = entry.idSystems.length > 0;
+  const hasCompanies = entry.companies.length > 0;
+  if (hasSystems && hasCompanies) return 'data-full';
+  if (hasSystems || hasCompanies) return 'data-partial';
+  return 'data-none';
+}
+
+function buildTooltipHtml(countryName, entry) {
+  let html = `<div class="tt-country">${countryName}</div>`;
+  html += `<div class="tt-section-label">eIDAS / National ID Systems</div>`;
+  if (entry && entry.idSystems.length) {
+    html += `<ul>${entry.idSystems.map(s => `<li><a href="${s.url}" target="_blank" rel="noopener">${s.name}</a></li>`).join('')}</ul>`;
+  } else {
+    html += `<div class="tt-empty">No system logged yet</div>`;
+  }
+  html += `<div class="tt-section-label">Wallet-space Companies</div>`;
+  if (entry && entry.companies.length) {
+    html += `<ul>${entry.companies.map(c => `<li><a href="${c.url}" target="_blank" rel="noopener">${c.name}</a></li>`).join('')}</ul>`;
+  } else {
+    html += `<div class="tt-empty">No companies logged yet</div>`;
+  }
+  return html;
+}
+
+function renderWorldMap() {
+  const container = document.getElementById('world-map');
+  container.innerHTML = '<div class="map-loading">Loading world map…</div>';
+
+  d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+    .then(topology => {
+      const geojson = topojson.feature(topology, topology.objects.countries);
+      const width = 900, height = 460;
+      const projection = d3.geoNaturalEarth1().fitSize([width - 20, height - 20], geojson);
+      const path = d3.geoPath(projection);
+
+      container.innerHTML = '';
+      const svg = d3.select('#world-map').append('svg')
+        .attr('viewBox', `0 0 ${width} ${height}`)
+        .style('background', 'var(--surface)');
+
+      // Background rect — without this, any area not covered by a country
+      // shape (ocean, unmapped territory) falls back to default page white.
+      svg.append('rect')
+        .attr('x', 0).attr('y', 0)
+        .attr('width', width).attr('height', height)
+        .attr('fill', '#122236'); // slightly darker than --surface, reads as "ocean"
+
+      const tooltip = document.getElementById('map-tooltip');
+
+      svg.selectAll('path')
+        .data(geojson.features)
+        .join('path')
+        .attr('d', path)
+        .attr('class', d => landscapeStatusClass(LANDSCAPE_DATA[d.properties.name]))
+        .on('mouseenter', function(event, d) {
+          const entry = LANDSCAPE_DATA[d.properties.name];
+          tooltip.innerHTML = buildTooltipHtml(d.properties.name, entry);
+          tooltip.style.display = 'block';
+        })
+        .on('mousemove', function(event) {
+          const rect = container.getBoundingClientRect();
+          const x = event.clientX - rect.left;
+          const y = event.clientY - rect.top;
+          tooltip.style.left = Math.min(x + 16, rect.width - 260) + 'px';
+          tooltip.style.top = y + 16 + 'px';
+        })
+        .on('mouseleave', function() {
+          tooltip.style.display = 'none';
+        });
+    })
+    .catch(err => {
+      container.innerHTML = '<div class="map-loading">Map data failed to load (requires internet access in your browser). ' + err + '</div>';
+    });
+}
+
+document.querySelectorAll('.nav-item[data-page]').forEach(item => {
+  item.addEventListener('click', () => showPage(item.dataset.page));
+});
+
+renderNewsList();
+renderTrackedPanel();
+renderOppCards();
+renderDatabase();
+</script>
+</body>
+</html>

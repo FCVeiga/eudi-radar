@@ -1,0 +1,412 @@
+# National Procurement Registry
+#
+# eudi_wallet_authority / wallet_name / wallet_status_raw / assurance_level /
+# status_source below are populated from the iGrant.io EUDI Wallet Status
+# Tracker (https://eudi-wallet-tracker.igrant.io/tracker/table), an
+# actively maintained, source-cited, CC BY 4.0 dataset — last checked
+# 2026-08-13 per the tracker's own "last updated" line.
+#
+# national_procurement_portal is confirmed real for 30/32 countries,
+# researched primarily via the European Commission's own official
+# "Public procurement in EU countries" directory page
+# (commission.europa.eu/funding-and-tenders/tools-public-buyers/public-procurement-eu-countries_en),
+# cross-checked against independent sources for several. Germany and
+# Liechtenstein remain without one — both genuinely lack a single national
+# portal, documented in their entries below.
+#
+# status_code is a heuristic mapping of the tracker's status label onto our
+# 0-12 scale (see national_status_scale below) — approximate by nature.
+# wallet_status_raw preserves the tracker's exact wording so you can judge
+# the mapping yourself.
+
+countries:
+  - code: AT
+    name: Austria
+    national_procurement_portal: "http://www.bbg.gv.at/"
+    note_on_portal: "Austrian Federal Procurement Agency (BBG). Source: European Commission's official public-procurement-eu-countries page."
+    eudi_wallet_authority: "Federal Chancellery / Digital Austria"
+    wallet_name: "eAusweise"
+    wallet_status_raw: "Public Pilot"
+    assurance_level: high
+    status_code: 10
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/austria"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: BE
+    name: Belgium
+    national_procurement_portal: "http://www.publicprocurement.be/fr"
+    note_on_portal: "Federal portal. Belgium's regions also run separate portals: Brussels (pouvoirs-locaux.brussels), Flanders (overheid.vlaanderen.be), Wallonia (marchespublics.wallonie.be)."
+    eudi_wallet_authority: "FPS Policy and Support (BOSA)"
+    wallet_name: "MyGov.be (itsme in parallel use)"
+    wallet_status_raw: "Closed Pilot / LSP"
+    assurance_level: high
+    status_code: 8
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/belgium"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: BG
+    name: Bulgaria
+    national_procurement_portal: "http://www.aop.bg"
+    eudi_wallet_authority: "Ministry of e-Government"
+    wallet_name: "National EUDI Wallet (announced)"
+    wallet_status_raw: "Closed Pilot / LSP — draft law published for consultation Feb 2026"
+    assurance_level: substantial
+    status_code: 4
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/bulgaria"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: HR
+    name: Croatia
+    national_procurement_portal: "http://www.javnanabava.hr/"
+    eudi_wallet_authority: "Ministry of Finance / Financial Agency (FINA)"
+    wallet_name: "Certilia Wallet"
+    wallet_status_raw: "Closed Pilot / LSP"
+    assurance_level: high
+    status_code: 8
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/croatia"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: CY
+    name: Cyprus
+    national_procurement_portal: "http://www.eprocurement.gov.cy"
+    eudi_wallet_authority: "Deputy Ministry of Research, Innovation and Digital Policy"
+    wallet_name: "Digital Citizen"
+    wallet_status_raw: "Public Pilot"
+    assurance_level: high
+    status_code: 10
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/cyprus"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: CZ
+    name: Czech Republic
+    national_procurement_portal: "https://portal-vz.cz/"
+    eudi_wallet_authority: "Digital and Information Agency"
+    wallet_name: "National EUDI Wallet (announced)"
+    wallet_status_raw: "Closed Pilot / LSP"
+    assurance_level: high
+    status_code: 8
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/czechia"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: DK
+    name: Denmark
+    national_procurement_portal: "https://www.udbud.dk"
+    procurement_open_data: "udbud.dk has its own public JSON search API (confirmed via third-party integration referencing it directly) — no API key needed. Operated by Konkurrence- og Forbrugerstyrelsen (Danish Competition and Consumer Authority)."
+    eudi_wallet_authority: null  # not named in tracker row — verify
+    wallet_name: "AltID"
+    wallet_status_raw: "Production (EU Notification Pending) — public sandbox since April 2026"
+    assurance_level: null
+    status_code: 11
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/denmark"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: EE
+    name: Estonia
+    national_procurement_portal: "https://riigihanked.riik.ee"
+    note_on_portal: "The actual transactional registry. fin.ee has a supplementary policy/info page but riigihanked.riik.ee is the real registry — confirmed both via EC's official list and independent confirmation from Estonia's own May 2026 EUDI Wallet procurement notice."
+    eudi_wallet_authority: "Information System Authority (RIA)"
+    wallet_name: "National EUDI Wallet (announced)"
+    wallet_status_raw: "Closed Pilot / LSP — building on existing Smart-ID/Mobile-ID estate"
+    assurance_level: high
+    status_code: 8
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/estonia"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13) — consistent with RIA's own May 2026 procurement notice"
+
+  - code: FI
+    name: Finland
+    national_procurement_portal: "https://www.hankintailmoitukset.fi"
+    note_on_portal: "Hankinnat.fi is the advisory unit; hankintailmoitukset.fi is the actual notice portal — verify which is primary before wiring in."
+    eudi_wallet_authority: "Digital and Population Data Services Agency (DVV)"
+    wallet_name: "National EUDI Wallet (announced)"
+    wallet_status_raw: "Closed Pilot / LSP"
+    assurance_level: high
+    status_code: 8
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/finland"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: FR
+    name: France
+    national_procurement_portal: "https://www.boamp.fr"
+    procurement_open_data: "BOAMP (Bulletin Officiel des Annonces de Marchés Publics), operated by DILA, has a confirmed open-data API — data.gouv.fr/fr/datasets/boamp — updated twice daily, no key needed. PLACE (marches-publics.gouv.fr) is the separate central-government bid-submission platform."
+    eudi_wallet_authority: "France Titres (ANTS), under the Ministry of the Interior"
+    wallet_name: "France Identité"
+    wallet_status_raw: "Production (EU Notification Pending)"
+    assurance_level: high
+    launch_date: "2024-04-17"
+    status_code: 11
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/france"
+    official_url: "https://eudi-wallet.gouv.fr/"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13); confirmed via France Identité official channels"
+
+  - code: DE
+    name: Germany
+    national_procurement_portal: null
+    note_on_portal: "Germany has NO single national portal — procurement is genuinely fragmented across federal, state (16 Länder), and municipal levels. Key platforms: evergabe-online.de (federal, run by Beschaffungsamt des BMI), oeffentlichevergabe.de (national publication service aggregating federal + all Länder, appears to have an accessible structure suitable for scraping), DTVP (Deutsches Vergabeportal, privately-run aggregator), plus 180+ further regional/sector platforms (e.g. Vergabe.NRW). For real coverage, prioritize oeffentlichevergabe.de as the broadest single aggregator, then evergabe-online.de for federal-specific."
+    eudi_wallet_authority: "SPRIND (Federal Agency for Breakthrough Innovations), on behalf of the Federal Ministry for Digital and State Modernization (BMDS)"
+    wallet_name: "National EUDI Wallet (state-run, market open to private providers in parallel)"
+    wallet_status_raw: "Public Pilot — state-driven version scheduled to launch 2 January 2027"
+    assurance_level: null
+    status_code: 10
+    official_url: "https://eudi-wallet.gov.de/en/"
+    status_source: "Official site eudi-wallet.gov.de (checked live) + iGrant.io tracker (checked 2026-08-13)"
+
+  - code: GR
+    name: Greece
+    national_procurement_portal: "http://www.eaadhsy.gr"
+    note_on_portal: "Central Public Procurement Authority. Also check promitheus.gov.gr (ESIDIS/KHMDIS e-procurement system) for the transactional platform."
+    eudi_wallet_authority: "Ministry of Digital Governance"
+    wallet_name: "Gov.gr Wallet"
+    wallet_status_raw: "Closed Pilot / LSP — expanded to 13 documents incl. passport"
+    assurance_level: high
+    status_code: 8
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/greece"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: HU
+    name: Hungary
+    national_procurement_portal: "https://www.kozbeszerzes.hu/english/"
+    eudi_wallet_authority: "Digitális Magyarország Ügynökség (DMA)"
+    wallet_name: "DÁP (Digitális Állampolgárság Program)"
+    wallet_status_raw: "Closed Pilot / LSP — EUDI upgrade not yet officially confirmed"
+    assurance_level: substantial
+    status_code: 8
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/hungary"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: IS
+    name: Iceland
+    national_procurement_portal: "http://utbodsvefur.is/"
+    note_on_portal: "Managed by Fjársýslan (Financial Management Authority). EEA-wide notices also go via SIMAP/TED."
+    eudi_wallet_authority: "Digital Iceland (Stafrænt Ísland)"
+    wallet_name: "National EUDI Wallet (announced)"
+    wallet_status_raw: "Closed Pilot / LSP — launch announced for 2026, Idemia as tech partner"
+    assurance_level: high
+    status_code: 8
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/iceland"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: IE
+    name: Ireland
+    national_procurement_portal: "https://www.eTenders.gov.ie"
+    eudi_wallet_authority: "Department of the Environment, Climate and Communications"
+    wallet_name: "National EUDI Wallet (announced)"
+    wallet_status_raw: "Public Pilot — early public access to test wallet since April 2026"
+    assurance_level: high
+    status_code: 10
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/ireland"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: IT
+    name: Italy
+    national_procurement_portal: "https://www.anticorruzione.it"
+    procurement_open_data: "ANAC publishes an official OCDS (Open Contracting Data Standard) feed, CC BY 4.0, JSON/Excel/CSV, covering all contracts above EUR 40,000 — see data.open-contracting.org/en/publication/117"
+    below_threshold_portal: "https://www.acquistinretepa.it (MEPA — Mercato Elettronico della Pubblica Amministrazione, run by Consip)"
+    eudi_wallet_authority: "Department for Digital Transformation / PagoPA"
+    wallet_name: "Sistema IT-Wallet (IO app + accredited private wallets)"
+    wallet_status_raw: "Production (EU Notification Pending) — activation via CIE or SPID"
+    assurance_level: high
+    launch_date: "2024-12-04"
+    status_code: 11
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/italy"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: LV
+    name: Latvia
+    national_procurement_portal: "http://www.iub.gov.lv"
+    note_on_portal: "Procurement Monitoring Bureau."
+    eudi_wallet_authority: "State Digital Development Agency (VDAA)"
+    wallet_name: "National EUDI Wallet (announced)"
+    wallet_status_raw: "Closed Pilot / LSP — initial release planned December 2026"
+    assurance_level: high
+    status_code: 8
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/latvia"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: LI
+    name: Liechtenstein
+    national_procurement_portal: null
+    note_on_portal: "No separate national portal found — Liechtenstein publishes via SIMAP/TED as an EEA member. Legislation gazette: gesetze.li."
+    eudi_wallet_authority: "Office for Information Technology (AI)"
+    wallet_name: "eID.li"
+    wallet_status_raw: "Planned for Production — EEA deadline December 2027"
+    assurance_level: high
+    status_code: 1
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/liechtenstein"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: LT
+    name: Lithuania
+    national_procurement_portal: "http://www.vpt.lt"
+    note_on_portal: "Public Procurement Office."
+    eudi_wallet_authority: "Informatics and Communications Department, Ministry of the Interior"
+    wallet_name: "National EUDI Wallet (announced)"
+    wallet_status_raw: "Closed Pilot / LSP — state-approved wallet expected usable by end of 2026"
+    assurance_level: high
+    status_code: 8
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/lithuania"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: LU
+    name: Luxembourg
+    national_procurement_portal: "http://www.marches.public.lu/fr.html"
+    eudi_wallet_authority: "Ministry for Digitalisation / INCERT"
+    wallet_name: "GouvID (being upgraded); INCERT partnering with HOPAE"
+    wallet_status_raw: "Closed Pilot / LSP"
+    assurance_level: high
+    status_code: 8
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/luxembourg"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: MT
+    name: Malta
+    national_procurement_portal: "http://www.contracts.gov.mt"
+    eudi_wallet_authority: "Malta Digital Innovation Authority (MDIA)"
+    wallet_name: "National Digital Wallet (announced)"
+    wallet_status_raw: "Closed Pilot / LSP — MDIA issued a call for tenders for implementation"
+    assurance_level: substantial
+    status_code: 6
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/malta"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: NL
+    name: Netherlands
+    national_procurement_portal: "https://www.tenderned.nl"
+    procurement_open_data: "TenderNed publishes a CC0 (public domain) dataset, JSON/Excel/CSV, updated quarterly — data.open-contracting.org/en/publication/133. Operated by PIANOo (Dutch Public Procurement Expertise Centre)."
+    eudi_wallet_authority: "Ministry of the Interior and Kingdom Relations"
+    wallet_name: "NL Wallet"
+    wallet_status_raw: "Public Pilot — tested with residents of Amsterdam and Nijmegen"
+    assurance_level: high
+    status_code: 10
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/netherlands"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: "NO"
+    name: Norway
+    national_procurement_portal: "http://www.doffin.no"
+    note_on_portal: "Doffin is the national notice database; anskaffelser.no is the policy/advisory body (Procurement Department)."
+    eudi_wallet_authority: "Digitaliseringsdirektoratet (Digdir)"
+    wallet_name: "Digital lommebok (National EUDI Wallet, announced)"
+    wallet_status_raw: "Public Pilot — EEA deadline December 2027 (extra year)"
+    assurance_level: high
+    status_code: 10
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/norway"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: PL
+    name: Poland
+    national_procurement_portal: "https://www.uzp.gov.pl/en"
+    note_on_portal: "Public Procurement Office (UZP). The transactional e-Zamówienia platform's build-out has had a troubled history (a 2019 contract withdrawal); confirm current transactional URL before wiring in."
+    eudi_wallet_authority: "Ministry of Digital Affairs"
+    wallet_name: "mObywatel (v2.0, ~10M users)"
+    wallet_status_raw: "Closed Pilot / LSP — public commitment to integrate EUDI capabilities by end of 2026"
+    assurance_level: high
+    status_code: 8
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/poland"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: PT
+    name: Portugal
+    national_procurement_portal: "https://www.base.gov.pt/base4"
+    eudi_wallet_authority: "Agency for Administrative Modernisation (AMA)"
+    wallet_name: "gov.pt Wallet"
+    wallet_status_raw: "Closed Pilot / LSP — expecting EUDI upgrade"
+    assurance_level: high
+    status_code: 8
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/portugal"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: RO
+    name: Romania
+    national_procurement_portal: "http://www.e-licitatie.ro"
+    eudi_wallet_authority: "Authority for the Digitalization of Romania (ADR)"
+    wallet_name: "RoEUDIW"
+    wallet_status_raw: "Closed Pilot / LSP — adopted Germany's open-source solution; phase 1 planned 2026"
+    assurance_level: substantial
+    status_code: 8
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/romania"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: SK
+    name: Slovakia
+    national_procurement_portal: "https://www.uvo.gov.sk/"
+    eudi_wallet_authority: "Ministry of Interior"
+    wallet_name: "eDOKLADY"
+    wallet_status_raw: "Closed Pilot / LSP — offline verification scheduled Q2 2026"
+    assurance_level: high
+    status_code: 8
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/slovakia"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: SI
+    name: Slovenia
+    national_procurement_portal: "http://www.enarocanje.si"
+    eudi_wallet_authority: "Ministry of Digital Transformation"
+    wallet_name: "National EUDI Wallet (announced) — SI-PASS as trust anchor"
+    wallet_status_raw: "Closed Pilot / LSP"
+    assurance_level: high
+    status_code: 8
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/slovenia"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: ES
+    name: Spain
+    national_procurement_portal: "https://contrataciondelestado.es"
+    note_on_portal: "Operated by Ministry of Finance. Spain's 17 autonomous communities have varying degrees of integration with this national platform — some regions (e.g. Basque Country) run largely separate systems, worth checking individually for full coverage."
+    eudi_wallet_authority: "Ministry for Digital Transformation and Civil Service"
+    wallet_name: "Cartera Digital (leveraging Cl@ve, 24M+ registered users)"
+    wallet_status_raw: "Closed Pilot / LSP — first version presented at EUDI Wallet Launchpad Dec 2025"
+    assurance_level: high
+    status_code: 8
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/spain"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: SE
+    name: Sweden
+    national_procurement_portal: "http://www.upphandlingsmyndigheten.se/en"
+    note_on_portal: "Swedish Public Procurement Agency — policy/advisory body. Actual notices are distributed across multiple e-procurement systems (e.g. e-Avrop, Kommers, Visma/Mercell); no single transactional portal."
+    eudi_wallet_authority: "Agency for Digital Government (DIGG)"
+    wallet_name: "National EUDI Wallet (announced) — Sverige-ID"
+    wallet_status_raw: "Closed Pilot / LSP — phased roadmap: test env Dec 2026, certified 2029"
+    assurance_level: high
+    status_code: 4
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/sweden"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13) — consistent with DIGG's own published roadmap"
+
+  - code: CH
+    name: Switzerland
+    national_procurement_portal: "https://www.simap.ch"
+    note_on_portal: "Joint platform of the Swiss Confederation, cantons and communes. Most notices also republished to TED via bilateral agreement. A third-party MCP server exists for querying SIMAP programmatically (mcpservers.org/en/servers/digilac/simap-mcp) — may be worth evaluating alongside a direct adapter."
+    eudi_wallet_authority: "Swiss Confederation (BIT / FOITT)"
+    wallet_name: "swiyu"
+    wallet_status_raw: "Public Pilot — national e-ID launch expected 1 December 2026"
+    assurance_level: high
+    status_code: 10
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/switzerland"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+  - code: UK
+    name: United Kingdom
+    national_procurement_portal: "https://www.find-tender.service.gov.uk"
+    procurement_open_data: "Find a Tender Service (FTS) has a confirmed official OCDS API, published under Open Government Licence v3.0 — no auth, no key, no fee. Run by the Cabinet Office; replaced TED for UK notices since 1 Jan 2021. Below-threshold contracts (>£10,000) are on the separate Contracts Finder platform. Devolved nations have their own: Public Contracts Scotland, Sell2Wales, eTendersNI."
+    eudi_wallet_authority: "Government Digital Service (GDS)"
+    wallet_name: "GOV.UK Wallet (alongside GOV.UK One Login)"
+    wallet_status_raw: "No plans (re: EU EUDI mandate — UK is outside it) — tracking interoperability"
+    assurance_level: substantial
+    status_code: 0
+    country_url: "https://eudi-wallet-tracker.igrant.io/tracker/united-kingdom"
+    status_source: "iGrant.io EUDI Wallet Status Tracker (checked 2026-08-13)"
+
+national_status_scale:
+  0: UNKNOWN
+  1: POLICY_ANNOUNCED
+  2: RESPONSIBLE_AUTHORITY_IDENTIFIED
+  3: BUDGET_FUNDING_IDENTIFIED
+  4: MARKET_CONSULTATION
+  5: PROCUREMENT_EXPECTED
+  6: PROCUREMENT_OPEN
+  7: AWARDED
+  8: DEVELOPMENT
+  9: CERTIFICATION
+  10: PILOT
+  11: PRODUCTION
+  12: OPERATIONS_MAINTENANCE

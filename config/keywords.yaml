@@ -1,0 +1,137 @@
+pack_1_exact_eudi:
+  terms:
+    - '"EUDI Wallet"'
+    - '"EUDIW"'
+    - '"European Digital Identity Wallet"'
+    - '"EU Digital Identity Wallet"'
+  combine_with:
+    - tender
+    - procurement
+    - contract
+    - RFP
+    - RFI
+    - grant
+    - funding
+    - pilot
+    - consultation
+    - market consultation
+    - expression of interest
+    - call for proposals
+    - partner
+    - consortium
+    - implementation
+    - development
+    - certification
+    - conformity assessment
+
+pack_2_wallet:
+  terms:
+    - '"digital identity wallet"'
+    - '"identity wallet"'
+    - '"national identity wallet"'
+    - '"digital ID wallet"'
+    - '"mobile identity"'
+    - '"mobile ID"'
+
+pack_3_credentials:
+  terms:
+    - verifiable credentials
+    - digital credentials
+    - electronic credentials
+    - attestation of attributes
+    - electronic attestation of attributes
+    - QEAA
+    - EAA
+    - PID
+    - LPID
+    - person identification data
+    - legal person identification data
+
+pack_4_technical_components:
+  terms:
+    - OpenID4VCI
+    - OpenID4VP
+    - SIOPv2
+    - SD-JWT
+    - SD-JWT VC
+    - ISO 18013-5
+    - ISO 18013-7
+    - mDL
+    - mobile driving licence
+    - WSCA
+    - wallet secure cryptographic application
+    - secure element wallet
+    - remote HSM wallet
+    - PID issuer
+    - QEAA issuer
+    - credential issuer
+    - RP registration
+    - relying party registration
+  note: >
+    Never rely exclusively on these terms — procurement documents often
+    describe the same capabilities without standards terminology.
+
+pack_5_trust:
+  terms:
+    - electronic signature
+    - qualified electronic signature
+    - QES
+    - qualified certificate
+    - QTSP
+    - trust service
+    - PKI
+    - remote signature
+    - digital certificate
+    - identity proofing
+    - remote identity proofing
+  combine_with: [government, procurement]
+
+pack_6_use_cases:
+  terms:
+    - mobile driving licence
+    - digital driving licence
+    - digital travel credentials
+    - DTC
+    - age verification
+    - proof of age
+    - digital diploma
+    - education credentials
+    - professional qualifications
+    - digital health credentials
+    - ePrescription
+    - European Health Insurance Card
+    - EHIC
+    - social security credentials
+    - PDA1
+    - bank account opening wallet
+    - payment authentication
+    - SIM registration
+    - company credentials
+    - business wallet
+    - legal person wallet
+    - power of representation
+    - digital mandate
+
+untranslatable_acronyms:
+  - EUDI
+  - eIDAS
+  - PID
+  - QEAA
+  - OpenID4VC
+  - SD-JWT
+  - mDL
+
+false_positive_filter:
+  suppress:
+    - cryptocurrency wallets
+    - Web3 wallets
+    - consumer payment wallets
+    - physical wallets
+    - generic password managers
+    - marketing announcements
+    - generic IAM procurement
+    - pure document scanning
+    - pure cybersecurity
+    - academic papers without funding
+    - conference announcements without opportunity relevance
+    - jobs

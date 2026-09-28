@@ -1,0 +1,117 @@
+# Africa & Latin America Digital ID / Wallet source registry
+africa_sources:
+  regional_bodies:
+    - name: African Union — Digital Transformation Strategy
+      source_type: GOVERNMENT
+      url: "https://au.int/en/digital-transformation-strategy-africa"
+      priority: 2
+    - name: Smart Africa Alliance
+      source_type: CONSORTIUM
+      url: "https://smartafrica.org"
+      priority: 2
+    - name: ECOWAS Digital ID / biometric ID programmes
+      source_type: GOVERNMENT
+      url: null
+      priority: 3
+
+  development_finance:
+    - name: World Bank ID4D (Identification for Development)
+      source_type: DEVELOPMENT_BANK
+      url: "https://id4d.worldbank.org"
+      api_url: "https://search.worldbank.org/api/v2/procnotices"
+      api_available: true
+      api_key_required: false  # CONFIRMED — same open procurement API, filter by country
+      priority: 1
+    - name: World Bank G2Px (Government-to-Person payments)
+      source_type: DEVELOPMENT_BANK
+      url: "https://www.worldbank.org/en/programs/g2px"
+      priority: 2
+    - name: African Development Bank (AfDB) procurement
+      source_type: DEVELOPMENT_BANK
+      url: "https://www.afdb.org/en/projects-and-operations/procurement"
+      priority: 1
+    - name: European Investment Bank (EIB) Africa operations
+      source_type: DEVELOPMENT_BANK
+      url: "https://www.eib.org/en/projects/regions/africa"
+      priority: 2
+    - name: Gates Foundation digital ID grants
+      source_type: FUNDING_PORTAL
+      url: null
+      priority: 3
+
+  country_watchlist:
+    - country: Nigeria
+      note: "NIMC digital ID modernisation programme"
+    - country: Kenya
+      note: "Maisha Namba / national digital ID rollout"
+    - country: Ghana
+      note: "Ghana Card / NIA digital ID ecosystem"
+    - country: Morocco
+      note: "National digital ID / e-government initiatives"
+    - country: Rwanda
+      note: "Irembo digital government platform, national ID integration"
+    - country: Tunisia
+      note: "National digital identity initiatives"
+    - country: Ethiopia
+      note: "Fayda national digital ID programme"
+    - country: Egypt
+      note: "National digital transformation / e-ID programmes"
+
+latam_sources:
+  regional_bodies:
+    - name: Inter-American Development Bank (IDB) digital ID / GovTech
+      source_type: DEVELOPMENT_BANK
+      url: "https://www.iadb.org/en/how-we-can-work-together/procurement/procurement-projects/procurement-notices"
+      open_data_portal: "https://data.iadb.org/dataset/project-procurement-bidding-notices-and-notification-of-contract-awards"
+      api_available: false
+      priority: 1
+      note: "26 borrowing countries across LatAm/Caribbean. Bulk open-data downloads confirmed; real-time query API not confirmed as of this research pass."
+    - name: CEPAL / ECLAC digital government observatory
+      source_type: GOVERNMENT
+      url: null
+      priority: 3
+    - name: Red GEALC (Latin American e-Government Network)
+      source_type: CONSORTIUM
+      url: null
+      priority: 3
+
+  development_finance:
+    - name: World Bank LAC digital ID projects
+      source_type: DEVELOPMENT_BANK
+      url: "https://projects.worldbank.org"
+      api_url: "https://search.worldbank.org/api/v2/procnotices"
+      api_available: true
+      api_key_required: false
+      priority: 1
+    - name: IDB Lab (innovation grants, digital ID pilots)
+      source_type: FUNDING_PORTAL
+      url: "https://www.idblab.org"
+      priority: 2
+    - name: CAF (Development Bank of Latin America)
+      source_type: DEVELOPMENT_BANK
+      url: "https://www.caf.com"
+      priority: 2
+
+  country_watchlist:
+    - country: Colombia
+      note: "MinTIC digital identity / Carpeta Ciudadana initiatives"
+    - country: Mexico
+      note: "CURP digital / national ID digitisation efforts"
+    - country: Brazil
+      note: "gov.br digital identity platform, Carteira de Identidade Nacional"
+    - country: Peru
+      note: "RENIEC digital ID, ID digital rollout"
+    - country: Chile
+      note: "ClaveÚnica / national digital identity"
+    - country: Argentina
+      note: "Mi Argentina digital ID app"
+    - country: Ecuador
+      note: "Digital ID modernisation programmes"
+    - country: Dominican Republic
+      note: "National digital ID initiatives"
+
+note: >
+  Unlike the EU, most Africa/LatAm opportunities surface through
+  development-bank procurement notices (World Bank/IDB/AfDB use
+  standardised, searchable procurement portals) rather than fragmented
+  national systems — prioritise those adapters first when deploying.

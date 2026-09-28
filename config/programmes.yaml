@@ -1,0 +1,35 @@
+lsp_profile_schema:
+  programme: ""
+  coordinator: ""
+  partners: []
+  countries: []
+  budget: null
+  start: null
+  end: null
+  use_cases: []
+  open_calls: []
+  procurements: []
+  partner_searches: []
+  subcontracting: []
+  news: []
+  funding_source: ""
+
+profiles:
+  - programme: APTITUDE
+    status: UNVERIFIED_SEED
+  - programme: WE BUILD
+    status: UNVERIFIED_SEED
+  - programme: POTENTIAL
+    status: UNVERIFIED_SEED
+  - programme: EWC
+    status: UNVERIFIED_SEED
+  - programme: NOBID
+    status: UNVERIFIED_SEED
+  - programme: DC4EU
+    status: UNVERIFIED_SEED
+
+note: >
+  All profiles above are placeholders (unfilled). The Pipeline Intelligence
+  agent (agents/pipeline_intelligence.py) and weekly Source Discovery job
+  are responsible for populating coordinator/partners/budget/etc. from
+  primary sources before these are treated as CONFIRMED in any digest.

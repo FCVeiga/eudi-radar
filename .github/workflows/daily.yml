@@ -1,0 +1,51 @@
+name: Daily EUDI Wallet Opportunity Radar
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  daily-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run daily discovery + triage + digest
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          python run_daily.py
+
+      - name: Upload digest as workflow artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-digest-${{ github.run_number }}
+          path: reports/daily/*.md
+          retention-days: 90
+
+      - name: Commit digest to repo
+        if: success()
+        run: |
+          git config --global user.name "eudi-radar-bot"
+          git config --global user.email "actions@github.com"
+          git add reports/daily/*.md
+          git diff --staged --quiet || git commit -m "Daily digest: $(date +%Y-%m-%d)"
+          git push

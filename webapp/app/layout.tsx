@@ -1,0 +1,35 @@
+import './globals.css';
+import Link from 'next/link';
+
+export const metadata = {
+  title: 'Opportunity Radar — Biometrid',
+  description: 'Digital ID / Wallet Intelligence',
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <div className="app">
+          <div className="rail">
+            <div>
+              <div className="brand-mark">Opportunity Radar</div>
+              <div className="brand-sub">Digital ID / Wallet Intelligence</div>
+            </div>
+            <div className="nav-group">
+              <div className="nav-label">PAGES</div>
+              <Link className="nav-item" href="/news">News</Link>
+              <Link className="nav-item" href="/opportunities">Opportunities</Link>
+              <Link className="nav-item" href="/database">Database</Link>
+              <Link className="nav-item" href="/landscape">Landscape</Link>
+            </div>
+            <div className="rail-footer">
+              <div><span className="dot"></span>Live — Supabase</div>
+            </div>
+          </div>
+          <div className="main">{children}</div>
+        </div>
+      </body>
+    </html>
+  );
+}

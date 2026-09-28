@@ -1,0 +1,35 @@
+name: Weekly Source Discovery
+
+on:
+  schedule:
+    - cron: "0 7 * * 1"
+  workflow_dispatch: {}
+
+jobs:
+  weekly-source-discovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run weekly source discovery
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python -c "
+          print('Wire this up to call agents/source_discovery.py once a')
+          print('concrete weekly orchestration script exists — currently')
+          print('that module only provides building blocks, not a runner.')
+          "

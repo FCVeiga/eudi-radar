@@ -1,0 +1,28 @@
+# Tracked social accounts for the News pipeline.
+#
+# CATEGORY guide:
+#   REGULATOR, STANDARDS_BODY, COMPETITOR, PARTNER, JOURNALIST, PROGRAMME
+#
+# PLATFORM NOTES:
+#   - twitter: requires an X API v2 Bearer Token. See SETUP_CHECKLIST.md.
+#   - linkedin: LinkedIn has no public API for monitoring third-party posts.
+#     Realistic options are (a) a paid scraping provider like Apify or
+#     PhantomBuster — operates against LinkedIn's ToS, carries account-ban
+#     risk — or (b) LinkedIn's official Community Management API, which
+#     requires partner approval and only covers pages you administer.
+
+accounts:
+  # --- EXAMPLE ROWS — replace with real accounts, delete these ---
+  - platform: twitter
+    handle: "EU_Commission"
+    display_name: "European Commission (EXAMPLE — verify real handle)"
+    category: REGULATOR
+    priority: 1
+    active: false
+
+  - platform: linkedin
+    profile_url: "https://www.linkedin.com/company/example-placeholder/"
+    display_name: "[EXAMPLE] Replace with a real tracked profile or company page"
+    category: COMPETITOR
+    priority: 2
+    active: false

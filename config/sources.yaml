@@ -1,0 +1,211 @@
+# source_registry seed data
+source_types:
+  - PROCUREMENT_PORTAL
+  - FUNDING_PORTAL
+  - DIGITAL_AGENCY
+  - IDENTITY_AUTHORITY
+  - GOVERNMENT
+  - LSP
+  - EU_PROGRAMME
+  - DEVELOPMENT_BANK
+  - STANDARDS_BODY
+  - INDUSTRY_SOURCE
+  - CONSORTIUM
+  - NEWS
+
+eu_sources:
+  tier_1:
+    - name: TED (Tenders Electronic Daily)
+      source_type: PROCUREMENT_PORTAL
+      url: "https://ted.europa.eu"
+      api_url: "https://api.ted.europa.eu/v3/notices/search"
+      api_docs: "https://docs.ted.europa.eu/api/"
+      api_available: true
+      api_key_required: false  # CONFIRMED — public read access, no auth needed
+      priority: 1
+    - name: EU Funding & Tenders Portal
+      source_type: FUNDING_PORTAL
+      url: "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/home"
+      api_available: true
+      priority: 1
+    - name: European Commission EUDI Wallet Portal
+      source_type: EU_PROGRAMME
+      url: "https://digital-strategy.ec.europa.eu/en/policies/eudi-wallet-architecture-and-reference-framework"
+      priority: 1
+    - name: DG CONNECT
+      source_type: EU_PROGRAMME
+      url: "https://digital-strategy.ec.europa.eu"
+      priority: 1
+    - name: Digital Europe Programme
+      source_type: FUNDING_PORTAL
+      url: "https://digital-strategy.ec.europa.eu/en/activities/digital-programme"
+      priority: 1
+    - name: HaDEA (European Health and Digital Executive Agency)
+      source_type: EU_PROGRAMME
+      url: "https://hadea.ec.europa.eu"
+      priority: 1
+    - name: European Commission Procurement
+      source_type: PROCUREMENT_PORTAL
+      url: "https://ec.europa.eu/info/funding-tenders/how-eu-funding-works/procurement_en"
+      priority: 1
+    - name: EUDI Wallet GitHub / Reference Implementation
+      source_type: STANDARDS_BODY
+      url: "https://github.com/eu-digital-identity-wallet"
+      rss_available: false
+      priority: 1
+    - name: EUDI Launchpad
+      source_type: EU_PROGRAMME
+      url: null
+      priority: 1
+    - name: eIDAS / EUDI Expert Group Publications
+      source_type: EU_PROGRAMME
+      url: null
+      priority: 1
+  tier_2:
+    - name: iGrant.io EUDI Wallet Status Tracker
+      source_type: STANDARDS_BODY
+      url: "https://eudi-wallet-tracker.igrant.io/tracker/table"
+      api_available: false
+      priority: 1
+      note: "Third-party but actively maintained, sourced, CC BY 4.0. Covers all 37 EU/EEA/candidate countries in one table — check this before country-by-country manual research."
+    - name: Namirial EUDI Wallet Status Reviews
+      source_type: NEWS
+      url: "https://www.namirial.com/en/blog/stories/status-check-eudi-wallet/"
+      api_available: false
+      priority: 2
+      note: "Recurring (roughly quarterly) status review blog, cited as a source by the iGrant tracker."
+    - name: eIDEasy EUDI Wallet Blog
+      source_type: NEWS
+      url: "https://www.eideasy.com/blog/eu-digital-identity-wallets-status-april-2026"
+      api_available: false
+      priority: 2
+      note: "Recurring status-snapshot blog series — check for latest post URL each run, this one is dated."
+    - name: EU Trust List Browser (eIDAS)
+      source_type: STANDARDS_BODY
+      url: "https://eidas.ec.europa.eu/efda/tl-browser/"
+      api_available: false
+      priority: 2
+      note: "Official EU source for each country's notified trust services / eID schemes. Per-country deep links exist (pattern: .../screen/tl/{ISO_CODE}) but verify the exact path before hardcoding — not confirmed live in this research pass."
+    - name: ENISA
+      source_type: STANDARDS_BODY
+      url: "https://www.enisa.europa.eu"
+      priority: 2
+    - name: ECCC (European Cybersecurity Competence Centre)
+      source_type: STANDARDS_BODY
+      url: null
+      priority: 2
+    - name: ETSI
+      source_type: STANDARDS_BODY
+      url: "https://www.etsi.org"
+      priority: 2
+    - name: CEN/CENELEC
+      source_type: STANDARDS_BODY
+      url: "https://www.cencenelec.eu"
+      priority: 2
+    - name: OpenID Foundation
+      source_type: STANDARDS_BODY
+      url: "https://openid.net"
+      priority: 2
+    - name: OpenWallet Foundation
+      source_type: STANDARDS_BODY
+      url: "https://openwallet.foundation"
+      priority: 2
+    - name: ANAC OCDS (Italy procurement open data)
+      source_type: PROCUREMENT_PORTAL
+      url: "https://www.anticorruzione.it"
+      api_url: "https://dati.anticorruzione.it"
+      api_available: true
+      api_key_required: false
+      priority: 2
+      note: "OCDS-format bulk data for all Italian public contracts above EUR 40,000, updated monthly. Confirmed via data.open-contracting.org/en/publication/117."
+    - name: TenderNed Open Data (Netherlands)
+      source_type: PROCUREMENT_PORTAL
+      url: "https://www.tenderned.nl"
+      api_available: true
+      api_key_required: false
+      priority: 2
+      note: "CC0 dataset, JSON/Excel/CSV, updated quarterly. Confirmed via data.open-contracting.org/en/publication/133."
+    - name: BOAMP Open Data (France)
+      source_type: PROCUREMENT_PORTAL
+      url: "https://www.boamp.fr"
+      api_url: "https://echanges.dila.gouv.fr/OPENDATA/BOAMP/"
+      api_available: true
+      api_key_required: false
+      priority: 2
+      note: "Open data published twice daily. Covers contracts from EUR 40,000 up to EU thresholds. eForms XML/JSON. Confirmed via data.gouv.fr."
+    - name: UK Find a Tender Service Open Data
+      source_type: PROCUREMENT_PORTAL
+      url: "https://www.find-tender.service.gov.uk"
+      api_available: true
+      api_key_required: false
+      priority: 1
+      note: "Official OCDS API, no auth, no fee. Replaced TED for UK notices since 1 Jan 2021. Below-threshold contracts (>£10,000) are on the separate Contracts Finder platform."
+    - name: Denmark udbud.dk
+      source_type: PROCUREMENT_PORTAL
+      url: "https://www.udbud.dk"
+      api_available: true
+      api_key_required: false
+      priority: 2
+      note: "Includes below-EU-threshold notices that never reach TED — most complete source for Danish opportunities."
+    - name: Switzerland simap.ch
+      source_type: PROCUREMENT_PORTAL
+      url: "https://www.simap.ch"
+      api_available: false
+      priority: 2
+
+international_sources:
+  - name: World Bank
+    source_type: DEVELOPMENT_BANK
+    url: "https://projects.worldbank.org"
+    api_url: "https://search.worldbank.org/api/v2/procnotices"
+    api_available: true
+    api_key_required: false  # CONFIRMED — fully open, keyless, CC BY 4.0
+    priority: 1
+    note: "Best single source for Africa/LatAm coverage — one consistent feed across 100+ borrowing countries. See adapters/world_bank.py."
+  - name: EIB
+    source_type: DEVELOPMENT_BANK
+    url: "https://www.eib.org"
+    priority: 2
+  - name: EBRD
+    source_type: DEVELOPMENT_BANK
+    url: "https://www.ebrd.com"
+    priority: 2
+  - name: ADB
+    source_type: DEVELOPMENT_BANK
+    url: "https://www.adb.org"
+    priority: 3
+  - name: IDB (Inter-American Development Bank)
+    source_type: DEVELOPMENT_BANK
+    url: "https://www.iadb.org/en/how-we-can-work-together/procurement/procurement-projects/procurement-notices"
+    open_data_portal: "https://data.iadb.org/dataset/project-procurement-bidding-notices-and-notification-of-contract-awards"
+    api_available: false
+    priority: 1
+    note: "26 borrowing countries across LatAm/Caribbean. Open data portal has downloadable datasets; no confirmed real-time query API as of this research pass."
+  - name: AfDB
+    source_type: DEVELOPMENT_BANK
+    url: "https://www.afdb.org/en/projects-and-operations/procurement"
+    api_available: false
+    priority: 1
+    note: "No public API found in this research pass — appears to be portal/eSourcing only (eprocurement.afdb.org). Likely needs a dedicated scraper adapter or manual monitoring."
+  - name: UNGM (UN Global Marketplace)
+    source_type: PROCUREMENT_PORTAL
+    url: "https://www.ungm.org"
+    priority: 2
+  - name: ITU
+    source_type: STANDARDS_BODY
+    url: "https://www.itu.int"
+    priority: 3
+
+lsp_tracker_seed:
+  - programme: APTITUDE
+    status: UNVERIFIED_SEED
+  - programme: WE BUILD
+    status: UNVERIFIED_SEED
+  - programme: POTENTIAL
+    status: UNVERIFIED_SEED
+  - programme: EWC
+    status: UNVERIFIED_SEED
+  - programme: NOBID
+    status: UNVERIFIED_SEED
+  - programme: DC4EU
+    status: UNVERIFIED_SEED

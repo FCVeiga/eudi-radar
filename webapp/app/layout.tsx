@@ -1,6 +1,10 @@
 import './globals.css';
 import Link from 'next/link';
 
+// Every page reads live from Supabase. Without this, Next prerenders pages
+// with no searchParams at build time and serves that frozen snapshot forever.
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'Opportunity Radar — Biometrid',
   description: 'Digital ID / Wallet Intelligence',

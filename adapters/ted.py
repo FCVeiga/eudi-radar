@@ -5,9 +5,13 @@ CONFIRMED (2026-09 research pass): TED's public API v3 is genuinely open —
 no API key, login, or auth required to read published notices. Official
 docs: https://docs.ted.europa.eu/api/. Auth is only required for
 submission-related workflows, not our use case (spec section 5, Tier 1).
+
+The search endpoint is POST-only and takes TED "expert search" syntax.
+Always search quoted phrases (FT~"identity wallet"): bare terms like eIDAS
+match tens of thousands of notices through e-signature boilerplate.
 """
 import hashlib
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional
 
 import requests
@@ -15,27 +19,51 @@ import requests
 from .web_search import SearchProvider, SearchResult
 
 _TED_API_BASE = "https://api.ted.europa.eu/v3/notices/search"
+_FIELDS = [
+    "notice-title", "buyer-name", "buyer-country", "notice-type",
+    "publication-date", "deadline-receipt-tender-date-lot", "links",
+]
+
+
+def _pick_lang(value, lang="eng"):
+    """TED returns multilingual fields as {"eng": [...], "deu": [...]} or {"eng": "..."}."""
+    if not isinstance(value, dict) or not value:
+        return value or ""
+    v = value.get(lang) or next(iter(value.values()))
+    return v[0] if isinstance(v, list) and v else (v or "")
 
 
 class TedSearchProvider(SearchProvider):
-    def __init__(self, session: Optional[requests.Session] = None):
+    def __init__(self, session: Optional[requests.Session] = None,
+                 lookback_days: int = 120, limit: int = 50):
         self.session = session or requests.Session()
+        self.lookback_days = lookback_days
+        self.limit = limit
 
     def search(self, query, country=None, language="en", date_from=None):
-        params = {"q": query, "scope": "3", "lang": language}
+        date_from = date_from or (datetime.utcnow() - timedelta(days=self.lookback_days))
+        expert = f'FT~"{query.strip(chr(34))}" AND PD>={date_from.strftime("%Y%m%d")}'
         if country:
-            params["country"] = country
-        if date_from:
-            params["publication-date-from"] = date_from.strftime("%Y%m%d")
-        resp = self.session.get(_TED_API_BASE, params=params, timeout=30)
+            expert += f" AND buyer-country={country}"
+        resp = self.session.post(_TED_API_BASE, json={
+            "query": expert, "fields": _FIELDS, "limit": self.limit,
+        }, timeout=30)
         resp.raise_for_status()
-        data = resp.json()
         results = []
-        for notice in data.get("results", []):
+        for n in resp.json().get("notices", []):
+            pub_no = n.get("publication-number", "")
+            buyer = _pick_lang(n.get("buyer-name"))
+            countries = n.get("buyer-country") or []
+            deadlines = n.get("deadline-receipt-tender-date-lot") or []
+            snippet = (f"Buyer: {buyer}. Notice type: {n.get('notice-type', '')}. "
+                       f"Tender deadline: {deadlines[0] if deadlines else 'n/a'}. "
+                       f"TED notice {pub_no}.")
             results.append(SearchResult(
-                title=notice.get("title", ""), url=notice.get("uri", ""),
-                snippet=notice.get("summary", ""),
-                published_date=notice.get("publication-date"),
+                title=_pick_lang(n.get("notice-title")),
+                url=f"https://ted.europa.eu/en/notice/-/detail/{pub_no}",
+                snippet=snippet,
+                published_date=n.get("publication-date"),
+                country=countries[0] if countries else None,
             ))
         return results
 

@@ -59,6 +59,9 @@ a { color: inherit; text-decoration: none; }
 .tag.grant { background: rgba(76,154,123,0.18); color: var(--teal); }
 .tag.lsp { background: rgba(147,166,188,0.18); color: var(--muted); }
 .tag.rfi { background: rgba(201,162,39,0.18); color: var(--brass); }
+.tag.pilot { background: rgba(147,166,188,0.18); color: var(--muted); }
+.tag.consortium { background: rgba(90,140,200,0.18); color: #7FAEE0; }
+.tag.signal { background: rgba(201,162,39,0.18); color: var(--brass); }
 .tag.linkedin { background: rgba(90,140,200,0.18); color: #7FAEE0; }
 .tag.twitter { background: rgba(147,166,188,0.18); color: var(--muted); }
 .tag.unverified { border: 1px dashed var(--rust); color: #E08B65; background: none; }

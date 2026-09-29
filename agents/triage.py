@@ -50,7 +50,7 @@ def run_triage_llm(candidate: Candidate) -> dict:
     )
     return call_llm_json(
         system_prompt=_get_triage_prompt(), user_content=user_content,
-        model=CHEAP_MODEL, max_tokens=512,
+        model=CHEAP_MODEL, max_tokens=1024,
     )
 
 

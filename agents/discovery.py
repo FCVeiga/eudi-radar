@@ -19,18 +19,37 @@ def _candidate_id(source_url: str, title: str) -> str:
     return hashlib.sha256(f"{source_url}|{title}".encode()).hexdigest()[:16]
 
 
-def run_discovery(session, search_provider, query_packs: dict, countries: list[str]):
+def _parse_date(value):
+    try:
+        return datetime.strptime(str(value)[:10], "%Y-%m-%d") if value else None
+    except ValueError:
+        return None
+
+
+def run_discovery(session, search_provider, query_packs: dict, countries: list,
+                  errors: Optional[list] = None):
+    """Run every query in query_packs. A failing query is recorded in
+    `errors` (when given) and skipped, so one bad source can't sink the run."""
     new_candidates = []
+    seen = set()
     for pack_name, queries in query_packs.items():
         for query in queries:
-            results = search_provider.search(query, language="en")
+            try:
+                results = search_provider.search(query, language="en")
+            except Exception as e:
+                if errors is None:
+                    raise
+                errors.append(f"{type(search_provider).__name__} '{query}': {e}")
+                continue
             for r in results:
                 cid = _candidate_id(r.url, r.title)
-                if session.get(Candidate, cid):
+                if cid in seen or session.get(Candidate, cid):
                     continue
+                seen.add(cid)
                 candidate = Candidate(
                     candidate_id=cid, discovered_at=datetime.utcnow(),
                     source_url=r.url, title=r.title, description=r.snippet,
+                    country=r.country, publication_date=_parse_date(r.published_date),
                     discovery_query=query, potential_categories=[pack_name],
                     processed=False,
                 )

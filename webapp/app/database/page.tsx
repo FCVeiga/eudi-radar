@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { getSupabaseServerClient } from '@/lib/supabase';
 
-const TYPES = ['tender', 'grant', 'lsp', 'rfi'];
+const TYPES = ['tender', 'grant', 'pilot', 'consortium', 'signal'];
 
 export default async function DatabasePage({
   searchParams,

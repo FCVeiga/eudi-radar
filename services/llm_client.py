@@ -25,7 +25,10 @@ def _get_client() -> "anthropic.Anthropic":
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
         raise ValueError("ANTHROPIC_API_KEY environment variable is not set.")
-    return anthropic.Anthropic(api_key=api_key)
+    # Keys not scoped to a workspace must name one on every request.
+    workspace_id = os.environ.get("ANTHROPIC_WORKSPACE_ID")
+    headers = {"anthropic-workspace-id": workspace_id} if workspace_id else None
+    return anthropic.Anthropic(api_key=api_key, default_headers=headers)
 
 
 def _extract_json(text: str) -> dict:
@@ -33,7 +36,9 @@ def _extract_json(text: str) -> dict:
     text = re.sub(r"^```(?:json)?\s*", "", text)
     text = re.sub(r"\s*```$", "", text)
     try:
-        return json.loads(text)
+        start = text.find("{")
+        obj, _ = json.JSONDecoder().raw_decode(text[start if start >= 0 else 0:])
+        return obj
     except json.JSONDecodeError as e:
         raise ValueError(
             f"LLM response was not valid JSON after cleanup: {e}\n"

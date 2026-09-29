@@ -16,7 +16,8 @@ except ImportError:
 
 
 class TavilySearchProvider(SearchProvider):
-    def __init__(self, api_key: Optional[str] = None):
+    def __init__(self, api_key: Optional[str] = None, topic: str = "general",
+                 days: Optional[int] = None):
         if TavilyClient is None:
             raise ImportError(
                 "The 'tavily-python' package is not installed. Run: "
@@ -26,6 +27,8 @@ class TavilySearchProvider(SearchProvider):
         if not self.api_key:
             raise ValueError("TAVILY_API_KEY environment variable is not set.")
         self.client = TavilyClient(api_key=self.api_key)
+        self.topic = topic  # "news" restricts to news outlets
+        self.days = days
 
     def search(self, query: str, country: Optional[str] = None,
                language: str = "en", date_from: Optional[datetime] = None
@@ -33,7 +36,9 @@ class TavilySearchProvider(SearchProvider):
         effective_query = query
         if country:
             effective_query = f"{query} {country}"
-        response = self.client.search(query=effective_query, search_depth="basic", max_results=10)
+        extra = {"days": self.days} if self.days else {}
+        response = self.client.search(query=effective_query, search_depth="basic",
+                                      max_results=10, topic=self.topic, **extra)
         results = []
         for item in response.get("results", []):
             results.append(SearchResult(

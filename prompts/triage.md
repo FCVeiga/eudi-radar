@@ -40,6 +40,14 @@ opportunity relevance, job postings.
   "commercial_relevance": "HIGH | MEDIUM | LOW | NONE",
   "type": "TENDER | GRANT | PILOT | CONSORTIUM_CALL | PIPELINE_SIGNAL | NEWS_ONLY | FALSE_POSITIVE",
   "reason": "one or two sentences",
-  "deep_analysis_required": true
+  "deep_analysis_required": true,
+  "country": "ISO 3166-1 alpha-2 code of the buying/issuing country, or null if multi-country/unclear",
+  "authority": "contracting authority / funder / organisation name, or null",
+  "deadline": "YYYY-MM-DD submission deadline if stated, else null",
+  "summary": "two or three plain sentences on what this is and why it matters for a wallet/identity vendor",
+  "news_category": "regulation | govdecision | null  (only for NEWS_ONLY: regulation = laws, implementing acts, standards; govdecision = government programmes, rollouts, budgets, announcements)"
 }
 ```
+
+Only fill `country`, `authority` and `deadline` from what the input actually
+says — never guess. Use null when unknown.

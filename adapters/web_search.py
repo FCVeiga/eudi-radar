@@ -12,6 +12,7 @@ class SearchResult:
     snippet: str
     published_date: Optional[str] = None
     source_domain: str = field(default="")
+    country: Optional[str] = None  # set by structured sources (e.g. TED buyer country)
 
     def __post_init__(self):
         if not self.source_domain and self.url:

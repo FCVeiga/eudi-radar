@@ -157,7 +157,8 @@ create table candidates (
   commercial_relevance VARCHAR(32),
   candidate_type VARCHAR(64),
   triage_reason TEXT,
-  deep_analysis_required BOOLEAN DEFAULT false
+  deep_analysis_required BOOLEAN DEFAULT false,
+  triage_output JSONB
 );
 create index idx_candidates_processed on candidates(processed);
 create index idx_candidates_relevance on candidates(relevance);
@@ -178,6 +179,7 @@ create table opportunities (
   duration_months INTEGER,
   funding_rate FLOAT,
   official_url VARCHAR(1024),
+  summary TEXT,
   first_detected TIMESTAMPTZ DEFAULT now(),
   last_checked TIMESTAMPTZ,
   last_change TIMESTAMPTZ,

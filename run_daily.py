@@ -9,6 +9,7 @@ search is skipped without it; TED is keyless). Tunables via env:
 TAVILY_QUERIES_PER_RUN (default 20), MAX_TRIAGE_PER_RUN (default 400).
 """
 import os
+import re
 import sys
 import uuid
 from concurrent.futures import ThreadPoolExecutor
@@ -40,11 +41,12 @@ TED_PHRASES = [
     "mobile driving licence", "OpenID4VC", "SD-JWT", "ISO 18013-5",
 ]
 
-# Triage types that are something to bid on / prepare for vs. informational.
+# Triage type -> opportunity category shown on the site (Opportunities subpages).
 OPPORTUNITY_TYPES = {
-    "TENDER": "tender", "GRANT": "grant", "PILOT": "pilot",
-    "CONSORTIUM_CALL": "consortium", "PIPELINE_SIGNAL": "signal",
+    "TENDER": "rfp", "RFI": "rfi", "GRANT": "grant", "CONSORTIUM_CALL": "grant",
+    "PILOT": "grant", "PIPELINE_SIGNAL": "signal",
 }
+NEWS_CATEGORIES = ("regulation", "industry", "market")
 PROMOTE_THRESHOLD = 50
 
 # Tavily news-mode queries (last 30 days). Only candidates from this pack are
@@ -52,9 +54,14 @@ PROMOTE_THRESHOLD = 50
 # vendor product pages. Triage relevance is bid-oriented, so news only needs
 # relevance > 0 (0 = off-topic / suppressed).
 NEWS_QUERIES = [
+    # market: adopters (governments, banks, …)
     "EUDI Wallet", "European Digital Identity Wallet rollout",
-    "eIDAS 2 implementing acts", "national digital identity wallet launch",
+    "national digital identity wallet launch",
     "mobile driving licence digital wallet government",
+    # regulation
+    "eIDAS 2 implementing acts", "European Commission digital identity regulation wallet certification",
+    # industry: vendors / competitors
+    "digital identity wallet company funding acquisition partnership",
 ]
 
 
@@ -87,6 +94,30 @@ def _parse_date(value):
         return None
 
 
+def ted_notice_type(candidate: Candidate):
+    """TED's own notice type (from the snippet the TED adapter writes)."""
+    if "ted.europa.eu" not in (candidate.source_url or ""):
+        return None
+    m = re.search(r"Notice type: ([a-z0-9-]+)", candidate.description or "")
+    return m.group(1) if m else None
+
+
+def classify_opportunity(candidate: Candidate, t: dict):
+    """(category, awarded) — TED's notice type overrides the LLM when present:
+    cn-* = contract notice (RFP), pin-*/pmc = prior info / market consultation
+    (RFI), can-*/veat = award (already awarded, never active)."""
+    category = OPPORTUNITY_TYPES.get((t.get("type") or "").upper())
+    nt = ted_notice_type(candidate)
+    if nt:
+        if nt.startswith(("can-", "veat")):
+            return category or "rfp", True
+        if nt.startswith("cn-"):
+            return "rfp", False
+        if nt.startswith("pin-") or nt == "pmc":
+            return "rfi", False
+    return category, False
+
+
 def promote(session, candidate: Candidate, t: dict, country_names: dict):
     """Turn a triaged candidate into an Opportunity or NewsItem row.
     Returns ("opportunity"|"news", row) or None."""
@@ -95,36 +126,49 @@ def promote(session, candidate: Candidate, t: dict, country_names: dict):
     country = (t.get("country") or "").upper()[:2] or None
     summary = t.get("summary") or t.get("reason") or ""
 
-    if ctype in OPPORTUNITY_TYPES and relevance >= PROMOTE_THRESHOLD:
-        opp_id = fingerprint(country or "", t.get("authority") or "", None, candidate.title or "")
-        existing = session.get(Opportunity, opp_id)
+    category, awarded = classify_opportunity(candidate, t)
+    if category and relevance >= PROMOTE_THRESHOLD:
         now = datetime.utcnow()
-        if existing:
-            existing.last_checked = now
-            return None
         deadline = _parse_date(t.get("deadline"))
-        status = ("OPEN" if deadline and deadline >= now else "CLOSED" if deadline
-                  else "SIGNAL" if ctype == "PIPELINE_SIGNAL" else "UNCLEAR")
-        opp = Opportunity(
-            opportunity_id=opp_id, title=candidate.title or "(untitled)",
-            country=country, authority=(t.get("authority") or None),
-            opportunity_type=OPPORTUNITY_TYPES[ctype], status=status,
+        # Stored status is a snapshot; the site decides "active" at query time
+        # from status + deadline, so nothing goes stale.
+        status = ("AWARDED" if awarded else "OPEN" if deadline and deadline >= now
+                  else "CLOSED" if deadline else "SIGNAL" if category == "signal" else "UNCLEAR")
+        fields = dict(
+            title=candidate.title or "(untitled)", country=country,
+            authority=(t.get("authority") or None), opportunity_type=category,
+            status=status, summary=summary, deadline=deadline,
             publication_date=_parse_date(candidate.publication_date),
-            deadline=deadline, official_url=candidate.source_url,
-            first_detected=now, last_checked=now,
+            official_url=candidate.source_url, last_checked=now,
             relevance_score=relevance, opportunity_relevance_score=relevance,
         )
+        # Same notice URL = same opportunity, even if triage re-words the
+        # authority (which changes the fingerprint). Re-triage updates in place.
+        existing = (session.query(Opportunity).filter_by(official_url=candidate.source_url).first()
+                    if candidate.source_url else None)
+        if not existing and ted_notice_type(candidate):
+            # TED republishes the same procurement as new notices (corrigenda,
+            # changed deadlines): same title + country = same opportunity.
+            existing = (session.query(Opportunity)
+                        .filter(Opportunity.title == fields["title"], Opportunity.country == country,
+                                Opportunity.official_url.like("%ted.europa.eu%")).first())
+            if existing and (existing.publication_date or datetime.min) > (fields["publication_date"] or datetime.min):
+                return None  # we already hold a newer notice for this procurement
+        opp_id = fingerprint(country or "", t.get("authority") or "", None, candidate.title or "")
+        existing = existing or session.get(Opportunity, opp_id)
+        if existing:
+            for k, v in fields.items():
+                setattr(existing, k, v)
+            return None
+        opp = Opportunity(opportunity_id=opp_id, first_detected=now, **fields)
         session.add(opp)
         return "opportunity", opp
 
     from_news_search = "news" in (candidate.potential_categories or [])
     if ctype == "NEWS_ONLY" and from_news_search and relevance > 0:
-        news_id = candidate.candidate_id
-        if session.get(NewsItem, news_id):
-            return None
-        category = t.get("news_category") if t.get("news_category") in ("regulation", "govdecision") else "govdecision"
-        item = NewsItem(
-            news_id=news_id, title=candidate.title or "(untitled)", category=category,
+        category = t.get("news_category") if t.get("news_category") in NEWS_CATEGORIES else "market"
+        fields = dict(
+            title=candidate.title or "(untitled)", category=category,
             region=country_names.get(country, "EU / International") if country else "EU / International",
             country=country, published_date=_parse_date(candidate.publication_date) or candidate.discovered_at,
             source_name=urlparse(candidate.source_url or "").netloc,
@@ -132,6 +176,12 @@ def promote(session, candidate: Candidate, t: dict, country_names: dict):
             excerpt=(candidate.description or "")[:400], summary=summary,
             impact_note=t.get("reason") or "",
         )
+        existing = session.get(NewsItem, candidate.candidate_id)
+        if existing:  # re-triage: refresh in place
+            for k, v in fields.items():
+                setattr(existing, k, v)
+            return None
+        item = NewsItem(news_id=candidate.candidate_id, **fields)
         session.add(item)
         return "news", item
     return None
@@ -233,7 +283,7 @@ def main():
         "type": o.opportunity_type, "deadline": o.deadline.date().isoformat() if o.deadline else "NOT_DISCLOSED",
         "opportunity_score": o.opportunity_relevance_score,
         "details": {"sources": o.official_url or ""},
-    } for o in new_opps if o.opportunity_type != "signal"]
+    } for o in new_opps if o.opportunity_type != "signal" and o.status != "AWARDED"]
     signals = [{
         "country": country_names.get(o.country, o.country or "International"),
         "signal": o.title, "action": f"Review: {o.official_url}",

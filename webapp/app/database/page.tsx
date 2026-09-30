@@ -1,7 +1,13 @@
 import Link from 'next/link';
 import { getSupabaseServerClient } from '@/lib/supabase';
+import { OPP_CATEGORIES, oppCategoryLabel } from '@/lib/data';
 
-const TYPES = ['tender', 'grant', 'pilot', 'consortium', 'signal'];
+// Status as of now: a stored OPEN/UNCLEAR whose deadline has passed is closed.
+function displayStatus(o: { status: string | null; deadline: string | null }) {
+  if (o.status === 'AWARDED' || o.status === 'CLOSED') return o.status;
+  if (o.deadline && new Date(o.deadline) < new Date()) return 'CLOSED';
+  return o.status === 'SIGNAL' ? 'SIGNAL' : o.status === 'OPEN' ? 'OPEN' : 'ACTIVE';
+}
 
 export default async function DatabasePage({
   searchParams,
@@ -13,7 +19,7 @@ export default async function DatabasePage({
   let query = supabase.from('opportunities').select('*').order('first_detected', { ascending: false });
 
   if (searchParams.type) {
-    query = query.ilike('opportunity_type', searchParams.type);
+    query = query.eq('opportunity_type', searchParams.type);
   }
   if (searchParams.country) {
     query = query.eq('country', searchParams.country);
@@ -27,15 +33,15 @@ export default async function DatabasePage({
   return (
     <div>
       <div className="hero">
-        <div><h1>Database</h1><div className="hero-sub">Full record of tenders, grants, pilots &amp; RFIs analysed</div></div>
+        <div><h1>Database</h1><div className="hero-sub">Full record of everything analysed — including closed and awarded opportunities</div></div>
       </div>
 
       <div className="filters">
         <Link href="/database" className={`filter-link ${!searchParams.type ? 'active' : ''}`}>All types</Link>
-        {TYPES.map((t) => (
-          <Link key={t} href={`/database?type=${t}${searchParams.country ? `&country=${searchParams.country}` : ''}`}
-                className={`filter-link ${searchParams.type === t ? 'active' : ''}`}>
-            {t.toUpperCase()}
+        {OPP_CATEGORIES.map(({ slug, label }) => (
+          <Link key={slug} href={`/database?type=${slug}${searchParams.country ? `&country=${searchParams.country}` : ''}`}
+                className={`filter-link ${searchParams.type === slug ? 'active' : ''}`}>
+            {label}
           </Link>
         ))}
       </div>
@@ -62,8 +68,8 @@ export default async function DatabasePage({
               <tr key={o.opportunity_id} className="data-row">
                 <td><Link href={`/opportunities/${o.opportunity_id}`}>{o.title}</Link></td>
                 <td>{o.country}</td>
-                <td>{o.opportunity_type && <span className={`tag ${o.opportunity_type.toLowerCase()}`}>{o.opportunity_type}</span>}</td>
-                <td>{o.status}</td>
+                <td>{o.opportunity_type && <span className={`tag ${o.opportunity_type}`}>{oppCategoryLabel(o.opportunity_type)}</span>}</td>
+                <td><span className={`status ${displayStatus(o).toLowerCase()}`}>{displayStatus(o)}</span></td>
                 <td className="mono">{o.estimated_value ? `${o.currency || ''} ${o.estimated_value.toLocaleString()}` : '—'}</td>
                 <td className="score-inline">{o.opportunity_relevance_score ?? '—'}</td>
                 <td className="score-inline">{o.bid_readiness_score ?? '—'}</td>

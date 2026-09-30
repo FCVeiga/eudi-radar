@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getSupabaseServerClient } from '@/lib/supabase';
+import { newsCategoryLabel } from '@/lib/data';
 
 export default async function NewsDetailPage({ params }: { params: { id: string } }) {
   const supabase = getSupabaseServerClient();
@@ -24,7 +25,7 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
       <Link className="back-link" href="/news">← Back to News</Link>
       <div className="hero">
         <div>
-          <span className={`tag ${n.category}`}>{n.category}</span>
+          <span className={`tag ${n.category}`}>{newsCategoryLabel(n.category)}</span>
           {n.unverified && <span className="tag unverified">Unverified</span>}
           <h1 style={{ marginTop: 10 }}>{n.title}</h1>
           <div className="hero-sub">{n.region} — {n.published_date ? new Date(n.published_date).toLocaleDateString() : ''}</div>

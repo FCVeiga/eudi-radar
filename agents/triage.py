@@ -65,6 +65,7 @@ def apply_triage_result(session, candidate: Candidate, triage_output: dict):
         triage_output.get("deep_analysis_required")
         or candidate.relevance >= _DEEP_ANALYSIS_THRESHOLD
     )
+    candidate.triage_output = triage_output
     candidate.processed = True
     session.commit()
     return candidate

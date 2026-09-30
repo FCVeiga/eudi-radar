@@ -294,6 +294,7 @@ class Candidate(Base):
     candidate_type = Column(String(64))
     triage_reason = Column(Text)
     deep_analysis_required = Column(Boolean, default=False)
+    triage_output = Column(JSON_TYPE)   # full LLM triage JSON, for re-promotion without re-calling
 
 
 class Opportunity(Base):
@@ -313,6 +314,7 @@ class Opportunity(Base):
     duration_months = Column(Integer, nullable=True)
     funding_rate = Column(Float, nullable=True)
     official_url = Column(String(1024))
+    summary = Column(Text)
     first_detected = Column(DateTime, default=datetime.utcnow)
     last_checked = Column(DateTime)
     last_change = Column(DateTime)

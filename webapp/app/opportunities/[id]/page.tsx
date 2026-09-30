@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getSupabaseServerClient } from '@/lib/supabase';
+import { oppCategoryLabel } from '@/lib/data';
 
 const REQ_CATEGORY_GROUPS: Record<string, string[]> = {
   Certifications: ['CERTIFICATION', 'PERSONAL_CERTIFICATION'],
@@ -65,10 +66,10 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
       <div className="hero">
         <div>
           <div className="opp-tags" style={{ marginBottom: 10 }}>
-            {o.opportunity_type && <span className={`tag ${o.opportunity_type.toLowerCase()}`}>{o.opportunity_type}</span>}
+            {o.opportunity_type && <span className={`tag ${o.opportunity_type}`}>{oppCategoryLabel(o.opportunity_type)}</span>}
           </div>
           <h1 className="serif" style={{ fontSize: 24 }}>{o.title}</h1>
-          <div className="hero-sub">{o.authority} — {o.country}</div>
+          <div className="hero-sub">{[o.authority, o.country].filter(Boolean).join(' — ') || 'International'}</div>
         </div>
       </div>
 
@@ -81,8 +82,14 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
 
       <div className="opp-detail-grid">
         <div>
-          <div className="detail-block"><h2>Classification</h2><p>{o.opportunity_type} — {o.status}</p></div>
-          <div className="detail-block"><h2>Sources</h2><p className="mono">{o.official_url || 'Not recorded'}</p></div>
+          {o.summary && <div className="detail-block"><h2>Summary</h2><p>{o.summary}</p></div>}
+          <div className="detail-block"><h2>Classification</h2><p>{oppCategoryLabel(o.opportunity_type)} — {o.status}</p></div>
+          <div className="detail-block">
+            <h2>Source</h2>
+            {o.official_url
+              ? <p><a href={o.official_url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--brass)' }}>{o.official_url}</a></p>
+              : <p className="mono">Not recorded</p>}
+          </div>
 
           <div className="detail-block">
             <h2>Requirements &amp; Match Status</h2>

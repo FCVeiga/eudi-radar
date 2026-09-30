@@ -31,6 +31,19 @@ opportunity relevance, job postings.
 - A signal can be a precursor to procurement even with no tender text. Score it
   on strategic relevance, type="PIPELINE_SIGNAL" rather than discarding as noise.
 
+## Type definitions
+- TENDER: an actual call for tenders / RFP / ITT / contract notice you could bid on.
+- RFI: request for information, market consultation, prior information notice
+  (PIN), early market engagement — the buyer is asking the market, not buying yet.
+- GRANT: grant, call for proposals, funding programme.
+- CONSORTIUM_CALL: a call where the vendor would join a consortium (e.g. a
+  Horizon / DIGITAL Europe project looking for partners).
+- PILOT: a pilot or large-scale pilot (LSP) programme open to participants.
+- PIPELINE_SIGNAL: a concrete sign that procurement is coming (budget allocated,
+  procurement announced, law mandating a system) without an open call yet.
+- NEWS_ONLY: informative news with no opportunity to act on.
+- FALSE_POSITIVE: off-topic.
+
 ## Output (JSON only)
 ```json
 {
@@ -38,16 +51,25 @@ opportunity relevance, job postings.
   "opportunity_probability": 0.0,
   "eudi_relevance": "DIRECT | ADJACENT | STRATEGIC | LOW | NONE",
   "commercial_relevance": "HIGH | MEDIUM | LOW | NONE",
-  "type": "TENDER | GRANT | PILOT | CONSORTIUM_CALL | PIPELINE_SIGNAL | NEWS_ONLY | FALSE_POSITIVE",
+  "type": "TENDER | RFI | GRANT | CONSORTIUM_CALL | PILOT | PIPELINE_SIGNAL | NEWS_ONLY | FALSE_POSITIVE",
   "reason": "one or two sentences",
   "deep_analysis_required": true,
   "country": "ISO 3166-1 alpha-2 code of the buying/issuing country, or null if multi-country/unclear",
   "authority": "contracting authority / funder / organisation name, or null",
   "deadline": "YYYY-MM-DD submission deadline if stated, else null",
   "summary": "two or three plain sentences on what this is and why it matters for a wallet/identity vendor",
-  "news_category": "regulation | govdecision | null  (only for NEWS_ONLY: regulation = laws, implementing acts, standards; govdecision = government programmes, rollouts, budgets, announcements)"
+  "news_category": "regulation | industry | market | null  (only for NEWS_ONLY — see below)"
 }
 ```
 
 Only fill `country`, `authority` and `deadline` from what the input actually
 says — never guess. Use null when unknown.
+
+## News categories (NEWS_ONLY only)
+- regulation: laws, implementing acts, regulators' decisions, certification
+  schemes, technical standards (eIDAS 2, ARF, OpenID4VC, ISO mDL, ENISA).
+- industry: news about wallet/identity vendors and industry players — product
+  launches, funding rounds, acquisitions, partnerships, company surveys/reports.
+- market: an adopter (government, bank, telco, retailer, university, health
+  system…) launching, adopting, piloting or taking a public stance on digital
+  identity wallets or credentials — including national wallet rollouts.

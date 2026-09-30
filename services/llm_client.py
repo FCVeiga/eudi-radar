@@ -47,11 +47,10 @@ def _extract_json(text: str) -> dict:
 
 
 def call_llm_json(system_prompt: str, user_content: str,
-                   model: str = CHEAP_MODEL, max_tokens: int = 1024,
-                   temperature: float = 0.0) -> dict:
+                   model: str = CHEAP_MODEL, max_tokens: int = 1024) -> dict:
     client = _get_client()
     response = client.messages.create(
-        model=model, max_tokens=max_tokens, temperature=temperature,
+        model=model, max_tokens=max_tokens,
         system=system_prompt,
         messages=[{"role": "user", "content": user_content}],
     )
@@ -60,11 +59,10 @@ def call_llm_json(system_prompt: str, user_content: str,
 
 
 def call_llm_text(system_prompt: str, user_content: str,
-                   model: str = STRONG_MODEL, max_tokens: int = 4096,
-                   temperature: float = 0.3) -> str:
+                   model: str = STRONG_MODEL, max_tokens: int = 4096) -> str:
     client = _get_client()
     response = client.messages.create(
-        model=model, max_tokens=max_tokens, temperature=temperature,
+        model=model, max_tokens=max_tokens,
         system=system_prompt,
         messages=[{"role": "user", "content": user_content}],
     )

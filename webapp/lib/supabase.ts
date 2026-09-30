@@ -14,5 +14,10 @@ export function getSupabaseServerClient() {
     );
   }
 
-  return createClient(url, serviceKey, { auth: { persistSession: false } });
+  return createClient(url, serviceKey, {
+    auth: { persistSession: false },
+    // Next's Data Cache otherwise stores every Supabase response for a year
+    // (even with dynamic = 'force-dynamic'), so pages kept serving old rows.
+    global: { fetch: (input, init) => fetch(input, { ...init, cache: 'no-store' }) },
+  });
 }

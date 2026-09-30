@@ -562,6 +562,13 @@ def get_engine(db_url: str = None):
     """
     if db_url is None:
         db_url = os.environ.get("DATABASE_URL", "sqlite:///eudi_radar.db")
+    # Supabase hands out postgres://, postgresql:// and postgresql+psycopg://
+    # variants; only psycopg2 is installed, so pin every Postgres URL to it.
+    db_url = db_url.strip()
+    for prefix in ("postgres://", "postgresql://", "postgresql+psycopg://"):
+        if db_url.startswith(prefix):
+            db_url = "postgresql+psycopg2://" + db_url[len(prefix):]
+            break
     return create_engine(db_url, echo=False, future=True)
 
 

@@ -24,6 +24,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 from database.models import (  # noqa: E402
     init_db, get_session, Source, Country, AgentRun, Candidate, Opportunity, NewsItem,
+    ChangeEvent, ChangeImportance,
 )
 from agents.digest import render_daily_digest, CoverageStats  # noqa: E402
 from agents.discovery import run_discovery, build_query_combinations  # noqa: E402
@@ -94,12 +95,53 @@ def _parse_date(value):
         return None
 
 
-def ted_notice_type(candidate: Candidate):
-    """TED's own notice type (from the snippet the TED adapter writes)."""
+def ted_meta(candidate: Candidate) -> dict:
+    """Fields the TED adapter writes into the snippet: notice type, procedure
+    id (shared by every notice of one procurement) and tender deadline."""
     if "ted.europa.eu" not in (candidate.source_url or ""):
-        return None
-    m = re.search(r"Notice type: ([a-z0-9-]+)", candidate.description or "")
-    return m.group(1) if m else None
+        return {}
+    text = candidate.description or ""
+    grab = lambda pat: (m.group(1) if (m := re.search(pat, text)) else None)
+    return {
+        "notice_type": grab(r"Notice type: ([a-z0-9-]+)"),
+        "procedure": grab(r"TED procedure: ([0-9a-f-]{36})"),
+        "deadline": _parse_date(grab(r"Tender deadline: (\d{4}-\d{2}-\d{2})")),
+    }
+
+
+def ted_notice_order(url: str):
+    """TED publication numbers ("671205-2026") increase over time: (year, n)."""
+    m = re.search(r"/(\d+)-(\d{4})$", url or "")
+    return (int(m.group(2)), int(m.group(1))) if m else None
+
+
+def ted_notice_type(candidate: Candidate):
+    return ted_meta(candidate).get("notice_type")
+
+
+def _fmt(d):
+    return d.strftime("%d %b %Y") if d else "none"
+
+
+def record_changes(session, opp: Opportunity, new: dict, now: datetime) -> list:
+    """Diff an existing opportunity against incoming values; log each material
+    change as a ChangeEvent so the site can show what moved."""
+    events = []
+    old_dl = opp.deadline.replace(tzinfo=None) if opp.deadline else None
+    new_dl = new.get("deadline")
+    if new_dl and old_dl != new_dl:
+        verb = "extended" if old_dl and new_dl > old_dl else "brought forward" if old_dl else "set"
+        events.append(("deadline", f"Deadline {verb}: {_fmt(old_dl)} → {_fmt(new_dl)}"))
+    finished = ("AWARDED", "CLOSED")
+    newly_finished = new.get("status") in finished and opp.status != new.get("status")
+    reopened = opp.status in finished and new.get("status") == "OPEN"
+    if newly_finished or reopened:
+        events.append(("status", f"Status changed: {opp.status} → {new['status']}"))
+    for event_type, description in events:
+        session.add(ChangeEvent(opportunity_id=opp.opportunity_id, event_type=event_type,
+                                importance=ChangeImportance.MATERIAL, description=description,
+                                detected_at=now))
+    return [d for _, d in events]
 
 
 def classify_opportunity(candidate: Candidate, t: dict):
@@ -120,7 +162,7 @@ def classify_opportunity(candidate: Candidate, t: dict):
 
 def promote(session, candidate: Candidate, t: dict, country_names: dict):
     """Turn a triaged candidate into an Opportunity or NewsItem row.
-    Returns ("opportunity"|"news", row) or None."""
+    Returns ("opportunity"|"news", row), ("updated", opp, [change, ...]) or None."""
     ctype = (t.get("type") or "").upper()
     relevance = int(t.get("relevance") or 0)
     country = (t.get("country") or "").upper()[:2] or None
@@ -129,11 +171,14 @@ def promote(session, candidate: Candidate, t: dict, country_names: dict):
     category, awarded = classify_opportunity(candidate, t)
     if category and relevance >= PROMOTE_THRESHOLD:
         now = datetime.utcnow()
-        deadline = _parse_date(t.get("deadline"))
+        ted = ted_meta(candidate)
+        # TED's structured deadline beats the LLM's reading of the snippet.
+        deadline = ted.get("deadline") or _parse_date(t.get("deadline"))
         # Stored status is a snapshot; the site decides "active" at query time
         # from status + deadline, so nothing goes stale.
         status = ("AWARDED" if awarded else "OPEN" if deadline and deadline >= now
                   else "CLOSED" if deadline else "SIGNAL" if category == "signal" else "UNCLEAR")
+        reference = f"TED:{ted['procedure']}" if ted.get("procedure") else None
         fields = dict(
             title=candidate.title or "(untitled)", country=country,
             authority=(t.get("authority") or None), opportunity_type=category,
@@ -142,23 +187,38 @@ def promote(session, candidate: Candidate, t: dict, country_names: dict):
             official_url=candidate.source_url, last_checked=now,
             relevance_score=relevance, opportunity_relevance_score=relevance,
         )
-        # Same notice URL = same opportunity, even if triage re-words the
-        # authority (which changes the fingerprint). Re-triage updates in place.
-        existing = (session.query(Opportunity).filter_by(official_url=candidate.source_url).first()
-                    if candidate.source_url else None)
-        if not existing and ted_notice_type(candidate):
-            # TED republishes the same procurement as new notices (corrigenda,
-            # changed deadlines): same title + country = same opportunity.
-            existing = (session.query(Opportunity)
-                        .filter(Opportunity.title == fields["title"], Opportunity.country == country,
-                                Opportunity.official_url.like("%ted.europa.eu%")).first())
-            if existing and (existing.publication_date or datetime.min) > (fields["publication_date"] or datetime.min):
-                return None  # we already hold a newer notice for this procurement
+        if reference:
+            fields["reference"] = reference
+
+        # Is this an update of something we already track? TED republishes a
+        # procurement as a new notice for every change (deadline extensions,
+        # corrigenda), all sharing one procedure id. Fall back to the same
+        # notice URL (re-triage), then same TED title + country.
+        q = session.query(Opportunity)
+        existing = (q.filter_by(reference=reference).first() if reference else None) \
+            or (q.filter_by(official_url=candidate.source_url).first() if candidate.source_url else None)
+        if not existing and ted:
+            existing = q.filter(Opportunity.title == fields["title"], Opportunity.country == country,
+                                Opportunity.official_url.like("%ted.europa.eu%")).first()
         opp_id = fingerprint(country or "", t.get("authority") or "", None, candidate.title or "")
         existing = existing or session.get(Opportunity, opp_id)
+
         if existing:
+            held, incoming = ted_notice_order(existing.official_url), ted_notice_order(candidate.source_url)
+            if held and incoming and incoming < held:
+                existing.last_checked = now
+                return None  # an older notice of a procurement we hold a newer version of
+            # publication_date = when the procurement first appeared (drives "New");
+            # a later notice is an update, not a new opportunity.
+            old_pub = existing.publication_date.replace(tzinfo=None) if existing.publication_date else None
+            if old_pub and (not fields["publication_date"] or old_pub < fields["publication_date"]):
+                fields["publication_date"] = old_pub
+            changes = record_changes(session, existing, fields, now)
             for k, v in fields.items():
                 setattr(existing, k, v)
+            if changes:
+                existing.last_change = now
+                return "updated", existing, changes
             return None
         opp = Opportunity(opportunity_id=opp_id, first_detected=now, **fields)
         session.add(opp)
@@ -252,7 +312,7 @@ def main():
         except Exception as e:
             return None, e
 
-    new_opps, new_news = [], []
+    new_opps, new_news, updates = [], [], []
     failures = 0
     with ThreadPoolExecutor(max_workers=8) as pool:
         for i, (c, (result, err)) in enumerate(zip(to_llm, pool.map(_triage, snapshots)), 1):
@@ -268,12 +328,15 @@ def main():
             promoted = promote(session, c, result, country_names)
             if promoted and promoted[0] == "opportunity":
                 new_opps.append(promoted[1])
+            elif promoted and promoted[0] == "updated":
+                updates.append({"opportunity": promoted[1].title, "change": "; ".join(promoted[2]),
+                                "action": f"Review: {promoted[1].official_url}"})
             elif promoted:
                 new_news.append(promoted[1])
             session.commit()
             if i % 25 == 0:
                 print(f"  triaged {i}/{len(to_llm)}")
-    print(f"Triage: {len(to_llm)} LLM calls -> {len(new_opps)} opportunities, {len(new_news)} news items")
+    print(f"Triage: {len(to_llm)} LLM calls -> {len(new_opps)} opportunities, {len(updates)} updates, {len(new_news)} news items")
 
     # --- 3. Digest ------------------------------------------------------------
     digest_opps = [{
@@ -294,11 +357,11 @@ def main():
         sources_checked=len(sources), sources_total=len(sources),
         queries_executed=query_count, candidates_found=len(candidates),
         deep_analyses_executed=0, new_opportunities=len(digest_opps),
-        material_updates=0, errors=errors,
+        material_updates=len(updates), errors=errors,
     )
     digest_md = render_daily_digest(
         run_date=date.today(), coverage=coverage, new_opportunities=digest_opps,
-        rollout_changes=[], early_signals=signals, existing_updates=[],
+        rollout_changes=[], early_signals=signals, existing_updates=updates,
     )
     out_dir = os.path.join(os.path.dirname(__file__), "reports", "daily")
     os.makedirs(out_dir, exist_ok=True)

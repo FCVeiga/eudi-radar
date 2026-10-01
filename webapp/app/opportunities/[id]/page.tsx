@@ -52,6 +52,12 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
     .select('*')
     .eq('opportunity_id', params.id);
 
+  const { data: changes } = await supabase
+    .from('change_events')
+    .select('*')
+    .eq('opportunity_id', params.id)
+    .order('detected_at', { ascending: false });
+
   const reqsByCategory: Record<string, any[]> = {};
   for (const groupName of Object.keys(REQ_CATEGORY_GROUPS)) {
     reqsByCategory[groupName] = (requirements || []).filter((r) =>
@@ -83,6 +89,17 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
       <div className="opp-detail-grid">
         <div>
           {o.summary && <div className="detail-block"><h2>Summary</h2><p>{o.summary}</p></div>}
+          {changes && changes.length > 0 && (
+            <div className="detail-block">
+              <h2>Updates</h2>
+              {changes.map((c) => (
+                <div key={c.id} className="change-row">
+                  <span className="news-date">{new Date(c.detected_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                  <span>{c.description}</span>
+                </div>
+              ))}
+            </div>
+          )}
           <div className="detail-block"><h2>Classification</h2><p>{oppCategoryLabel(o.opportunity_type)} — {o.status}</p></div>
           <div className="detail-block">
             <h2>Source</h2>

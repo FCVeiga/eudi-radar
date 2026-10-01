@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import {
-  NEW_WINDOW_DAYS, Opportunity, appearedAt, daysUntil, getActiveOpportunities, getNews, isNew, oppCategoryLabel,
+  NEW_WINDOW_DAYS, Opportunity, appearedAt, daysUntil, getActiveOpportunities, getNews, getRecentChanges,
+  isNew, isUpdated, oppCategoryLabel,
 } from '@/lib/data';
 import { DeadlineText } from '@/components/OpportunityCard';
 import NewsRow, { formatDate } from '@/components/NewsRow';
@@ -11,7 +12,7 @@ function OppRow({ o }: { o: Opportunity }) {
   return (
     <Link href={`/opportunities/${o.opportunity_id}`} className="news-item compact">
       <div>
-        {isNew(o) && <span className="tag new">New</span>}{' '}
+        {isNew(o) ? <span className="tag new">New</span> : isUpdated(o) ? <span className="tag updated">Updated</span> : null}{' '}
         {o.opportunity_type && <span className={`tag ${o.opportunity_type}`}>{oppCategoryLabel(o.opportunity_type)}</span>}
         <div className="news-title">{o.title}</div>
         <div className="news-meta">{o.country || 'International'} · <DeadlineText deadline={o.deadline} /></div>
@@ -23,8 +24,8 @@ function OppRow({ o }: { o: Opportunity }) {
 
 export default async function HomePage() {
   const now = new Date();
-  const [{ opportunities: active, error: oppError }, { news, error: newsError }] =
-    await Promise.all([getActiveOpportunities(), getNews()]);
+  const [{ opportunities: active, error: oppError }, { news, error: newsError }, { changes }] =
+    await Promise.all([getActiveOpportunities(), getNews(), getRecentChanges(14)]);
 
   const newOnes = active.filter((o) => isNew(o, now));
   const closingSoon = active
@@ -68,7 +69,7 @@ export default async function HomePage() {
           {highlights.map((o) => (
             <Link key={o.opportunity_id} href={`/opportunities/${o.opportunity_id}`} className="highlight">
               <div className="opp-tags">
-                {isNew(o, now) && <span className="tag new">New</span>}
+                {isNew(o, now) ? <span className="tag new">New</span> : isUpdated(o, now) ? <span className="tag updated">Updated</span> : null}
                 {o.opportunity_type && <span className={`tag ${o.opportunity_type}`}>{oppCategoryLabel(o.opportunity_type)}</span>}
                 <span className="highlight-score">Relevance {o.opportunity_relevance_score ?? '—'}</span>
               </div>
@@ -94,6 +95,18 @@ export default async function HomePage() {
               </Link>
             );
           })}
+
+          <h2 className="section-title" style={{ marginTop: 22 }}>Recent updates</h2>
+          {changes.length === 0 && <div className="sidebar-sub">No changes to tracked opportunities in the last 14 days.</div>}
+          {changes.map((c) => (
+            <Link key={c.id} href={`/opportunities/${c.opportunity_id}`} className="closing-item">
+              <div className="closing-days">{c.detected_at ? new Date(c.detected_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : ''}</div>
+              <div>
+                <div className="closing-title">{c.opportunities?.title}</div>
+                <div className="doc-type">{c.description}</div>
+              </div>
+            </Link>
+          ))}
         </aside>
       </div>
 

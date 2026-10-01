@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Opportunity, daysUntil, isNew, oppCategoryLabel } from '@/lib/data';
+import { Opportunity, daysUntil, isNew, isUpdated, oppCategoryLabel } from '@/lib/data';
 
 function priorityClass(score: number | null) {
   if (score === null) return '';
@@ -26,6 +26,7 @@ export default function OpportunityCard({ o }: { o: Opportunity }) {
           <div className="opp-card-country">{o.country || 'International'}{o.authority ? ` · ${o.authority}` : ''}</div>
           <div className="opp-tags">
             {isNew(o) && <span className="tag new">New</span>}
+            {!isNew(o) && isUpdated(o) && <span className="tag updated">Updated</span>}
             {o.opportunity_type && <span className={`tag ${o.opportunity_type}`}>{oppCategoryLabel(o.opportunity_type)}</span>}
           </div>
         </div>

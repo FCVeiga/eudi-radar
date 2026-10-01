@@ -11,6 +11,7 @@ Always search quoted phrases (FT~"identity wallet"): bare terms like eIDAS
 match tens of thousands of notices through e-signature boilerplate.
 """
 import hashlib
+import time
 from datetime import datetime, timedelta
 from typing import Optional
 
@@ -22,6 +23,7 @@ _TED_API_BASE = "https://api.ted.europa.eu/v3/notices/search"
 _FIELDS = [
     "notice-title", "buyer-name", "buyer-country", "notice-type",
     "publication-date", "deadline-receipt-tender-date-lot", "links",
+    "procedure-identifier",  # stable across every notice of one procurement
 ]
 
 
@@ -45,9 +47,13 @@ class TedSearchProvider(SearchProvider):
         expert = f'FT~"{query.strip(chr(34))}" AND PD>={date_from.strftime("%Y%m%d")}'
         if country:
             expert += f" AND buyer-country={country}"
-        resp = self.session.post(_TED_API_BASE, json={
-            "query": expert, "fields": _FIELDS, "limit": self.limit,
-        }, timeout=30)
+        for attempt in range(4):  # TED rate-limits bursts with 429
+            resp = self.session.post(_TED_API_BASE, json={
+                "query": expert, "fields": _FIELDS, "limit": self.limit,
+            }, timeout=30)
+            if resp.status_code != 429:
+                break
+            time.sleep(int(resp.headers.get("Retry-After", 0)) or 2 ** (attempt + 1))
         resp.raise_for_status()
         results = []
         for n in resp.json().get("notices", []):
@@ -55,9 +61,10 @@ class TedSearchProvider(SearchProvider):
             buyer = _pick_lang(n.get("buyer-name"))
             countries = n.get("buyer-country") or []
             deadlines = n.get("deadline-receipt-tender-date-lot") or []
+            # Machine-read by run_daily.ted_meta(): keep these labels stable.
             snippet = (f"Buyer: {buyer}. Notice type: {n.get('notice-type', '')}. "
                        f"Tender deadline: {deadlines[0] if deadlines else 'n/a'}. "
-                       f"TED notice {pub_no}.")
+                       f"TED notice {pub_no}. TED procedure: {n.get('procedure-identifier') or 'n/a'}.")
             results.append(SearchResult(
                 title=_pick_lang(n.get("notice-title")),
                 url=f"https://ted.europa.eu/en/notice/-/detail/{pub_no}",

@@ -28,6 +28,8 @@ export type Opportunity = {
   publication_date: string | null;
   deadline: string | null;
   first_detected: string | null;
+  last_change: string | null;
+  reference: string | null;
   estimated_value: number | null;
   currency: string | null;
   official_url: string | null;
@@ -66,6 +68,11 @@ export function isNew(o: Opportunity, now = new Date()) {
   return !!at && now.getTime() - at.getTime() <= NEW_WINDOW_DAYS * 86400_000;
 }
 
+/** Changed (e.g. deadline extended) within the "new" window. */
+export function isUpdated(o: Opportunity, now = new Date()) {
+  return !!o.last_change && now.getTime() - new Date(o.last_change).getTime() <= NEW_WINDOW_DAYS * 86400_000;
+}
+
 export function daysUntil(iso: string | null, now = new Date()) {
   if (!iso) return null;
   return Math.ceil((new Date(iso).getTime() - now.getTime()) / 86400_000);
@@ -97,3 +104,25 @@ export async function getNews(category?: string, limit?: number) {
   const { data, error } = await q;
   return { news: (data || []) as NewsItem[], error };
 }
+
+export type ChangeEvent = {
+  id: number;
+  opportunity_id: string;
+  event_type: string | null;
+  description: string | null;
+  detected_at: string | null;
+  opportunities?: { title: string; country: string | null } | null;
+};
+
+/** Updates to tracked opportunities (deadline extensions, awards…), newest first. */
+export async function getRecentChanges(days: number, limit = 8) {
+  const since = new Date(Date.now() - days * 86400_000).toISOString();
+  const { data, error } = await getSupabaseServerClient()
+    .from('change_events')
+    .select('*, opportunities(title, country)')
+    .gte('detected_at', since)
+    .order('detected_at', { ascending: false })
+    .limit(limit);
+  return { changes: (data || []) as ChangeEvent[], error };
+}
+

@@ -13,7 +13,7 @@ import re
 import sys
 import uuid
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from types import SimpleNamespace
 from urllib.parse import urlparse
 
@@ -146,17 +146,20 @@ def record_changes(session, opp: Opportunity, new: dict, now: datetime) -> list:
 
 def classify_opportunity(candidate: Candidate, t: dict):
     """(category, awarded) — TED's notice type overrides the LLM when present:
-    cn-* = contract notice (RFP), pin-*/pmc = prior info / market consultation
-    (RFI), can-*/veat = award (already awarded, never active)."""
+    cn-* and pin-cfc-* (PIN used as the call itself) = RFP; pmc = market
+    consultation (RFI); other pin-* = prior information notice, i.e. a planned
+    procurement (signal); can-*/veat = award (already awarded, never active)."""
     category = OPPORTUNITY_TYPES.get((t.get("type") or "").upper())
     nt = ted_notice_type(candidate)
     if nt:
         if nt.startswith(("can-", "veat")):
             return category or "rfp", True
-        if nt.startswith("cn-"):
+        if nt.startswith(("cn-", "pin-cfc")):
             return "rfp", False
-        if nt.startswith("pin-") or nt == "pmc":
+        if nt == "pmc":
             return "rfi", False
+        if nt.startswith("pin-"):
+            return "signal", False
     return category, False
 
 
@@ -172,12 +175,16 @@ def promote(session, candidate: Candidate, t: dict, country_names: dict):
     if category and relevance >= PROMOTE_THRESHOLD:
         now = datetime.utcnow()
         ted = ted_meta(candidate)
-        # TED's structured deadline beats the LLM's reading of the snippet.
-        deadline = ted.get("deadline") or _parse_date(t.get("deadline"))
-        # Stored status is a snapshot; the site decides "active" at query time
-        # from status + deadline, so nothing goes stale.
-        status = ("AWARDED" if awarded else "OPEN" if deadline and deadline >= now
-                  else "CLOSED" if deadline else "SIGNAL" if category == "signal" else "UNCLEAR")
+        # Only TED's structured deadline is trusted at this point. Anything else
+        # starts UNVERIFIED and is settled by verify_opportunities() against
+        # the source page (triage only saw a snippet and doesn't know the date).
+        deadline = ted.get("deadline")
+        if awarded:
+            status = "AWARDED"
+        elif deadline:
+            status = "OPEN" if deadline >= now else "CLOSED"
+        else:
+            status, deadline = "UNVERIFIED", _parse_date(t.get("deadline"))
         reference = f"TED:{ted['procedure']}" if ted.get("procedure") else None
         fields = dict(
             title=candidate.title or "(untitled)", country=country,
@@ -213,6 +220,10 @@ def promote(session, candidate: Candidate, t: dict, country_names: dict):
             old_pub = existing.publication_date.replace(tzinfo=None) if existing.publication_date else None
             if old_pub and (not fields["publication_date"] or old_pub < fields["publication_date"]):
                 fields["publication_date"] = old_pub
+            if existing.verified_at and not awarded and not ted.get("deadline"):
+                # Keep the status/deadline verification established; a snippet
+                # re-triage is weaker evidence.
+                fields.pop("status"); fields.pop("deadline")
             changes = record_changes(session, existing, fields, now)
             for k, v in fields.items():
                 setattr(existing, k, v)
@@ -245,6 +256,53 @@ def promote(session, candidate: Candidate, t: dict, country_names: dict):
         session.add(item)
         return "news", item
     return None
+
+
+def verify_opportunities(session, errors: list) -> int:
+    """Check every not-yet-settled opportunity against its source: TED XML
+    for TED notices without a deadline, page text + LLM for everything else.
+    Re-checks items without a firm deadline weekly, since pages change."""
+    from adapters.ted import TedSearchProvider
+    from agents import verification as V
+    tavily = None
+    if os.environ.get("TAVILY_API_KEY"):
+        from adapters.tavily import TavilySearchProvider
+        tavily = TavilySearchProvider()
+    ted = TedSearchProvider()
+    now = datetime.utcnow()
+    stale = now - timedelta(days=V.REVERIFY_AFTER_DAYS)
+    todo = (session.query(Opportunity)
+            .filter(~Opportunity.status.in_(["CLOSED", "AWARDED", "REJECTED"]))
+            .filter((Opportunity.verified_at.is_(None)) | (Opportunity.verified_at < stale))
+            .all())
+    checked = 0
+    for o in todo:
+        is_ted = "ted.europa.eu" in (o.official_url or "")
+        if is_ted and o.deadline:
+            continue  # TED's structured deadline already decides it
+        try:
+            if is_ted:
+                status, deadline, evidence = V.verify_ted(ted, o.official_url.rstrip("/").split("/")[-1],
+                                                          o.opportunity_type, now)
+                category = o.opportunity_type
+            else:
+                v = V.llm_verify(o.opportunity_type, o.title, V.fetch_page_text(o.official_url, tavily), now)
+                status, deadline, dated, category = V.resolve(o.opportunity_type, v, now)
+                evidence = (f'"{v["evidence"]}" — {v.get("reason") or ""}' if v.get("evidence")
+                            else v.get("reason") or "No dates found on the source page")
+                if dated and not o.publication_date:
+                    o.publication_date = dated
+        except Exception as e:
+            errors.append(f"verify {o.opportunity_id}: {e}")
+            status, deadline, category, evidence = "UNVERIFIED", None, o.opportunity_type, f"Source could not be read: {e}"[:300]
+        if o.verified_at:  # the first check is a correction, not a change worth announcing
+            record_changes(session, o, {"status": status, "deadline": deadline}, now)
+        o.status, o.opportunity_type, o.status_evidence, o.verified_at = status, category, evidence, now
+        if deadline:
+            o.deadline = deadline
+        session.commit()
+        checked += 1
+    return checked
 
 
 def main():
@@ -338,7 +396,11 @@ def main():
                 print(f"  triaged {i}/{len(to_llm)}")
     print(f"Triage: {len(to_llm)} LLM calls -> {len(new_opps)} opportunities, {len(updates)} updates, {len(new_news)} news items")
 
-    # --- 3. Digest ------------------------------------------------------------
+    # --- 3. Verification: is each opportunity actually open today? ----------
+    verified = verify_opportunities(session, errors)
+    print(f"Verification: {verified} opportunities checked against their source")
+
+    # --- 4. Digest ------------------------------------------------------------
     digest_opps = [{
         "priority": "P1" if (o.opportunity_relevance_score or 0) >= 75 else "P2",
         "country": country_names.get(o.country, o.country or "International"),

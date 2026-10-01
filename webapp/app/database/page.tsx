@@ -4,9 +4,11 @@ import { OPP_CATEGORIES, oppCategoryLabel } from '@/lib/data';
 
 // Status as of now: a stored OPEN/UNCLEAR whose deadline has passed is closed.
 function displayStatus(o: { status: string | null; deadline: string | null }) {
-  if (o.status === 'AWARDED' || o.status === 'CLOSED') return o.status;
-  if (o.deadline && new Date(o.deadline) < new Date()) return 'CLOSED';
-  return o.status === 'SIGNAL' ? 'SIGNAL' : o.status === 'OPEN' ? 'OPEN' : 'ACTIVE';
+  if (o.status === 'OPEN' || o.status === 'SIGNAL') {
+    return o.deadline && new Date(o.deadline) < new Date() ? 'CLOSED' : o.status;
+  }
+  if (o.status === 'REJECTED') return 'NOT AN OPPORTUNITY';
+  return o.status || 'UNVERIFIED';
 }
 
 export default async function DatabasePage({
@@ -69,7 +71,7 @@ export default async function DatabasePage({
                 <td><Link href={`/opportunities/${o.opportunity_id}`}>{o.title}</Link></td>
                 <td>{o.country}</td>
                 <td>{o.opportunity_type && <span className={`tag ${o.opportunity_type}`}>{oppCategoryLabel(o.opportunity_type)}</span>}</td>
-                <td><span className={`status ${displayStatus(o).toLowerCase()}`}>{displayStatus(o)}</span></td>
+                <td><span className={`status ${displayStatus(o).toLowerCase().replace(/ /g, '-')}`} title={o.status_evidence || ''}>{displayStatus(o)}</span></td>
                 <td className="mono">{o.estimated_value ? `${o.currency || ''} ${o.estimated_value.toLocaleString()}` : '—'}</td>
                 <td className="score-inline">{o.opportunity_relevance_score ?? '—'}</td>
                 <td className="score-inline">{o.bid_readiness_score ?? '—'}</td>

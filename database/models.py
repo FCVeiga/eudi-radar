@@ -315,6 +315,8 @@ class Opportunity(Base):
     funding_rate = Column(Float, nullable=True)
     official_url = Column(String(1024))
     summary = Column(Text)
+    verified_at = Column(DateTime)      # last time status was checked against the source
+    status_evidence = Column(Text)      # quote / fact the status rests on
     first_detected = Column(DateTime, default=datetime.utcnow)
     last_checked = Column(DateTime)
     last_change = Column(DateTime)

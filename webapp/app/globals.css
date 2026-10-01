@@ -180,6 +180,8 @@ tr.data-row:hover { background: var(--surface); }
 .status { font-size: 10.5px; font-family: 'IBM Plex Mono', monospace; color: var(--muted); }
 .status.open, .status.active { color: var(--teal); }
 .status.signal { color: var(--brass); }
+.status.unverified, .status.not-an-opportunity { color: var(--muted); opacity: 0.7; }
+.evidence { border-left: 2px solid var(--line); padding-left: 10px; font-style: italic; }
 
 /* --- Home ------------------------------------------------------------- */
 .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }

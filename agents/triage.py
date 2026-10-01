@@ -8,6 +8,7 @@ section 64) — classification only, no requirement extraction here.
 import sys
 import os
 import yaml
+from datetime import date
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "database"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
@@ -42,6 +43,7 @@ def run_triage_llm(candidate: Candidate) -> dict:
     """Real LLM call — sends the candidate to the cheap model against
     prompts/triage.md, returns the parsed JSON output (spec section 17)."""
     user_content = (
+        f"Today's date: {date.today().isoformat()}\n"
         f"Title: {candidate.title or 'N/A'}\n"
         f"Description: {candidate.description or 'N/A'}\n"
         f"Source URL: {candidate.source_url or 'N/A'}\n"

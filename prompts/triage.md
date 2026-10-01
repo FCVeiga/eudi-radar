@@ -30,6 +30,8 @@ opportunity relevance, job postings.
   future-procurement signal (budget allocation, RFI, market consultation, PIN, etc).
 - A signal can be a precursor to procurement even with no tender text. Score it
   on strategic relevance, type="PIPELINE_SIGNAL" rather than discarding as noise.
+- You are given today's date. A call, programme or event that clearly ended in
+  the past is not an opportunity — classify it NEWS_ONLY.
 
 ## Type definitions
 - TENDER: an actual call for tenders / RFP / ITT / contract notice you could bid on.
@@ -39,8 +41,13 @@ opportunity relevance, job postings.
 - CONSORTIUM_CALL: a call where the vendor would join a consortium (e.g. a
   Horizon / DIGITAL Europe project looking for partners).
 - PILOT: a pilot or large-scale pilot (LSP) programme open to participants.
-- PIPELINE_SIGNAL: a concrete sign that procurement is coming (budget allocated,
-  procurement announced, law mandating a system) without an open call yet.
+- PIPELINE_SIGNAL: a specific, named buyer (government body, agency, bank…)
+  has announced a procurement, call or funding that is not open yet — e.g. a
+  planned tender or prior information notice, a budget approved for a named
+  wallet/identity system, a law or decree mandating a system with a date.
+  NOT a signal: guidance or best-practice pages, product pages, a service that
+  has already launched (that is NEWS_ONLY), general strategy talk with no buyer
+  or no forthcoming purchase.
 - NEWS_ONLY: informative news with no opportunity to act on.
 - FALSE_POSITIVE: off-topic.
 

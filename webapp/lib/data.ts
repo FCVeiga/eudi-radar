@@ -5,7 +5,7 @@ export const OPP_CATEGORIES = [
   { slug: 'rfp', path: 'rfps', label: 'RFPs', blurb: 'Open calls for tenders and contract notices' },
   { slug: 'rfi', path: 'rfis', label: 'RFIs', blurb: 'Requests for information, market consultations and prior information notices' },
   { slug: 'grant', path: 'grants', label: 'Grants', blurb: 'Grants, calls for proposals, consortium calls and funded pilots' },
-  { slug: 'signal', path: 'signals', label: 'Signals', blurb: 'Early procurement signals — budgets, announced procurements, mandates — before any call is open' },
+  { slug: 'signal', path: 'signals', label: 'Signals', blurb: 'A named buyer has announced a procurement that isn\u2019t open yet — TED prior information notices, approved budgets, mandated systems. Dated within the last 6 months.' },
 ] as const;
 
 // News sections — must match NEWS_CATEGORIES in run_daily.py.
@@ -16,6 +16,7 @@ export const NEWS_CATEGORIES = [
 ] as const;
 
 export const NEW_WINDOW_DAYS = 5;
+export const SIGNAL_MAX_AGE_DAYS = 183;
 
 export type Opportunity = {
   opportunity_id: string;
@@ -25,6 +26,8 @@ export type Opportunity = {
   opportunity_type: string | null;
   status: string | null;
   summary: string | null;
+  status_evidence: string | null;
+  verified_at: string | null;
   publication_date: string | null;
   deadline: string | null;
   first_detected: string | null;
@@ -79,21 +82,26 @@ export function daysUntil(iso: string | null, now = new Date()) {
 }
 
 /**
- * Active = not awarded/closed, and the deadline hasn't passed (or isn't stated).
- * Computed at query time so items drop off the moment their deadline passes;
- * closed and awarded items only appear on the Database page.
+ * Active = status OPEN or SIGNAL (set only once the pipeline has confirmed it
+ * against TED's structured data or the source page — "no deadline" alone never
+ * counts), the deadline hasn't passed, and signals are under 6 months old.
+ * Closed, awarded and unverified items only appear on the Database page.
  */
 export async function getActiveOpportunities(category?: string) {
   const supabase = getSupabaseServerClient();
   let q = supabase
     .from('opportunities')
     .select('*')
-    .not('status', 'in', '(AWARDED,CLOSED)')
+    .in('status', ['OPEN', 'SIGNAL'])
     .or(`deadline.is.null,deadline.gte.${new Date().toISOString()}`)
     .order('opportunity_relevance_score', { ascending: false });
   if (category) q = q.eq('opportunity_type', category);
   const { data, error } = await q;
-  return { opportunities: (data || []) as Opportunity[], error };
+  const cutoff = Date.now() - SIGNAL_MAX_AGE_DAYS * 86400_000;
+  const opportunities = ((data || []) as Opportunity[]).filter(
+    (o) => o.status !== 'SIGNAL' || o.deadline || !o.publication_date || new Date(o.publication_date).getTime() >= cutoff,
+  );
+  return { opportunities, error };
 }
 
 export async function getNews(category?: string, limit?: number) {

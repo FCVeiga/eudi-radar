@@ -180,6 +180,8 @@ create table opportunities (
   funding_rate FLOAT,
   official_url VARCHAR(1024),
   summary TEXT,
+  verified_at TIMESTAMPTZ,
+  status_evidence TEXT,
   first_detected TIMESTAMPTZ DEFAULT now(),
   last_checked TIMESTAMPTZ,
   last_change TIMESTAMPTZ,

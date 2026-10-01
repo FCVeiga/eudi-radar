@@ -100,7 +100,14 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
               ))}
             </div>
           )}
-          <div className="detail-block"><h2>Classification</h2><p>{oppCategoryLabel(o.opportunity_type)} — {o.status}</p></div>
+          <div className="detail-block">
+            <h2>Status</h2>
+            <p>{oppCategoryLabel(o.opportunity_type)} — {o.status}</p>
+            {o.status_evidence && <p className="evidence">{o.status_evidence}</p>}
+            {o.verified_at && (
+              <p className="news-meta">Checked against the source on {new Date(o.verified_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+            )}
+          </div>
           <div className="detail-block">
             <h2>Source</h2>
             {o.official_url

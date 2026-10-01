@@ -11,6 +11,7 @@ Always search quoted phrases (FT~"identity wallet"): bare terms like eIDAS
 match tens of thousands of notices through e-signature boilerplate.
 """
 import hashlib
+import re
 import time
 from datetime import datetime, timedelta
 from typing import Optional
@@ -23,8 +24,13 @@ _TED_API_BASE = "https://api.ted.europa.eu/v3/notices/search"
 _FIELDS = [
     "notice-title", "buyer-name", "buyer-country", "notice-type",
     "publication-date", "deadline-receipt-tender-date-lot", "links",
+    "deadline-receipt-request-date-lot",  # restricted / competitive dialogue: requests to participate
     "procedure-identifier",  # stable across every notice of one procurement
 ]
+
+# eForms XML elements holding the dates that decide whether a notice is open.
+_XML_DEADLINES = ("TenderSubmissionDeadlinePeriod", "ParticipationRequestReceptionPeriod",
+                  "AnswerReceptionPeriod")  # last one: market consultation answers
 
 
 def _pick_lang(value, lang="eng"):
@@ -60,7 +66,8 @@ class TedSearchProvider(SearchProvider):
             pub_no = n.get("publication-number", "")
             buyer = _pick_lang(n.get("buyer-name"))
             countries = n.get("buyer-country") or []
-            deadlines = n.get("deadline-receipt-tender-date-lot") or []
+            deadlines = (n.get("deadline-receipt-tender-date-lot")
+                         or n.get("deadline-receipt-request-date-lot") or [])
             # Machine-read by run_daily.ted_meta(): keep these labels stable.
             snippet = (f"Buyer: {buyer}. Notice type: {n.get('notice-type', '')}. "
                        f"Tender deadline: {deadlines[0] if deadlines else 'n/a'}. "
@@ -73,6 +80,22 @@ class TedSearchProvider(SearchProvider):
                 country=countries[0] if countries else None,
             ))
         return results
+
+    def notice_dates(self, publication_number: str) -> dict:
+        """Read deadline and planned date from the notice's eForms XML, for
+        notices whose search fields carry no deadline (e.g. market
+        consultations, prior information notices)."""
+        resp = self.session.get(f"https://ted.europa.eu/en/notice/{publication_number}/xml", timeout=30)
+        resp.raise_for_status()
+        xml = resp.text
+
+        def end_dates(tag):
+            return re.findall(rf"<[\w:]*{tag}>.*?<cbc:EndDate>(\d{{4}}-\d{{2}}-\d{{2}})", xml, re.S)
+
+        deadlines = sorted(d for tag in _XML_DEADLINES for d in end_dates(tag))
+        planned = re.search(r"<cbc:PlannedDate>(\d{4}-\d{2}-\d{2})", xml)
+        return {"deadline": deadlines[-1] if deadlines else None,
+                "planned_date": planned.group(1) if planned else None}
 
     def fetch(self, url: str) -> str:
         resp = self.session.get(url, timeout=30)

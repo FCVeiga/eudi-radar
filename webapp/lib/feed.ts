@@ -51,6 +51,7 @@ export type FeedItem = {
   movement: 'up' | 'down' | 'same';
   deadline: string | null;
   isNew: boolean;
+  statusLabel?: string | null;   // e.g. "Closed" / "Awarded" in search results
 };
 
 const decay = (at: Date, now: Date) =>

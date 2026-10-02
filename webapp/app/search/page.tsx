@@ -1,0 +1,42 @@
+import FeedCard from '@/components/FeedCard';
+import { search, searchWords } from '@/lib/search';
+
+export default async function SearchPage({ searchParams }: { searchParams: { q?: string } }) {
+  const q = (searchParams.q || '').trim();
+  const now = new Date();
+  const { opportunities, news } = await search(q, now);
+  const total = opportunities.length + news.length;
+
+  return (
+    <div className="search-page">
+      <div className="page-head">
+        <div>
+          <div className="eyebrow">Search</div>
+          <h1>{q ? <>Results for “{q}”</> : 'Search'}</h1>
+          <p className="page-sub">
+            {!q ? 'Type in the search box above to find opportunities and news.'
+              : !searchWords(q).length ? 'Use at least one word of two or more letters.'
+                : `${total} result${total === 1 ? '' : 's'} — ${opportunities.length} opportunit${opportunities.length === 1 ? 'y' : 'ies'}, ${news.length} news.`}
+          </p>
+        </div>
+      </div>
+
+      {q && total === 0 && searchWords(q).length > 0 && (
+        <div className="callout">Nothing matches every word. Try fewer or broader words.</div>
+      )}
+
+      {opportunities.length > 0 && (
+        <section className="search-section">
+          <h2 className="search-h2">Opportunities <span className="mono">{opportunities.length}</span></h2>
+          <div className="feed">{opportunities.map((i) => <FeedCard key={i.key} item={i} now={now} />)}</div>
+        </section>
+      )}
+      {news.length > 0 && (
+        <section className="search-section">
+          <h2 className="search-h2">News <span className="mono">{news.length}</span></h2>
+          <div className="feed">{news.map((i) => <FeedCard key={i.key} item={i} now={now} />)}</div>
+        </section>
+      )}
+    </div>
+  );
+}

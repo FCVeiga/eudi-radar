@@ -45,6 +45,7 @@ export type NewsItem = {
   title: string;
   category: string | null;
   region: string | null;
+  country: string | null;
   published_date: string | null;
   source_name: string | null;
   excerpt: string | null;

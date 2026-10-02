@@ -52,7 +52,19 @@ export type FeedItem = {
   deadline: string | null;
   isNew: boolean;
   statusLabel?: string | null;   // e.g. "Closed" / "Awarded" in search results
+  image?: string | null;         // news: the publisher's share image
 };
+
+/**
+ * News page score: importance × novelty, where more important stories age
+ * more slowly — the half-life runs from 2 days (importance 0) to 8 days
+ * (importance 100), so big stories stay near the top of the news feed longer.
+ */
+export function newsScore(score: number, at: Date, now = new Date()) {
+  const halfLife = 2 + 6 * (Math.max(0, Math.min(100, score)) / 100);
+  const ageDays = Math.max(0, (now.getTime() - at.getTime()) / 86400_000);
+  return score * Math.pow(0.5, ageDays / halfLife);
+}
 
 const decay = (at: Date, now: Date) =>
   Math.pow(0.5, Math.max(0, (now.getTime() - at.getTime()) / 86400_000) / HALF_LIFE_DAYS);

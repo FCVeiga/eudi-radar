@@ -460,6 +460,11 @@ def main():
     if translated:
         print(f"Translation: {translated} titles given an English version")
 
+    from agents.news_images import fetch_news_images
+    images = fetch_news_images(session)
+    if images:
+        print(f"News images: {images} found")
+
     # --- 4. Feed: agents post new events, then the feed is re-ranked ---------
     from agents.feed_writer import publish_new_posts, rank_posts
     posted = publish_new_posts(session, errors)

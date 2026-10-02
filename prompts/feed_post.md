@@ -34,7 +34,11 @@ Add only what the headline and card don't say: the substance.
   (certifications such as ISO 27001, references, standards, consortium
   rules).
 - Updates: the substance of the tender itself, not the change again.
-- News: the key facts — what changes, for whom, from when, the numbers.
+- News: the juice of the story — what happened or changes, who exactly,
+  for whom, from when, and the hard facts (numbers, budgets, user counts,
+  dates, named partners, standards). Prefer the one concrete detail the
+  headline couldn't fit over a general description. Two short sentences of
+  facts beat one sentence of context.
 
 Start straight with the substance. Never:
 - restate the headline, deadline, deadline change, country or post date;
@@ -43,7 +47,10 @@ Start straight with the substance. Never:
 - open with framing like "The tender covers…", "This contract…",
   "According to…", "The article argues…";
 - add commentary like "relevant for vendors", "a direct opportunity",
-  "signals growing momentum".
+  "signals growing momentum";
+- judge the item ("informational content", "not a vendor opportunity",
+  "market-level news") or describe the article ("The article explains…",
+  "The post covers…") instead of stating its facts.
 
 Ignore legal and procedural boilerplate in source material: exclusion
 grounds, remedies and complaint procedures, sanctions declarations, award

@@ -60,6 +60,7 @@ export type NewsItem = {
   unverified: boolean | null;
   relevance_score: number | null;
   created_at: string | null;
+  image_url: string | null;
 };
 
 /** English title: title_en, else a cleaner English fallback (e.g. the agent's headline),

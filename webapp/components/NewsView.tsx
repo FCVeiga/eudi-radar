@@ -1,13 +1,45 @@
-import { NEWS_CATEGORIES, getNews } from '@/lib/data';
-import NewsRow from './NewsRow';
+import { NEWS_CATEGORIES, getNews, newsCategoryLabel, titleOf } from '@/lib/data';
+import { FeedItem, newsScore } from '@/lib/feed';
+import { firstEnglish } from '@/lib/english';
+import { getSupabaseServerClient } from '@/lib/supabase';
+import FeedCard from './FeedCard';
 import SectionTabs from './SectionTabs';
 
 type View = 'all' | (typeof NEWS_CATEGORIES)[number]['slug'];
 
 export default async function NewsView({ view }: { view: View }) {
+  const now = new Date();
   const { news: all, error } = await getNews();
-  const shown = view === 'all' ? all : all.filter((n) => n.category === view);
   const heading = NEWS_CATEGORIES.find((c) => c.slug === view);
+
+  // The agents' post for each story: substance-first English copy, and the
+  // feed ranks behind the movement arrows.
+  const { data: posts } = all.length
+    ? await getSupabaseServerClient().from('feed_posts').select('post_id, headline, body, rank, prev_rank')
+        .in('post_id', all.map((n) => `news:${n.news_id}`))
+    : { data: [] as any[] };
+  const post = new Map((posts || []).map((p: any) => [p.post_id.slice(5), p]));
+
+  const items: FeedItem[] = all
+    .filter((n) => view === 'all' || n.category === view)
+    .map((n): FeedItem => {
+      const p = post.get(n.news_id);
+      const at = new Date(n.published_date || n.created_at || now);
+      const score = n.relevance_score ?? 30;
+      const movement: FeedItem['movement'] = !p || p.rank == null ? 'same'
+        : p.prev_rank == null || p.rank < p.prev_rank ? 'up' : p.rank > p.prev_rank ? 'down' : 'same';
+      return {
+        key: n.news_id, kind: 'news', event: 'news', href: `/news/${n.news_id}`,
+        headline: firstEnglish(p?.headline) ?? titleOf(n),
+        body: firstEnglish(p?.body, n.summary),
+        category: n.category || 'market', categoryLabel: newsCategoryLabel(n.category), kindLabel: 'News',
+        country: n.region && n.region !== 'EU / International' ? n.region : null,
+        at, score, combined: Math.round(newsScore(score, at, now)), movement,
+        deadline: null, isNew: now.getTime() - at.getTime() <= 2 * 86400_000,
+        image: n.image_url,
+      };
+    })
+    .sort((a, b) => b.combined - a.combined || b.at.getTime() - a.at.getTime());
 
   const tabs = [
     { href: '/news', label: 'All', count: all.length },
@@ -17,16 +49,16 @@ export default async function NewsView({ view }: { view: View }) {
   ];
 
   return (
-    <div>
+    <div className="news-page">
       <h1 className="opps-h1">{heading ? heading.label : 'EUDI News'}</h1>
       <SectionTabs tabs={tabs} active={view === 'all' ? '/news' : `/news/${view}`} />
 
       {error && <div className="callout error"><strong>Error loading news.</strong> {error.message}</div>}
-      {!error && shown.length === 0 && (
-        <div className="callout"><strong>No news in this section yet.</strong></div>
-      )}
+      {!error && items.length === 0 && <div className="callout"><strong>No news in this section yet.</strong></div>}
 
-      <div className="news-list">{shown.map((n) => <NewsRow key={n.news_id} n={n} />)}</div>
+      <div className="feed">
+        {items.map((i) => <FeedCard key={i.key} item={i} now={now} />)}
+      </div>
     </div>
   );
 }

@@ -464,3 +464,8 @@ alter table change_events add column if not exists note text;          -- Englis
 -- Buyer names in English: the official name plus an English rendering in
 -- parentheses when it isn't English (agents/translator.py; new items from triage).
 alter table opportunities add column if not exists authority_en text;
+
+-- Share image of each news story (og:image / twitter:image of the source page),
+-- shown on the News page cards. image_checked_at marks pages already looked at.
+alter table news_items add column if not exists image_url text;
+alter table news_items add column if not exists image_checked_at timestamptz;

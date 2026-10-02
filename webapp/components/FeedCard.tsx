@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { daysUntil } from '@/lib/data';
 import { FeedItem, timeAgo } from '@/lib/feed';
+import NewsImage from './NewsImage';
 
 function Votes({ item, value }: { item: FeedItem; value: number }) {
   const title =
@@ -41,6 +42,7 @@ export default function FeedCard({ item, now, value }: { item: FeedItem; now: Da
           <span className="feed-time" title={item.at.toLocaleString('en-GB')}>{timeAgo(item.at, now)}</span>
         </div>
         <div className="feed-title">{item.headline}</div>
+        {item.image && <NewsImage src={item.image} />}
         {item.body && <p className="feed-summary">{item.body}</p>}
         {item.deadline && <Deadline deadline={item.deadline} now={now} />}
       </div>

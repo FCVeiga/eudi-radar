@@ -75,23 +75,11 @@ export async function saveSource(_prev: SaveSourceState, form: FormData): Promis
   return { ok: true, message: `${row.name}: ${enabled ? how : 'paused'}.` };
 }
 
-export type NewsReportState = { ok: boolean; message: string } | null;
-
-/** "Trigger agent report" on a news page: the News Report Agent reads the article and reports. */
-export async function triggerNewsReport(_prev: NewsReportState, form: FormData): Promise<NewsReportState> {
-  const newsId = String(form.get('news_id') || '');
-  if (!/^[0-9a-f]{16}$/.test(newsId)) return { ok: false, message: 'Unknown news item.' };
-  try {
-    const { runNewsReport } = await import('@/lib/newsReport');
-    await runNewsReport(newsId);
-  } catch (e: any) {
-    const msg = String(e?.message || e);
-    return {
-      ok: false,
-      message: /credit balance/i.test(msg) ? 'The agent could not run: the Anthropic API account is out of credit.'
-        : `The agent could not run: ${msg.slice(0, 200)}`,
-    };
-  }
-  revalidatePath(`/news/${newsId}`);
-  return { ok: true, message: 'Report ready.' };
+/** Opening a news page starts the News Report Agent if the story has no report yet. */
+export async function startNewsReport(newsId: string) {
+  if (!/^[0-9a-f]{16}$/.test(newsId)) return { status: 'error' as const, message: 'unknown news item' };
+  const { ensureNewsReport } = await import('@/lib/newsReport');
+  const result = await ensureNewsReport(newsId);
+  if (result.status === 'done') revalidatePath(`/news/${newsId}`);
+  return result;
 }

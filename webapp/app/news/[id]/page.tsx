@@ -3,10 +3,10 @@ import { getSupabaseServerClient } from '@/lib/supabase';
 import { newsCategoryLabel, titleOf } from '@/lib/data';
 import { firstEnglish } from '@/lib/english';
 import NewsImage from '@/components/NewsImage';
-import NewsReportTrigger, { AgentFace } from '@/components/NewsReport';
+import NewsReportRunner, { AgentFace } from '@/components/NewsReport';
 
 // The News Report Agent runs inside this page's server action: give it time.
-export const maxDuration = 120;
+export const maxDuration = 300;
 
 type Action = { type: string; title: string; why?: string; next_step?: string; deadline?: string | null; priority?: string };
 type Analysis = { verdict: 'act' | 'consider' | 'monitor'; take?: string; actions: Action[]; agent?: string };
@@ -70,6 +70,7 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
           )}
         </div>
         {n.image_url && <NewsImage src={n.image_url} />}
+        {!n.summary_long && <p className="summary-pending">Preview — the News Report Agent replaces this with the full summary.</p>}
         {paragraphs.length ? paragraphs.map((p: string, i: number) => <p key={i}>{p}</p>)
           : <p className="muted">No English summary yet.</p>}
         {facts.length > 0 && (
@@ -80,7 +81,7 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
 
       <section className="detail-block analysis-block">
         <div className="agent-head">
-          <AgentFace />
+          <AgentFace working={!analysis} />
           <div className="agent-id">
             <h2>Agent Analysis</h2>
             <span className="agent-name">News Report Agent{n.analysed_at ? ` · report from ${fmtDate(n.analysed_at)}` : ''}</span>
@@ -88,12 +89,7 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
           {analysis && <span className={`verdict ${analysis.verdict}`} title={VERDICTS[analysis.verdict]?.note}>{VERDICTS[analysis.verdict]?.label}</span>}
         </div>
 
-        {!analysis && (
-          <p className="muted agent-intro">
-            Ask the News Report Agent to read this story and report what WalliD should do about it — publish a post,
-            take part in a consultation, standards group or pilot, make an announcement, reach out, or just monitor.
-          </p>
-        )}
+        {!analysis && <NewsReportRunner newsId={n.news_id} lastError={n.report_error ?? null} />}
         {analysis && (
           <>
             {firstEnglish(analysis.take) && <p className="analysis-take">{analysis.take}</p>}
@@ -113,7 +109,6 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
             </div>
           </>
         )}
-        <NewsReportTrigger newsId={n.news_id} hasReport={!!analysis} />
       </section>
     </div>
   );

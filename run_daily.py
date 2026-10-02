@@ -460,13 +460,6 @@ def main():
     if translated:
         print(f"Translation: {translated} titles given an English version")
 
-    # Complete English digests for the news pages (the "what should WalliD
-    # do" report is written on demand from the site — webapp/lib/newsReport.ts).
-    from agents.news_analyst import summarise_news
-    summarised = summarise_news(session, errors)
-    if summarised:
-        print(f"News summaries: {summarised} stories")
-
     from agents.news_images import fetch_news_images
     images = fetch_news_images(session)
     if images:

@@ -1,9 +1,10 @@
 /**
- * News Report Agent — runs only when a team member clicks "Trigger agent
- * report" on a news page. Reads the full article and reports what WalliD
- * should do about it: publish, participate, announce, reach out, bid, product
- * implications, or just monitor (prompt: agents/news_report.md; company
- * context: agents/company_brief.md — both team-editable).
+ * News Report Agent — runs the first time someone opens a news story's page.
+ * Reads the full article and writes, in one go, the page's complete summary
+ * (with key facts) and its report on what WalliD should do: publish,
+ * participate, announce, reach out, bid, product implications, or monitor.
+ * The result is saved, so later visits show it instantly.
+ * (prompt: agents/news_report.md; company context: agents/company_brief.md.)
  */
 import { readFile } from 'fs/promises';
 import path from 'path';
@@ -51,11 +52,45 @@ function parseJson(text: string) {
   throw new Error('The agent did not return a readable report.');
 }
 
-export async function runNewsReport(newsId: string) {
+// A run that started longer ago than this is presumed dead and may be retried.
+const LOCK_MINUTES = 5;
+
+export type ReportStatus = 'done' | 'running' | 'error';
+
+/**
+ * Make sure the story has its summary + report. Takes a lock first, so when
+ * two people open the same story only one agent run happens; the other gets
+ * 'running' and simply waits for the page to fill in.
+ */
+export async function ensureNewsReport(newsId: string): Promise<{ status: ReportStatus; message?: string }> {
+  const db = getSupabaseServerClient();
+  const cutoff = new Date(Date.now() - LOCK_MINUTES * 60_000).toISOString();
+  const { data: locked } = await db.from('news_items')
+    .update({ report_started_at: new Date().toISOString(), report_error: null })
+    .eq('news_id', newsId).is('analysed_at', null)
+    .or(`report_started_at.is.null,report_started_at.lt.${cutoff}`)
+    .select('news_id');
+  if (!locked?.length) {
+    const { data } = await db.from('news_items').select('analysed_at').eq('news_id', newsId).single();
+    return { status: data?.analysed_at ? 'done' : 'running' };
+  }
+  try {
+    await runNewsReport(newsId);
+    return { status: 'done' };
+  } catch (e: any) {
+    const raw = String(e?.message || e);
+    const message = /credit balance/i.test(raw) ? 'the Anthropic API account is out of credit' : raw.slice(0, 200);
+    // Release the lock so the next visit tries again.
+    await db.from('news_items').update({ report_started_at: null, report_error: message }).eq('news_id', newsId);
+    return { status: 'error', message };
+  }
+}
+
+async function runNewsReport(newsId: string) {
   if (!process.env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY is not configured on the server.');
   const db = getSupabaseServerClient();
   const { data: n, error } = await db.from('news_items')
-    .select('news_id, title, title_en, category, region, published_date, source_name, source_url, summary_long, summary')
+    .select('news_id, title, title_en, category, region, published_date, source_name, source_url, summary')
     .eq('news_id', newsId).single();
   if (error || !n) throw new Error('News item not found.');
 
@@ -64,7 +99,7 @@ export async function runNewsReport(newsId: string) {
   const story = [
     `Title: ${n.title_en || n.title}`, `Category: ${n.category}`, `Region: ${n.region}`,
     n.published_date && `Published: ${String(n.published_date).slice(0, 10)}`, `Source: ${n.source_name}`,
-    (n.summary_long || n.summary) && `Our summary: ${n.summary_long || n.summary}`,
+    n.summary && `Short summary from triage: ${n.summary}`,
   ].filter(Boolean).join('\n');
 
   const client = new Anthropic({
@@ -74,9 +109,9 @@ export async function runNewsReport(newsId: string) {
   // fallback re-runs a declined request on a fallback model.
   const response: any = await client.beta.messages.create({
     model: MODEL,
-    max_tokens: 8000,
+    max_tokens: 12000,
     system: await systemPrompt(),
-    messages: [{ role: 'user', content: `${story}\n\nArticle text:\n${article || '(not available)'}` }],
+    messages: [{ role: 'user', content: `${story}\n\nArticle text:\n${article || '(not available — work from the facts above)'}` }],
     betas: ['server-side-fallback-2026-07-01'],
     output_config: { effort: 'medium' },
     fallbacks: 'default',
@@ -93,8 +128,10 @@ export async function runNewsReport(newsId: string) {
       .filter((a: any) => a && ACTION_TYPES.includes(a.type) && a.title).slice(0, 6),
     model: response.model ?? MODEL,
   };
-  const { error: saveError } = await db.from('news_items')
-    .update({ analysis: report, analysed_at: new Date().toISOString() }).eq('news_id', newsId);
+  const { error: saveError } = await db.from('news_items').update({
+    summary_long: String(out.summary || '').trim() || null,
+    key_facts: (Array.isArray(out.key_facts) ? out.key_facts : []).map(String).slice(0, 8),
+    analysis: report, analysed_at: new Date().toISOString(), report_error: null,
+  }).eq('news_id', newsId);
   if (saveError) throw new Error(saveError.message);
-  return report;
 }

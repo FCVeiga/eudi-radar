@@ -50,6 +50,8 @@ function verb(a: Activity) {
 export default function LiveActivity({ initial }: { initial: Activity[] }) {
   const [items, setItems] = useState(initial);
   const [now, setNow] = useState(() => Date.now());
+  // Phones and tablets show the panel above the feed, collapsed until tapped (desktop: always open).
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -66,11 +68,12 @@ export default function LiveActivity({ initial }: { initial: Activity[] }) {
   }, []);
 
   return (
-    <div className="live-panel">
-      <div className="live-head">
+    <div className={`live-panel ${open ? 'open' : ''}`}>
+      <button type="button" className="live-head" aria-expanded={open} onClick={() => setOpen(!open)}>
         <span className="live-title"><span className="live-pulse" />Live activity</span>
         <span className="live-sub">auto-updating</span>
-      </div>
+        <svg className="live-chevron" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5l3-3" /></svg>
+      </button>
       <ul className="live-list">
         {items.length === 0 && <li className="side-empty">No activity yet from the sources you follow.</li>}
         {items.map((a) => (

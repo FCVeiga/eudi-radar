@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { TENDER_CATEGORIES, oppCategoryLabel, titleOf } from '@/lib/data';
 import FilterSelect from '@/components/FilterSelect';
+import SortSelect from '@/components/SortSelect';
 
 // Status as of now: a stored OPEN/SIGNAL whose deadline has passed is closed.
 function displayStatus(o: { status: string | null; deadline: string | null }) {
@@ -92,12 +93,17 @@ export default async function DatabasePage({
       <div className="filter-inline">
         <FilterSelect name="type" label="Type" options={TENDER_CATEGORIES.map(({ slug, label }) => ({ value: slug, label }))} />
         <FilterSelect name="country" label="Country" options={countries} />
+        <SortSelect options={[
+          { sort: 'deadline', label: 'Latest deadline' }, { sort: 'deadline', dir: 'rev', label: 'Earliest deadline' },
+          { sort: 'relevance', label: 'Highest relevance' }, { sort: 'value', label: 'Highest value' },
+          { sort: 'country', label: 'Country A–Z' }, { sort: 'country', dir: 'rev', label: 'Country Z–A' },
+        ]} />
       </div>
 
       {error && <div className="callout error"><strong>Error.</strong> {error.message}</div>}
 
       <div className="table-wrap">
-        <table className="data-table">
+        <table className="data-table history-table">
           <thead>
             <tr>
               <th>Title</th>
@@ -115,14 +121,14 @@ export default async function DatabasePage({
               return (
                 <tr key={o.opportunity_id} className="data-row">
                   <td className="title-cell"><Link href={`/tenders/${o.opportunity_id}`}>{titleOf(o as any)}</Link></td>
-                  <td className="mono" title={o.country ? countryName.get(o.country) ?? '' : ''}>{o.country || '—'}</td>
-                  <td>{o.opportunity_type && <span className={`tag ${o.opportunity_type}`}>{oppCategoryLabel(o.opportunity_type)}</span>}</td>
-                  <td>
+                  <td className="mono cell-country" data-label="Country" title={o.country ? countryName.get(o.country) ?? '' : ''}>{o.country || '—'}</td>
+                  <td className="cell-type">{o.opportunity_type && <span className={`tag ${o.opportunity_type}`}>{oppCategoryLabel(o.opportunity_type)}</span>}</td>
+                  <td className="cell-status">
                     <span className={`status ${status.toLowerCase().replace(/ /g, '-')}`} title={o.status_evidence || ''}>{status}</span>
                   </td>
-                  <td className="num mono">{o.opportunity_relevance_score ?? '—'}</td>
-                  <td className="num mono nowrap">{money(o.estimated_value, o.currency)}</td>
-                  <td className="mono nowrap">{fmt(o.deadline)}</td>
+                  <td className="num mono" data-label="Relevance">{o.opportunity_relevance_score ?? '—'}</td>
+                  <td className="num mono nowrap" data-label="Value">{money(o.estimated_value, o.currency)}</td>
+                  <td className="mono nowrap" data-label="Proposal deadline">{fmt(o.deadline)}</td>
                 </tr>
               );
             })}

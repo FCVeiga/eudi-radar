@@ -23,14 +23,41 @@ async function people(ids: string[]): Promise<Map<string, Person>> {
   return new Map((data || []).map((p: any) => [p.id, { id: p.id, username: p.username, displayName: p.display_name || p.username, avatarUrl: p.avatar_url }]));
 }
 
-export async function notify(userId: string, n: { type: string; title: string; body?: string | null; link?: string | null; actorId?: string | null }) {
+/** Which preference (profiles.notification_prefs) switches each notification type on or off. Chat is always on. */
+export const NOTIFICATION_PREFS: Record<string, string> = {
+  like_post: 'likes', like_comment: 'likes', comment: 'comments', reply: 'replies',
+  new_tender: 'new_tender', tender_update: 'tender_update', follow: 'follows',
+};
+
+/** Notify a user, unless they switched that type off. `once` skips it if the same actor already triggered it for the same link. */
+export async function notify(userId: string, n: { type: string; title: string; body?: string | null; link?: string | null; actorId?: string | null; once?: boolean }) {
+  const pref = NOTIFICATION_PREFS[n.type];
+  if (pref) {
+    const { data } = await db().from('profiles').select('notification_prefs').eq('id', userId).maybeSingle();
+    if (data?.notification_prefs?.[pref] === false) return;
+  }
+  if (n.once && n.actorId && n.link) {
+    const { data } = await db().from('notifications').select('id').eq('user_id', userId).eq('type', n.type)
+      .eq('actor_id', n.actorId).eq('link', n.link).limit(1);
+    if (data?.length) return;
+  }
   await db().from('notifications').insert({ user_id: userId, type: n.type, title: n.title, body: n.body ?? null, link: n.link ?? null, actor_id: n.actorId ?? null });
 }
 
 /* ---------------- Notifications ---------------- */
 
-export async function listNotifications(userId: string, limit = 20): Promise<Notification[]> {
-  const { data } = await db().from('notifications').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(limit);
+export const NOTIFICATION_TABS: { key: string; label: string; types: string[] | null }[] = [
+  { key: 'all', label: 'All', types: null },
+  { key: 'likes', label: 'Likes', types: ['like_post', 'like_comment'] },
+  { key: 'comments', label: 'Comments', types: ['comment', 'reply'] },
+  { key: 'tenders', label: 'Tenders', types: ['new_tender', 'tender_update'] },
+  { key: 'social', label: 'Social', types: ['follow', 'chat_request', 'chat_accepted'] },
+];
+
+export async function listNotifications(userId: string, limit = 20, types: string[] | null = null): Promise<Notification[]> {
+  let q = db().from('notifications').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(limit);
+  if (types) q = q.in('type', types);
+  const { data } = await q;
   const who = await people((data || []).map((n: any) => n.actor_id));
   return (data || []).map((n: any) => ({
     id: n.id, type: n.type, title: n.title, body: n.body, link: n.link, read: !!n.read_at, createdAt: n.created_at,

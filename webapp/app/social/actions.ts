@@ -22,6 +22,29 @@ export async function getNotifications() {
   return user ? listNotifications(user.id) : [];
 }
 
+/** The newest unread notification (for the toast when one arrives). */
+export async function getLatestUnread() {
+  const user = await getCurrentUser();
+  if (!user) return null;
+  const [n] = await listNotifications(user.id, 1);
+  return n && !n.read ? n : null;
+}
+
+export async function getNotificationPrefs() {
+  const user = await getCurrentUser();
+  if (!user) return null;
+  const { data } = await db().from('profiles').select('notification_prefs').eq('id', user.id).maybeSingle();
+  return (data?.notification_prefs || {}) as Record<string, boolean>;
+}
+
+const PREF_KEYS = ['likes', 'comments', 'replies', 'new_tender', 'tender_update', 'follows'];
+export async function setNotificationPref(key: string, on: boolean) {
+  const user = await getCurrentUser();
+  if (!user || !PREF_KEYS.includes(key)) return;
+  const prefs = (await getNotificationPrefs()) || {};
+  await db().from('profiles').update({ notification_prefs: { ...prefs, [key]: on } }).eq('id', user.id);
+}
+
 export async function markNotificationsRead(ids?: string[]) {
   const user = await getCurrentUser();
   if (!user) return;

@@ -3,12 +3,13 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import UserAvatar from '@/components/UserAvatar';
 import ChatPanel from './ChatPanel';
-import { getCounts, getNotifications, markNotificationsRead } from '@/app/social/actions';
+import { getCounts, getLatestUnread, getNotifications, markNotificationsRead } from '@/app/social/actions';
+import NotificationIcon from './NotificationIcon';
 
 type Note = { id: string; type: string; title: string; body: string | null; link: string | null; read: boolean; createdAt: string; actor: { username: string; avatarUrl: string | null } | null };
-const COUNTS_MS = 20_000;
+const COUNTS_MS = 15_000;
+const TOAST_MS = 6_000;
 
 function ago(iso: string) {
   const m = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
@@ -33,7 +34,21 @@ export default function NavActions() {
   const path = usePathname();
   const router = useRouter();
 
-  const refresh = useCallback(async () => setCount(await getCounts()), []);
+  const [toast, setToast] = useState<Note | null>(null);
+  const [ringing, setRinging] = useState(false);
+  const seen = useRef<number | null>(null);
+
+  // New notification since the last check: ring the bell and show a toast.
+  const refresh = useCallback(async () => {
+    const next = await getCounts();
+    setCount(next);
+    if (seen.current !== null && next.notifications > seen.current) {
+      const latest = await getLatestUnread();
+      if (latest) { setToast(latest as Note); setRinging(true); setTimeout(() => setRinging(false), 1200); }
+    }
+    seen.current = next.notifications;
+  }, []);
+  useEffect(() => { if (!toast) return; const t = setTimeout(() => setToast(null), TOAST_MS); return () => clearTimeout(t); }, [toast]);
   useEffect(() => { refresh(); const t = setInterval(refresh, COUNTS_MS); return () => clearInterval(t); }, [refresh]);
   useEffect(() => { setBellOpen(false); }, [path]);
   useEffect(() => {
@@ -54,7 +69,7 @@ export default function NavActions() {
     setBellOpen(next);
     if (next) {
       setNotes(await getNotifications() as Note[]);
-      if (count.notifications) { await markNotificationsRead(); refresh(); }
+      if (count.notifications) { await markNotificationsRead(); seen.current = 0; refresh(); }
     }
   }
 
@@ -74,13 +89,13 @@ export default function NavActions() {
       </Link>
 
       <div className="nav-bell" ref={bell}>
-        <button type="button" className="nav-icon" aria-label={`Notifications${count.notifications ? ` (${count.notifications} new)` : ''}`} aria-expanded={bellOpen} onClick={toggleBell}>
+        <button type="button" className={`nav-icon ${ringing ? 'ringing' : ''}`} aria-label={`Notifications${count.notifications ? ` (${count.notifications} new)` : ''}`} aria-expanded={bellOpen} onClick={toggleBell}>
           <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.8a4.6 4.6 0 0 0-4.6 4.6v2.7L4 12.9h12l-1.4-2.8V7.4A4.6 4.6 0 0 0 10 2.8zM8.2 15.6a1.9 1.9 0 0 0 3.6 0" /></svg>
           {count.notifications > 0 && <span className="nav-badge">{count.notifications > 9 ? '9+' : count.notifications}</span>}
         </button>
         {bellOpen && (
           <div className="notes-menu" role="dialog" aria-label="Notifications">
-            <div className="notes-head"><strong>Notifications</strong></div>
+            <div className="notes-head"><strong>Notifications</strong><Link href="/notifications" className="notes-all">See all</Link></div>
             <ul>
               {notes === null && <li className="notes-empty">Loading…</li>}
               {notes?.length === 0 && <li className="notes-empty">You’re all caught up. Follow tenders with the heart to hear about their updates.</li>}
@@ -88,8 +103,7 @@ export default function NavActions() {
                 <li key={n.id}>
                   <button type="button" className={`note ${n.read ? '' : 'unread'}`}
                     onClick={() => { setBellOpen(false); if (n.link?.startsWith('/chat')) { setComposeTo(null); setChatOpen(true); } else if (n.link) router.push(n.link); }}>
-                    {n.actor ? <UserAvatar name={n.actor.username} src={n.actor.avatarUrl} size={32} />
-                      : <span className="note-icon" aria-hidden="true">{n.type === 'tender_update' ? '📌' : '🔔'}</span>}
+                    <NotificationIcon type={n.type} actor={n.actor} size={32} />
                     <span className="note-text"><strong>{n.title}</strong>{n.body && <em>{n.body}</em>}</span>
                     <time>{ago(n.createdAt)}</time>
                   </button>
@@ -99,6 +113,17 @@ export default function NavActions() {
           </div>
         )}
       </div>
+
+      {toast && (
+        <button type="button" className="notif-toast" role="status" onClick={() => {
+          setToast(null); markNotificationsRead([toast.id]).then(refresh);
+          if (toast.link?.startsWith('/chat')) setChatOpen(true); else if (toast.link) router.push(toast.link);
+        }}>
+          <NotificationIcon type={toast.type} actor={toast.actor} size={36} />
+          <span className="note-text"><strong>{toast.title}</strong>{toast.body && <em>{toast.body}</em>}</span>
+          <span className="notif-toast-close" aria-label="Dismiss" onClick={(e) => { e.stopPropagation(); setToast(null); }}>×</span>
+        </button>
+      )}
 
       {chatOpen && !onChatPage && (
         <div className="chat-popup" role="dialog" aria-label="Chat">

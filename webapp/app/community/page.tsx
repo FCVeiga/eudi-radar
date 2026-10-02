@@ -57,10 +57,6 @@ export default async function CommunityPage({ searchParams }: { searchParams: { 
         </div>
       )}
       {posts.length > shown && <Link href={href(view, shown + PAGE)} scroll={false} className="feed-more">Show more <span className="mono">({posts.length - shown} left)</span></Link>}
-      <p className="field-hint community-note">
-        {view === 'best' ? 'Best ranks posts by how well their tags match your interests and the radar’s search scope, whether you follow the author, how many likes they have, and how recent they are.'
-          : view === 'new' ? 'Newest posts first.' : 'Most liked posts first.'}
-      </p>
     </div>
   );
 }

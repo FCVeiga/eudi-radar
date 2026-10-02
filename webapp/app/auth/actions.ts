@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { USERNAME, authClient, getCurrentUser, safeNext, siteOrigin } from '@/lib/auth';
 import { ensureProfile, usernameTaken } from '@/lib/profiles';
+import { notify } from '@/lib/social';
 
 export type AuthState = { ok: boolean; message: string } | null;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -149,7 +150,22 @@ export async function toggleLike(itemType: 'tender' | 'news' | 'post' | 'comment
   const key = { user_id: user.id, item_type: itemType, item_id: itemId };
   const { data } = await db.from('likes').select('item_id').match(key).maybeSingle();
   if (data) await db.from('likes').delete().match(key);
-  else await db.from('likes').insert(key);
+  else {
+    await db.from('likes').insert(key);
+    // Tell the author their post or comment was liked (once per person and item).
+    if (itemType === 'post') {
+      const { data: post } = await db.from('posts').select('user_id, title').eq('id', itemId).maybeSingle();
+      if (post && post.user_id !== user.id) {
+        await notify(post.user_id, { type: 'like_post', title: `u/${user.username} liked your post`, body: post.title, link: `/posts/${itemId}`, actorId: user.id, once: true });
+      }
+    } else if (itemType === 'comment') {
+      const { data: c } = await db.from('comments').select('user_id, body, item_type, item_id, post_id').eq('id', itemId).maybeSingle();
+      if (c && c.user_id !== user.id) {
+        const base = c.item_type === 'news' ? `/news/${c.item_id}` : c.item_type === 'tender' ? `/tenders/${c.item_id}` : `/posts/${c.post_id ?? c.item_id}`;
+        await notify(c.user_id, { type: 'like_comment', title: `u/${user.username} liked your comment`, body: c.body.slice(0, 200), link: `${base}#c-${itemId}`, actorId: user.id, once: true });
+      }
+    }
+  }
   revalidatePath(`/u/${user.username}`);
   return { liked: !data };
 }

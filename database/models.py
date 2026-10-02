@@ -481,6 +481,9 @@ class ChangeEvent(Base):
     importance = Column(Enum(ChangeImportance))
     description = Column(Text)
     detected_at = Column(DateTime, default=datetime.utcnow)
+    notice_url = Column(Text)          # the notice that brought the change
+    note_source = Column(Text)         # what that notice says changed, original language
+    note = Column(Text)                # English comment shown under the opportunity
 
     opportunity = relationship("Opportunity", back_populates="change_events")
 

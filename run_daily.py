@@ -135,9 +135,11 @@ def _fmt(d):
     return d.strftime("%d %b %Y") if d else "none"
 
 
-def record_changes(session, opp: Opportunity, new: dict, now: datetime) -> list:
+def record_changes(session, opp: Opportunity, new: dict, now: datetime,
+                   notice_url: str = None, note: str = None) -> list:
     """Diff an existing opportunity against incoming values; log each material
-    change as a ChangeEvent so the site can show what moved."""
+    change as a ChangeEvent so the site can show what moved. notice_url / note
+    carry what the change notice itself says (see agents/updates.py)."""
     events = []
     old_dl = opp.deadline.replace(tzinfo=None) if opp.deadline else None
     new_dl = new.get("deadline")
@@ -152,7 +154,7 @@ def record_changes(session, opp: Opportunity, new: dict, now: datetime) -> list:
     for event_type, description in events:
         session.add(ChangeEvent(opportunity_id=opp.opportunity_id, event_type=event_type,
                                 importance=ChangeImportance.MATERIAL, description=description,
-                                detected_at=now))
+                                detected_at=now, notice_url=notice_url, note_source=note))
     return [d for _, d in events]
 
 
@@ -237,7 +239,25 @@ def promote(session, candidate: Candidate, t: dict, country_names: dict):
                 # Keep the status/deadline verification established; a snippet
                 # re-triage is weaker evidence.
                 fields.pop("status"); fields.pop("deadline")
-            changes = record_changes(session, existing, fields, now)
+            # A newer TED notice is a change notice: keep what it says changed.
+            notice_note, notice_changes = None, None
+            if ted and incoming and (not held or incoming > held):
+                try:
+                    from adapters.ted import TedSearchProvider
+                    from agents.updates import note_source
+                    notice_changes = TedSearchProvider().notice_changes(candidate.source_url.rstrip("/").split("/")[-1])
+                    notice_note = note_source(notice_changes)
+                except Exception:
+                    pass
+            changes = record_changes(session, existing, fields, now, candidate.source_url if notice_note else None, notice_note)
+            if not changes and notice_note:
+                # Clarifications, amended documents…: an update even without a new deadline.
+                from agents.updates import fallback_description
+                desc = fallback_description(notice_changes)
+                session.add(ChangeEvent(opportunity_id=existing.opportunity_id, event_type="notice_update",
+                                        importance=ChangeImportance.MATERIAL, description=desc, detected_at=now,
+                                        notice_url=candidate.source_url, note_source=notice_note))
+                changes = [desc]
             for k, v in fields.items():
                 setattr(existing, k, v)
             if changes:
@@ -428,9 +448,14 @@ def main():
     verified = verify_opportunities(session, errors)
     print(f"Verification: {verified} opportunities checked against their source")
 
-    # English titles for anything that predates triage's title_en, and for activity.
+    # English titles for anything that predates triage's title_en, and for activity;
+    # English notes for tender updates (shown as comments).
     from agents.translator import backfill_english_titles
     translated = backfill_english_titles(session, errors)
+    from agents.translator import write_update_notes
+    noted = write_update_notes(session, errors)
+    if noted:
+        print(f"Update notes: {noted} written")
     if translated:
         print(f"Translation: {translated} titles given an English version")
 

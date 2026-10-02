@@ -131,6 +131,35 @@ class TedSearchProvider(SearchProvider):
             "details": details[:6],
         }
 
+    # eForms change-corrig-justification codes
+    CHANGE_REASONS = {
+        "cor-buy": "correction by the buyer", "cor-esen": "correction by the eSender",
+        "cor-pub": "correction by the Publications Office", "info-release": "information released",
+        "update-add": "additional information", "technical": "technical correction",
+        "cancel": "procedure cancelled",
+    }
+
+    def notice_changes(self, publication_number: str):
+        """What a change notice says it changed (eForms <efac:Changes>), in the
+        notice's own language: reason, description, whether the procurement
+        documents changed. None for notices that aren't change notices."""
+        resp = self.session.get(f"https://ted.europa.eu/en/notice/{publication_number}/xml", timeout=30)
+        resp.raise_for_status()
+        block = re.search(r"<efac:Changes>(.*?)</efac:Changes>", resp.text, re.S)
+        if not block:
+            return None
+        b = block.group(1)
+        texts = lambda tag: [re.sub(r"\s+", " ", t).strip() for t in re.findall(rf"<efbc:{tag}[^>]*>(.*?)</efbc:{tag}>", b, re.S)]
+        code = re.search(r"<cbc:ReasonCode[^>]*>([\w-]+)<", b)
+        docs = re.search(r"<efbc:ProcurementDocumentsChangeIndicator>(\w+)<", b)
+        return {
+            "reason_code": code.group(1) if code else None,
+            "reason": self.CHANGE_REASONS.get(code.group(1)) if code else None,
+            "reason_text": " ".join(texts("ReasonDescription")) or None,
+            "changes": " ".join(texts("ChangeDescription")) or None,
+            "documents_changed": bool(docs and docs.group(1) == "true"),
+        }
+
     def fetch(self, url: str) -> str:
         resp = self.session.get(url, timeout=30)
         resp.raise_for_status()

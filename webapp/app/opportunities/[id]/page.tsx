@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { Opportunity, oppCategoryLabel, titleOf } from '@/lib/data';
 import { DeadlineText, StatusTags } from '@/components/OpportunityCard';
+import UpdateComment, { UpdateEvent } from '@/components/UpdateComment';
 
 const REQ_CATEGORY_GROUPS: Record<string, string[]> = {
   Certifications: ['CERTIFICATION', 'PERSONAL_CERTIFICATION'],
@@ -90,14 +91,11 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
         <div>
           {o.summary && <div className="detail-block"><h2>Summary</h2><p>{o.summary}</p></div>}
           {changes && changes.length > 0 && (
-            <div className="detail-block">
-              <h2>Updates</h2>
-              {changes.map((c) => (
-                <div key={c.id} className="change-row">
-                  <span className="date-badge">{new Date(c.detected_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-                  <span>{c.description}</span>
-                </div>
-              ))}
+            <div className="detail-block" id="updates">
+              <h2>Updates <span className="uc-count">{changes.length}</span></h2>
+              <div className="uc-thread">
+                {(changes as UpdateEvent[]).map((c) => <UpdateComment key={c.id} e={c} />)}
+              </div>
             </div>
           )}
           <div className="detail-block">

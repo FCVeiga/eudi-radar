@@ -20,6 +20,7 @@ Say what happened, plainly and specifically. Lead with the event:
   ("New RFI: …", "New grant: …", "Signal: … plans to procure …")
 - Deadline change → "Deadline extended: Germany's EWSO tooling tender now closes 5 Oct"
 - Award → "Awarded: youniqx wins Germany's EUDI Wallet infrastructure contract"
+- Tender update → "Clarifications published: Germany's EWSO tooling tender amends price sheet"
 - News → the news itself: "Germany launches d-you, its national EUDI Wallet"
 
 Use country names, not codes. Never copy procurement boilerplate such as

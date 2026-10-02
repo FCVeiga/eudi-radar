@@ -155,11 +155,14 @@ def plan_posts(session, now: datetime, rewrite: bool = False) -> list:
         desc = c.description or ""
         if c.event_type == "deadline" and is_active(o, now):
             event, label = "deadline_change", "Deadline change"
+        elif c.event_type == "notice_update" and is_active(o, now):
+            event, label = "notice_update", "Tender update (clarification / amended documents)"
         elif c.event_type == "status" and "award" in desc.lower():
             event, label = "awarded", "Contract awarded"
         else:
             continue  # e.g. a deadline simply passing isn't news
-        facts = opportunity_facts(o, country_names) | {"What changed": desc}
+        facts = opportunity_facts(o, country_names) | {"What changed": desc,
+                                                        "What the change notice says": c.note or c.note_source}
         plans.append((dict(post_id=pid, kind="opportunity", event=event, opportunity_id=o.opportunity_id,
                            change_event_id=c.id, category=o.opportunity_type, country=o.country,
                            score=o.opportunity_relevance_score, posted_at=_naive(c.detected_at)),
@@ -219,7 +222,7 @@ def publish_new_posts(session, errors: list, now=None, rewrite: bool = False) ->
 
 def visible(p: FeedPost, opps: dict, now: datetime) -> bool:
     if p.kind == "news" or p.event == "awarded":
-        return True
+        return True  # notice_update / deadline_change posts follow their opportunity's status
     o = opps.get(p.opportunity_id)
     return bool(o) and is_active(o, now)
 

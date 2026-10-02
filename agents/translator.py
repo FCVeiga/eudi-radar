@@ -65,3 +65,37 @@ def backfill_english_titles(session, errors: list) -> int:
                 done += 1
             session.commit()
     return done
+
+
+_NOTE_SYSTEM = """You write update notes on public tenders for bid managers, posted as a
+short comment under the tender. You get, for each numbered update, the change
+the radar detected and what the official change notice says (often not in
+English). Write one English note per update, max 200 characters: lead with
+the change, then the reason if given; mention clarifications, amended
+documents, price sheets or contract clauses when the notice says so. Plain
+and factual, no filler. Dates as "5 Oct 2026".
+
+Reply with JSON only: {"items": [{"n": 1, "note": "..."}, ...]}"""
+
+
+def write_update_notes(session, errors: list) -> int:
+    """English notes for change events whose notice text hasn't been turned into one yet."""
+    rows = session.execute(text("""select id, description, note_source from change_events
+        where note is null and note_source is not null order by id limit 40""")).fetchall()
+    if not rows:
+        return 0
+    listing = "\n".join(f"{i + 1}. Detected: {r.description}\n   Notice says: {r.note_source[:1200]}" for i, r in enumerate(rows))
+    try:
+        out = call_llm_json(_NOTE_SYSTEM, listing, model=CHEAP_MODEL, max_tokens=4000)
+    except Exception as e:
+        errors.append(f"update notes: {e}"[:300])
+        return 0
+    by_n = {int(x["n"]): x.get("note") for x in out.get("items", []) if "n" in x}
+    done = 0
+    for i, r in enumerate(rows):
+        if by_n.get(i + 1):
+            session.execute(text("update change_events set note = :n where id = :id"), {"n": by_n[i + 1][:300], "id": r.id})
+            done += 1
+    session.commit()
+    return done
+

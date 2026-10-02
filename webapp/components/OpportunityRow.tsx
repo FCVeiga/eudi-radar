@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Opportunity, daysUntil, isNew, isUpdated, oppCategoryLabel } from '@/lib/data';
+import UpdateComment, { UpdateEvent } from './UpdateComment';
 
 export type RowCopy = { headline: string | null; body: string | null } | undefined;
 
@@ -52,7 +53,9 @@ export function RingGradients() {
   );
 }
 
-export default function OpportunityRow({ o, copy, countryName }: { o: Opportunity; copy: RowCopy; countryName: string | null }) {
+export default function OpportunityRow({ o, copy, countryName, updates = [] }: {
+  o: Opportunity; copy: RowCopy; countryName: string | null; updates?: UpdateEvent[];
+}) {
   const days = daysUntil(o.deadline);
   const value = money(o.estimated_value, o.currency);
   const description = copy?.body || o.summary;
@@ -99,6 +102,13 @@ export default function OpportunityRow({ o, copy, countryName }: { o: Opportunit
           )}
         </div>
       </div>
+
+      {updates.length > 0 && (
+        <div className="opp-updates">
+          <UpdateComment e={updates[0]} compact />
+          {updates.length > 1 && <span className="uc-more">+{updates.length - 1} earlier update{updates.length > 2 ? 's' : ''}</span>}
+        </div>
+      )}
     </Link>
   );
 }

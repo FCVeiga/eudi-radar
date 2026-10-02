@@ -453,3 +453,10 @@ alter table news_items add column if not exists title_en text;
 alter table news_items add column if not exists language varchar(8);
 alter table source_activity add column if not exists title_en text;
 alter table source_activity add column if not exists kind varchar(32);   -- triage type: TENDER, RFI, GRANT, NEWS_ONLY…
+
+-- Update notes: what a change notice says it changed (reason, description,
+-- documents changed) in its own language, and an English note written from it
+-- — shown as a comment under the opportunity.
+alter table change_events add column if not exists notice_url text;
+alter table change_events add column if not exists note_source text;   -- TED's own text, original language
+alter table change_events add column if not exists note text;          -- English comment (agents/translator.py)

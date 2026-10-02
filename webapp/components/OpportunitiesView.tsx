@@ -1,6 +1,7 @@
 import { OPP_CATEGORIES, NEW_WINDOW_DAYS, getActiveOpportunities, isNew } from '@/lib/data';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import OpportunityRow, { RingGradients } from './OpportunityRow';
+import type { UpdateEvent } from './UpdateComment';
 import SectionTabs from './SectionTabs';
 
 type View = 'all' | 'new' | (typeof OPP_CATEGORIES)[number]['slug'];
@@ -29,10 +30,14 @@ export default async function OpportunitiesView({ view }: { view: View }) {
   ];
   // Agent-written copy (informative description, English headline) and country names.
   const db = getSupabaseServerClient();
-  const [{ data: posts }, { data: countries }] = await Promise.all([
-    shown.length ? db.from('feed_posts').select('post_id, headline, body').in('post_id', shown.map((o) => `opp:${o.opportunity_id}`)) : Promise.resolve({ data: [] as any[] }),
+  const ids = shown.map((o) => o.opportunity_id);
+  const [{ data: posts }, { data: countries }, { data: changes }] = await Promise.all([
+    ids.length ? db.from('feed_posts').select('post_id, headline, body').in('post_id', ids.map((id) => `opp:${id}`)) : Promise.resolve({ data: [] as any[] }),
     db.from('countries').select('code, name'),
+    ids.length ? db.from('change_events').select('*').in('opportunity_id', ids).order('detected_at', { ascending: false }) : Promise.resolve({ data: [] as any[] }),
   ]);
+  const updates = new Map<string, UpdateEvent[]>();
+  for (const c of (changes || []) as UpdateEvent[]) updates.set(c.opportunity_id, [...(updates.get(c.opportunity_id) || []), c]);
   const copy = new Map((posts || []).map((p: any) => [p.post_id.slice(4), p]));
   const names = new Map((countries || []).map((c: any) => [c.code, c.name]));
 
@@ -59,7 +64,8 @@ export default async function OpportunitiesView({ view }: { view: View }) {
       <div className="opp-rows">
         {shown.map((o) => (
           <OpportunityRow key={o.opportunity_id} o={o} copy={copy.get(o.opportunity_id)}
-                          countryName={o.country ? names.get(o.country) ?? null : null} />
+                          countryName={o.country ? names.get(o.country) ?? null : null}
+                          updates={updates.get(o.opportunity_id) ?? []} />
         ))}
       </div>
     </div>

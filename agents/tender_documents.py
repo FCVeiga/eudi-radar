@@ -5,8 +5,7 @@ documents a bidder needs, with links that work from the site:
   - TED notice PDFs for every notice of the procedure (original + changes)
   - the buyer portal's own document list, where the portal shows it publicly:
       ePPS (Malta, Cyprus, Ireland, …): every file, with direct download links
-      DTVP (Germany): every file by category, linked to the DTVP documents page
-      (its downloads only work inside a browser session)
+      DTVP (Germany): every file by category, with direct download links
   - otherwise one link to the portal's documents page
 
 A document that appears after the first collection (a clarification note, an
@@ -37,7 +36,8 @@ _TYPES = [
     ("CONTRACT", r"vertrag|contract|contrat|contratto|σύμβαση|auftragsverarbeitung"),
     ("TECHNICAL_SPECIFICATIONS", r"leistungsbeschreibung|specification|technical|technisch|τεχνικ|terms of reference|lastenheft"),
     ("FORM", r"formblatt|form\b|formular|eigenerkl|declaration|espd|δήλωση|έντυπο"),
-    ("TENDER_SPECIFICATIONS", r"angebotsbedingungen|instructions|tender document|dossier|disciplinare|διακήρυξη|invitation"),
+    ("TENDER_SPECIFICATIONS", r"angebotsbedingungen|instructions|tender document|dossier|disciplinare|διακήρυξη|invitation|forms and annexes"),
+    ("FORM", r"espd"),
 ]
 
 
@@ -94,10 +94,16 @@ def _epps_documents(url: str) -> list:
             pages.append(page)
     docs = {}
     for page in pages:
-        for title, doc_id, filename in re.findall(
-                r"<td>\s*\d+\s*</td>\s*<td>\s*([^<]*?)\s*</td>\s*<td>\s*<a href=\"#\" onclick=\"downloadDocForAnonymous\('(\d+)'\)\">([^<]+)</a>", page):
-            docs[doc_id] = (html.unescape(title).strip(), html.unescape(filename).strip(),
-                            f"{base}/epps/cft/downloadContractDocument.do?documentId={doc_id}&resourceId={resource.group(1)}")
+        for row in re.split(r"<tr[ >]", page):
+            link = re.search(r"downloadDocForAnonymous\('(\d+)'\)\">([^<]+)</a>", row)
+            if not link:
+                continue
+            cells = [re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", c)).strip() for c in re.findall(r"<td[^>]*>(.*?)</td>", row, re.S)]
+            if link.group(2).strip().lower().endswith(".xml"):
+                continue  # machine-readable copies (ESPD request, c4t) of files listed as PDF
+            title = next((c for c in cells if c and not c.isdigit() and c != link.group(2).strip() and c.upper() != "N/A"), "")
+            docs[link.group(1)] = (html.unescape(title), html.unescape(link.group(2)).strip(),
+                                   f"{base}/epps/cft/downloadContractDocument.do?documentId={link.group(1)}&resourceId={resource.group(1)}")
     return list(docs.values())
 
 
@@ -106,16 +112,17 @@ _DTVP_GROUPS = {"address": "TENDER_SPECIFICATIONS", "serviceDescription": "TECHN
 
 
 def _dtvp_documents(url: str) -> list:
-    """DTVP documents page: (file name, type hint) — downloads need DTVP's session, so link the page."""
-    page = _get(url).text
+    """DTVP documents page: (file name, type hint, direct URL). The notice link
+    redirects to the public project page; file links are relative to it."""
+    r = _get(url)
     out = []
-    for group, path in re.findall(r'href="\./documents/(\w+)/([^";]+)', page):
+    for group, path in re.findall(r'href="\./documents/(\w+)/([^";]+)', r.text):
         if group == "archive":
             continue
         name = unquote_plus(unquote_plus(path))
         name = re.sub(r"\s*\(ID \d+\)", "", name)
-        out.append((name, _DTVP_GROUPS.get(group)))
-    return list(dict.fromkeys(out))
+        out.append((name, _DTVP_GROUPS.get(group), urljoin(r.url, html.unescape(f"./documents/{group}/{path}"))))
+    return list({n: (n, h, u) for n, h, u in out}.values())
 
 
 def collect_documents(session, opportunity_id: str, procedure_id: str) -> dict:
@@ -143,7 +150,7 @@ def collect_documents(session, opportunity_id: str, procedure_id: str) -> dict:
                     continue
             if "dtvp.de" in host:
                 found = _dtvp_documents(url)
-                rows += [(name, hint or classify(name), url, None, None) for name, hint in found]
+                rows += [(name, hint or classify(name), dl, None, None) for name, hint, dl in found]
                 if found:
                     continue
         except Exception:
@@ -156,8 +163,11 @@ def collect_documents(session, opportunity_id: str, procedure_id: str) -> dict:
     now = datetime.utcnow()
     for name, doc_type, url, published, version in rows:
         doc_id = f"{opportunity_id}-{hashlib.md5(f'{name}|{url}'.encode()).hexdigest()[:10]}"
-        exists = session.execute(text("select 1 from documents where document_id = :d"), {"d": doc_id}).first()
+        exists = session.execute(text("select document_id, url from documents where document_id = :d or (opportunity_id = :o and name = :n)"),
+                                 {"d": doc_id, "o": opportunity_id, "n": name[:500]}).first()
         if exists:
+            if exists.url != url[:1000]:  # same file, better link (e.g. a direct download)
+                session.execute(text("update documents set url = :u where document_id = :d"), {"u": url[:1000], "d": exists.document_id})
             continue
         session.execute(text("""insert into documents (document_id, opportunity_id, name, document_type, url,
                                 version, publication_date, downloaded_at)

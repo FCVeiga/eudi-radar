@@ -16,10 +16,13 @@ const GROUPS: [string, string][] = [
 const ORDER = Array.from(new Set(GROUPS.map(([, g]) => g)));
 const groupOf = (t: string | null) => GROUPS.find(([k]) => k === t)?.[1] ?? 'Other documents';
 
+// Buyer-portal links that download the file itself (ePPS, DTVP).
+const DIRECT = /downloadContractDocument|dtvp\.de\/Satellite\/public\/company\/project\/[^/]+\/\w+\/documents\//;
+
 function linkKind(url: string | null) {
   if (!url) return null;
   if (/ted\.europa\.eu\/.*\/pdf$/.test(url)) return { label: 'PDF', title: 'Official TED notice (PDF)' };
-  if (/downloadContractDocument/.test(url)) return { label: 'Download', title: 'Direct download from the buyer portal' };
+  if (DIRECT.test(url)) return { label: 'Download', title: 'Direct download from the buyer portal' };
   return { label: 'Open on portal', title: 'Opens the buyer portal page where this document is downloaded' };
 }
 
@@ -44,7 +47,7 @@ export default function TenderDocuments({ docs }: { docs: Doc[] }) {
           })}
         </div>
       ))}
-      {docs.some((d) => !/downloadContractDocument|ted\.europa/.test(d.url ?? '')) && (
+      {docs.some((d) => !DIRECT.test(d.url ?? '') && !/ted\.europa/.test(d.url ?? '')) && (
         <p className="sidebar-note">“Portal ↗” documents download from the buyer&apos;s portal, which may ask you to register.</p>
       )}
     </div>

@@ -1,19 +1,25 @@
 """
-Tender analysis — what a bidder must meet, for the opportunity pages.
+Tender analysis — what a tender asks for, for the opportunity pages.
 
   1. Award criteria (no LLM): type and weight straight from the notice's
      eForms XML, e.g. price 30 % / quality 50 % / quality 20 %.
-  2. Requirements (Tender Analysis agent): the notice's selection criteria
-     and tenderer requirements turned into English requirement rows —
-     category, mandatory, threshold, evidence — each matched against the
-     company brief (webapp/agents/company_brief.md), plus English
-     descriptions of the award criteria.
+  2. Tender Analysis agent: reads the notice and the text of the tender
+     documents the buyer published (tender conditions, specifications,
+     proof forms, Q&A catalogues) and writes an English summary of the
+     tender plus every requirement, grouped as eligibility, project
+     references, human resources and technical / project requirements.
+
+It describes the tender only. WalliD's fit is the Evaluation Report Agent's
+job (webapp/lib/evaluationReport.ts), run from the opportunity page.
 """
+import io
 import json
 import os
 import re
 import sys
 import uuid
+import zipfile
+from datetime import datetime
 
 from sqlalchemy import text
 
@@ -25,7 +31,6 @@ CATEGORIES = {"LEGAL", "FINANCIAL", "TURNOVER", "INSURANCE", "CERTIFICATION", "C
               "TEAM", "CV", "EDUCATION", "PERSONAL_CERTIFICATION", "SECURITY_CLEARANCE", "LANGUAGE", "FTE",
               "LOCAL_PRESENCE", "TECHNICAL", "SECURITY", "PRIVACY", "EIDAS", "EUDI", "INTEROPERABILITY", "HOSTING",
               "SLA", "IMPLEMENTATION", "CONSORTIUM", "SUBCONTRACTING", "EVIDENCE"}
-MATCHES = {"MATCH", "PARTIAL_MATCH", "PARTNER_NEEDED", "NO_MATCH", "UNKNOWN"}
 
 
 def _clean(s):
@@ -64,24 +69,109 @@ def store_award_criteria(session, opportunity_id: str, award: list) -> int:
     return len(award)
 
 
-def extract_requirements(criteria: dict, documents: list) -> dict:
-    with open(os.path.join(_ROOT, "webapp", "agents", "company_brief.md")) as f:
-        brief = f.read()
-    prompt = load_prompt("tender_requirements.md").replace("{company_brief}", brief)
+GROUPS = {"ELIGIBILITY", "REFERENCES", "HUMAN_RESOURCES", "TECHNICAL"}
+# Documents worth reading, in order; contracts and price sheets add little.
+READ_ORDER = ["TENDER_SPECIFICATIONS", "TECHNICAL_SPECIFICATIONS", "AWARD_CRITERIA", "FORM", "Q_AND_A", "CLARIFICATION", "ANNEX"]
+DOC_CHARS, TOTAL_CHARS = 60_000, 260_000
+MAIN_DOC_CHARS = 100_000  # tender conditions and specifications get more room
+
+
+def notice_description(xml: str) -> str:
+    """The procedure's and each lot's name, description and duration."""
+    out = []
+    for b in re.findall(r"<cac:ProcurementProject>(.*?)</cac:ProcurementProject>", xml, re.S):
+        name = re.search(r"<cbc:Name[^>]*>(.*?)</cbc:Name>", b, re.S)
+        desc = re.search(r"<cbc:Description[^>]*>(.*?)</cbc:Description>", b, re.S)
+        dur = re.search(r'<cbc:DurationMeasure unitCode="(\w+)">(\d+)<', b)
+        out.append(" — ".join(x for x in [_clean(name.group(1)) if name else "", _clean(desc.group(1)) if desc else "",
+                                         f"duration {dur.group(2)} {dur.group(1).lower()}" if dur else ""] if x))
+    return "\n".join(dict.fromkeys(x for x in out if x))
+
+
+def _file_text(name: str, data: bytes) -> str:
+    """Plain text of a PDF, Word or Excel file (or of those inside a zip)."""
+    low = name.lower()
+    try:
+        if data[:4] == b"%PDF" or low.endswith(".pdf"):
+            from pypdf import PdfReader
+            return "\n".join((p.extract_text() or "") for p in PdfReader(io.BytesIO(data)).pages[:80])
+        if data[:2] == b"PK":
+            z = zipfile.ZipFile(io.BytesIO(data))
+            names = z.namelist()
+            if "word/document.xml" in names:
+                from docx import Document as Docx
+                d = Docx(io.BytesIO(data))
+                rows = [" | ".join(c.text.strip() for c in r.cells) for t in d.tables for r in t.rows]
+                return "\n".join([p.text for p in d.paragraphs if p.text.strip()] + rows)
+            if "xl/workbook.xml" in names:
+                from openpyxl import load_workbook
+                wb = load_workbook(io.BytesIO(data), read_only=True, data_only=True)
+                return "\n".join(" | ".join(str(v) for v in row if v is not None)
+                                 for ws in wb.worksheets for row in ws.iter_rows(values_only=True) if any(row))
+            inner = [n for n in names if n.lower().endswith((".pdf", ".docx", ".xlsx"))][:8]
+            return "\n\n".join(f"[{n}]\n{_file_text(n, z.read(n))}" for n in inner)
+    except Exception:
+        return ""
+    return ""
+
+
+def _recency(name: str) -> int:
+    """Sort key from a file name's date (Stand 01.10.2026, 2026-10-01) or number (Clarification Note 31)."""
+    d = re.search(r"(\d{1,2})\.(\d{1,2})\.(20\d\d)", name) or re.search(r"(20\d\d)-(\d\d)-(\d\d)", name)
+    if d:
+        a, b, c = (int(x) for x in d.groups())
+        return (c * 10000 + b * 100 + a) if c > 1000 else (a * 10000 + b * 100 + c)
+    n = re.findall(r"\d+", name)
+    return int(n[-1]) if n else 0
+
+
+def document_texts(session, opportunity_id: str) -> list:
+    """(name, text) of the downloadable tender documents, most useful first, within budget."""
+    import requests
+    rows = session.execute(text("""select name, document_type, url from documents where opportunity_id = :o
+            and (url like '%downloadContractDocument%' or url like '%/de/documents/%')"""), {"o": opportunity_id}).fetchall()
+    rank = {t: i for i, t in enumerate(READ_ORDER)}
+    rows = sorted((r for r in rows if r.document_type in rank), key=lambda r: (rank[r.document_type], -_recency(r.name)))
+    picked, seen_kind, total = [], {}, 0
+    for r in rows:
+        kind = r.document_type
+        if kind in ("Q_AND_A", "CLARIFICATION") and seen_kind.get(kind, 0) >= 4:
+            continue  # catalogues are cumulative: the latest few say it all
+        try:
+            resp = requests.get(r.url, timeout=60, headers={"User-Agent": "Mozilla/5.0 EUDI-Radar/1.0"})
+            if resp.status_code != 200 or len(resp.content) > 30_000_000:
+                continue
+        except Exception:
+            continue
+        body = re.sub(r"[ \t]+", " ", _file_text(r.name, resp.content)).strip()[:MAIN_DOC_CHARS if kind in READ_ORDER[:2] else DOC_CHARS]
+        if len(body) < 200:
+            continue
+        if total + len(body) > TOTAL_CHARS:
+            body = body[:max(0, TOTAL_CHARS - total)]
+        if not body:
+            break
+        picked.append((r.name, body))
+        seen_kind[kind] = seen_kind.get(kind, 0) + 1
+        total += len(body)
+    return picked
+
+
+def extract_requirements(description: str, criteria: dict, doc_names: list, docs: list) -> dict:
     listing = "\n".join([
-        "Selection criteria:", *[f"- {s[:1500]}" for s in criteria["selection"]],
-        "Other tenderer requirements:", *[f"- {s[:1500]}" for s in criteria["tenderer"]],
+        "## Notice", "Procurement description:", description or "(none)",
+        "Selection criteria:", *[f"- {s[:2000]}" for s in criteria["selection"]],
+        "Other tenderer requirements:", *[f"- {s[:2000]}" for s in criteria["tenderer"]],
         "Award criteria:", *[f"- {a['type']} {a['weight']}%: {a['name'] or ''} {a['description'] or ''}" for a in criteria["award"]],
-        "Documents:", *[f"- {d}" for d in documents[:60]],
+        "All published documents:", *[f"- {d}" for d in doc_names[:80]],
+        *[f"\n## Document: {name}\n{body}" for name, body in docs],
     ])
-    return call_llm_json_premium(prompt, listing, max_tokens=8000, effort="medium")
+    return call_llm_json_premium(load_prompt("tender_requirements.md"), listing, max_tokens=16000, effort="medium")
 
 
 def analyse_tenders(session, errors: list, limit: int = 10) -> dict:
-    """Award criteria for every tracked TED notice; requirements (LLM) for active ones without any yet."""
+    """Award criteria for every tracked TED notice; summary + requirements (LLM) for active ones not analysed yet."""
     import requests
-    opps = session.execute(text("""select opportunity_id, official_url, status, deadline,
-            (select count(*) from requirements r where r.opportunity_id = o.opportunity_id) as reqs
+    opps = session.execute(text("""select opportunity_id, official_url, status, deadline, tender_analysed_at
             from opportunities o where official_url like '%ted.europa.eu%'""")).fetchall()
     done = {"award": 0, "requirements": 0}
     llm_budget = limit
@@ -93,37 +183,39 @@ def analyse_tenders(session, errors: list, limit: int = 10) -> dict:
             errors.append(f"tender analysis {o.opportunity_id}: {e}"[:200]); continue
         crit = notice_criteria(xml)
         done["award"] += store_award_criteria(session, o.opportunity_id, crit["award"])
-        active = o.status in ("OPEN", "SIGNAL")
-        if not active or o.reqs or llm_budget <= 0 or not (crit["selection"] or crit["tenderer"]):
+        active = o.status in ("OPEN", "SIGNAL") and (o.deadline is None or o.deadline >= datetime.utcnow())
+        if not active or o.tender_analysed_at or llm_budget <= 0:
             continue
         llm_budget -= 1
-        docs = [r.name for r in session.execute(text("select name from documents where opportunity_id = :o"), {"o": o.opportunity_id})]
+        names = [r.name for r in session.execute(text("select name from documents where opportunity_id = :o"), {"o": o.opportunity_id})]
         try:
-            out = extract_requirements(crit, docs)
+            out = extract_requirements(notice_description(xml), crit, names, document_texts(session, o.opportunity_id))
         except Exception as e:
             errors.append(f"requirements {o.opportunity_id}: {e}"[:300])
             if "credit" in str(e).lower():
                 break
             continue
+        session.execute(text("delete from requirement_matches where requirement_id in (select requirement_id from requirements where opportunity_id = :o)"), {"o": o.opportunity_id})
+        session.execute(text("delete from requirements where opportunity_id = :o"), {"o": o.opportunity_id})
         for r in out.get("requirements") or []:
-            cat = (r.get("category") or "").upper()
-            if cat not in CATEGORIES or not r.get("text"):
+            cat, group = (r.get("category") or "").upper(), (r.get("group") or "").upper()
+            if not r.get("text") or group not in GROUPS:
                 continue
-            rid = f"{o.opportunity_id}-{uuid.uuid4().hex[:8]}"
-            session.execute(text("""insert into requirements (requirement_id, opportunity_id, category, requirement_text,
-                    mandatory, threshold, evidence_required, source_url, confidence)
-                    values (:id, :o, :c, :t, :m, :th, :ev, :u, 'INFERRED')"""),
-                            {"id": rid, "o": o.opportunity_id, "c": cat, "t": r["text"][:2000], "m": bool(r.get("mandatory", True)),
-                             "th": (r.get("threshold") or None), "ev": (r.get("evidence") or None), "u": o.official_url})
-            m = (r.get("match") or "UNKNOWN").upper()
-            session.execute(text("""insert into requirement_matches (requirement_id, match_status, notes)
-                    values (:id, cast(:m as matchstatus), :n)"""), {"id": rid, "m": m if m in MATCHES else "UNKNOWN", "n": r.get("match_note")})
+            session.execute(text("""insert into requirements (requirement_id, opportunity_id, requirement_group, category, requirement_text,
+                    mandatory, threshold, evidence_required, document, source_url, confidence)
+                    values (:id, :o, :g, :c, :t, :m, :th, :ev, :doc, :u, 'INFERRED')"""),
+                            {"id": f"{o.opportunity_id}-{uuid.uuid4().hex[:8]}", "o": o.opportunity_id, "g": group,
+                             "c": cat if cat in CATEGORIES else None, "t": r["text"][:2000], "m": r.get("mandatory") is not False,
+                             "th": (r.get("threshold") or None) and str(r["threshold"])[:256], "ev": r.get("evidence") or None,
+                             "doc": (r.get("source") or None) and str(r["source"])[:512], "u": o.official_url})
         for a in out.get("award_criteria") or []:
             if a.get("criterion"):
                 session.execute(text("""update award_criteria set subcriteria = subcriteria || cast(:s as jsonb)
                         where opportunity_id = :o and weight is not distinct from :w"""),
                                 {"s": json.dumps({"name_en": a["criterion"], "description_en": a.get("description")}),
                                  "o": o.opportunity_id, "w": float(a["weight"]) if a.get("weight") is not None else None})
+        session.execute(text("update opportunities set tender_summary = :s, tender_analysed_at = now() where opportunity_id = :o"),
+                        {"s": (out.get("summary") or "").strip() or None, "o": o.opportunity_id})
         session.commit()
         done["requirements"] += 1
     return done

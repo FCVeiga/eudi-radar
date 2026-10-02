@@ -359,6 +359,12 @@ class Opportunity(Base):
     opportunity_relevance_score = Column(Integer)   # 0-100, section 47
     bid_readiness_score = Column(Integer)            # 0-100, section 48
     action_priority = Column(Enum(ActionPriority))
+    tender_summary = Column(Text)                    # agents/tender_analysis.py
+    tender_analysed_at = Column(DateTime)
+    evaluation = Column(JSON_TYPE)                   # Evaluation Report Agent (webapp)
+    evaluated_at = Column(DateTime)
+    evaluation_started_at = Column(DateTime)
+    evaluation_error = Column(Text)
 
     documents = relationship("Document", back_populates="opportunity")
     requirements = relationship("Requirement", back_populates="opportunity")
@@ -389,6 +395,7 @@ class Requirement(Base):
     requirement_id = Column(String(64), primary_key=True)
     opportunity_id = Column(String(64), ForeignKey("opportunities.opportunity_id"))
     category = Column(String(64))       # must be in REQUIREMENT_CATEGORIES
+    requirement_group = Column(String(32))  # ELIGIBILITY | REFERENCES | HUMAN_RESOURCES | TECHNICAL
     subcategory = Column(String(128))
     requirement_text = Column(Text)
     mandatory = Column(Boolean, default=True)

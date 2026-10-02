@@ -4,8 +4,11 @@ requests>=2.31
 anthropic>=0.40        # LLM calls — services/llm_client.py
 tavily-python>=0.5     # search adapter — adapters/tavily.py
 psycopg2-binary>=2.9   # PostgreSQL driver for Supabase connection
+pypdf>=4.0             # tender document text — agents/tender_analysis.py
+python-docx>=1.1
+openpyxl>=3.1
 # Add for a fuller deployment:
 # pgvector          # semantic dedup / candidate matching (section 60)
 # feedparser        # RSS monitoring (section 3.C)
 # beautifulsoup4    # fallback HTML parsing for portal adapters
-# pypdf or pdfplumber  # document text extraction (section 66)
+

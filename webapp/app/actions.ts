@@ -83,3 +83,12 @@ export async function startNewsReport(newsId: string) {
   if (result.status === 'done') revalidatePath(`/news/${newsId}`);
   return result;
 }
+
+/** The opportunity page's "Run" button: starts the Evaluation Report Agent. */
+export async function startEvaluationReport(opportunityId: string) {
+  if (!/^[0-9a-f]{12,40}$/.test(opportunityId)) return { status: 'error' as const, message: 'unknown opportunity' };
+  const { ensureEvaluation } = await import('@/lib/evaluationReport');
+  const result = await ensureEvaluation(opportunityId);
+  if (result.status === 'done') revalidatePath(`/opportunities/${opportunityId}`);
+  return result;
+}

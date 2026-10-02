@@ -65,6 +65,10 @@ def _facts(lines: dict) -> str:
     return "\n".join(f"{k}: {v}" for k, v in lines.items() if v)
 
 
+def _money(value, currency):
+    return f"{currency or ''} {value:,.0f}".strip() if value else None
+
+
 def opportunity_facts(o: Opportunity, country_names: dict) -> dict:
     return {
         "Category": CATEGORY_NAMES.get(o.opportunity_type, o.opportunity_type),
@@ -72,10 +76,40 @@ def opportunity_facts(o: Opportunity, country_names: dict) -> dict:
         "Country": country_names.get(o.country, o.country),
         "Buyer": o.authority,
         "Deadline": _fmt(o.deadline),
-        "Estimated value": f"{o.currency or ''} {o.estimated_value:,.0f}".strip() if o.estimated_value else None,
+        "Estimated value": _money(o.estimated_value, o.currency),
+        "Contract duration": f"{o.duration_months} months" if o.duration_months else None,
         "Analyst summary": o.summary,
         "Source": urlparse(o.official_url or "").netloc,
     }
+
+
+_ted = _tavily = None
+
+
+def gather_material(url: str):
+    """Source material for the writer, fetched in worker threads.
+    Returns (extra facts, opportunity fields to backfill)."""
+    global _ted, _tavily
+    if not url:
+        return {}, {}
+    if "ted.europa.eu" in url:
+        from adapters.ted import TedSearchProvider
+        _ted = _ted or TedSearchProvider()
+        d = _ted.notice_details(url.rstrip("/").split("/")[-1])
+        facts = {
+            "Estimated value": _money(d["value"], d["currency"]),
+            "Contract duration": f"{d['duration_months']} months" if d["duration_months"] else None,
+            "Contract nature": d["contract_nature"],
+            "Notice descriptions (may include legal boilerplate)": "\n- " + "\n- ".join(d["details"]) if d["details"] else None,
+        }
+        backfill = {k: v for k, v in (("estimated_value", d["value"]), ("currency", d["currency"]),
+                                      ("duration_months", d["duration_months"])) if v}
+        return facts, backfill
+    from agents.verification import fetch_page_text
+    if _tavily is None and os.environ.get("TAVILY_API_KEY"):
+        from adapters.tavily import TavilySearchProvider
+        _tavily = TavilySearchProvider()
+    return {"Source page text": fetch_page_text(url, _tavily)[:6000]}, {}
 
 
 def write(event: str, facts: dict) -> dict:
@@ -89,9 +123,10 @@ def write(event: str, facts: dict) -> dict:
     return {"headline": headline[:140], "body": body[:400]}
 
 
-def plan_posts(session, now: datetime) -> list:
-    """Events that should be posts but aren't yet: (post fields, event, facts)."""
-    have = {pid for (pid,) in session.query(FeedPost.post_id)}
+def plan_posts(session, now: datetime, rewrite: bool = False) -> list:
+    """Events that should be posts but aren't yet — or, with rewrite=True,
+    every current event, to regenerate copy. (post fields, event, facts, source url)."""
+    have = set() if rewrite else {pid for (pid,) in session.query(FeedPost.post_id)}
     country_names = {c.code: c.name for c in session.query(Country)}
     opps = {o.opportunity_id: o for o in session.query(Opportunity)}
     plans = []
@@ -104,7 +139,7 @@ def plan_posts(session, now: datetime) -> list:
                            opportunity_id=o.opportunity_id, category=o.opportunity_type,
                            country=o.country, score=o.opportunity_relevance_score,
                            posted_at=_naive(o.first_detected) or now),
-                      "New opportunity", opportunity_facts(o, country_names)))
+                      "New opportunity", opportunity_facts(o, country_names), o.official_url))
 
     # Only the latest change per opportunity and kind: an older deadline move
     # that has since been superseded would just be stale news.
@@ -128,7 +163,7 @@ def plan_posts(session, now: datetime) -> list:
         plans.append((dict(post_id=pid, kind="opportunity", event=event, opportunity_id=o.opportunity_id,
                            change_event_id=c.id, category=o.opportunity_type, country=o.country,
                            score=o.opportunity_relevance_score, posted_at=_naive(c.detected_at)),
-                      label, facts))
+                      label, facts, o.official_url))
 
     for n in session.query(NewsItem):
         pid = f"news:{n.news_id}"
@@ -140,29 +175,43 @@ def plan_posts(session, now: datetime) -> list:
                       f"News ({n.category})",
                       {"Original title": n.title, "Region": n.region, "Source": n.source_name,
                        "Published": _fmt(n.published_date), "Analyst summary": n.summary,
-                       "Excerpt": (n.excerpt or "")[:400]}))
+                       "Excerpt": (n.excerpt or "")[:400]}, n.source_url))
     return plans
 
 
-def publish_new_posts(session, errors: list, now=None) -> int:
-    """Write and store posts for every new event. Failed posts are retried next run."""
+def publish_new_posts(session, errors: list, now=None, rewrite: bool = False) -> int:
+    """Write and store posts for every new event (failed ones retry next run).
+    rewrite=True regenerates the copy of existing posts, keeping their ranks."""
     now = now or datetime.utcnow()
-    plans = plan_posts(session, now)
+    plans = plan_posts(session, now, rewrite)
 
     def run(plan):
-        fields, event, facts = plan
+        fields, event, facts, url = plan
         try:
-            return fields, write(event, facts), None
+            try:
+                extra, backfill = gather_material(url)
+            except Exception:  # unreadable source: write from the facts we have
+                extra, backfill = {}, {}
+            return fields, write(event, facts | {k: v for k, v in extra.items() if v}), backfill, None
         except Exception as e:
-            return fields, None, e
+            return fields, None, {}, e
 
     published = 0
     with ThreadPoolExecutor(max_workers=6) as pool:
-        for fields, copy, err in pool.map(run, plans):
+        for fields, copy, backfill, err in pool.map(run, plans):
             if err:
                 errors.append(f"feed post {fields['post_id']}: {err}")
                 continue
-            session.add(FeedPost(**fields, **copy, created_at=now))
+            if backfill and fields.get("opportunity_id"):
+                o = session.get(Opportunity, fields["opportunity_id"])
+                for k, v in backfill.items():
+                    if getattr(o, k) is None:
+                        setattr(o, k, v)
+            existing = session.get(FeedPost, fields["post_id"])
+            if existing:
+                existing.headline, existing.body = copy["headline"], copy["body"]
+            else:
+                session.add(FeedPost(**fields, **copy, created_at=now))
             session.commit()
             published += 1
     return published

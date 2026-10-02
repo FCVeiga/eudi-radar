@@ -97,6 +97,40 @@ class TedSearchProvider(SearchProvider):
         return {"deadline": deadlines[-1] if deadlines else None,
                 "planned_date": planned.group(1) if planned else None}
 
+    def notice_details(self, publication_number: str) -> dict:
+        """Substance of a notice from its eForms XML: estimated value,
+        duration, contract nature and the procurement/lot descriptions."""
+        resp = self.session.get(f"https://ted.europa.eu/en/notice/{publication_number}/xml", timeout=30)
+        resp.raise_for_status()
+        xml = resp.text
+
+        # Descriptions in English if the notice has any, else the original language.
+        found = [(lang, re.sub(r"\s+", " ", t).strip()) for lang, t in
+                 re.findall(r'<cbc:Description(?: [^>]*languageID="(\w+)")?[^>]*>(.*?)</cbc:Description>', xml, re.S)]
+        english = [t for lang, t in found if lang == "ENG"]
+        descriptions = english or [t for _, t in found]
+
+        value = re.search(r'<cbc:EstimatedOverallContractAmount currencyID="(\w+)">([\d.]+)<', xml)
+        duration = re.search(r'<cbc:DurationMeasure unitCode="(\w+)">([\d.]+)<', xml)
+        months = None
+        if duration:
+            n = float(duration.group(2))
+            months = round({"MONTH": n, "YEAR": n * 12, "DAY": n / 30}.get(duration.group(1), n))
+        nature = re.search(r'<cbc:ProcurementTypeCode listName="contract-nature">(\w+)<', xml)
+        seen, details = set(), []
+        for t in descriptions:
+            key = t.lower()[:80]
+            if len(t) > 25 and not t.startswith("http") and key not in seen:
+                seen.add(key)
+                details.append(t[:600])
+        return {
+            "value": float(value.group(2)) if value else None,
+            "currency": value.group(1) if value else None,
+            "duration_months": months,
+            "contract_nature": nature.group(1) if nature else None,
+            "details": details[:6],
+        }
+
     def fetch(self, url: str) -> str:
         resp = self.session.get(url, timeout=30)
         resp.raise_for_status()

@@ -68,9 +68,9 @@ export default function NavActions() {
         {count.chat > 0 && <span className="nav-badge">{count.chat > 9 ? '9+' : count.chat}</span>}
       </button>
 
-      <Link href="/posts/new" className="btn nav-new-post" aria-label="Create a new post">
-        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" /></svg>
-        <span>New Post</span>
+      <Link href="/posts/new" className="nav-new-post" aria-label="Create a new post">
+        <span className="nav-new-post-box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" /></svg></span>
+        <span className="nav-new-post-text">New Post</span>
       </Link>
 
       <div className="nav-bell" ref={bell}>

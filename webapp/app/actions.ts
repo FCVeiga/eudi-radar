@@ -74,3 +74,24 @@ export async function saveSource(_prev: SaveSourceState, form: FormData): Promis
       : `searched every ${every === 1 ? 'day' : `${every} days`}`;
   return { ok: true, message: `${row.name}: ${enabled ? how : 'paused'}.` };
 }
+
+export type NewsReportState = { ok: boolean; message: string } | null;
+
+/** "Trigger agent report" on a news page: the News Report Agent reads the article and reports. */
+export async function triggerNewsReport(_prev: NewsReportState, form: FormData): Promise<NewsReportState> {
+  const newsId = String(form.get('news_id') || '');
+  if (!/^[0-9a-f]{16}$/.test(newsId)) return { ok: false, message: 'Unknown news item.' };
+  try {
+    const { runNewsReport } = await import('@/lib/newsReport');
+    await runNewsReport(newsId);
+  } catch (e: any) {
+    const msg = String(e?.message || e);
+    return {
+      ok: false,
+      message: /credit balance/i.test(msg) ? 'The agent could not run: the Anthropic API account is out of credit.'
+        : `The agent could not run: ${msg.slice(0, 200)}`,
+    };
+  }
+  revalidatePath(`/news/${newsId}`);
+  return { ok: true, message: 'Report ready.' };
+}

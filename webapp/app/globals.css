@@ -311,7 +311,7 @@ h1, h2, h3 { color: var(--ink); letter-spacing: -0.02em; line-height: 1.25; }
 .summary-head h2, .analysis-head h2 { margin-bottom: 0; }
 .source-link { font-size: 12.5px; font-weight: 600; color: var(--accent); white-space: nowrap; }
 .source-link:hover { text-decoration: underline; }
-.summary-block p { font-size: 15px; line-height: 1.7; color: var(--text); margin-bottom: 12px; }
+.summary-block p { font-size: 15.5px; line-height: 1.75; color: var(--text); margin-bottom: 12px; }
 .summary-block .feed-image { max-height: 360px; margin-bottom: 16px; }
 .key-facts { margin: 6px 0 4px; padding: 14px 18px 14px 34px; background: var(--surface-2); border-radius: 10px; display: flex; flex-direction: column; gap: 6px; }
 .key-facts li { font-size: 13.5px; color: var(--ink); line-height: 1.5; }
@@ -321,6 +321,19 @@ h1, h2, h3 { color: var(--ink); letter-spacing: -0.02em; line-height: 1.25; }
 .verdict.act { background: var(--brand-gradient); color: var(--ink); }
 .verdict.consider { background: var(--warn-soft); color: var(--warn); }
 .verdict.monitor { background: var(--surface-2); color: var(--muted); }
+.agent-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.agent-head .verdict { margin-left: auto; }
+.agent-face { flex-shrink: 0; filter: drop-shadow(0 3px 8px rgba(0, 204, 255, 0.35)); }
+.agent-id h2 { margin-bottom: 0; }
+.agent-name { font-family: var(--font-mono-stack); font-size: 11.5px; color: var(--muted); }
+.agent-intro { margin-bottom: 14px !important; }
+.report-trigger { margin-top: 16px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.btn.trigger { height: 40px; padding: 0 18px; }
+.btn.primary.trigger { background: var(--ink); background-image: linear-gradient(135deg, #1A233B, #2B3A63); }
+.report-progress { font-size: 13px !important; color: var(--accent) !important; display: flex; align-items: center; gap: 10px; margin: 0 !important; }
+.dots { width: 18px; height: 6px; background: radial-gradient(circle, var(--accent) 2.5px, transparent 3px) 0 50% / 6px 6px repeat-x; animation: dots 1s steps(3) infinite; }
+@keyframes dots { from { width: 6px; } to { width: 24px; } }
+@media (prefers-reduced-motion: reduce) { .dots { animation: none; width: 18px; } }
 .analysis-take { font-size: 15px; font-weight: 600; color: var(--ink); line-height: 1.55; margin-bottom: 14px !important; }
 .actions { display: flex; flex-direction: column; gap: 10px; }
 .action { padding: 14px 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }

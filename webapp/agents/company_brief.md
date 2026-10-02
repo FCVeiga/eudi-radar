@@ -1,7 +1,7 @@
 # WalliD — company brief for the radar's agents
 
 <!-- Drafted from wallid.io (Oct 2026). The team should review and extend it:
-     the News analyst agent (agents/news_analyst.py) reads this file to judge
+     the News Report Agent (webapp/lib/newsReport.ts) reads this file to judge
      what WalliD should do about each story. Edit freely; no code change needed. -->
 
 ## What WalliD does

@@ -3,9 +3,13 @@ import { getSupabaseServerClient } from '@/lib/supabase';
 import { newsCategoryLabel, titleOf } from '@/lib/data';
 import { firstEnglish } from '@/lib/english';
 import NewsImage from '@/components/NewsImage';
+import NewsReportTrigger, { AgentFace } from '@/components/NewsReport';
+
+// The News Report Agent runs inside this page's server action: give it time.
+export const maxDuration = 120;
 
 type Action = { type: string; title: string; why?: string; next_step?: string; deadline?: string | null; priority?: string };
-type Analysis = { verdict: 'act' | 'consider' | 'monitor'; take?: string; actions: Action[] };
+type Analysis = { verdict: 'act' | 'consider' | 'monitor'; take?: string; actions: Action[]; agent?: string };
 
 const ACTION_LABELS: Record<string, string> = {
   content: 'Publish', participate: 'Participate', announce: 'Announce', outreach: 'Reach out',
@@ -75,13 +79,22 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
       </section>
 
       <section className="detail-block analysis-block">
-        <div className="analysis-head">
-          <h2>Agent Analysis</h2>
+        <div className="agent-head">
+          <AgentFace />
+          <div className="agent-id">
+            <h2>Agent Analysis</h2>
+            <span className="agent-name">News Report Agent{n.analysed_at ? ` · report from ${fmtDate(n.analysed_at)}` : ''}</span>
+          </div>
           {analysis && <span className={`verdict ${analysis.verdict}`} title={VERDICTS[analysis.verdict]?.note}>{VERDICTS[analysis.verdict]?.label}</span>}
         </div>
-        {!analysis ? (
-          <p className="muted">The analyst agent hasn&apos;t reviewed this story yet — it reads the full article in the next run.</p>
-        ) : (
+
+        {!analysis && (
+          <p className="muted agent-intro">
+            Ask the News Report Agent to read this story and report what WalliD should do about it — publish a post,
+            take part in a consultation, standards group or pilot, make an announcement, reach out, or just monitor.
+          </p>
+        )}
+        {analysis && (
           <>
             {firstEnglish(analysis.take) && <p className="analysis-take">{analysis.take}</p>}
             <div className="actions">
@@ -100,6 +113,7 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
             </div>
           </>
         )}
+        <NewsReportTrigger newsId={n.news_id} hasReport={!!analysis} />
       </section>
     </div>
   );

@@ -512,6 +512,29 @@ class NewsItem(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
+class FeedPost(Base):
+    """A post on the home feed, written by the feed-writer agent. One per
+    event: a new opportunity, an update to one (deadline moved, awarded),
+    or a news story. Ranked like Reddit's "hot" with the AI score as votes."""
+    __tablename__ = "feed_posts"
+    post_id = Column(String(80), primary_key=True)   # opp:<id> | chg:<change id> | news:<id>
+    kind = Column(String(16))          # opportunity | news
+    event = Column(String(32))         # new_opportunity | deadline_change | awarded | news
+    opportunity_id = Column(String(64))
+    news_id = Column(String(64))
+    change_event_id = Column(Integer)
+    category = Column(String(32))      # rfp | rfi | grant | signal | regulation | industry | market
+    country = Column(String(4))
+    headline = Column(Text)
+    body = Column(Text)
+    score = Column(Integer)            # AI relevance / importance, 0-100
+    posted_at = Column(DateTime)       # when the event happened: drives novelty
+    created_at = Column(DateTime, default=datetime.utcnow)
+    rank = Column(Integer)             # position at the last pipeline run
+    prev_rank = Column(Integer)        # position at the run before: drives the ▲/▼
+    ranked_at = Column(DateTime)
+
+
 class TrackedAccount(Base):
     """LinkedIn/Twitter accounts monitored for the News page — mirrors
     config/tracked_accounts.yaml, persisted so the dashboard can query it."""

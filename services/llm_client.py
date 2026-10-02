@@ -14,6 +14,7 @@ except ImportError:
 
 CHEAP_MODEL = "claude-haiku-4-5-20251001"
 STRONG_MODEL = "claude-sonnet-4-6"
+WRITER_MODEL = "claude-opus-5-5"   # feed copy: quality matters, volume is small
 
 
 def _get_client() -> "anthropic.Anthropic":
@@ -54,6 +55,27 @@ def call_llm_json(system_prompt: str, user_content: str,
         system=system_prompt,
         messages=[{"role": "user", "content": user_content}],
     )
+    text = "".join(block.text for block in response.content if block.type == "text")
+    return _extract_json(text)
+
+
+def call_llm_json_premium(system_prompt: str, user_content: str,
+                          model: str = WRITER_MODEL, max_tokens: int = 4000,
+                          effort: str = "low") -> dict:
+    """For Claude Opus 5.5-class models: thinking is always on (effort is the
+    only dial), and the server-side refusal fallback re-runs a declined
+    request on a fallback model. Both are sent as raw body/header fields so
+    this works on the 0.x SDK (local) and 1.x SDK (GitHub Actions) alike."""
+    client = _get_client()
+    response = client.messages.create(
+        model=model, max_tokens=max_tokens,
+        system=system_prompt,
+        messages=[{"role": "user", "content": user_content}],
+        extra_headers={"anthropic-beta": "server-side-fallback-2026-07-01"},
+        extra_body={"output_config": {"effort": effort}, "fallbacks": "default"},
+    )
+    if response.stop_reason == "refusal":
+        raise ValueError(f"Model declined the request ({getattr(response, 'stop_details', None)})")
     text = "".join(block.text for block in response.content if block.type == "text")
     return _extract_json(text)
 

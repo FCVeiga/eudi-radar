@@ -1,92 +1,100 @@
 /**
- * The home feed: opportunities and news in one list, ranked like Reddit's
- * "hot" — but the AI's relevance score stands in for upvotes.
+ * EUDI Radar feed: posts written by the feed-writer agent
+ * (agents/feed_writer.py) about opportunities, their updates, and news.
  *
- *   hot = score × 0.5^(age / HALF_LIFE)
+ * Ranking ("Relevance" view) works like Reddit's hot, with the AI score in
+ * place of upvotes:  hot = score × 0.5^(age / HALF_LIFE_DAYS)
+ * Keep HALF_LIFE_DAYS in sync with agents/feed_writer.py.
  *
- * so an item's weight halves every HALF_LIFE_DAYS. A fresh 60 beats a 95 from
- * a week ago; nothing old and marginal survives near the top.
- *
- * "Age" runs from when the item entered the feed:
- *   - news: its publication date (old news found today is still old news);
- *   - opportunities: when the radar first found them, bumped by any later
- *     update (e.g. a deadline extension) — like a post rising on new activity.
+ * Movement arrows compare the post's rank at the last pipeline run with the
+ * run before (feed_posts.rank / prev_rank). Since every post decays at the
+ * same rate, order only shifts when posts enter or leave the feed.
  */
-import {
-  NewsItem, Opportunity, getActiveOpportunities, getNews, getRecentChanges,
-  isNew, isUpdated, newsCategoryLabel, oppCategoryLabel,
-} from '@/lib/data';
+import { getSupabaseServerClient } from '@/lib/supabase';
+import { getActiveOpportunities, newsCategoryLabel, oppCategoryLabel } from '@/lib/data';
 
 export const HALF_LIFE_DAYS = 4;
-// News whose importance couldn't be scored ranks as "marginal".
 const UNSCORED = 30;
+
+export const FEED_VIEWS = [
+  { slug: 'relevance', label: 'Relevance' },
+  { slug: 'new', label: 'New' },
+  { slug: 'top', label: 'Top' },
+  { slug: 'opportunities', label: 'Opportunities' },
+  { slug: 'news', label: 'News' },
+] as const;
+export type FeedView = (typeof FEED_VIEWS)[number]['slug'];
+
+type PostRow = {
+  post_id: string; kind: 'opportunity' | 'news'; event: string;
+  opportunity_id: string | null; news_id: string | null;
+  category: string | null; country: string | null;
+  headline: string; body: string | null; score: number | null;
+  posted_at: string | null; created_at: string | null;
+  rank: number | null; prev_rank: number | null;
+};
 
 export type FeedItem = {
   key: string;
   kind: 'opportunity' | 'news';
+  event: string;
   href: string;
-  title: string;
-  summary: string | null;
-  category: string;          // css tag class: rfp | rfi | grant | signal | regulation | industry | market
+  headline: string;
+  body: string | null;
+  category: string;
   categoryLabel: string;
-  kindLabel: string;         // "Opportunity" | "News"
+  kindLabel: string;
   country: string | null;
-  source: string | null;     // domain or authority
-  at: Date;                  // feed time (see above)
-  score: number;             // AI relevance / importance, 0-100
-  hot: number;
+  at: Date;
+  score: number;        // AI relevance / importance
+  combined: number;     // score × novelty — what the card shows
+  movement: 'up' | 'down' | 'same';
   deadline: string | null;
   isNew: boolean;
-  update: string | null;     // latest change, e.g. "Deadline extended: …"
 };
 
-function domain(url: string | null) {
-  if (!url) return null;
-  try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return null; }
-}
+const decay = (at: Date, now: Date) =>
+  Math.pow(0.5, Math.max(0, (now.getTime() - at.getTime()) / 86400_000) / HALF_LIFE_DAYS);
 
-function hot(score: number, at: Date, now: Date) {
-  const ageDays = Math.max(0, (now.getTime() - at.getTime()) / 86400_000);
-  return score * Math.pow(0.5, ageDays / HALF_LIFE_DAYS);
-}
+export async function getFeed(view: FeedView, now = new Date()) {
+  const [{ data, error }, { opportunities }] = await Promise.all([
+    getSupabaseServerClient().from('feed_posts').select('*').order('posted_at', { ascending: false }).limit(1000),
+    getActiveOpportunities(),
+  ]);
+  const active = new Map(opportunities.map((o) => [o.opportunity_id, o]));
 
-export async function getFeed(now = new Date()) {
-  const [{ opportunities, error: oErr }, { news, error: nErr }, { changes }] =
-    await Promise.all([getActiveOpportunities(), getNews(), getRecentChanges(30, 200)]);
+  const items: FeedItem[] = ((data || []) as PostRow[])
+    // Opportunity posts only while the opportunity is still open; awards and news always.
+    .filter((p) => p.kind === 'news' || p.event === 'awarded' || (p.opportunity_id && active.has(p.opportunity_id)))
+    .map((p) => {
+      const at = new Date(p.posted_at || p.created_at || now);
+      const score = p.score ?? UNSCORED;
+      const opp = p.opportunity_id ? active.get(p.opportunity_id) : undefined;
+      const movement: FeedItem['movement'] =
+        p.rank === null ? 'same'
+          : p.prev_rank === null || p.rank < p.prev_rank ? 'up'
+            : p.rank > p.prev_rank ? 'down' : 'same';
+      return {
+        key: p.post_id, kind: p.kind, event: p.event,
+        href: p.kind === 'news' ? `/news/${p.news_id}` : `/opportunities/${p.opportunity_id}`,
+        headline: p.headline, body: p.body,
+        category: p.category || (p.kind === 'news' ? 'market' : 'rfp'),
+        categoryLabel: p.kind === 'news' ? newsCategoryLabel(p.category) : oppCategoryLabel(p.category),
+        kindLabel: p.kind === 'news' ? 'News' : 'Opportunity',
+        country: p.country, at, score, combined: Math.round(score * decay(at, now)),
+        movement, deadline: p.event === 'awarded' ? null : opp?.deadline ?? null,
+        isNew: now.getTime() - at.getTime() <= 2 * 86400_000,
+      };
+    });
 
-  const latestChange = new Map<string, string>();
-  for (const c of changes) if (!latestChange.has(c.opportunity_id) && c.description) latestChange.set(c.opportunity_id, c.description);
-
-  const opp = (o: Opportunity): FeedItem => {
-    const found = new Date(o.first_detected || o.publication_date || now);
-    const updated = isUpdated(o, now) && o.last_change ? new Date(o.last_change) : null;
-    const at = updated && updated > found ? updated : found;
-    const score = o.opportunity_relevance_score ?? UNSCORED;
-    return {
-      key: `o:${o.opportunity_id}`, kind: 'opportunity', href: `/opportunities/${o.opportunity_id}`,
-      title: o.title, summary: o.summary, category: o.opportunity_type || 'rfp',
-      categoryLabel: oppCategoryLabel(o.opportunity_type), kindLabel: 'Opportunity',
-      country: o.country, source: o.authority || domain(o.official_url), at, score, hot: hot(score, at, now),
-      deadline: o.deadline, isNew: isNew(o, now),
-      update: updated ? latestChange.get(o.opportunity_id) ?? 'Updated' : null,
-    };
-  };
-
-  const newsItem = (n: NewsItem): FeedItem => {
-    const at = new Date(n.published_date || n.created_at || now);
-    const score = n.relevance_score ?? UNSCORED;
-    return {
-      key: `n:${n.news_id}`, kind: 'news', href: `/news/${n.news_id}`,
-      title: n.title, summary: n.summary || n.excerpt, category: n.category || 'market',
-      categoryLabel: newsCategoryLabel(n.category), kindLabel: 'News',
-      country: n.region && n.region !== 'EU / International' ? n.region : null,
-      source: n.source_name?.replace(/^www\./, '') || null, at, score, hot: hot(score, at, now),
-      deadline: null, isNew: now.getTime() - at.getTime() <= 2 * 86400_000, update: null,
-    };
-  };
-
-  const items = [...opportunities.map(opp), ...news.map(newsItem)].sort((a, b) => b.hot - a.hot);
-  return { items, error: oErr || nErr };
+  const byHot = (a: FeedItem, b: FeedItem) => b.score * decay(b.at, now) - a.score * decay(a.at, now);
+  const sorted =
+    view === 'new' ? items.sort((a, b) => b.at.getTime() - a.at.getTime())
+      : view === 'top' ? items.sort((a, b) => b.score - a.score || b.at.getTime() - a.at.getTime())
+        : view === 'opportunities' ? items.filter((i) => i.kind === 'opportunity').sort(byHot)
+          : view === 'news' ? items.filter((i) => i.kind === 'news').sort(byHot)
+            : items.sort(byHot);
+  return { items: sorted, error };
 }
 
 /** "3h ago", "2d ago", "14 Sep" — compact, like a feed. */
@@ -99,4 +107,3 @@ export function timeAgo(at: Date, now = new Date()) {
   if (days < 14) return `${days}d ago`;
   return at.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 }
-

@@ -401,7 +401,13 @@ def main():
     verified = verify_opportunities(session, errors)
     print(f"Verification: {verified} opportunities checked against their source")
 
-    # --- 4. Digest ------------------------------------------------------------
+    # --- 4. Feed: agents post new events, then the feed is re-ranked ---------
+    from agents.feed_writer import publish_new_posts, rank_posts
+    posted = publish_new_posts(session, errors)
+    ranked = rank_posts(session)
+    print(f"Feed: {posted} new posts, {ranked} posts ranked")
+
+    # --- 5. Digest ------------------------------------------------------------
     digest_opps = [{
         "priority": "P1" if (o.opportunity_relevance_score or 0) >= 75 else "P2",
         "country": country_names.get(o.country, o.country or "International"),

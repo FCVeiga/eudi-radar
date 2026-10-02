@@ -1,5 +1,8 @@
 import Link from 'next/link';
 import HeartButton from './HeartButton';
+import CardActions from './social/CardActions';
+import CardMenu from './social/CardMenu';
+import type { Engagement } from '@/lib/engagement';
 import { likeTarget } from '@/lib/likes';
 import { daysUntil } from '@/lib/data';
 import { FeedItem, timeAgo } from '@/lib/feed';
@@ -30,9 +33,11 @@ function Deadline({ deadline, now }: { deadline: string; now: Date }) {
 }
 
 /** One post: the same card on the home feed and in search results. */
-export default function FeedCard({ item, now, value, like }: {
+export default function FeedCard({ item, now, value, like, social }: {
   item: FeedItem; now: Date; value?: number; like?: { liked: boolean; signedIn: boolean };
+  social?: { engagement: Engagement; signedIn: boolean };  // News page: … menu and action bar
 }) {
+  if (social) return <SocialFeedCard item={item} now={now} value={value} social={social} />;
   const target = like ? likeTarget(item.href) : null;
   const card = (
     <Link href={item.href} className={`feed-item ${item.kind}`}>
@@ -60,5 +65,37 @@ export default function FeedCard({ item, now, value, like }: {
       {card}
       <HeartButton type={target[0]} id={target[1]} liked={like.liked} signedIn={like.signedIn} className="card-heart" />
     </div>
+  );
+}
+
+/** News page card (Reddit-style): tags · time, … menu, content, action bar under it. */
+function SocialFeedCard({ item, now, value, social }: { item: FeedItem; now: Date; value?: number; social: { engagement: Engagement; signedIn: boolean } }) {
+  const target = likeTarget(item.href);
+  if (!target || target[0] === 'post') return null;
+  const [type, id] = target as ['news' | 'tender', string];
+  const e = social.engagement;
+  return (
+    <article className={`feed-item ${item.kind} social-card`} data-card>
+      <Votes item={item} value={value ?? item.combined} />
+      <div className="feed-body">
+        <div className="feed-meta cc-meta">
+          <span className={`feed-kind ${item.kind}`}>{item.kindLabel}</span>
+          <span className={`tag ${item.category}`}>{item.categoryLabel}</span>
+          {item.isNew && <span className="tag new">New</span>}
+          {item.country && <span className="feed-meta-text">{item.country}</span>}
+          <span className="cc-dot">·</span>
+          <span className="cc-time" title={item.at.toLocaleString('en-GB')}>{timeAgo(item.at, now)}</span>
+        </div>
+        <Link href={item.href} className="cc-link">
+          <div className="feed-title">{item.headline}</div>
+          {item.image && <NewsImage src={item.image} />}
+          {item.body && <p className="feed-summary">{item.body}</p>}
+          {item.deadline && <Deadline deadline={item.deadline} now={now} />}
+        </Link>
+        <CardActions type={type} id={id} href={item.href} title={item.headline} signedIn={social.signedIn}
+          likes={e.likes} liked={e.liked} comments={e.comments} reposts={e.reposts} reposted={e.reposted} />
+      </div>
+      <CardMenu type={type} id={id} signedIn={social.signedIn} />
+    </article>
   );
 }

@@ -4,12 +4,9 @@ import { firstInLanguage } from '@/lib/english';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import FeedCard from './FeedCard';
 import SectionTabs from './SectionTabs';
-import { getFeedLikes, likeTarget } from '@/lib/likes';
+import { likeTarget } from '@/lib/likes';
+import { getEngagement } from '@/lib/engagement';
 
-const likeOf = (likes: { signedIn: boolean; liked: Set<string> }, href: string) => {
-  const t = likeTarget(href);
-  return { liked: !!t && likes.liked.has(`${t[0]}:${t[1]}`), signedIn: likes.signedIn };
-};
 
 type View = 'all' | 'signals' | (typeof NEWS_CATEGORIES)[number]['slug'];
 
@@ -69,7 +66,11 @@ export default async function NewsView({ view }: { view: View }) {
   const items = (view === 'signals' ? signalItems : view === 'all' ? [...newsItems, ...signalItems] : newsItems)
     .sort((a, b) => b.combined - a.combined || b.at.getTime() - a.at.getTime());
 
-  const likes = await getFeedLikes(items.map((i) => i.href));
+  // Action bars: news stories and signals (tenders).
+  const idsOf = (t: string) => items.map((i) => likeTarget(i.href)).filter((x) => x?.[0] === t).map((x) => x![1]);
+  const [newsEng, tenderEng] = await Promise.all([getEngagement('news', idsOf('news')), getEngagement('tender', idsOf('tender'))]);
+  const engOf = (href: string) => { const t = likeTarget(href); return t?.[0] === 'tender' ? tenderEng : newsEng; };
+  const visible = items.filter((i) => { const t = likeTarget(i.href); return !t || !engOf(i.href).hidden.has(t[1]); });
   const tabs = [
     { href: '/news', label: 'All', count: all.length + signals.length },
     ...NEWS_CATEGORIES.map((c) => ({
@@ -84,7 +85,7 @@ export default async function NewsView({ view }: { view: View }) {
       <SectionTabs tabs={tabs} active={view === 'all' ? '/news' : `/news/${view}`} />
 
       {error && <div className="callout error"><strong>Error loading news.</strong> {error.message}</div>}
-      {!error && items.length === 0 && (
+      {!error && visible.length === 0 && (
         <div className="callout">
           <strong>{view === 'signals' ? 'No confirmed signals right now.' : 'No news in this section yet.'}</strong>
           {view === 'signals' && ' A signal is a named buyer announcing a procurement that isn’t open yet — a prior information notice, an approved budget, a mandated system. They appear here, and on the home feed, once the pipeline has checked them against the source.'}
@@ -92,7 +93,8 @@ export default async function NewsView({ view }: { view: View }) {
       )}
 
       <div className="feed">
-        {items.map((i) => <FeedCard key={i.key} item={i} now={now} like={likeOf(likes, i.href)} />)}
+        {visible.map((i) => <FeedCard key={i.key} item={i} now={now}
+          social={{ engagement: engOf(i.href).get(likeTarget(i.href)?.[1] ?? ''), signedIn: newsEng.signedIn }} />)}
       </div>
     </div>
   );

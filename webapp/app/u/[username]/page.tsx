@@ -13,6 +13,7 @@ import FollowButton from '@/components/social/FollowButton';
 import CommunityCard from '@/components/social/CommunityCard';
 import { getLikedPosts } from '@/lib/community';
 import { getSupabaseServerClient } from '@/lib/supabase';
+import { getEngagement } from '@/lib/engagement';
 
 const TABS = [
   { key: 'posts', label: 'Posts' },
@@ -49,18 +50,21 @@ export default async function ProfilePage({ params, searchParams }: { params: { 
   } else if (tab === 'comments') {
     const comments = await getComments(profile.id);
     body = comments.length ? comments.map((c: any) => (
-      <Link key={c.id} href={`/posts/${c.post_id}`} className="profile-post"><span className="profile-meta">on “{c.posts?.title}” · {fmt(c.created_at)}</span><p className="profile-post-body">{c.body}</p></Link>
+      <Link key={c.id} href={`${c.item_type === 'news' ? `/news/${c.item_id}` : c.item_type === 'tender' ? `/tenders/${c.item_id}` : `/posts/${c.post_id}`}#c-${c.id}`} className="profile-post">
+        <span className="profile-meta">{c.posts?.title ? <>on “{c.posts.title}”</> : c.item_type === 'news' ? 'on a news story' : 'on a tender'} · {fmt(c.created_at)}</span>
+        <p className="profile-post-body">{c.body}</p>
+      </Link>
     )) : <Empty own={own} who={profile.username} what="comments" hint="Comments on other people’s posts will show here." />;
   } else if (tab === 'following') {
     if (!own) {
       body = <div className="profile-empty"><p className="profile-empty-title">Only u/{profile.username} can see what they follow.</p></div>;
     } else {
       const [items, likedPosts] = await Promise.all([getFollowing(profile.id), getLikedPosts(profile.id, now)]);
-      const likes = await getFeedLikes(items.map((i) => i.href));
+      const [likes, postEngagement] = await Promise.all([getFeedLikes(items.map((i) => i.href)), getEngagement('post', likedPosts.map((l) => l.post.id))]);
       // Tenders, news and posts together, most recently liked first.
       const all = [
         ...items.map((i) => ({ at: i.at.getTime(), node: (() => { const t = likeTarget(i.href); return <FeedCard key={i.key} item={i} now={now} like={{ liked: !!t && likes.liked.has(`${t[0]}:${t[1]}`), signedIn: true }} />; })() })),
-        ...likedPosts.map(({ post, likedAt }) => ({ at: new Date(likedAt).getTime(), node: <CommunityCard key={`post:${post.id}`} post={post} now={now} liked signedIn /> })),
+        ...likedPosts.map(({ post, likedAt }) => ({ at: new Date(likedAt).getTime(), node: <CommunityCard key={`post:${post.id}`} post={post} now={now} engagement={postEngagement.get(post.id)} signedIn /> })),
       ].sort((a, b) => b.at - a.at);
       body = all.length
         ? <div className="feed">{all.map((x) => x.node)}</div>

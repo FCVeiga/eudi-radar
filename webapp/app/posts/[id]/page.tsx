@@ -3,17 +3,17 @@ import { notFound } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { getPost } from '@/lib/social';
 import UserAvatar from '@/components/UserAvatar';
-import { CommentForm } from '@/components/social/PostForms';
+import CommentsSection from '@/components/social/CommentsSection';
 import PostMarkdown from '@/components/social/PostMarkdown';
-import HeartButton from '@/components/HeartButton';
-import { getLikes } from '@/lib/likes';
+import CardActions from '@/components/social/CardActions';
+import { getEngagement } from '@/lib/engagement';
 
 const fmt = (iso: string) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
 export default async function PostPage({ params }: { params: { id: string } }) {
   const [post, user] = await Promise.all([getPost(params.id), getCurrentUser()]);
   if (!post) notFound();
-  const likes = await getLikes('post', [post.id]);
+  const eng = await getEngagement('post', [post.id]);
   return (
     <div className="post-page">
       <Link className="back-link" href="/community">← Community</Link>
@@ -35,28 +35,12 @@ export default async function PostPage({ params }: { params: { id: string } }) {
             ))}
           </div>
         )}
-        <div className="post-actions">
-          <HeartButton type="post" id={post.id} liked={likes.liked.has(post.id)} signedIn={likes.signedIn} />
-          <span>{post.likes} {post.likes === 1 ? 'like' : 'likes'}</span>
-          <span>· {post.comments.length} {post.comments.length === 1 ? 'comment' : 'comments'}</span>
-        </div>
+        <CardActions type="post" id={post.id} href={`/posts/${post.id}`} title={post.title} signedIn={eng.signedIn}
+          likes={eng.get(post.id).likes} liked={eng.get(post.id).liked} comments={eng.get(post.id).comments}
+          reposts={eng.get(post.id).reposts} reposted={eng.get(post.id).reposted} />
       </article>
 
-      <section className="detail-block">
-        <h2>Comments <span className="uc-count">{post.comments.length}</span></h2>
-        {user ? <CommentForm postId={post.id} /> : <p className="muted"><Link href={`/login?next=/posts/${post.id}`}>Log in</Link> to comment.</p>}
-        <div className="comments">
-          {post.comments.map((c) => (
-            <div key={c.id} className="comment">
-              <UserAvatar name={c.author?.username || '?'} src={c.author?.avatarUrl} size={28} />
-              <div>
-                <div className="comment-meta">{c.author ? <Link href={`/u/${c.author.username}`}>u/{c.author.username}</Link> : 'deleted user'} · {fmt(c.createdAt)}</div>
-                <p>{c.body}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      <CommentsSection itemType="post" itemId={post.id} loginNext={`/posts/${post.id}`} />
     </div>
   );
 }

@@ -90,21 +90,77 @@ export async function toggleFollow(username: string) {
   return { following: !data };
 }
 
+const ITEM = /^(post|news|tender):([\w-]{6,64})$/;
+type ItemType = 'post' | 'news' | 'tender';
+const itemHref = (t: string, id: string) => (t === 'post' ? `/posts/${id}` : t === 'news' ? `/news/${id}` : `/tenders/${id}`);
+
+/** A comment on a post, news story or tender — or a reply to another comment. */
 export async function addComment(_prev: FormState, form: FormData): Promise<FormState> {
   const user = await getCurrentUser();
   if (!user) return { ok: false, message: 'Log in to comment.' };
-  const postId = String(form.get('post') || '');
+  const ref = String(form.get('item') || '').match(ITEM);
+  const parent = String(form.get('parent') || '');
   const body = String(form.get('body') || '').trim();
-  if (!UUID.test(postId) || !body) return { ok: false, message: 'Write a comment first.' };
-  const { data: post } = await db().from('posts').select('user_id, title').eq('id', postId).maybeSingle();
-  if (!post) return { ok: false, message: 'That post no longer exists.' };
-  const { error } = await db().from('comments').insert({ user_id: user.id, post_id: postId, body: body.slice(0, 10000) });
-  if (error) return { ok: false, message: error.message };
-  if (post.user_id !== user.id) {
-    await notify(post.user_id, { type: 'comment', title: `u/${user.username} commented on your post`, body: post.title, link: `/posts/${postId}`, actorId: user.id });
+  if (!ref || !body) return { ok: false, message: 'Write a comment first.' };
+  const [, type, id] = ref;
+  if (parent && !UUID.test(parent)) return { ok: false, message: 'That comment no longer exists.' };
+  let parentAuthor: string | null = null;
+  if (parent) {
+    const { data: p } = await db().from('comments').select('user_id, item_type, item_id').eq('id', parent).maybeSingle();
+    if (!p || p.item_type !== type || p.item_id !== id) return { ok: false, message: 'That comment no longer exists.' };
+    parentAuthor = p.user_id;
   }
-  revalidatePath(`/posts/${postId}`);
+  let postAuthor: string | null = null, postTitle = '';
+  if (type === 'post') {
+    const { data: post } = await db().from('posts').select('user_id, title').eq('id', id).maybeSingle();
+    if (!post) return { ok: false, message: 'That post no longer exists.' };
+    postAuthor = post.user_id; postTitle = post.title;
+  }
+  const { error } = await db().from('comments').insert({
+    user_id: user.id, item_type: type, item_id: id, post_id: type === 'post' ? id : null, parent_id: parent || null, body: body.slice(0, 10000),
+  });
+  if (error) return { ok: false, message: error.message };
+  const link = `${itemHref(type, id)}#comments`;
+  if (parentAuthor && parentAuthor !== user.id) {
+    await notify(parentAuthor, { type: 'reply', title: `u/${user.username} replied to your comment`, body: body.slice(0, 200), link, actorId: user.id });
+  } else if (!parent && postAuthor && postAuthor !== user.id) {
+    await notify(postAuthor, { type: 'comment', title: `u/${user.username} commented on your post`, body: postTitle, link, actorId: user.id });
+  }
+  revalidatePath(itemHref(type, id));
   return { ok: true, message: 'Comment posted.' };
+}
+
+/** Repost / undo: shares the item to your profile, and counts on the card. */
+export async function toggleRepost(itemType: ItemType, itemId: string) {
+  const user = await getCurrentUser();
+  if (!user) return { error: 'login' as const };
+  if (!['post', 'news', 'tender'].includes(itemType) || !/^[\w-]{6,64}$/.test(itemId)) return { error: 'invalid' as const };
+  const key = { user_id: user.id, item_type: itemType, item_id: itemId };
+  const { data } = await db().from('reposts').select('item_id').match(key).maybeSingle();
+  if (data) await db().from('reposts').delete().match(key);
+  else await db().from('reposts').insert(key);
+  revalidatePath(`/u/${user.username}`);
+  return { reposted: !data };
+}
+
+/** "Hide" in a card's menu: the item disappears from your feeds. */
+export async function hideItem(itemType: ItemType, itemId: string) {
+  const user = await getCurrentUser();
+  if (!user) return { error: 'login' as const };
+  if (!['post', 'news', 'tender'].includes(itemType) || !/^[\w-]{6,64}$/.test(itemId)) return { error: 'invalid' as const };
+  await db().from('hidden_items').upsert({ user_id: user.id, item_type: itemType, item_id: itemId });
+  return { ok: true };
+}
+
+const REASONS = ['spam', 'misleading', 'harassment', 'off-topic', 'copyright', 'other'];
+
+/** "Report" in a card's menu: stored for review. */
+export async function reportItem(itemType: ItemType | 'comment', itemId: string, reason: string, details: string) {
+  const user = await getCurrentUser();
+  if (!user) return { error: 'login' as const };
+  if (!['post', 'news', 'tender', 'comment'].includes(itemType) || !/^[\w-]{6,64}$/.test(itemId) || !REASONS.includes(reason)) return { error: 'invalid' as const };
+  await db().from('reports').insert({ user_id: user.id, item_type: itemType, item_id: itemId, reason, details: details.trim().slice(0, 1000) || null });
+  return { ok: true };
 }
 
 /* ---------------- Chat ---------------- */

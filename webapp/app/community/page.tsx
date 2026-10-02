@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { getCurrentUser } from '@/lib/auth';
 import { getPlatformLanguage } from '@/lib/language';
 import { COMMUNITY_VIEWS, CommunityView, getCommunityFeed } from '@/lib/community';
-import { getLikes } from '@/lib/likes';
+import { getEngagement } from '@/lib/engagement';
 import CommunityCard from '@/components/social/CommunityCard';
 
 export const metadata = { title: 'Community — EUDI Radar' };
@@ -20,9 +20,10 @@ export default async function CommunityPage({ searchParams }: { searchParams: { 
   const now = new Date();
   const view = (COMMUNITY_VIEWS.find((v) => v.slug === searchParams.view)?.slug ?? 'best') as CommunityView;
   const user = await getCurrentUser();
-  const posts = await getCommunityFeed(view, user?.id ?? null, now);
+  const ranked = await getCommunityFeed(view, user?.id ?? null, now);
   const shown = Math.max(PAGE, Number(searchParams.n) || PAGE);
-  const likes = await getLikes('post', posts.slice(0, shown).map((p) => p.id));
+  const engagement = await getEngagement('post', ranked.map((p) => p.id));
+  const posts = ranked.filter((p) => !engagement.hidden.has(p.id));  // "Hide" in a card's menu
   const href = (v: CommunityView, n?: number) => {
     const p = new URLSearchParams();
     if (v !== 'best') p.set('view', v);
@@ -52,7 +53,7 @@ export default async function CommunityPage({ searchParams }: { searchParams: { 
         </div>
       ) : (
         <div className="feed">
-          {posts.slice(0, shown).map((p) => <CommunityCard key={p.id} post={p} now={now} liked={likes.liked.has(p.id)} signedIn={likes.signedIn} />)}
+          {posts.slice(0, shown).map((p) => <CommunityCard key={p.id} post={p} now={now} engagement={engagement.get(p.id)} signedIn={engagement.signedIn} />)}
         </div>
       )}
       {posts.length > shown && <Link href={href(view, shown + PAGE)} scroll={false} className="feed-more">Show more <span className="mono">({posts.length - shown} left)</span></Link>}

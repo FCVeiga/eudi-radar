@@ -141,10 +141,10 @@ export async function deleteAccount(_prev: AuthState, form: FormData): Promise<A
 }
 
 /** Heart on a tender or news story: like / unlike. Liked items show under Following on the profile. */
-export async function toggleLike(itemType: 'tender' | 'news' | 'post', itemId: string) {
+export async function toggleLike(itemType: 'tender' | 'news' | 'post' | 'comment', itemId: string) {
   const user = await getCurrentUser();
   if (!user) return { error: 'login' as const };
-  if (!['tender', 'news', 'post'].includes(itemType) || !/^[\w-]{6,64}$/.test(itemId)) return { error: 'invalid' as const };
+  if (!['tender', 'news', 'post', 'comment'].includes(itemType) || !/^[\w-]{6,64}$/.test(itemId)) return { error: 'invalid' as const };
   const db = getSupabaseServerClient();
   const key = { user_id: user.id, item_type: itemType, item_id: itemId };
   const { data } = await db.from('likes').select('item_id').match(key).maybeSingle();

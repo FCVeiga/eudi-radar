@@ -42,7 +42,7 @@ export async function getPosts(userId: string) {
 }
 
 export async function getComments(userId: string) {
-  const { data } = await getSupabaseServerClient().from('comments').select('id, post_id, body, score, created_at, posts(title)')
+  const { data } = await getSupabaseServerClient().from('comments').select('id, post_id, item_type, item_id, body, score, created_at, posts(title)')
     .eq('user_id', userId).order('created_at', { ascending: false }).limit(50);
   return data || [];
 }

@@ -6,6 +6,7 @@ import NewsImage from '@/components/NewsImage';
 import NewsReportRunner from '@/components/NewsReport';
 import AgentAvatar from '@/components/AgentAvatar';
 import HeartButton from '@/components/HeartButton';
+import CommentsSection from '@/components/social/CommentsSection';
 import { getLikes } from '@/lib/likes';
 import { isAgentEnabled } from '@/lib/settings';
 import { getPlatformLanguage } from '@/lib/language';
@@ -122,6 +123,7 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
           </>
         )}
       </section>
+      <CommentsSection itemType="news" itemId={n.news_id} loginNext={`/news/${n.news_id}`} />
     </div>
   );
 }

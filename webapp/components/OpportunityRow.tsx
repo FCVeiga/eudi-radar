@@ -1,14 +1,14 @@
 import Link from 'next/link';
-import { Opportunity, daysUntil, isNew, isUpdated, oppCategoryLabel } from '@/lib/data';
+import { Opportunity, buyerOf, daysUntil, isNew, isUpdated, oppCategoryLabel, titleOf } from '@/lib/data';
+import { firstEnglish } from '@/lib/english';
 import UpdateComment, { UpdateEvent } from './UpdateComment';
 
 export type RowCopy = { headline: string | null; body: string | null } | undefined;
 
-/** Clean English title: triage's title_en, else the agent's headline without its event prefix. */
+/** Clean English title: title_en, else the agent's English headline without its event prefix. */
 function titleFor(o: Opportunity, copy: RowCopy) {
-  if (o.title_en) return o.title_en;
-  const h = copy?.headline?.replace(/^(New (tender|RFI|grant|signal)|Signal|Deadline (extended|changed|brought forward)|Awarded):\s*/i, '');
-  return h || o.title;
+  const h = copy?.headline?.replace(/^(New (tender|RFI|grant|signal)|Signal|Deadline (extended|changed|brought forward)|Awarded|Clarifications published):\s*/i, '');
+  return titleOf(o, h);
 }
 
 function money(value: number | null, currency: string | null) {
@@ -58,7 +58,8 @@ export default function OpportunityRow({ o, copy, countryName, updates = [] }: {
 }) {
   const days = daysUntil(o.deadline);
   const value = money(o.estimated_value, o.currency);
-  const description = copy?.body || o.summary;
+  const description = firstEnglish(copy?.body, o.summary);
+  const buyer = buyerOf(o);
   const urgent = days != null && days <= 14;
 
   return (
@@ -78,7 +79,7 @@ export default function OpportunityRow({ o, copy, countryName, updates = [] }: {
         </div>
         <h2 className="opp-title">{titleFor(o, copy)}</h2>
         {description && <p className="opp-desc">{description}</p>}
-        {o.authority && <p className="opp-buyer"><span>Buyer</span>{o.authority}</p>}
+        {buyer && <p className="opp-buyer" title={o.authority ?? ''}><span>Buyer</span>{buyer}</p>}
       </div>
 
       <div className="opp-metrics">

@@ -460,3 +460,7 @@ alter table source_activity add column if not exists kind varchar(32);   -- tria
 alter table change_events add column if not exists notice_url text;
 alter table change_events add column if not exists note_source text;   -- TED's own text, original language
 alter table change_events add column if not exists note text;          -- English comment (agents/translator.py)
+
+-- Buyer names in English: the official name plus an English rendering in
+-- parentheses when it isn't English (agents/translator.py; new items from triage).
+alter table opportunities add column if not exists authority_en text;

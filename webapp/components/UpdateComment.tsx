@@ -1,3 +1,5 @@
+import { looksEnglish } from '@/lib/english';
+
 /** A tender update shown like a Reddit comment: who posted it, when, and what changed. */
 
 export type UpdateEvent = {
@@ -25,9 +27,10 @@ const LABELS: Record<string, string> = {
 
 export default function UpdateComment({ e, compact = false }: { e: UpdateEvent; compact?: boolean }) {
   const fromTed = !!e.notice_url?.includes('ted.europa.eu');
-  // English note when the agent has written one; otherwise the detected change
-  // plus what the notice itself says (possibly in its own language).
-  const original = !e.note && e.note_source ? e.note_source.replace(/^Reason:\s*/, '') : null;
+  // English note when the agent has written one; otherwise the detected change,
+  // plus the notice's own words only if they are English (else in the tooltip).
+  const raw = !e.note && e.note_source ? e.note_source.replace(/^Reason:\s*/, '') : null;
+  const original = raw && looksEnglish(raw) ? raw : null;
   return (
     <div className={`update-comment ${compact ? 'compact' : ''}`}>
       <span className="uc-avatar" aria-hidden="true">
@@ -39,7 +42,7 @@ export default function UpdateComment({ e, compact = false }: { e: UpdateEvent; 
           <span className="uc-kind">{LABELS[e.event_type ?? ''] ?? 'Update'}</span>
           <span className="uc-time">· {ago(e.detected_at)}</span>
         </div>
-        <p className="uc-text">
+        <p className="uc-text" title={raw && !original ? `Notice text (translation pending): ${raw}` : undefined}>
           {e.note || e.description?.replace(/\s*\(TED [\d-]+\)$/, '')}
           {original && <span className="uc-original" title={e.note_source ?? ''}> “{original}”</span>}
         </p>

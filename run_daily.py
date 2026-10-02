@@ -204,6 +204,7 @@ def promote(session, candidate: Candidate, t: dict, country_names: dict):
             title=candidate.title or "(untitled)", country=country,
             title_en=(t.get("title_en") or None), language=(t.get("language") or None),
             authority=(t.get("authority") or None), opportunity_type=category,
+            authority_en=(t.get("authority") or None),  # triage already adds the English rendering
             status=status, summary=summary, deadline=deadline,
             publication_date=_parse_date(candidate.publication_date),
             official_url=candidate.source_url, last_checked=now,

@@ -336,6 +336,7 @@ class Opportunity(Base):
     reference = Column(String(128))
     country = Column(String(4))
     authority = Column(String(256))
+    authority_en = Column(Text)            # official name + English rendering when not English
     opportunity_type = Column(String(64))
     status = Column(String(64))
     publication_date = Column(DateTime)

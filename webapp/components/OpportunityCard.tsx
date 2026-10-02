@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Opportunity, daysUntil, isNew, isUpdated, oppCategoryLabel, titleOf } from '@/lib/data';
+import { Opportunity, buyerOf, daysUntil, isNew, isUpdated, oppCategoryLabel, titleOf } from '@/lib/data';
 
 export function DeadlineText({ deadline }: { deadline: string | null }) {
   if (!deadline) return <>No deadline stated</>;
@@ -44,7 +44,7 @@ export default function OpportunityCard({ o }: { o: Opportunity }) {
         {o.country && <span className="country-chip">{o.country}</span>}
       </div>
       <div className="opp-card-title">{titleOf(o)}</div>
-      {o.authority && <div className="opp-card-authority">{o.authority}</div>}
+      {buyerOf(o) && <div className="opp-card-authority">{buyerOf(o)}</div>}
       {o.summary && <div className="opp-card-summary">{o.summary}</div>}
       <div className="opp-card-scores">
         <ScoreBar label="Relevance" value={o.opportunity_relevance_score} kind="rel" />

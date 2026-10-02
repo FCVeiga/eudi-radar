@@ -8,6 +8,7 @@
 import { XMLParser } from 'fast-xml-parser';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { Source, SourceActivity } from '@/lib/sourceMeta';
+import { firstEnglish } from '@/lib/english';
 
 const FEED_REFRESH_MINUTES = 10;
 const FETCH_TIMEOUT_MS = 9000;
@@ -170,8 +171,11 @@ export async function getActivity(limit = 30) {
   const seen = new Set<string>();
   return ([...((feeds.data || []) as unknown as SourceActivity[]), ...current])
     .sort((a, b) => new Date(b.published_at || 0).getTime() - new Date(a.published_at || 0).getTime())
+    // English only: an item waits until it has an English title.
+    .map((a) => ({ ...a, title_en: firstEnglish(a.title_en, a.title) }))
     .filter((a) => {
-      const k = `${a.source_id}|${(a.title_en || a.title || '').toLowerCase().trim()}`;
+      if (!a.title_en) return false;
+      const k = `${a.source_id}|${a.title_en.toLowerCase().trim()}`;
       return !seen.has(k) && !!seen.add(k);
     })
     .slice(0, limit);

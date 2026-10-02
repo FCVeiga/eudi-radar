@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { newsCategoryLabel, titleOf } from '@/lib/data';
+import { firstEnglish } from '@/lib/english';
 
 export default async function NewsDetailPage({ params }: { params: { id: string } }) {
   const supabase = getSupabaseServerClient();
@@ -29,15 +30,15 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
           {n.unverified && <span className="tag unverified">Unverified</span>}
         </div>
         <h1>{titleOf(n)}</h1>
-        {n.title_en && n.title_en !== n.title && (
+        {titleOf(n) !== n.title && (
           <p className="original-title"><span>Original{n.language ? ` (${n.language.toUpperCase()})` : ''}</span> {n.title}</p>
         )}
         <p className="page-sub">
           {n.region}{n.published_date ? ` · ${new Date(n.published_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}` : ''}
         </p>
       </div>
-      <div className="detail-block"><h2>Summary</h2><p>{n.summary}</p></div>
-      <div className="detail-block impact-block"><h2>Why it matters</h2><p>{n.impact_note}</p></div>
+      {firstEnglish(n.summary) && <div className="detail-block"><h2>Summary</h2><p>{n.summary}</p></div>}
+      {firstEnglish(n.impact_note) && <div className="detail-block impact-block"><h2>Why it matters</h2><p>{n.impact_note}</p></div>}
       <div className="detail-block">
         <h2>Source</h2>
         <p className="mono">{n.source_name}</p>

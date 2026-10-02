@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getSupabaseServerClient } from '@/lib/supabase';
-import { Opportunity, oppCategoryLabel, titleOf } from '@/lib/data';
+import { Opportunity, buyerOf, oppCategoryLabel, titleOf } from '@/lib/data';
+import { firstEnglish } from '@/lib/english';
 import { DeadlineText, StatusTags } from '@/components/OpportunityCard';
 import UpdateComment, { UpdateEvent } from '@/components/UpdateComment';
 
@@ -74,8 +75,8 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
       <div className="detail-head">
         <div className="opp-tags"><StatusTags o={o as Opportunity} /></div>
         <h1>{titleOf(o)}</h1>
-        <p className="page-sub">{[o.authority, o.country].filter(Boolean).join(' · ') || 'International'}</p>
-        {o.title_en && o.title_en !== o.title && (
+        <p className="page-sub">{[buyerOf(o), o.country].filter(Boolean).join(' · ') || 'International'}</p>
+        {titleOf(o) !== o.title && (
           <p className="original-title"><span>Original{o.language ? ` (${o.language.toUpperCase()})` : ''}</span> {o.title}</p>
         )}
       </div>
@@ -89,7 +90,7 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
 
       <div className="opp-detail-grid">
         <div>
-          {o.summary && <div className="detail-block"><h2>Summary</h2><p>{o.summary}</p></div>}
+          {firstEnglish(o.summary) && <div className="detail-block"><h2>Summary</h2><p>{o.summary}</p></div>}
           {changes && changes.length > 0 && (
             <div className="detail-block" id="updates">
               <h2>Updates <span className="uc-count">{changes.length}</span></h2>

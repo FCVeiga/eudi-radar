@@ -1,4 +1,5 @@
 import { getSupabaseServerClient } from '@/lib/supabase';
+import { TRANSLATION_PENDING, englishName, firstEnglish, looksEnglish } from '@/lib/english';
 
 // Opportunity categories — must match OPPORTUNITY_TYPES values in run_daily.py.
 export const OPP_CATEGORIES = [
@@ -25,6 +26,7 @@ export type Opportunity = {
   language: string | null;
   country: string | null;
   authority: string | null;
+  authority_en: string | null;
   opportunity_type: string | null;
   status: string | null;
   summary: string | null;
@@ -60,8 +62,12 @@ export type NewsItem = {
   created_at: string | null;
 };
 
-/** English title when triage provided one, else the original. */
-export const titleOf = (x: { title: string; title_en?: string | null }) => x.title_en || x.title;
+/** English title: triage/translator's title_en, else the original only if it is English. */
+export const titleOf = (x: { title: string; title_en?: string | null; language?: string | null }, ...fallbacks: (string | null | undefined)[]) =>
+  firstEnglish(x.title_en, looksEnglish(x.title, x.language) ? x.title : null, ...fallbacks) ?? TRANSLATION_PENDING;
+
+/** Buyer / organisation in English (null when no English form exists yet). */
+export const buyerOf = (o: { authority: string | null; authority_en?: string | null }) => englishName(o.authority_en, o.authority);
 
 export function oppCategoryLabel(slug: string | null) {
   return OPP_CATEGORIES.find((c) => c.slug === slug)?.label.replace(/s$/, '') ?? slug ?? '';

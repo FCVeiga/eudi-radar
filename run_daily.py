@@ -317,7 +317,6 @@ def main():
     session.add(agent_run)
     session.commit()
 
-    sources = session.query(Source).all()
     countries = session.query(Country).all()
     country_codes = [c.code for c in countries]
     country_names = {c.code: c.name for c in countries}
@@ -344,6 +343,14 @@ def main():
         print(f"Tavily news: {len(news)} new candidates from {len(NEWS_QUERIES)} queries")
     else:
         errors.append("TAVILY_API_KEY not set — web search skipped")
+
+    # Followed sources (Following sidebar): RSS feeds and domain searches on
+    # their own schedules; whatever they surface joins the triage queue.
+    from agents.source_monitor import check_sources, ingest_activity
+    monitored = check_sources(session, errors)
+    from_sources = ingest_activity(session)
+    print(f"Sources: {monitored['checked']} of {monitored['total']} monitored sources due and checked, "
+          f"{monitored['found']} new items, {from_sources} new candidates")
 
     # --- 2. Triage (all unprocessed, including leftovers from earlier runs) --
     max_triage = int(os.environ.get("MAX_TRIAGE_PER_RUN", 400))
@@ -397,6 +404,9 @@ def main():
                 print(f"  triaged {i}/{len(to_llm)}")
     print(f"Triage: {len(to_llm)} LLM calls -> {len(new_opps)} opportunities, {len(updates)} updates, {len(new_news)} news items")
 
+    from agents.source_monitor import mark_relevance
+    mark_relevance(session)
+
     # --- 3. Verification: is each opportunity actually open today? ----------
     verified = verify_opportunities(session, errors)
     print(f"Verification: {verified} opportunities checked against their source")
@@ -423,7 +433,7 @@ def main():
 
     coverage = CoverageStats(
         countries_checked=len(countries), countries_total=len(countries),
-        sources_checked=len(sources), sources_total=len(sources),
+        sources_checked=monitored["checked"] + 1, sources_total=monitored["total"],  # +1: TED
         queries_executed=query_count, candidates_found=len(candidates),
         deep_analyses_executed=0, new_opportunities=len(digest_opps),
         material_updates=len(updates), errors=errors,

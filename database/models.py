@@ -46,6 +46,7 @@ class SourceType(str, enum.Enum):
     NEWS = "NEWS"
     SOCIAL_LINKEDIN = "SOCIAL_LINKEDIN"
     SOCIAL_TWITTER = "SOCIAL_TWITTER"
+    SOCIAL_REDDIT = "SOCIAL_REDDIT"
 
 
 class SourceStatus(str, enum.Enum):
@@ -191,6 +192,32 @@ class Source(Base):
     response_status = Column(String(32))
     number_results_last_run = Column(Integer)
     parser_status = Column(String(32))
+
+    # How the radar monitors it (agents/source_monitor.py); edited from the
+    # site's Following sidebar. method: ted | rss | site_search | off
+    method = Column(String(16), nullable=False, default="off")
+    feed_url = Column(Text)
+    handle = Column(Text)              # social handle, e.g. @EU_Commission, r/digitalidentity
+    enabled = Column(Boolean, nullable=False, default=True)
+    check_every_days = Column(Integer, nullable=False, default=7)
+    last_error = Column(Text)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class SourceActivity(Base):
+    """What a source published or what a site search found on it: shown in
+    the site's Live activity panel and turned into pipeline candidates."""
+    __tablename__ = "source_activity"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    source_id = Column(String(64), ForeignKey("sources.source_id"), nullable=False)
+    external_id = Column(Text, nullable=False)
+    title = Column(Text)
+    url = Column(Text)
+    summary = Column(Text)
+    published_at = Column(DateTime)
+    fetched_at = Column(DateTime, default=datetime.utcnow)
+    ingested = Column(Boolean, nullable=False, default=False)
+    relevant = Column(Boolean)         # set after triage; site-search finds show only when true
 
 
 class Organisation(Base):

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { FEED_VIEWS, FeedView, getFeed } from '@/lib/feed';
-import { getActivity } from '@/lib/accounts';
+import { getActivity } from '@/lib/sources';
 import FeedCard from '@/components/FeedCard';
 import LiveActivity from '@/components/LiveActivity';
 

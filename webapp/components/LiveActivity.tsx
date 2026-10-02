@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { Activity } from '@/lib/accounts';
-import PlatformIcon from './PlatformIcon';
+import type { SourceActivity as Activity } from '@/lib/sourceMeta';
+import SourceIcon from './SourceIcon';
 
 const POLL_MS = 60_000;
 
@@ -18,12 +18,15 @@ function ago(iso: string | null, now: number) {
 }
 
 function verb(a: Activity) {
-  const acc = a.tracked_accounts;
-  if (acc?.platform === 'reddit') return acc.handle_or_url.startsWith('r/') ? <>posted in <span className="la-where">{acc.handle_or_url}</span></> : 'posted';
+  const src = a.sources;
+  if (src?.source_type === 'SOCIAL_REDDIT') {
+    return src.handle?.startsWith('r/') ? <>posted in <span className="la-where">{src.handle}</span></> : 'posted';
+  }
+  if (src?.method === 'site_search') return 'has';  // "<portal> has <page>": found by a site search
   return 'published';
 }
 
-/** Moltbook-style live panel: latest activity of followed accounts, polled every minute. */
+/** Moltbook-style live panel: latest activity of followed sources, polled every minute. */
 export default function LiveActivity({ initial }: { initial: Activity[] }) {
   const [items, setItems] = useState(initial);
   const [now, setNow] = useState(() => Date.now());
@@ -49,13 +52,13 @@ export default function LiveActivity({ initial }: { initial: Activity[] }) {
         <span className="live-sub">auto-updating</span>
       </div>
       <ul className="live-list">
-        {items.length === 0 && <li className="side-empty">No activity yet from the accounts you follow.</li>}
+        {items.length === 0 && <li className="side-empty">No activity yet from the sources you follow.</li>}
         {items.map((a) => (
           <li key={a.id} className="la-item">
-            <PlatformIcon platform={a.tracked_accounts?.platform ?? 'news'} size={26} />
+            <SourceIcon type={a.sources?.source_type ?? 'NEWS'} size={26} />
             <div className="la-body">
               <p>
-                <strong>{a.tracked_accounts?.display_name ?? 'Unknown'}</strong> {verb(a)}{' '}
+                <strong>{a.sources?.name ?? 'Unknown source'}</strong> {verb(a)}{' '}
                 <a href={a.url ?? '#'} target="_blank" rel="noopener noreferrer" className="la-link">{a.title}</a>
               </p>
               <span className="la-time">{ago(a.published_at, now)}</span>

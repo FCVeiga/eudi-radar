@@ -8,7 +8,7 @@ import type { Engagement } from '@/lib/engagement';
 
 const pct = (x: number) => `${Math.round(x * 100)}%`;
 
-/** A post in the Community Feed (Reddit-style): score, author · time, …, content, action bar. */
+/** A post in the Community Feed (Reddit-style): score, author · time · tags, …, content, action bar. */
 export default function CommunityCard({ post, now, engagement, signedIn }: { post: PostCard; now: Date; engagement: Engagement; signedIn: boolean }) {
   const why = `Score ${post.score}: relevance ${pct(post.parts.relevance)}, following ${post.parts.following ? 'yes' : 'no'}, likes ${post.likes}, recency ${pct(post.parts.recency)}`;
   const href = `/posts/${post.id}`;
@@ -27,10 +27,10 @@ export default function CommunityCard({ post, now, engagement, signedIn }: { pos
           )}
           <span className="cc-dot">·</span>
           <span className="cc-time" title={new Date(post.createdAt).toLocaleString('en-GB')}>{timeAgo(new Date(post.createdAt), now)}</span>
+          {post.tags.slice(0, 5).map((t) => <span key={t} className="cc-tag">{t}</span>)}
         </div>
         <Link href={href} className="cc-link">
           <div className="feed-title">{post.title}</div>
-          {post.tags.length > 0 && <div className="cc-tags">{post.tags.slice(0, 5).map((t) => <span key={t} className="cc-tag">{t}</span>)}</div>}
           {post.media ? (
             <div className="cc-media">
               {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/media-has-caption */}

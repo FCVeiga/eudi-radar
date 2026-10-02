@@ -1412,3 +1412,4 @@ a.profile-post:hover { border-color: var(--border-strong); }
 .about-details dt { font-family: var(--font-mono-stack); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--subtle); margin-bottom: 4px; }
 .about-details dd { margin: 0; font-size: 14px; color: var(--ink); }
 @media (max-width: 600px) { .about-details { grid-template-columns: 1fr; } }
+.cc-meta { flex-wrap: wrap; row-gap: 4px; }

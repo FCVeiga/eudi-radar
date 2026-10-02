@@ -9,6 +9,7 @@ import UserAvatar from '@/components/UserAvatar';
 import { CRED } from '@/lib/terms';
 import StartChatButton from '@/components/social/StartChatButton';
 import ImageEditButton from '@/components/auth/ImageEditButton';
+import SocialLinks, { hasLinks } from '@/components/SocialLinks';
 import FollowButton from '@/components/social/FollowButton';
 import CommunityCard from '@/components/social/CommunityCard';
 import { getLikedPosts } from '@/lib/community';
@@ -80,6 +81,18 @@ export default async function ProfilePage({ params, searchParams }: { params: { 
           {own && <Link href="/profile/edit" className="btn">{profile.bio ? 'Edit description' : 'Add a description'}</Link>}
         </section>
         <section className="detail-block">
+          <div className="about-head"><h2>Details</h2>{own && <Link href="/profile/edit#details" className="btn">Edit details</Link>}</div>
+          {profile.company || profile.role || profile.location || profile.expertise.length || hasLinks(profile.links) ? (
+            <dl className="about-details">
+              {profile.role && <div><dt>Role</dt><dd>{profile.role}</dd></div>}
+              {profile.company && <div><dt>Company</dt><dd>{profile.company}</dd></div>}
+              {profile.location && <div><dt>Location</dt><dd>{profile.location}</dd></div>}
+              {profile.expertise.length > 0 && <div className="wide"><dt>Expertise</dt><dd className="cc-tags">{profile.expertise.map((e) => <span key={e} className="cc-tag">{e}</span>)}</dd></div>}
+              {hasLinks(profile.links) && <div className="wide"><dt>Connections</dt><dd><SocialLinks links={profile.links} variant="list" /></dd></div>}
+            </dl>
+          ) : <p className="muted">{own ? 'Add your company, role, expertise and social links.' : `u/${profile.username} hasn’t added any details yet.`}</p>}
+        </section>
+        <section className="detail-block">
           <h2>Achievements <span className="uc-count">0/{ACHIEVEMENTS.length}</span></h2>
           <div className="trophies">
             {ACHIEVEMENTS.map((a) => (
@@ -136,6 +149,7 @@ export default async function ProfilePage({ params, searchParams }: { params: { 
             </div>
             <h2>{profile.displayName}</h2>
             <span className="profile-handle">u/{profile.username}</span>
+            {(profile.role || profile.company) && <p className="profile-card-work">{[profile.role, profile.company].filter(Boolean).join(' · ')}</p>}
             {profile.bio && <p className="profile-card-bio">{profile.bio}</p>}
             {own && <Link href="/profile/edit" className="btn primary profile-card-edit">Edit profile</Link>}
             {!own && me && <div className="profile-card-edit profile-card-actions"><FollowButton username={profile.username} following={iFollow} /><StartChatButton username={profile.username} /></div>}
@@ -147,6 +161,17 @@ export default async function ProfilePage({ params, searchParams }: { params: { 
               <div><dt>{fmt(profile.createdAt)}</dt><dd>Membership day</dd></div>
               <div><dt>{own ? stats.following : '—'}</dt><dd>Liked items</dd></div>
             </dl>
+            {(hasLinks(profile.links) || own) && (
+              <div className="profile-card-section">
+                <div className="profile-card-section-head">
+                  <h3>Social links</h3>
+                  {own && hasLinks(profile.links) && <Link href="/profile/edit#links" className="section-edit" aria-label="Edit social links">
+                    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.8 2.7a1.6 1.6 0 0 1 2.3 2.3L5.6 12.5 2.5 13.5l1-3.1z" /></svg></Link>}
+                </div>
+                {hasLinks(profile.links) ? <SocialLinks links={profile.links} />
+                  : <Link href="/profile/edit#links" className="add-links">+ Add social links</Link>}
+              </div>
+            )}
             <div className="profile-card-section">
               <h3>Trophy case</h3>
               <div className="trophy-row">

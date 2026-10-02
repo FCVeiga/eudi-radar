@@ -4,7 +4,7 @@ import { useRef, useState, useTransition } from 'react';
 import { useFormState, useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import UserAvatar from '@/components/UserAvatar';
-import { AuthState, createAvatarUpload, deleteAccount, setAvatar, updateProfile } from '@/app/auth/actions';
+import { AuthState, createAvatarUpload, deleteAccount, setAvatar, updateProfile, updateProfileDetails } from '@/app/auth/actions';
 
 function Submit({ label, busy, danger }: { label: string; busy: string; danger?: boolean }) {
   const { pending } = useFormStatus();
@@ -71,6 +71,33 @@ export function DeleteAccountForm({ username }: { username: string }) {
       <label className="field"><span>Type <strong>{username}</strong> to confirm</span><input name="confirm" autoComplete="off" required /></label>
       <Msg state={state} />
       <div className="settings-actions"><Submit label="Delete my account" busy="Deleting…" danger /></div>
+    </form>
+  );
+}
+
+export function ProfileDetailsForm({ v }: { v: { company: string; role: string; location: string; expertise: string; website: string; linkedin: string; x: string; github: string } }) {
+  const [state, action] = useFormState<AuthState, FormData>(updateProfileDetails, null);
+  return (
+    <form action={action} className="settings-form">
+      <div className="field-row">
+        <label className="field"><span>Company</span><input name="company" defaultValue={v.company} maxLength={100} placeholder="e.g. WalliD" /></label>
+        <label className="field"><span>Role</span><input name="role" defaultValue={v.role} maxLength={100} placeholder="e.g. Head of Public Sector" /></label>
+      </div>
+      <div className="field-row">
+        <label className="field"><span>Location</span><input name="location" defaultValue={v.location} maxLength={100} placeholder="e.g. Lisbon, Portugal" /></label>
+        <label className="field"><span>Expertise <em>— comma separated</em></span><input name="expertise" defaultValue={v.expertise} maxLength={600} placeholder="e.g. EUDI Wallet, eIDAS, public procurement" /></label>
+      </div>
+      <h3 className="form-subhead" id="links">Social links</h3>
+      <div className="field-row">
+        <label className="field"><span>LinkedIn</span><input name="linkedin" defaultValue={v.linkedin} placeholder="linkedin.com/in/yourname" /></label>
+        <label className="field"><span>X (Twitter)</span><input name="x" defaultValue={v.x} placeholder="@handle or x.com/handle" /></label>
+      </div>
+      <div className="field-row">
+        <label className="field"><span>GitHub</span><input name="github" defaultValue={v.github} placeholder="username or github.com/username" /></label>
+        <label className="field"><span>Website</span><input name="website" defaultValue={v.website} placeholder="yourcompany.com" /></label>
+      </div>
+      <Msg state={state} />
+      <div className="settings-actions"><Submit label="Save details" busy="Saving…" /></div>
     </form>
   );
 }

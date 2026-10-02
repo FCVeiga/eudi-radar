@@ -4,16 +4,22 @@ import { newsCategoryLabel, oppCategoryLabel, titleOf } from '@/lib/data';
 import { firstInLanguage } from '@/lib/english';
 import type { FeedItem } from '@/lib/feed';
 
-export type Profile = { id: string; username: string; displayName: string; avatarUrl: string | null; bannerUrl: string | null; bio: string | null; createdAt: string };
+export type Profile = {
+  id: string; username: string; displayName: string; avatarUrl: string | null; bannerUrl: string | null; bio: string | null; createdAt: string;
+  company: string | null; role: string | null; location: string | null; expertise: string[];
+  links: { website: string | null; linkedin: string | null; x: string | null; github: string | null };
+};
 
 export async function getProfile(username: string): Promise<Profile | null> {
   if (!/^[A-Za-z0-9_]{3,24}$/.test(username)) return null;
   const { data } = await getSupabaseServerClient().from('profiles')
-    .select('id, username, display_name, avatar_url, banner_url, bio, created_at')
+    .select('id, username, display_name, avatar_url, banner_url, bio, created_at, company, role, location, expertise, website_url, linkedin_url, x_url, github_url')
     .ilike('username', username.replace(/_/g, '\\_')).maybeSingle();
   return data && {
     id: data.id, username: data.username, displayName: data.display_name || data.username,
     avatarUrl: data.avatar_url, bannerUrl: data.banner_url, bio: data.bio, createdAt: data.created_at,
+    company: data.company, role: data.role, location: data.location, expertise: data.expertise || [],
+    links: { website: data.website_url, linkedin: data.linkedin_url, x: data.x_url, github: data.github_url },
   };
 }
 

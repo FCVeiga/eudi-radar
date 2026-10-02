@@ -13,7 +13,7 @@ const ITEMS = [
   { href: '/privacy', label: 'Privacy policy', icon: <><path d="M8 2 3 4v4c0 3 2.2 5.2 5 6 2.8-.8 5-3 5-6V4z" /><path d="m6 8 1.5 1.5L10.5 6.5" /></> },
 ];
 
-/** Navbar: the signed-in user's picture and name, opening a menu. */
+/** Navbar: the signed-in user's picture, opening their account menu. */
 export default function UserMenu({ user }: { user: { username: string; displayName: string; avatarUrl: string | null } }) {
   const [open, setOpen] = useState(false);
   const box = useRef<HTMLDivElement>(null);
@@ -30,10 +30,9 @@ export default function UserMenu({ user }: { user: { username: string; displayNa
 
   return (
     <div className="user-menu" ref={box}>
-      <button type="button" className="user-menu-button" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen(!open)}>
-        <UserAvatar name={user.username} src={user.avatarUrl} size={30} />
-        <span className="user-menu-name">{user.displayName}</span>
-        <svg className="user-menu-chevron" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5l3-3" /></svg>
+      <button type="button" className="user-menu-button" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen(!open)}
+        aria-label={`Account menu for ${user.displayName}`} title={user.displayName}>
+        <UserAvatar name={user.username} src={user.avatarUrl} size={34} />
       </button>
       {open && (
         <div className="user-menu-list" role="menu">

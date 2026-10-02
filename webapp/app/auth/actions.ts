@@ -153,3 +153,41 @@ export async function toggleLike(itemType: 'tender' | 'news' | 'post' | 'comment
   revalidatePath(`/u/${user.username}`);
   return { liked: !data };
 }
+
+/** "https://…" on the given site (or a bare handle for it), else null; throws on a link to another site. */
+function socialUrl(raw: string, label: string, hosts: string[], handleBase?: string) {
+  const v = raw.trim();
+  if (!v) return null;
+  const handle = v.replace(/^@/, '');
+  if (handleBase && /^[A-Za-z0-9_.-]{1,60}$/.test(handle)) return `${handleBase}${handle}`;
+  let url: URL;
+  try { url = new URL(/^https?:\/\//i.test(v) ? v : `https://${v}`); } catch { throw new Error(`${label}: that isn’t a valid link.`); }
+  const host = url.hostname.replace(/^www\./, '').toLowerCase();
+  if (hosts.length && !hosts.some((h) => host === h || host.endsWith(`.${h}`))) throw new Error(`${label}: use a link on ${hosts[0]}.`);
+  url.protocol = 'https:';
+  return url.toString().slice(0, 300);
+}
+
+/** About details and social links (Edit profile). */
+export async function updateProfileDetails(_prev: AuthState, form: FormData): Promise<AuthState> {
+  const user = await getCurrentUser();
+  if (!user) return { ok: false, message: 'Your session expired — log in again.' };
+  const text = (k: string, max: number) => String(form.get(k) || '').trim().slice(0, max) || null;
+  const expertise = Array.from(new Set(String(form.get('expertise') || '').split(',').map((t) => t.trim().slice(0, 40)).filter(Boolean))).slice(0, 15);
+  let links;
+  try {
+    links = {
+      website_url: socialUrl(String(form.get('website') || ''), 'Website', []),
+      linkedin_url: socialUrl(String(form.get('linkedin') || ''), 'LinkedIn', ['linkedin.com']),
+      x_url: socialUrl(String(form.get('x') || ''), 'X', ['x.com', 'twitter.com'], 'https://x.com/'),
+      github_url: socialUrl(String(form.get('github') || ''), 'GitHub', ['github.com'], 'https://github.com/'),
+    };
+  } catch (e: any) { return { ok: false, message: e.message }; }
+  const { error } = await getSupabaseServerClient().from('profiles').update({
+    company: text('company', 100), role: text('role', 100), location: text('location', 100), expertise, ...links,
+    updated_at: new Date().toISOString(),
+  }).eq('id', user.id);
+  if (error) return { ok: false, message: error.message };
+  revalidatePath(`/u/${user.username}`);
+  return { ok: true, message: 'Saved.' };
+}

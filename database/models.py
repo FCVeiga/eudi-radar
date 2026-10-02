@@ -371,6 +371,7 @@ class Document(Base):
     document_id = Column(String(64), primary_key=True)
     opportunity_id = Column(String(64), ForeignKey("opportunities.opportunity_id"))
     name = Column(String(512))
+    name_en = Column(Text)              # English name (agents/translator.py)
     document_type = Column(Enum(DocumentType))
     url = Column(String(1024))
     version = Column(String(32))

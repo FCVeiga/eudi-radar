@@ -4,6 +4,7 @@ import { Opportunity, buyerOf, oppCategoryLabel, titleOf } from '@/lib/data';
 import { firstEnglish } from '@/lib/english';
 import { DeadlineText, StatusTags } from '@/components/OpportunityCard';
 import UpdateComment, { UpdateEvent } from '@/components/UpdateComment';
+import TenderDocuments, { Doc } from '@/components/TenderDocuments';
 
 const REQ_CATEGORY_GROUPS: Record<string, string[]> = {
   Certifications: ['CERTIFICATION', 'PERSONAL_CERTIFICATION'],
@@ -18,12 +19,14 @@ function matchLabel(m: string | null) {
   if (m === 'MATCH') return 'Match';
   if (m === 'PARTNER_NEEDED') return 'Partner needed';
   if (m === 'NO_MATCH') return 'No match';
+  if (m === 'PARTIAL_MATCH') return 'Partial';
   return 'Unknown';
 }
 function matchClass(m: string | null) {
   if (m === 'MATCH') return 'match';
   if (m === 'PARTNER_NEEDED') return 'partner';
   if (m === 'NO_MATCH') return 'no_match';
+  if (m === 'PARTIAL_MATCH') return 'partner';
   return 'unknown';
 }
 
@@ -47,13 +50,20 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
 
   const { data: requirements } = await supabase
     .from('requirements')
-    .select('*, requirement_matches(match_status, matched_evidence)')
+    .select('*, requirement_matches(match_status, matched_evidence, notes)')
     .eq('opportunity_id', params.id);
 
   const { data: documents } = await supabase
     .from('documents')
     .select('*')
-    .eq('opportunity_id', params.id);
+    .eq('opportunity_id', params.id)
+    .order('publication_date', { ascending: true, nullsFirst: false });
+
+  const { data: award } = await supabase
+    .from('award_criteria')
+    .select('*')
+    .eq('opportunity_id', params.id)
+    .order('weight', { ascending: false });
 
   const { data: changes } = await supabase
     .from('change_events')
@@ -114,53 +124,59 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
               : <p className="mono">Not recorded</p>}
           </div>
 
+          {(award || []).length > 0 && (
+            <div className="detail-block">
+              <h2>Award criteria</h2>
+              <div className="award-list">
+                {(award || []).map((a: any) => {
+                  const what = firstEnglish(a.subcriteria?.name_en, a.subcriteria?.name, a.subcriteria?.description_en, a.subcriteria?.description);
+                  return (
+                    <div key={a.id} className="award-row">
+                      <span className="award-label">{a.criterion}{what ? <em> — {what}</em> : null}</span>
+                      <span className="award-bar"><span style={{ width: `${a.weight ?? 0}%` }} /></span>
+                      <span className="award-weight">{a.weight != null ? `${a.weight}%` : '—'}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           <div className="detail-block">
             <h2>Requirements &amp; Match Status</h2>
-            {Object.entries(reqsByCategory).map(([label, rows]) => (
+            {(requirements || []).length === 0 ? (
+              <p className="muted">
+                Not extracted yet. The Tender Analysis agent reads the notice&apos;s selection criteria and tenderer
+                requirements — certifications, references, team, insurance, technical obligations — and checks each
+                against WalliD&apos;s profile. It runs in the daily pipeline for open tenders.
+              </p>
+            ) : Object.entries(reqsByCategory).filter(([, rows]) => rows.length).map(([label, rows]) => (
               <div key={label} className="req-category-block">
                 <div className="req-category-title">{label}</div>
-                {rows.length === 0 ? (
-                  <div className="req-empty">No {label.toLowerCase()} requirements identified in this opportunity.</div>
-                ) : (
-                  <table className="req-table">
-                    <thead><tr><th>Requirement</th><th>Threshold</th><th>Mandatory</th><th>Match</th></tr></thead>
-                    <tbody>
-                      {rows.map((r) => (
-                        <tr key={r.requirement_id}>
-                          <td>{r.requirement_text}</td>
-                          <td>{r.threshold}</td>
-                          <td>{r.mandatory ? <span className="mand-yes">Mandatory</span> : <span className="mand-no">Optional</span>}</td>
-                          <td>
-                            <span className={`badge-match ${matchClass(r.requirement_matches?.[0]?.match_status)}`}>
-                              {matchLabel(r.requirement_matches?.[0]?.match_status)}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
+                <table className="req-table">
+                  <thead><tr><th>Requirement</th><th>Threshold</th><th>Mandatory</th><th>Match</th></tr></thead>
+                  <tbody>
+                    {rows.map((r) => (
+                      <tr key={r.requirement_id}>
+                        <td>{firstEnglish(r.requirement_text) ?? '—'}{firstEnglish(r.evidence_required) && <div className="req-evidence">Evidence: {r.evidence_required}</div>}</td>
+                        <td>{firstEnglish(r.threshold) ?? ''}</td>
+                        <td>{r.mandatory ? <span className="mand-yes">Mandatory</span> : <span className="mand-no">Optional</span>}</td>
+                        <td>
+                          <span className={`badge-match ${matchClass(r.requirement_matches?.[0]?.match_status)}`}
+                                title={r.requirement_matches?.[0]?.notes ?? ''}>
+                            {matchLabel(r.requirement_matches?.[0]?.match_status)}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="opp-sidebar">
-          <h3>Tender Documents</h3>
-          <div className="sidebar-sub">{(documents || []).length} document(s) on file</div>
-          {(documents || []).map((d) => (
-            <div key={d.document_id} className="doc-item">
-              <div>
-                <div>{d.name}</div>
-                <div className="doc-type">{d.document_type?.replace(/_/g, ' ')}</div>
-              </div>
-              {d.url && <a className="doc-download" href={d.url} target="_blank" rel="noopener noreferrer">Download ↓</a>}
-            </div>
-          ))}
-          {(!documents || documents.length === 0) && (
-            <div className="sidebar-sub">No documents recorded yet.</div>
-          )}
-        </div>
+        <TenderDocuments docs={(documents || []) as Doc[]} />
       </div>
     </div>
   );

@@ -39,6 +39,7 @@ TARGETS = [
     ("opportunities", "opportunity_id", "title", "title_en", "title", ""),
     ("opportunities", "opportunity_id", "authority", "authority_en", "name", ""),
     ("news_items", "news_id", "title", "title_en", "title", ""),
+    ("documents", "document_id", "name", "name_en", "title", ""),
     ("source_activity", "id", "title", "title_en", "title",
      "and (relevant is true or source_id in (select source_id from sources where method <> 'site_search'))"),
 ]

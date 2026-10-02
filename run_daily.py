@@ -449,6 +449,14 @@ def main():
     verified = verify_opportunities(session, errors)
     print(f"Verification: {verified} opportunities checked against their source")
 
+    # Tender documents (TED notices + buyer portal lists) and what bidders must meet.
+    from agents.tender_documents import collect_all
+    from agents.tender_analysis import analyse_tenders
+    docs = collect_all(session, errors)
+    print(f"Documents: {docs['documents']} across {docs['opportunities']} active tenders, {docs['new']} new")
+    analysed = analyse_tenders(session, errors)
+    print(f"Tender analysis: award criteria for {analysed['award']} criteria, requirements for {analysed['requirements']} tenders")
+
     # English titles for anything that predates triage's title_en, and for activity;
     # English notes for tender updates (shown as comments).
     from agents.translator import backfill_english_titles

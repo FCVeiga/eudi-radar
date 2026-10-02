@@ -1,0 +1,52 @@
+import { firstEnglish } from '@/lib/english';
+
+export type Doc = {
+  document_id: string; name: string; name_en: string | null; document_type: string | null;
+  url: string | null; publication_date: string | null; downloaded_at: string | null;
+};
+
+// Display order and English labels for document types.
+const GROUPS: [string, string][] = [
+  ['CONTRACT_NOTICE', 'Notices'], ['CORRIGENDUM', 'Notices'],
+  ['CLARIFICATION', 'Clarifications & Q&A'], ['Q_AND_A', 'Clarifications & Q&A'],
+  ['TENDER_SPECIFICATIONS', 'Tender documents'], ['TECHNICAL_SPECIFICATIONS', 'Specifications'],
+  ['AWARD_CRITERIA', 'Evaluation'], ['FINANCIAL_PROPOSAL', 'Price & financial forms'], ['FORM', 'Forms to complete'],
+  ['CONTRACT', 'Contract'], ['ANNEX', 'Other documents'],
+];
+const ORDER = Array.from(new Set(GROUPS.map(([, g]) => g)));
+const groupOf = (t: string | null) => GROUPS.find(([k]) => k === t)?.[1] ?? 'Other documents';
+
+function linkKind(url: string | null) {
+  if (!url) return null;
+  if (/ted\.europa\.eu\/.*\/pdf$/.test(url)) return { label: 'PDF', title: 'Official TED notice (PDF)' };
+  if (/downloadContractDocument/.test(url)) return { label: 'Download', title: 'Direct download from the buyer portal' };
+  return { label: 'Open on portal', title: 'Opens the buyer portal page where this document is downloaded' };
+}
+
+/** Tender documents grouped by type, with direct downloads where the portal allows. */
+export default function TenderDocuments({ docs }: { docs: Doc[] }) {
+  const groups = ORDER.map((g) => ({ g, items: docs.filter((d) => groupOf(d.document_type) === g) })).filter((x) => x.items.length);
+  return (
+    <div className="opp-sidebar">
+      <h3>Tender Documents</h3>
+      <div className="sidebar-sub">{docs.length ? `${docs.length} document${docs.length === 1 ? '' : 's'}` : 'No documents found yet'}</div>
+      {groups.map(({ g, items }) => (
+        <div key={g} className="doc-group">
+          <div className="doc-group-label">{g} <span>{items.length}</span></div>
+          {items.map((d) => {
+            const k = linkKind(d.url);
+            return (
+              <a key={d.document_id} className="doc-item" href={d.url ?? '#'} target="_blank" rel="noopener noreferrer" title={k?.title}>
+                <span className="doc-name">{firstEnglish(d.name_en) ?? d.name}</span>
+                {k && <span className={`doc-download ${k.label === 'Open on portal' ? 'portal' : ''}`}>{k.label === 'Download' ? 'Download ↓' : k.label === 'PDF' ? 'PDF ↓' : 'Portal ↗'}</span>}
+              </a>
+            );
+          })}
+        </div>
+      ))}
+      {docs.some((d) => !/downloadContractDocument|ted\.europa/.test(d.url ?? '')) && (
+        <p className="sidebar-note">“Portal ↗” documents download from the buyer&apos;s portal, which may ask you to register.</p>
+      )}
+    </div>
+  );
+}

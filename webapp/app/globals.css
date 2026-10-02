@@ -622,10 +622,25 @@ tr.data-row:hover td { background: #FAFBFD; }
 .change-row:last-child { border-bottom: none; }
 .change-row .date-badge { width: 96px; }
 
-.opp-sidebar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; position: sticky; top: 88px; box-shadow: var(--shadow-sm); }
+.opp-sidebar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; position: sticky; top: calc(var(--topbar-h) + 24px); box-shadow: var(--shadow-sm); }
 .opp-sidebar h3 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
 .sidebar-sub { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
-.doc-item { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--border); font-size: 12.5px; }
+.doc-item { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 8px 0; border-top: 1px solid var(--border); font-size: 12.5px; color: var(--ink); }
+.doc-item:hover .doc-name { color: var(--accent); }
+.doc-name { line-height: 1.4; word-break: break-word; }
+.doc-group { margin-top: 10px; }
+.doc-group-label { font-family: var(--font-mono-stack); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--subtle); margin-bottom: 2px; }
+.doc-group-label span { color: var(--border-strong); margin-left: 4px; }
+.doc-download.portal { color: var(--muted); }
+.sidebar-note { font-size: 11.5px; color: var(--subtle); margin-top: 12px; line-height: 1.45; }
+.opp-sidebar { max-height: calc(100vh - var(--topbar-h) - 48px); overflow-y: auto; }
+.award-list { display: flex; flex-direction: column; gap: 10px; }
+.award-row { display: grid; grid-template-columns: minmax(0, 1fr) 160px 48px; align-items: center; gap: 12px; font-size: 13.5px; color: var(--ink); }
+.award-label em { font-style: normal; color: var(--muted); }
+.award-bar { height: 6px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+.award-bar span { display: block; height: 100%; border-radius: 999px; background: var(--brand-gradient); }
+.award-weight { font-family: var(--font-mono-stack); font-weight: 700; text-align: right; }
+.req-evidence { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
 .doc-type { font-size: 10.5px; color: var(--subtle); text-transform: uppercase; letter-spacing: 0.04em; }
 .doc-download { font-size: 12px; font-weight: 600; color: var(--accent); white-space: nowrap; }
 

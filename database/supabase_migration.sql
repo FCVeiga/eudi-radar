@@ -481,3 +481,6 @@ alter table news_items add column if not exists analysed_at timestamptz;
 -- visitors don't start two runs, and the last error to show on the page.
 alter table news_items add column if not exists report_started_at timestamptz;
 alter table news_items add column if not exists report_error text;
+
+-- English names for tender documents (file names are in the buyer's language).
+alter table documents add column if not exists name_en text;

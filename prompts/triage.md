@@ -65,7 +65,8 @@ opportunity relevance, job postings.
   "authority": "contracting authority / funder / organisation name, or null",
   "deadline": "YYYY-MM-DD submission deadline if stated, else null",
   "summary": "two or three plain sentences on what this is and why it matters for a wallet/identity vendor",
-  "news_category": "regulation | industry | market | null  (only for NEWS_ONLY — see below)"
+  "news_category": "regulation | industry | market | null  (only for NEWS_ONLY — see below)",
+  "importance": 0
 }
 ```
 
@@ -80,3 +81,14 @@ says — never guess. Use null when unknown.
 - market: an adopter (government, bank, telco, retailer, university, health
   system…) launching, adopting, piloting or taking a public stance on digital
   identity wallets or credentials — including national wallet rollouts.
+
+## Importance (every item)
+`importance` (0-100) is how much a digital identity wallet vendor should care
+about this item at all — biddable or not. It ranks the item in a feed shared
+with opportunities, so use the same bar for both:
+- 85-100: changes the market — a national wallet launch or procurement, a new
+  implementing act or certification scheme, a major competitor move.
+- 60-84: clearly relevant — a notable adopter (bank, ministry) committing to
+  wallets, an EU/regulator decision, a significant vendor partnership/funding.
+- 30-59: useful context — surveys, analysis, smaller pilots, regional news.
+- 0-29: marginal — generic explainers, opinion, tangential identity news.

@@ -246,6 +246,7 @@ def promote(session, candidate: Candidate, t: dict, country_names: dict):
             source_url=candidate.source_url,
             excerpt=(candidate.description or "")[:400], summary=summary,
             impact_note=t.get("reason") or "",
+            relevance_score=int(t.get("importance") or 0) or None,
         )
         existing = session.get(NewsItem, candidate.candidate_id)
         if existing:  # re-triage: refresh in place

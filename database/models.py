@@ -507,6 +507,7 @@ class NewsItem(Base):
     excerpt = Column(Text)
     summary = Column(Text)
     impact_note = Column(Text)  # the "Biometrid Impact Note" — agent-written
+    relevance_score = Column(Integer)  # triage "importance", 0-100 — ranks the home feed
     unverified = Column(Boolean, default=False)  # true for social-sourced items
     created_at = Column(DateTime, default=datetime.utcnow)
 

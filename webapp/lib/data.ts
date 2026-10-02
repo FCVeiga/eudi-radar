@@ -50,6 +50,8 @@ export type NewsItem = {
   excerpt: string | null;
   summary: string | null;
   unverified: boolean | null;
+  relevance_score: number | null;
+  created_at: string | null;
 };
 
 export function oppCategoryLabel(slug: string | null) {

@@ -365,6 +365,7 @@ create table news_items (
   excerpt TEXT,
   summary TEXT,
   impact_note TEXT,
+  relevance_score INTEGER,
   unverified BOOLEAN DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT now()
 );

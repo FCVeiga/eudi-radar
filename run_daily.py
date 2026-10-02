@@ -379,17 +379,20 @@ def main():
             return None, e
 
     new_opps, new_news, updates = [], [], []
-    failures = 0
+    failures = streak = 0
     with ThreadPoolExecutor(max_workers=8) as pool:
         for i, (c, (result, err)) in enumerate(zip(to_llm, pool.map(_triage, snapshots)), 1):
             if err:
                 errors.append(f"triage {c.candidate_id}: {err}")
                 failures += 1
-                if i >= 5 and failures == i:  # nothing has worked: bad key/config
-                    errors.append("Triage aborted: first calls all failed.")
+                streak += 1
+                # Bad key, no credit, outage: stop instead of failing the whole queue.
+                if (i >= 5 and failures == i) or streak >= 10:
+                    errors.append(f"Triage aborted after {streak} consecutive failures: {err}"[:300])
                     pool.shutdown(wait=False, cancel_futures=True)
                     break
                 continue
+            streak = 0
             apply_triage_result(session, c, result)
             promoted = promote(session, c, result, country_names)
             if promoted and promoted[0] == "opportunity":

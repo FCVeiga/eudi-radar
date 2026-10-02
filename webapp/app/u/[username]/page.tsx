@@ -6,6 +6,8 @@ import { ACHIEVEMENTS, getComments, getFollowing, getPosts, getProfile, getProfi
 import { getFeedLikes, likeTarget } from '@/lib/likes';
 import FeedCard from '@/components/FeedCard';
 import UserAvatar from '@/components/UserAvatar';
+import { CRED } from '@/lib/terms';
+import StartChatButton from '@/components/social/StartChatButton';
 
 const TABS = [
   { key: 'posts', label: 'Posts' },
@@ -35,12 +37,12 @@ export default async function ProfilePage({ params, searchParams }: { params: { 
   if (tab === 'posts') {
     const posts = await getPosts(profile.id);
     body = posts.length ? posts.map((p: any) => (
-      <article key={p.id} className="profile-post"><h3>{p.title}</h3>{p.body && <p>{p.body}</p>}<span className="profile-meta">{p.score} points · {fmt(p.created_at)}</span></article>
-    )) : <Empty own={own} who={profile.username} what="posts" hint="Posts arrive with the community feed — tenders, news and discussion from people in the market." />;
+      <Link key={p.id} href={`/posts/${p.id}`} className="profile-post"><h3>{p.title}</h3>{p.body && <p className="profile-post-body">{p.body}</p>}<span className="profile-meta">{p.score} {CRED} · {fmt(p.created_at)}</span></Link>
+    )) : <Empty own={own} who={profile.username} what="posts" hint={own ? 'Share a take on a tender, a question for the market, or lessons from a bid.' : 'Their posts will show here.'} cta={own ? { href: '/posts/new', label: 'Create a post' } : undefined} />;
   } else if (tab === 'comments') {
     const comments = await getComments(profile.id);
     body = comments.length ? comments.map((c: any) => (
-      <article key={c.id} className="profile-post"><span className="profile-meta">on “{c.posts?.title}” · {fmt(c.created_at)}</span><p>{c.body}</p></article>
+      <Link key={c.id} href={`/posts/${c.post_id}`} className="profile-post"><span className="profile-meta">on “{c.posts?.title}” · {fmt(c.created_at)}</span><p className="profile-post-body">{c.body}</p></Link>
     )) : <Empty own={own} who={profile.username} what="comments" hint="Comments on other people’s posts will show here." />;
   } else if (tab === 'following') {
     if (!own) {
@@ -90,6 +92,8 @@ export default async function ProfilePage({ params, searchParams }: { params: { 
             <span className="profile-handle">u/{profile.username}</span>
           </div>
           {own && <Link href="/profile/edit" className="btn profile-edit-top">Edit profile</Link>}
+          {!own && me && <span className="profile-chat-top"><StartChatButton username={profile.username} /></span>}
+          {!own && !me && <Link href={`/login?next=/u/${profile.username}`} className="btn profile-chat-top">Log in to chat</Link>}
         </header>
 
         <nav className="feed-sort section-tabs profile-tabs" aria-label="Profile sections">
@@ -116,9 +120,10 @@ export default async function ProfilePage({ params, searchParams }: { params: { 
             <span className="profile-handle">u/{profile.username}</span>
             {profile.bio && <p className="profile-card-bio">{profile.bio}</p>}
             {own && <Link href="/profile/edit" className="btn primary profile-card-edit">Edit profile</Link>}
+            {!own && me && <div className="profile-card-edit"><StartChatButton username={profile.username} /></div>}
             <dl className="profile-stats">
-              <div><dt>{stats.postKarma}</dt><dd>Post karma</dd></div>
-              <div><dt>{stats.commentKarma}</dt><dd>Comment karma</dd></div>
+              <div><dt>{stats.postCred}</dt><dd>Post {CRED}</dd></div>
+              <div><dt>{stats.commentCred}</dt><dd>Comment {CRED}</dd></div>
               <div><dt>{fmt(profile.createdAt)}</dt><dd>Cake day</dd></div>
               <div><dt>{own ? stats.following : '—'}</dt><dd>Following</dd></div>
             </dl>
@@ -135,11 +140,12 @@ export default async function ProfilePage({ params, searchParams }: { params: { 
   );
 }
 
-function Empty({ own, who, what, hint }: { own: boolean; who: string; what: string; hint: string }) {
+function Empty({ own, who, what, hint, cta }: { own: boolean; who: string; what: string; hint: string; cta?: { href: string; label: string } }) {
   return (
     <div className="profile-empty">
       <p className="profile-empty-title">{own ? `You don’t have any ${what} yet` : `u/${who} hasn’t got any ${what} yet`}</p>
       <p className="muted">{hint}</p>
+      {cta && <Link href={cta.href} className="btn primary profile-empty-cta">{cta.label}</Link>}
     </div>
   );
 }

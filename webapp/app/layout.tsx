@@ -10,6 +10,7 @@ import WorkingAgents from '@/components/WorkingAgents';
 import { getPlatformLanguage } from '@/lib/language';
 import { getCurrentUser } from '@/lib/auth';
 import UserMenu from '@/components/auth/UserMenu';
+import NavActions from '@/components/social/NavActions';
 import UserAvatar from '@/components/UserAvatar';
 import { logOut } from '@/app/auth/actions';
 import { BottomNav, MenuBackdrop, MenuButton } from '@/components/MobileNav';
@@ -44,6 +45,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <span className="brand-product">EUDI Radar</span>
           </Link>
           <Suspense fallback={<div className="search-box" />}><SearchBox /></Suspense>
+          {user && <NavActions />}
           <div className="auth-buttons">
             {user ? <UserMenu user={{ username: user.username, displayName: user.displayName, avatarUrl: user.avatarUrl }} /> : (
               <>
@@ -69,6 +71,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   <span><strong>{user.displayName}</strong><em>u/{user.username}</em></span>
                 </Link>
                 <nav className="sidebar-user-links">
+                  <Link href="/posts/new">New post</Link><Link href="/chat">Chat</Link>
                   <Link href="/help">Help</Link><Link href="/terms">Terms &amp; Conditions</Link><Link href="/privacy">Privacy policy</Link>
                 </nav>
                 <form action={logOut}><button type="submit" className="btn">Log out</button></form>

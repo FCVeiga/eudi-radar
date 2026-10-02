@@ -59,6 +59,7 @@ export function SignupForm({ next }: { next: string }) {
             title="3–24 letters, numbers or underscores" />
         </label>
         <label className="field"><span>Password <em>— at least 8 characters</em></span><input name="password" type="password" autoComplete="new-password" required minLength={8} /></label>
+        <label className="field"><span>Confirm password</span><input name="confirm" type="password" autoComplete="new-password" required minLength={8} /></label>
         <p className="auth-legal">By signing up you agree to our <Link href="/terms">Terms &amp; Conditions</Link> and <Link href="/privacy">Privacy Policy</Link>.</p>
         <Msg state={state} />
         <Submit label="Sign up" busy="Creating your account…" />

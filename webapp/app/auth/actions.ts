@@ -16,6 +16,7 @@ export async function signUp(_prev: AuthState, form: FormData): Promise<AuthStat
   if (!EMAIL.test(email)) return { ok: false, message: 'Enter a valid email address.' };
   if (!USERNAME.test(username)) return { ok: false, message: 'Usernames are 3–24 letters, numbers or underscores.' };
   if (password.length < 8) return { ok: false, message: 'Use a password of at least 8 characters.' };
+  if (password !== String(form.get('confirm') || '')) return { ok: false, message: 'The passwords don’t match.' };
   if (await usernameTaken(username)) return { ok: false, message: `u/${username} is taken — try another.` };
 
   // Created confirmed: email verification needs an email provider on Supabase (see Help).

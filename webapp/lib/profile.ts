@@ -27,7 +27,7 @@ export async function getProfileStats(userId: string) {
   const sum = (rows: any[] | null) => (rows || []).reduce((n, r) => n + (r.score || 0), 0);
   return {
     posts: posts.data?.length ?? 0, comments: comments.data?.length ?? 0, following: likes.count ?? 0,
-    postKarma: sum(posts.data), commentKarma: sum(comments.data),
+    postCred: sum(posts.data), commentCred: sum(comments.data),  // Bidcred (lib/terms.ts)
   };
 }
 
@@ -38,7 +38,7 @@ export async function getPosts(userId: string) {
 }
 
 export async function getComments(userId: string) {
-  const { data } = await getSupabaseServerClient().from('comments').select('id, body, score, created_at, posts(title)')
+  const { data } = await getSupabaseServerClient().from('comments').select('id, post_id, body, score, created_at, posts(title)')
     .eq('user_id', userId).order('created_at', { ascending: false }).limit(50);
   return data || [];
 }

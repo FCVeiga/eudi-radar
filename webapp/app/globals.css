@@ -945,3 +945,9 @@ th.num .sort-head { justify-content: flex-end; }
 /* In-page links (#agents, #updates…) stop below the fixed top bar. */
 [id] { scroll-margin-top: calc(var(--topbar-h) + env(safe-area-inset-top, 0px) + 12px); }
 @media (max-width: 560px) { .search-box input::placeholder { color: transparent; } }
+/* Proposal Manager Agent, inside the Tender Evaluation section */
+.proposal-block { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border); }
+.proposal-block .agent-head { margin-bottom: 8px; }
+.proposal-block h3 { font-size: 15px; font-weight: 700; color: var(--ink); }
+.proposal-block .agent-intro { font-size: 13px; color: var(--muted); line-height: 1.55; }
+a.btn-agent { display: inline-flex; align-items: center; text-decoration: none; }

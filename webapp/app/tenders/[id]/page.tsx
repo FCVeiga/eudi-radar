@@ -8,6 +8,7 @@ import TenderDocuments, { Doc } from '@/components/TenderDocuments';
 import AgentAvatar from '@/components/AgentAvatar';
 import { isAgentEnabled } from '@/lib/settings';
 import TenderEvaluationRunner from '@/components/TenderEvaluationRunner';
+import ProposalRunner from '@/components/ProposalRunner';
 
 // The Tender Evaluation Agent runs inside this page's server action: give it time.
 export const maxDuration = 300;
@@ -95,7 +96,8 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
   const evaluation = o.evaluation as Evaluation | null;
   const summary = (firstEnglish(o.tender_summary) ?? firstEnglish(o.summary) ?? '')
     .split(/\n{2,}/).map((p: string) => p.trim()).filter(Boolean);
-  const evaluatorOn = await isAgentEnabled('tender_evaluation');
+  const [evaluatorOn, proposerOn] = await Promise.all([isAgentEnabled('tender_evaluation'), isAgentEnabled('proposal_manager')]);
+  const proposing = !!o.proposal_started_at && Date.now() - new Date(o.proposal_started_at).getTime() < 6 * 60_000;
   const running = !!o.evaluation_started_at && Date.now() - new Date(o.evaluation_started_at).getTime() < 5 * 60_000;
 
   return (
@@ -171,6 +173,26 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
             )}
             {!evaluatorOn ? <p className="muted">The Tender Evaluation Agent is switched off in Settings.</p> : <TenderEvaluationRunner opportunityId={o.opportunity_id} evaluatedAt={o.evaluated_at ?? null} running={running}
                               ready={!!o.tender_summary || reqs.length > 0} lastError={o.evaluation_error ?? null} />}
+
+            {evaluation && proposerOn && (
+              <div className="proposal-block" id="proposal">
+                <div className="agent-head">
+                  <AgentAvatar agent="proposal_manager" size={36} working={proposing} />
+                  <div className="agent-id">
+                    <h3>Proposal Manager Agent</h3>
+                    <span className="agent-name">{o.proposal_at ? `Proposal brief from ${fmtDate(o.proposal_at)}` : 'Next step after the evaluation'}</span>
+                  </div>
+                </div>
+                <p className="agent-intro">
+                  Writes the proposal brief for the bid team: the tender summary, deadlines and evaluation criteria; every
+                  eligibility, reference, team, technical and project requirement with the answer your company material
+                  supports (who fills each role, which references and certificates); the documents to submit; the gaps
+                  and the next steps.
+                </p>
+                <ProposalRunner opportunityId={o.opportunity_id} proposalAt={o.proposal_at ?? null} running={proposing}
+                                lastError={o.proposal_error ?? null} />
+              </div>
+            )}
           </section>
           {changes && changes.length > 0 && (
             <div className="detail-block" id="updates">

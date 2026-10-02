@@ -92,3 +92,12 @@ export async function startTenderEvaluation(opportunityId: string) {
   if (result.status === 'done') revalidatePath(`/tenders/${opportunityId}`);
   return result;
 }
+
+/** The tender page's "Prepare proposal brief" button: starts the Proposal Manager Agent. */
+export async function startProposalBrief(opportunityId: string) {
+  if (!/^[0-9a-f]{12,40}$/.test(opportunityId)) return { status: 'error' as const, message: 'unknown tender' };
+  const { ensureProposal } = await import('@/lib/proposalManager');
+  const result = await ensureProposal(opportunityId);
+  if (result.status === 'done') revalidatePath(`/tenders/${opportunityId}`);
+  return result;
+}

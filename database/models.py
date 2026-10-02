@@ -365,6 +365,10 @@ class Opportunity(Base):
     evaluated_at = Column(DateTime)
     evaluation_started_at = Column(DateTime)
     evaluation_error = Column(Text)
+    proposal_brief = Column(Text)                    # Proposal Manager Agent (webapp), Markdown
+    proposal_at = Column(DateTime)
+    proposal_started_at = Column(DateTime)
+    proposal_error = Column(Text)
 
     documents = relationship("Document", back_populates="opportunity")
     requirements = relationship("Requirement", back_populates="opportunity")

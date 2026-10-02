@@ -477,7 +477,7 @@ def main():
     mark_relevance(session)
 
     # --- 3. Verification: is each opportunity actually open today? ----------
-    verified = verify_opportunities(session, errors) if S.enabled("verification") else 0
+    verified = verify_opportunities(session, errors)  # internal agent: always on
     print(f"Verification: {verified} opportunities checked against their source")
 
     # Tender documents (TED notices + buyer portal lists) and what bidders must meet.

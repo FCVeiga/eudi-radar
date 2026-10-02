@@ -22,15 +22,17 @@ _ROOT = os.path.join(os.path.dirname(__file__), "..")
 # Agent key -> its prompt file (repo-relative). Keys match webapp/lib/agents.ts.
 AGENT_PROMPTS = {
     "triage": "prompts/triage.md",
-    "verification": "prompts/verification.md",
     "tender_analysis": "prompts/tender_requirements.md",
     "feed_writer": "prompts/feed_post.md",
     "translator": "prompts/translation.md",
     "tender_evaluation": "webapp/agents/tender_evaluation.md",
     "news_report": "webapp/agents/news_report.md",
+    "proposal_manager": "webapp/agents/proposal_manager.md",
 }
-ALL_AGENTS = ["search", "triage", "verification", "tender_documents", "tender_analysis",
-              "tender_evaluation", "news_report", "feed_writer", "translator"]
+# Configurable on Settings. The Verification Agent is internal: it always runs,
+# on prompts/verification.md, and has no switch or fine-tuning.
+ALL_AGENTS = ["search", "triage", "tender_documents", "tender_analysis",
+              "tender_evaluation", "proposal_manager", "news_report", "feed_writer", "translator"]
 DEFAULT_COMPANY = "WalliD"
 
 _state = {"loaded": False, "enabled": {}, "overrides": {}, "search": None, "company": DEFAULT_COMPANY}

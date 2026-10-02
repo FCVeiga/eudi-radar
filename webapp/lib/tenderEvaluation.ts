@@ -5,10 +5,9 @@
  * status for each requirement, a fit score and a bid report.
  * (prompt: agents/tender_evaluation.md; company context: agents/company_brief.md.)
  */
-import { readFile } from 'fs/promises';
-import path from 'path';
 import Anthropic from '@anthropic-ai/sdk';
 import { getSupabaseServerClient } from '@/lib/supabase';
+import { agentPrompt, companyBrief, isAgentEnabled } from '@/lib/settings';
 
 export const EVALUATION_AGENT = 'Tender Evaluation Agent';
 const MODEL = 'claude-opus-5-5';
@@ -19,12 +18,10 @@ const LOCK_MINUTES = 5;
 
 export type EvaluationStatus = 'done' | 'running' | 'error';
 
+// Its fine-tuned prompt from Settings (or agents/tender_evaluation.md), with the company's
+// context and uploaded material in place of {company_brief}.
 async function systemPrompt() {
-  const dir = path.join(process.cwd(), 'agents');
-  const [prompt, brief] = await Promise.all([
-    readFile(path.join(dir, 'tender_evaluation.md'), 'utf8'),
-    readFile(path.join(dir, 'company_brief.md'), 'utf8'),
-  ]);
+  const [prompt, brief] = await Promise.all([agentPrompt('tender_evaluation', 'tender_evaluation.md'), companyBrief({ withDocuments: true })]);
   return prompt.replace('{company_brief}', brief);
 }
 
@@ -41,6 +38,7 @@ function parseJson(text: string) {
  * people, share one run: the second gets 'running' and waits for the page).
  */
 export async function ensureEvaluation(opportunityId: string): Promise<{ status: EvaluationStatus; message?: string }> {
+  if (!(await isAgentEnabled('tender_evaluation'))) return { status: 'error', message: 'the Tender Evaluation Agent is switched off in Settings' };
   const db = getSupabaseServerClient();
   const cutoff = new Date(Date.now() - LOCK_MINUTES * 60_000).toISOString();
   const { data: locked } = await db.from('opportunities')

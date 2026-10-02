@@ -30,6 +30,7 @@ from agents.digest import render_daily_digest, CoverageStats  # noqa: E402
 from agents.discovery import run_discovery, build_query_combinations  # noqa: E402
 from agents.triage import heuristic_prefilter, run_triage_llm, apply_triage_result  # noqa: E402
 from services.deduplicator import fingerprint  # noqa: E402
+from services import agent_settings as S  # noqa: E402
 
 CONFIG_DIR = os.path.join(os.path.dirname(__file__), "config")
 
@@ -76,6 +77,14 @@ NEWS_QUERIES = [
     # industry: vendors / competitors
     "digital identity wallet company funding acquisition partnership",
 ]
+
+
+def rotate(queries: list, n: int) -> list:
+    """n of the queries, a different slice each day."""
+    if not queries or n <= 0:
+        return []
+    start = (date.today().toordinal() * n) % len(queries)
+    return [queries[(start + i) % len(queries)] for i in range(min(n, len(queries)))]
 
 
 def tavily_queries_for_today(n: int) -> list:
@@ -356,33 +365,50 @@ def main():
     country_codes = [c.code for c in countries]
     country_names = {c.code: c.name for c in countries}
 
-    # --- 1. Discovery -------------------------------------------------------
-    from adapters.ted import TedSearchProvider
-    query_count = len(TED_PHRASES)
-    candidates = run_discovery(session, TedSearchProvider(), {"ted": TED_PHRASES},
-                               country_codes, errors=errors)
-    print(f"TED: {len(candidates)} new candidates from {len(TED_PHRASES)} phrases")
+    # Settings page: agents on/off, fine-tuned prompts, the search scope.
+    S.load(session)
+    scope = S.search_config()
+    off = [a for a in S.ALL_AGENTS if not S.enabled(a)]
+    if off:
+        print(f"Switched off on Settings: {', '.join(off)}")
+    if scope:
+        print(f"Search scope: {scope.get('topic') or 'custom'} ({len(scope.get('ted_phrases') or [])} TED phrases)")
 
-    if os.environ.get("TAVILY_API_KEY"):
+    # --- 1. Discovery (Search Agent) ----------------------------------------
+    from adapters.ted import TedSearchProvider
+    ted_phrases = scope.get("ted_phrases") or TED_PHRASES
+    news_queries = scope.get("news_queries") or NEWS_QUERIES
+    query_count = 0
+    candidates = []
+    if S.enabled("search"):
+        query_count = len(ted_phrases)
+        candidates = run_discovery(session, TedSearchProvider(), {"ted": ted_phrases},
+                                   country_codes, errors=errors)
+        print(f"TED: {len(candidates)} new candidates from {len(ted_phrases)} phrases")
+
+    if not S.enabled("search"):
+        pass
+    elif os.environ.get("TAVILY_API_KEY"):
         from adapters.tavily import TavilySearchProvider
-        web_queries = tavily_queries_for_today(int(os.environ.get("TAVILY_QUERIES_PER_RUN", 20)))
+        per_run = int(os.environ.get("TAVILY_QUERIES_PER_RUN", 20))
+        web_queries = rotate(scope["web_queries"], per_run) if scope.get("web_queries") else tavily_queries_for_today(per_run)
         query_count += len(web_queries)
         web = run_discovery(session, TavilySearchProvider(), {"web": web_queries},
                             country_codes, errors=errors)
         candidates += web
         print(f"Tavily: {len(web)} new candidates from {len(web_queries)} queries")
         news = run_discovery(session, TavilySearchProvider(topic="news", days=30),
-                             {"news": NEWS_QUERIES}, country_codes, errors=errors)
-        query_count += len(NEWS_QUERIES)
+                             {"news": news_queries}, country_codes, errors=errors)
+        query_count += len(news_queries)
         candidates += news
-        print(f"Tavily news: {len(news)} new candidates from {len(NEWS_QUERIES)} queries")
+        print(f"Tavily news: {len(news)} new candidates from {len(news_queries)} queries")
     else:
         errors.append("TAVILY_API_KEY not set — web search skipped")
 
     # Followed sources (Following sidebar): RSS feeds and domain searches on
     # their own schedules; whatever they surface joins the triage queue.
     from agents.source_monitor import check_sources, ingest_activity
-    monitored = check_sources(session, errors)
+    monitored = check_sources(session, errors) if S.enabled("search") else {"checked": 0, "total": 0, "found": 0}
     from_sources = ingest_activity(session)
     print(f"Sources: {monitored['checked']} of {monitored['total']} monitored sources due and checked, "
           f"{monitored['found']} new items, {from_sources} new candidates")
@@ -390,7 +416,7 @@ def main():
     # --- 2. Triage (all unprocessed, including leftovers from earlier runs) --
     max_triage = int(os.environ.get("MAX_TRIAGE_PER_RUN", 400))
     pending = (session.query(Candidate).filter(Candidate.processed.is_(False))
-               .order_by(Candidate.discovered_at).limit(max_triage).all())
+               .order_by(Candidate.discovered_at).limit(max_triage).all()) if S.enabled("triage") else []
     to_llm = []
     for c in pending:
         if heuristic_prefilter(c):
@@ -446,23 +472,25 @@ def main():
     mark_relevance(session)
 
     # --- 3. Verification: is each opportunity actually open today? ----------
-    verified = verify_opportunities(session, errors)
+    verified = verify_opportunities(session, errors) if S.enabled("verification") else 0
     print(f"Verification: {verified} opportunities checked against their source")
 
     # Tender documents (TED notices + buyer portal lists) and what bidders must meet.
     from agents.tender_documents import collect_all
     from agents.tender_analysis import analyse_tenders
-    docs = collect_all(session, errors)
-    print(f"Documents: {docs['documents']} across {docs['opportunities']} active tenders, {docs['new']} new")
-    analysed = analyse_tenders(session, errors)
-    print(f"Tender analysis: award criteria for {analysed['award']} criteria, requirements for {analysed['requirements']} tenders")
+    if S.enabled("tender_documents"):
+        docs = collect_all(session, errors)
+        print(f"Documents: {docs['documents']} across {docs['opportunities']} active tenders, {docs['new']} new")
+    if S.enabled("tender_analysis"):
+        analysed = analyse_tenders(session, errors)
+        print(f"Tender analysis: award criteria for {analysed['award']} criteria, requirements for {analysed['requirements']} tenders")
 
     # English titles for anything that predates triage's title_en, and for activity;
     # English notes for tender updates (shown as comments).
     from agents.translator import backfill_english_titles
-    translated = backfill_english_titles(session, errors)
     from agents.translator import write_update_notes
-    noted = write_update_notes(session, errors)
+    translated = backfill_english_titles(session, errors) if S.enabled("translator") else 0
+    noted = write_update_notes(session, errors) if S.enabled("translator") else 0
     if noted:
         print(f"Update notes: {noted} written")
     if translated:
@@ -475,7 +503,7 @@ def main():
 
     # --- 4. Feed: agents post new events, then the feed is re-ranked ---------
     from agents.feed_writer import publish_new_posts, rank_posts
-    posted = publish_new_posts(session, errors)
+    posted = publish_new_posts(session, errors) if S.enabled("feed_writer") else 0
     ranked = rank_posts(session)
     print(f"Feed: {posted} new posts, {ranked} posts ranked")
 

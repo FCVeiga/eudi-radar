@@ -13,24 +13,13 @@ import sys
 from sqlalchemy import text
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from services.llm_client import call_llm_json, CHEAP_MODEL  # noqa: E402
+from services.llm_client import call_llm_json, load_prompt, CHEAP_MODEL  # noqa: E402
 
 BATCH = 20
 MAX_BATCHES_PER_RUN = 25
 
-_SYSTEM = """You translate text for an English-language intelligence feed on digital
-identity wallets and public procurement. For each numbered item, detect its
-language and give English. If it is already English, return it unchanged.
+# The translation prompt lives in prompts/translation.md (fine-tunable on Settings).
 
-- kind "title": a clear English title. Drop procurement boilerplate such as
-  CPV category prefixes ("IT services: consulting, software development…")
-  and reference numbers; keep names, places and what is procured/announced.
-- kind "name": an organisation name. Keep the official name and add the
-  English rendering in parentheses, e.g. "Bundesamt für Sicherheit in der
-  Informationstechnik (Federal Office for Information Security)". Unchanged
-  if already English.
-
-Reply with JSON only: {"items": [{"n": 1, "language": "de", "text": "..."}, ...]}"""
 
 # (table, key, source column, target column, kind, extra condition) — every
 # non-English text the site can show. Site-search finds only matter once
@@ -47,7 +36,7 @@ TARGETS = [
 
 def translate(texts: list, kind: str) -> list:
     listing = "\n".join(f'{i + 1}. [{kind}] {t}' for i, t in enumerate(texts))
-    out = call_llm_json(_SYSTEM, listing, model=CHEAP_MODEL, max_tokens=4000)
+    out = call_llm_json(load_prompt("translation.md"), listing, model=CHEAP_MODEL, max_tokens=4000)
     by_n = {int(x["n"]): x for x in out.get("items", []) if "n" in x}
     return [by_n.get(i + 1, {}) for i in range(len(texts))]
 

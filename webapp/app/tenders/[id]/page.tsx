@@ -5,7 +5,8 @@ import { firstEnglish } from '@/lib/english';
 import { DeadlineText, StatusTags } from '@/components/OpportunityCard';
 import UpdateComment, { UpdateEvent } from '@/components/UpdateComment';
 import TenderDocuments, { Doc } from '@/components/TenderDocuments';
-import { AgentFace } from '@/components/NewsReport';
+import AgentAvatar from '@/components/AgentAvatar';
+import { isAgentEnabled } from '@/lib/settings';
 import TenderEvaluationRunner from '@/components/TenderEvaluationRunner';
 
 // The Tender Evaluation Agent runs inside this page's server action: give it time.
@@ -94,6 +95,7 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
   const evaluation = o.evaluation as Evaluation | null;
   const summary = (firstEnglish(o.tender_summary) ?? firstEnglish(o.summary) ?? '')
     .split(/\n{2,}/).map((p: string) => p.trim()).filter(Boolean);
+  const evaluatorOn = await isAgentEnabled('tender_evaluation');
   const running = !!o.evaluation_started_at && Date.now() - new Date(o.evaluation_started_at).getTime() < 5 * 60_000;
 
   return (
@@ -130,7 +132,7 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
 
           <section className="detail-block analysis-block" id="evaluation">
             <div className="agent-head">
-              <AgentFace working={running} />
+              <AgentAvatar agent="tender_evaluation" working={running} off={!evaluatorOn} />
               <div className="agent-id">
                 <h2>Tender Evaluation</h2>
                 <span className="agent-name">Tender Evaluation Agent{o.evaluated_at ? ` · report from ${fmtDate(o.evaluated_at)}` : ''}</span>
@@ -167,8 +169,8 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
                 )}
               </div>
             )}
-            <TenderEvaluationRunner opportunityId={o.opportunity_id} evaluatedAt={o.evaluated_at ?? null} running={running}
-                              ready={!!o.tender_summary || reqs.length > 0} lastError={o.evaluation_error ?? null} />
+            {!evaluatorOn ? <p className="muted">The Tender Evaluation Agent is switched off in Settings.</p> : <TenderEvaluationRunner opportunityId={o.opportunity_id} evaluatedAt={o.evaluated_at ?? null} running={running}
+                              ready={!!o.tender_summary || reqs.length > 0} lastError={o.evaluation_error ?? null} />}
           </section>
           {changes && changes.length > 0 && (
             <div className="detail-block" id="updates">

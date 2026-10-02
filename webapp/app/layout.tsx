@@ -6,6 +6,7 @@ import { Inter, JetBrains_Mono } from 'next/font/google';
 import SearchBox from '@/components/SearchBox';
 import SideNav from '@/components/SideNav';
 import SourcesSidebar from '@/components/SourcesSidebar';
+import WorkingAgents from '@/components/WorkingAgents';
 
 // Every page reads live from Supabase. Without this, Next prerenders pages
 // with no searchParams at build time and serves that frozen snapshot forever.
@@ -43,6 +44,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <SideNav />
             <div className="sidebar-rule" />
             <SourcesSidebar />
+            <div className="sidebar-rule" />
+            <WorkingAgents />
             <div className="sidebar-foot">WalliD · EUDI Radar<br /><span className="mono">TED · Tavily · official portals</span></div>
           </aside>
           <main className="content">{children}</main>

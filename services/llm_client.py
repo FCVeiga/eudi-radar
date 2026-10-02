@@ -92,6 +92,9 @@ def call_llm_text(system_prompt: str, user_content: str,
 
 
 def load_prompt(prompt_filename: str) -> str:
+    """The prompt file, or its fine-tuned version from the Settings page
+    (services/agent_settings.py), with the search scope applied."""
+    from services.agent_settings import prompt_for
     path = os.path.join(os.path.dirname(__file__), "..", "prompts", prompt_filename)
     with open(path) as f:
-        return f.read()
+        return prompt_for(prompt_filename, f.read())

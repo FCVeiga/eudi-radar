@@ -3,7 +3,9 @@ import { getSupabaseServerClient } from '@/lib/supabase';
 import { newsCategoryLabel, titleOf } from '@/lib/data';
 import { firstEnglish } from '@/lib/english';
 import NewsImage from '@/components/NewsImage';
-import NewsReportRunner, { AgentFace } from '@/components/NewsReport';
+import NewsReportRunner from '@/components/NewsReport';
+import AgentAvatar from '@/components/AgentAvatar';
+import { isAgentEnabled } from '@/lib/settings';
 
 // The News Report Agent runs inside this page's server action: give it time.
 export const maxDuration = 300;
@@ -44,6 +46,7 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
     .split(/\n{2,}/).map((p: string) => p.trim()).filter(Boolean);
   const facts: string[] = Array.isArray(n.key_facts) ? n.key_facts.filter((f: string) => firstEnglish(f)) : [];
   const analysis = n.analysis as Analysis | null;
+  const agentOn = await isAgentEnabled('news_report');
   const domain = n.source_url ? new URL(n.source_url).hostname.replace(/^www\./, '') : n.source_name;
 
   return (
@@ -81,7 +84,7 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
 
       <section className="detail-block analysis-block">
         <div className="agent-head">
-          <AgentFace working={!analysis} />
+          <AgentAvatar agent="news_report" working={!analysis && agentOn} off={!agentOn && !analysis} />
           <div className="agent-id">
             <h2>Agent Analysis</h2>
             <span className="agent-name">News Report Agent{n.analysed_at ? ` · report from ${fmtDate(n.analysed_at)}` : ''}</span>
@@ -89,7 +92,9 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
           {analysis && <span className={`verdict ${analysis.verdict}`} title={VERDICTS[analysis.verdict]?.note}>{VERDICTS[analysis.verdict]?.label}</span>}
         </div>
 
-        {!analysis && <NewsReportRunner newsId={n.news_id} lastError={n.report_error ?? null} />}
+        {!analysis && (agentOn
+          ? <NewsReportRunner newsId={n.news_id} lastError={n.report_error ?? null} />
+          : <p className="muted">The News Report Agent is switched off in Settings.</p>)}
         {analysis && (
           <>
             {firstEnglish(analysis.take) && <p className="analysis-take">{analysis.take}</p>}

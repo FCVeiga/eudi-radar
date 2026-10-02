@@ -44,6 +44,11 @@ def site_query(country) -> str:
             _LANG = yaml.safe_load(f)
     langs = [l for l in _LANG["country_languages"].get(country or "", []) if l != "en"]
     local = " ".join(p for l in langs[:2] for p in _LANG["phrases"].get(l, [])[1:3])
+    from services.agent_settings import search_config
+    custom = search_config().get("site_query")
+    if custom:  # the Settings search scope replaces the EUDI default, local-language phrases included
+        own = search_config().get("local_phrases") or {}
+        return f"{' '.join(p for l in langs[:2] for p in own.get(l, [])[:2])} {custom}".strip()
     return f"{local} EUDI eIDAS {SITE_QUERY}".strip()
 NEWS_TYPES = {"NEWS", "INDUSTRY_SOURCE", "SOCIAL_TWITTER", "SOCIAL_LINKEDIN", "SOCIAL_REDDIT"}
 

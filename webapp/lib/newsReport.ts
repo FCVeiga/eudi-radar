@@ -6,21 +6,18 @@
  * The result is saved, so later visits show it instantly.
  * (prompt: agents/news_report.md; company context: agents/company_brief.md.)
  */
-import { readFile } from 'fs/promises';
-import path from 'path';
 import Anthropic from '@anthropic-ai/sdk';
 import { getSupabaseServerClient } from '@/lib/supabase';
+import { agentPrompt, companyBrief, isAgentEnabled } from '@/lib/settings';
 
 export const AGENT_NAME = 'News Report Agent';
 const MODEL = 'claude-opus-5-5';
 const ACTION_TYPES = ['content', 'participate', 'announce', 'outreach', 'bid', 'product', 'monitor'];
 
+// Its fine-tuned prompt from Settings (or agents/news_report.md), with the company's
+// context in place of {company_brief}.
 async function systemPrompt() {
-  const dir = path.join(process.cwd(), 'agents');
-  const [prompt, brief] = await Promise.all([
-    readFile(path.join(dir, 'news_report.md'), 'utf8'),
-    readFile(path.join(dir, 'company_brief.md'), 'utf8'),
-  ]);
+  const [prompt, brief] = await Promise.all([agentPrompt('news_report', 'news_report.md'), companyBrief({ withDocuments: false })]);
   return prompt.replace('{company_brief}', brief);
 }
 
@@ -63,6 +60,7 @@ export type ReportStatus = 'done' | 'running' | 'error';
  * 'running' and simply waits for the page to fill in.
  */
 export async function ensureNewsReport(newsId: string): Promise<{ status: ReportStatus; message?: string }> {
+  if (!(await isAgentEnabled('news_report'))) return { status: 'error', message: 'the News Report Agent is switched off in Settings' };
   const db = getSupabaseServerClient();
   const cutoff = new Date(Date.now() - LOCK_MINUTES * 60_000).toISOString();
   const { data: locked } = await db.from('news_items')

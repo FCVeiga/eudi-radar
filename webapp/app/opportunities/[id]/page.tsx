@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { getSupabaseServerClient } from '@/lib/supabase';
-import { Opportunity, oppCategoryLabel } from '@/lib/data';
+import { Opportunity, oppCategoryLabel, titleOf } from '@/lib/data';
 import { DeadlineText, StatusTags } from '@/components/OpportunityCard';
 
 const REQ_CATEGORY_GROUPS: Record<string, string[]> = {
@@ -72,8 +72,11 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
 
       <div className="detail-head">
         <div className="opp-tags"><StatusTags o={o as Opportunity} /></div>
-        <h1>{o.title}</h1>
+        <h1>{titleOf(o)}</h1>
         <p className="page-sub">{[o.authority, o.country].filter(Boolean).join(' · ') || 'International'}</p>
+        {o.title_en && o.title_en !== o.title && (
+          <p className="original-title"><span>Original{o.language ? ` (${o.language.toUpperCase()})` : ''}</span> {o.title}</p>
+        )}
       </div>
 
       <div className="stat-grid">

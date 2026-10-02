@@ -20,7 +20,9 @@ export const SIGNAL_MAX_AGE_DAYS = 183;
 
 export type Opportunity = {
   opportunity_id: string;
-  title: string;
+  title: string;            // as published, original language
+  title_en: string | null;  // English title from triage
+  language: string | null;
   country: string | null;
   authority: string | null;
   opportunity_type: string | null;
@@ -43,6 +45,8 @@ export type Opportunity = {
 export type NewsItem = {
   news_id: string;
   title: string;
+  title_en: string | null;
+  language: string | null;
   category: string | null;
   region: string | null;
   country: string | null;
@@ -54,6 +58,9 @@ export type NewsItem = {
   relevance_score: number | null;
   created_at: string | null;
 };
+
+/** English title when triage provided one, else the original. */
+export const titleOf = (x: { title: string; title_en?: string | null }) => x.title_en || x.title;
 
 export function oppCategoryLabel(slug: string | null) {
   return OPP_CATEGORIES.find((c) => c.slug === slug)?.label.replace(/s$/, '') ?? slug ?? '';

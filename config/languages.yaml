@@ -1,0 +1,69 @@
+# Local-language search terms, so the radar finds notices and news that never
+# use the English phrasing. Used by:
+#   - run_daily.py: TED full-text phrases (TED matches each notice's own language)
+#   - agents/source_monitor.py: site searches of each country's portal and sites
+#
+# Each language lists the phrases a procurement notice or news story would
+# actually use for the EUDI Wallet / digital identity wallet, plus electronic
+# identification. "EUDI", "EUDIW" and "eIDAS" are the same in every language
+# and are searched separately.
+
+country_languages:
+  AT: [de]
+  BE: [nl, fr]
+  BG: [bg]
+  CH: [de, fr, it]
+  CY: [el]
+  CZ: [cs]
+  DE: [de]
+  DK: [da]
+  EE: [et]
+  ES: [es]
+  FI: [fi, sv]
+  FR: [fr]
+  GR: [el]
+  HR: [hr]
+  HU: [hu]
+  IE: [en]
+  IS: [is]
+  IT: [it]
+  LI: [de]
+  LT: [lt]
+  LU: [fr, de]
+  LV: [lv]
+  MT: [en]
+  NL: [nl]
+  NO: ["no"]
+  PL: [pl]
+  PT: [pt]
+  RO: [ro]
+  SE: [sv]
+  SI: [sl]
+  SK: [sk]
+  UK: [en]
+
+phrases:
+  en: ["European Digital Identity Wallet", "digital identity wallet", "electronic identification"]
+  de: ["Europäische Brieftasche für die Digitale Identität", "EUDI-Wallet", "digitale Identität", "elektronische Identifizierung"]
+  fr: ["portefeuille européen d'identité numérique", "portefeuille d'identité numérique", "identification électronique"]
+  it: ["portafoglio europeo di identità digitale", "portafoglio di identità digitale", "identificazione elettronica"]
+  es: ["cartera europea de identidad digital", "cartera de identidad digital", "identificación electrónica"]
+  pt: ["carteira europeia de identidade digital", "carteira de identidade digital", "identificação eletrónica"]
+  nl: ["Europese digitale identiteitsportemonnee", "digitale identiteitsportemonnee", "elektronische identificatie"]
+  pl: ["europejski portfel tożsamości cyfrowej", "portfel tożsamości cyfrowej", "identyfikacja elektroniczna"]
+  el: ["ευρωπαϊκό πορτοφόλι ψηφιακής ταυτότητας", "ψηφιακό πορτοφόλι", "ηλεκτρονική ταυτοποίηση"]
+  ro: ["portofelul european pentru identitatea digitală", "portofel de identitate digitală", "identificare electronică"]
+  cs: ["evropská peněženka digitální identity", "peněženka digitální identity", "elektronická identifikace"]
+  sk: ["európska peňaženka digitálnej identity", "peňaženka digitálnej identity", "elektronická identifikácia"]
+  sl: ["evropska denarnica za digitalno identiteto", "denarnica za digitalno identiteto", "elektronska identifikacija"]
+  hr: ["europska lisnica digitalnog identiteta", "lisnica digitalnog identiteta", "elektronička identifikacija"]
+  bg: ["европейски портфейл за цифрова самоличност", "портфейл за цифрова самоличност", "електронна идентификация"]
+  hu: ["európai digitális személyazonossági tárca", "digitális személyazonossági tárca", "elektronikus azonosítás"]
+  sv: ["europeisk digital identitetsplånbok", "digital identitetsplånbok", "elektronisk identifiering"]
+  da: ["europæisk digital identitetstegnebog", "digital identitetstegnebog", "elektronisk identifikation"]
+  fi: ["eurooppalainen digitaalisen identiteetin lompakko", "digitaalisen identiteetin lompakko", "sähköinen tunnistaminen"]
+  et: ["Euroopa digitaalse identiteedi rahakott", "digitaalse identiteedi rahakott", "elektrooniline identimine"]
+  lv: ["Eiropas digitālās identitātes maks", "digitālās identitātes maks", "elektroniskā identifikācija"]
+  lt: ["Europos skaitmeninės tapatybės piniginė", "skaitmeninės tapatybės piniginė", "elektroninė atpažintis"]
+  is: ["stafrænt auðkennisveski", "rafræn auðkenning"]
+  "no": ["digital identitetslommebok", "elektronisk identifikasjon"]

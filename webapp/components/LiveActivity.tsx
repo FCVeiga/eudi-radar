@@ -17,13 +17,33 @@ function ago(iso: string | null, now: number) {
   return d < 14 ? `${d}d ago` : new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 }
 
+// What kind of publisher a source is, for the wording below.
+const PUBLISHER: Record<string, 'buyer' | 'media' | 'standards' | 'reddit' | 'social'> = {
+  PROCUREMENT_PORTAL: 'buyer', FUNDING_PORTAL: 'buyer', EU_PROGRAMME: 'buyer', LSP: 'buyer', CONSORTIUM: 'buyer',
+  GOVERNMENT: 'buyer', DIGITAL_AGENCY: 'buyer', IDENTITY_AUTHORITY: 'buyer', DEVELOPMENT_BANK: 'buyer',
+  STANDARDS_BODY: 'standards', NEWS: 'media', INDUSTRY_SOURCE: 'media',
+  SOCIAL_REDDIT: 'reddit', SOCIAL_TWITTER: 'social', SOCIAL_LINKEDIN: 'social',
+};
+
+/** "<source> <verb>: <title>" — the verb says what the item is (from triage)
+ * and fits who published it: a portal *lists* a tender, a news site *reports* one. */
 function verb(a: Activity) {
-  const src = a.sources;
-  if (src?.source_type === 'SOCIAL_REDDIT') {
-    return src.handle?.startsWith('r/') ? <>posted in <span className="la-where">{src.handle}</span></> : 'posted';
+  const who = PUBLISHER[a.sources?.source_type ?? ''] ?? 'media';
+  const own = who === 'buyer';
+  switch (a.kind) {
+    case 'TENDER': return own ? 'listed a tender' : 'reported a tender';
+    case 'RFI': return own ? 'opened a market consultation' : 'reported a market consultation';
+    case 'GRANT': case 'CONSORTIUM_CALL': case 'PILOT': return own ? 'announced a funding call' : 'reported a funding call';
+    case 'PIPELINE_SIGNAL': return own ? 'announced a planned procurement' : 'reported a planned procurement';
   }
-  if (src?.method === 'site_search') return 'has';  // "<portal> has <page>": found by a site search
-  return 'published';
+  if (who === 'reddit') {
+    const h = a.sources?.handle;
+    return h?.startsWith('r/') ? <>posted in <span className="la-where">{h}</span></> : 'posted';
+  }
+  if (who === 'social') return 'posted';
+  if (who === 'standards') return 'published an update';
+  if (own) return 'published a news release';
+  return 'published an article';
 }
 
 /** Moltbook-style live panel: latest activity of followed sources, polled every minute. */
@@ -58,8 +78,10 @@ export default function LiveActivity({ initial }: { initial: Activity[] }) {
             <SourceIcon type={a.sources?.source_type ?? 'NEWS'} size={26} />
             <div className="la-body">
               <p>
-                <strong>{a.sources?.name ?? 'Unknown source'}</strong> {verb(a)}{' '}
-                <a href={a.url ?? '#'} target="_blank" rel="noopener noreferrer" className="la-link">{a.title}</a>
+                <strong>{(a.sources?.name ?? 'Unknown source').replace(/ — national procurement portal$/, ' portal')}</strong>{' '}
+                {verb(a)}:{' '}
+                <a href={a.url ?? '#'} target="_blank" rel="noopener noreferrer" className="la-link"
+                   title={a.title_en && a.title_en !== a.title ? `Original: ${a.title}` : undefined}>{a.title_en || a.title}</a>
               </p>
               <span className="la-time">{ago(a.published_at, now)}</span>
             </div>

@@ -32,6 +32,19 @@ from models import Candidate, Source, SourceActivity  # noqa: E402
 UA = {"User-Agent": "EUDI-Radar/1.0 (+https://eudi-radar.vercel.app; RSS reader)"}
 ITEMS_PER_FEED = 15
 SITE_QUERY = "EUDI wallet digital identity wallet eIDAS electronic identification tender procurement"
+_LANG = None
+
+
+def site_query(country) -> str:
+    """Search in the source's own language(s) as well as English (config/languages.yaml)."""
+    global _LANG
+    if _LANG is None:
+        import yaml
+        with open(os.path.join(os.path.dirname(__file__), "..", "config", "languages.yaml")) as f:
+            _LANG = yaml.safe_load(f)
+    langs = [l for l in _LANG["country_languages"].get(country or "", []) if l != "en"]
+    local = " ".join(p for l in langs[:2] for p in _LANG["phrases"].get(l, [])[1:3])
+    return f"{local} EUDI eIDAS {SITE_QUERY}".strip()
 NEWS_TYPES = {"NEWS", "INDUSTRY_SOURCE", "SOCIAL_TWITTER", "SOCIAL_LINKEDIN", "SOCIAL_REDDIT"}
 
 
@@ -96,7 +109,7 @@ def check_site(s, tavily) -> list:
     domain = urlparse(s.url or "").netloc.removeprefix("www.")
     if not domain:
         raise ValueError("no URL to search")
-    res = tavily.client.search(query=SITE_QUERY, include_domains=[domain], max_results=8,
+    res = tavily.client.search(query=site_query(s.country), include_domains=[domain], max_results=8,
                                search_depth="basic", time_range="month")
     return [{"external_id": i["url"], "title": (i.get("title") or i["url"])[:500], "url": i["url"],
              "summary": (i.get("content") or "")[:1000] or None, "published_at": _date(i.get("published_date"))}
@@ -115,7 +128,8 @@ def check_sources(session, errors: list, now=None) -> dict:
 
     # Workers get detached copies: ORM objects expire on every commit and
     # must not be lazy-loaded from other threads.
-    jobs = [SimpleNamespace(source_id=s.source_id, method=s.method, feed_url=s.feed_url, url=s.url) for s in due]
+    jobs = [SimpleNamespace(source_id=s.source_id, method=s.method, feed_url=s.feed_url, url=s.url, country=s.country)
+            for s in due]
 
     def run(job):
         try:
@@ -170,12 +184,15 @@ def ingest_activity(session) -> int:
 
 
 def mark_relevance(session) -> None:
-    """After triage: flag activity whose candidate cleared the bar, so the
-    site can show site-search finds only when they matter."""
+    """After triage: flag activity whose candidate cleared the bar (so the site
+    shows site-search finds only when they matter), and copy what triage found
+    it to be and its English title (Live activity wording)."""
     from sqlalchemy import text
     session.execute(text("""
         update source_activity a set relevant = (c.relevance >= 50
-               or (c.candidate_type = 'NEWS_ONLY' and c.relevance > 0))
+               or coalesce((c.triage_output->>'importance')::int, 0) >= 50),
+               kind = c.candidate_type,
+               title_en = nullif(c.triage_output->>'title_en', '')
         from candidates c
         where a.relevant is null and c.processed and c.source_url = a.url and c.source_id = a.source_id"""))
     session.commit()

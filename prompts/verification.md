@@ -31,9 +31,10 @@ text — never assume an opportunity is open because it sounds relevant.
   "status": "OPEN | CLOSED | AWARDED | UPCOMING | NOT_AN_OPPORTUNITY | UNKNOWN",
   "deadline": "YYYY-MM-DD or null — the submission/application deadline if stated",
   "dated": "YYYY-MM-DD or null — when the page/announcement was published or last updated, if stated",
-  "evidence": "a short exact quote from the page (max 25 words) that supports the status, or null",
-  "reason": "one sentence"
+  "evidence": "a short exact quote from the page (max 25 words) that supports the status — if the page isn't in English, the quote followed by its English translation in brackets — or null",
+  "reason": "one sentence, in English"
 }
 ```
 
 Use null rather than guessing. A deadline only counts if the page states it.
+The page may be in any language; read it as is, but write `reason` in English.

@@ -66,12 +66,22 @@ opportunity relevance, job postings.
   "deadline": "YYYY-MM-DD submission deadline if stated, else null",
   "summary": "two or three plain sentences on what this is and why it matters for a wallet/identity vendor",
   "news_category": "regulation | industry | market | null  (only for NEWS_ONLY — see below)",
-  "importance": 0
+  "importance": 0,
+  "language": "ISO 639-1 code of the input's language, e.g. de, el, fr, en",
+  "title_en": "the title in clear English (translated if needed; drop CPV/category boilerplate and reference numbers)"
 }
 ```
 
 Only fill `country`, `authority` and `deadline` from what the input actually
 says — never guess. Use null when unknown.
+
+## Languages
+The input may be in any language (procurement notices usually are in the
+buyer's language). Read and judge it in that language, but write every text
+field — `reason`, `summary`, `title_en` — in English. Keep `authority` as the
+official name, followed by an English rendering in parentheses when it isn't
+already English, e.g. "Υφυπουργείο Ψηφιακής Πολιτικής (Deputy Ministry of
+Digital Policy)".
 
 ## News categories (NEWS_ONLY only)
 - regulation: laws, implementing acts, regulators' decisions, certification

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { NewsItem, newsCategoryLabel } from '@/lib/data';
+import { NewsItem, newsCategoryLabel, titleOf } from '@/lib/data';
 
 export function formatDate(iso: string | null) {
   return iso ? new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
@@ -14,7 +14,7 @@ export default function NewsRow({ n }: { n: NewsItem }) {
           {n.unverified && <span className="tag unverified">Unverified</span>}
           <span className="news-date">{formatDate(n.published_date)}</span>
         </div>
-        <div className="news-title">{n.title}</div>
+        <div className="news-title">{titleOf(n)}</div>
         {(n.summary || n.excerpt) && <div className="news-excerpt">{n.summary || n.excerpt}</div>}
         <div className="list-row-meta">
           {n.region}{n.source_name ? <> <span className="sep">·</span> {n.source_name}</> : null}

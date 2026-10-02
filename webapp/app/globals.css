@@ -461,6 +461,8 @@ tr.data-row:hover td { background: #FAFBFD; }
 .detail-head { margin-bottom: 22px; }
 .detail-head .opp-tags { margin-bottom: 12px; }
 .detail-head h1 { font-size: 26px; font-weight: 700; max-width: 900px; }
+.original-title { margin-top: 10px; font-size: 13px; color: var(--muted); max-width: 900px; }
+.original-title span { font-family: var(--font-mono-stack); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--subtle); margin-right: 6px; }
 .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
 .stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 18px; box-shadow: var(--shadow-sm); }
 .stat-label { font-family: var(--font-mono-stack); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--subtle); }

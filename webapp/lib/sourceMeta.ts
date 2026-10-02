@@ -55,5 +55,7 @@ export type Source = {
 export type SourceActivity = {
   id: number; source_id: string; title: string | null; url: string | null; published_at: string | null;
   relevant: boolean | null;
+  title_en: string | null;
+  kind: string | null;          // what triage found it to be: TENDER, RFI, GRANT, NEWS_ONLY…
   sources: { name: string; source_type: SourceType; handle: string | null; method: Method } | null;
 };

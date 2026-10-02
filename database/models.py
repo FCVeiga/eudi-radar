@@ -218,6 +218,8 @@ class SourceActivity(Base):
     fetched_at = Column(DateTime, default=datetime.utcnow)
     ingested = Column(Boolean, nullable=False, default=False)
     relevant = Column(Boolean)         # set after triage; site-search finds show only when true
+    title_en = Column(Text)            # English title from triage
+    kind = Column(String(32))          # what triage found it to be: TENDER, RFI, GRANT, NEWS_ONLY…
 
 
 class Organisation(Base):
@@ -328,7 +330,9 @@ class Opportunity(Base):
     """Opportunity master record (spec section 22)."""
     __tablename__ = "opportunities"
     opportunity_id = Column(String(64), primary_key=True)
-    title = Column(Text, nullable=False)
+    title = Column(Text, nullable=False)       # as published, in the original language
+    title_en = Column(Text)                    # English title from triage
+    language = Column(String(8))               # ISO 639-1 of the original
     reference = Column(String(128))
     country = Column(String(4))
     authority = Column(String(256))
@@ -525,6 +529,8 @@ class NewsItem(Base):
     __tablename__ = "news_items"
     news_id = Column(String(64), primary_key=True)
     title = Column(Text, nullable=False)
+    title_en = Column(Text)
+    language = Column(String(8))
     category = Column(String(32))  # regulation | govdecision | linkedin | twitter
     region = Column(String(64))
     country = Column(String(4))

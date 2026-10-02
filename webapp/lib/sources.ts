@@ -132,14 +132,20 @@ export async function getCountryOptions() {
 /** Latest activity: everything from feeds; site-search finds only once triage marked them relevant. */
 export async function getActivity(limit = 30) {
   const db = getSupabaseServerClient();
-  const cols = 'id, source_id, title, url, published_at, relevant, sources!inner(name, source_type, handle, method)';
+  const cols = 'id, source_id, title, title_en, kind, url, published_at, relevant, sources!inner(name, source_type, handle, method)';
   const [feeds, finds] = await Promise.all([
     db.from('source_activity').select(cols).neq('sources.method', 'site_search')
       .order('published_at', { ascending: false }).limit(limit),
     db.from('source_activity').select(cols).eq('sources.method', 'site_search').eq('relevant', true)
       .order('published_at', { ascending: false }).limit(limit),
   ]);
+  // Sites often serve one document under several URLs: one entry per source and title.
+  const seen = new Set<string>();
   return ([...(feeds.data || []), ...(finds.data || [])] as unknown as SourceActivity[])
     .sort((a, b) => new Date(b.published_at || 0).getTime() - new Date(a.published_at || 0).getTime())
+    .filter((a) => {
+      const k = `${a.source_id}|${(a.title_en || a.title || '').toLowerCase().trim()}`;
+      return !seen.has(k) && !!seen.add(k);
+    })
     .slice(0, limit);
 }

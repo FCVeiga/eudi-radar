@@ -42,6 +42,18 @@ TED_PHRASES = [
     "mobile driving licence", "OpenID4VC", "SD-JWT", "ISO 18013-5",
 ]
 
+def _local_ted_phrases() -> list:
+    """Wallet phrases in every EU language (config/languages.yaml): TED matches
+    each notice in its own language, so English-only phrases miss most of them.
+    The generic 'electronic identification' terms are left out on purpose —
+    like bare 'eIDAS', they match e-signature boilerplate in unrelated notices."""
+    with open(os.path.join(CONFIG_DIR, "languages.yaml")) as f:
+        phrases = yaml.safe_load(f)["phrases"]
+    return [p for lang, ps in phrases.items() if lang != "en" for p in ps[:2]]
+
+
+TED_PHRASES = list(dict.fromkeys(TED_PHRASES + _local_ted_phrases()))
+
 # Triage type -> opportunity category shown on the site (Opportunities subpages).
 OPPORTUNITY_TYPES = {
     "TENDER": "rfp", "RFI": "rfi", "GRANT": "grant", "CONSORTIUM_CALL": "grant",
@@ -188,6 +200,7 @@ def promote(session, candidate: Candidate, t: dict, country_names: dict):
         reference = f"TED:{ted['procedure']}" if ted.get("procedure") else None
         fields = dict(
             title=candidate.title or "(untitled)", country=country,
+            title_en=(t.get("title_en") or None), language=(t.get("language") or None),
             authority=(t.get("authority") or None), opportunity_type=category,
             status=status, summary=summary, deadline=deadline,
             publication_date=_parse_date(candidate.publication_date),
@@ -240,6 +253,7 @@ def promote(session, candidate: Candidate, t: dict, country_names: dict):
         category = t.get("news_category") if t.get("news_category") in NEWS_CATEGORIES else "market"
         fields = dict(
             title=candidate.title or "(untitled)", category=category,
+            title_en=(t.get("title_en") or None), language=(t.get("language") or None),
             region=country_names.get(country, "EU / International") if country else "EU / International",
             country=country, published_date=_parse_date(candidate.publication_date) or candidate.discovered_at,
             source_name=urlparse(candidate.source_url or "").netloc,
@@ -413,6 +427,12 @@ def main():
     # --- 3. Verification: is each opportunity actually open today? ----------
     verified = verify_opportunities(session, errors)
     print(f"Verification: {verified} opportunities checked against their source")
+
+    # English titles for anything that predates triage's title_en, and for activity.
+    from agents.translator import backfill_english_titles
+    translated = backfill_english_titles(session, errors)
+    if translated:
+        print(f"Translation: {translated} titles given an English version")
 
     # --- 4. Feed: agents post new events, then the feed is re-ranked ---------
     from agents.feed_writer import publish_new_posts, rank_posts

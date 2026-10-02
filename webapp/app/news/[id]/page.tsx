@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { getSupabaseServerClient } from '@/lib/supabase';
-import { newsCategoryLabel } from '@/lib/data';
+import { newsCategoryLabel, titleOf } from '@/lib/data';
 
 export default async function NewsDetailPage({ params }: { params: { id: string } }) {
   const supabase = getSupabaseServerClient();
@@ -28,7 +28,10 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
           <span className={`tag ${n.category}`}>{newsCategoryLabel(n.category)}</span>
           {n.unverified && <span className="tag unverified">Unverified</span>}
         </div>
-        <h1>{n.title}</h1>
+        <h1>{titleOf(n)}</h1>
+        {n.title_en && n.title_en !== n.title && (
+          <p className="original-title"><span>Original{n.language ? ` (${n.language.toUpperCase()})` : ''}</span> {n.title}</p>
+        )}
         <p className="page-sub">
           {n.region}{n.published_date ? ` · ${new Date(n.published_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}` : ''}
         </p>

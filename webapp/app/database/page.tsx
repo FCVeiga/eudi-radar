@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { getSupabaseServerClient } from '@/lib/supabase';
-import { OPP_CATEGORIES, oppCategoryLabel } from '@/lib/data';
+import { OPP_CATEGORIES, oppCategoryLabel, titleOf } from '@/lib/data';
 
 // Status as of now: a stored OPEN/SIGNAL whose deadline has passed is closed.
 function displayStatus(o: { status: string | null; deadline: string | null }) {
@@ -77,7 +77,7 @@ export default async function DatabasePage({
               const status = displayStatus(o);
               return (
                 <tr key={o.opportunity_id} className="data-row">
-                  <td className="title-cell"><Link href={`/opportunities/${o.opportunity_id}`}>{o.title}</Link></td>
+                  <td className="title-cell"><Link href={`/opportunities/${o.opportunity_id}`}>{titleOf(o)}</Link></td>
                   <td className="mono">{o.country || '—'}</td>
                   <td>{o.opportunity_type && <span className={`tag ${o.opportunity_type}`}>{oppCategoryLabel(o.opportunity_type)}</span>}</td>
                   <td>

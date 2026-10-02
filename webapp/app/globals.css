@@ -24,7 +24,7 @@
   --bad: #C2413A;   --bad-soft: #FCEBEA;
   --rfp: #2F5BD8;   --rfp-soft: #E9EFFD;
   --rfi: #7A4FD6;   --rfi-soft: #F1ECFC;
-  --grant: #0E8A5F; --grant-soft: #E4F6EE;
+  --grant: #B5367F; --grant-soft: #FBEAF3;  /* magenta: green is reserved for open / active status */
   --signal: #B4630A; --signal-soft: #FDF1E2;
 
   --radius: 12px;

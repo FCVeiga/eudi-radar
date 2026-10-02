@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { getSupabaseServerClient } from '@/lib/supabase';
-import { OPP_CATEGORIES, oppCategoryLabel, titleOf } from '@/lib/data';
+import { TENDER_CATEGORIES, oppCategoryLabel, titleOf } from '@/lib/data';
 import FilterSelect from '@/components/FilterSelect';
 
 // Status as of now: a stored OPEN/SIGNAL whose deadline has passed is closed.
@@ -17,15 +17,14 @@ const fmt = (iso: string | null) =>
 const money = (v: number | null, cur: string | null) =>
   v ? `${cur || ''} ${v >= 1e6 ? `${(v / 1e6).toFixed(1)}M` : v >= 1e3 ? `${Math.round(v / 1e3)}k` : v}`.trim() : '—';
 
-// Signals are announcements, not tenders: they live on the home feed and in News.
-const TYPES = OPP_CATEGORIES.filter((c) => c.slug !== 'signal');
 
-// Each sortable column and its first-click order: closest deadline, highest
-// relevance, highest value, country A–Z. Clicking again reverses it.
+// Each sortable column and its first-click order: latest proposal deadline
+// (the default sort), highest relevance, highest value, country A–Z.
+// Clicking again reverses it.
 type SortKey = 'deadline' | 'relevance' | 'value' | 'country';
 type Row = Record<string, any>;
-const SORTS: Record<SortKey, (a: Row, b: Row, now: number) => number> = {
-  deadline: (a, b, now) => Math.abs(new Date(a.deadline).getTime() - now) - Math.abs(new Date(b.deadline).getTime() - now),
+const SORTS: Record<SortKey, (a: Row, b: Row) => number> = {
+  deadline: (a, b) => new Date(b.deadline).getTime() - new Date(a.deadline).getTime(),
   relevance: (a, b) => (b.opportunity_relevance_score ?? -1) - (a.opportunity_relevance_score ?? -1),
   value: (a, b) => (b.estimated_value ?? -1) - (a.estimated_value ?? -1),
   country: (a, b) => String(a.country).localeCompare(String(b.country)),
@@ -58,14 +57,10 @@ export default async function DatabasePage({
     .map((c) => ({ value: c as string, label: countryName.get(c) ?? c }))
     .sort((a, b) => a.label.localeCompare(b.label));
 
-  const sort = (Object.keys(SORTS) as SortKey[]).find((k) => k === searchParams.sort);
+  const sort: SortKey = (Object.keys(SORTS) as SortKey[]).find((k) => k === searchParams.sort) ?? 'deadline';
   const reversed = searchParams.dir === 'rev';
-  const now = Date.now();
-  let rows = (data || []) as Row[];
-  if (sort) {
-    const cmp = SORTS[sort];
-    rows = [...rows.filter(HAS[sort]).sort((a, b) => (reversed ? -1 : 1) * cmp(a, b, now)), ...rows.filter((r) => !HAS[sort](r))];
-  }
+  const all = (data || []) as Row[];
+  const rows = [...all.filter(HAS[sort]).sort((a, b) => (reversed ? -1 : 1) * SORTS[sort](a, b)), ...all.filter((r) => !HAS[sort](r))];
 
   const sortHref = (key: SortKey) => {
     const p = new URLSearchParams();
@@ -95,7 +90,7 @@ export default async function DatabasePage({
       </div>
 
       <div className="filter-inline">
-        <FilterSelect name="type" label="Type" options={TYPES.map(({ slug, label }) => ({ value: slug, label }))} />
+        <FilterSelect name="type" label="Type" options={TENDER_CATEGORIES.map(({ slug, label }) => ({ value: slug, label }))} />
         <FilterSelect name="country" label="Country" options={countries} />
       </div>
 

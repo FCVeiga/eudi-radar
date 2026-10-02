@@ -1,5 +1,6 @@
-import OpportunitiesView from '@/components/OpportunitiesView';
+import { redirect } from 'next/navigation';
 
+// Signals moved to News (and the home feed).
 export default function SignalsPage() {
-  return <OpportunitiesView view="signal" />;
+  redirect('/news/signals');
 }

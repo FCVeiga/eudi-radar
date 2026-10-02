@@ -1,4 +1,4 @@
-import { OPP_CATEGORIES, NEW_WINDOW_DAYS, getActiveOpportunities, isNew } from '@/lib/data';
+import { OPP_CATEGORIES, TENDER_CATEGORIES, NEW_WINDOW_DAYS, getActiveOpportunities, isNew } from '@/lib/data';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import OpportunityRow, { RingGradients } from './OpportunityRow';
 import type { UpdateEvent } from './UpdateComment';
@@ -13,7 +13,8 @@ const TITLES: Record<string, string> = {
 
 export default async function OpportunitiesView({ view }: { view: View }) {
   // One query for the whole active set: the tab counts and the list come from it.
-  const { opportunities: active, error } = await getActiveOpportunities();
+  const { opportunities: all, error } = await getActiveOpportunities();
+  const active = all.filter((o) => o.opportunity_type !== 'signal');  // signals: home feed and News
   const now = new Date();
   const newOnes = active.filter((o) => isNew(o, now));
   const shown =
@@ -22,7 +23,7 @@ export default async function OpportunitiesView({ view }: { view: View }) {
   const tabs = [
     { href: '/opportunities', label: 'All active', count: active.length },
     { href: '/opportunities/new', label: 'New', count: newOnes.length },
-    ...OPP_CATEGORIES.map((c) => ({
+    ...TENDER_CATEGORIES.map((c) => ({
       href: `/opportunities/${c.path}`,
       label: c.label,
       count: active.filter((o) => o.opportunity_type === c.slug).length,

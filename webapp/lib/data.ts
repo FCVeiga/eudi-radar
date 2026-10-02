@@ -9,6 +9,10 @@ export const OPP_CATEGORIES = [
   { slug: 'signal', path: 'signals', label: 'Signals', blurb: 'A named buyer has announced a procurement that isn\u2019t open yet — TED prior information notices, approved budgets, mandated systems. Dated within the last 6 months.' },
 ] as const;
 
+// Tenders, RFIs and grants: what Opportunities and Tender History list. Signals
+// are announcements, not open calls, so they live on the home feed and in News.
+export const TENDER_CATEGORIES = OPP_CATEGORIES.filter((c) => c.slug !== 'signal');
+
 // News sections — must match NEWS_CATEGORIES in run_daily.py.
 export const NEWS_CATEGORIES = [
   { slug: 'regulation', label: 'Regulation', blurb: 'Laws, implementing acts, regulators, certification and standards' },

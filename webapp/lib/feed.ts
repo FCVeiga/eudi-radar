@@ -89,11 +89,11 @@ export async function getFeed(view: FeedView, now = new Date()) {
             : p.rank > p.prev_rank ? 'down' : 'same';
       return {
         key: p.post_id, kind: p.kind, event: p.event,
-        href: p.kind === 'news' ? `/news/${p.news_id}` : `/opportunities/${p.opportunity_id}`,
+        href: p.kind === 'news' ? `/news/${p.news_id}` : `/tenders/${p.opportunity_id}`,
         headline: p.headline, body: p.body,
         category: p.category || (p.kind === 'news' ? 'market' : 'rfp'),
         categoryLabel: p.kind === 'news' ? newsCategoryLabel(p.category) : oppCategoryLabel(p.category),
-        kindLabel: p.kind === 'news' ? 'News' : 'Opportunity',
+        kindLabel: p.kind === 'news' ? 'News' : 'Tender',
         country: p.country, at, score, combined: Math.round(score * decay(at, now)),
         movement, deadline: p.event === 'awarded' ? null : opp?.deadline ?? null,
         isNew: now.getTime() - at.getTime() <= 2 * 86400_000,

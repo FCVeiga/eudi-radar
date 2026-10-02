@@ -4,7 +4,7 @@ export type Tab = { href: string; label: string; count?: number };
 
 // 16px line icons, keyed by the tab's last path segment (same style as the home sort pills).
 const ICONS: Record<string, JSX.Element> = {
-  opportunities: <><rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1" /><rect x="9" y="2.5" width="4.5" height="4.5" rx="1" /><rect x="2.5" y="9" width="4.5" height="4.5" rx="1" /><rect x="9" y="9" width="4.5" height="4.5" rx="1" /></>,
+  tenders: <><rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1" /><rect x="9" y="2.5" width="4.5" height="4.5" rx="1" /><rect x="2.5" y="9" width="4.5" height="4.5" rx="1" /><rect x="9" y="9" width="4.5" height="4.5" rx="1" /></>,
   new: <><circle cx="8" cy="8" r="6" /><path d="M8 4.8V8l2.2 1.6" /></>,
   rfps: <><rect x="2" y="5" width="12" height="8.5" rx="1.5" /><path d="M5.5 5V3.6c0-.4.3-.7.7-.7h3.6c.4 0 .7.3.7.7V5M2 9h12" /></>,
   rfis: <><path d="M2.5 3.5h11v7.2H8.4L5.2 13v-2.3H2.5z" /><path d="M6.6 5.8a1.5 1.5 0 1 1 2 1.4c-.4.2-.6.5-.6.9M8 9.2v.01" /></>,
@@ -16,7 +16,7 @@ const ICONS: Record<string, JSX.Element> = {
   market: <><path d="M2.5 13.5h11" /><rect x="3.5" y="8.5" width="2.2" height="5" rx=".5" /><rect x="6.9" y="5.5" width="2.2" height="8" rx=".5" /><rect x="10.3" y="2.8" width="2.2" height="10.7" rx=".5" /></>,
 };
 
-/** Section pills for Opportunities and News, styled like the home feed's sort pills. */
+/** Section pills for Tenders and News, styled like the home feed's sort pills. */
 export default function SectionTabs({ tabs, active }: { tabs: Tab[]; active: string }) {
   return (
     <nav className="feed-sort section-tabs" aria-label="Sections">

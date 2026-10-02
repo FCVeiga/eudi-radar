@@ -89,6 +89,6 @@ export async function startTenderEvaluation(opportunityId: string) {
   if (!/^[0-9a-f]{12,40}$/.test(opportunityId)) return { status: 'error' as const, message: 'unknown opportunity' };
   const { ensureEvaluation } = await import('@/lib/tenderEvaluation');
   const result = await ensureEvaluation(opportunityId);
-  if (result.status === 'done') revalidatePath(`/opportunities/${opportunityId}`);
+  if (result.status === 'done') revalidatePath(`/tenders/${opportunityId}`);
   return result;
 }

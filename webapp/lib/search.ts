@@ -73,7 +73,7 @@ export async function search(q: string, now = new Date()) {
     const score = o.opportunity_relevance_score ?? 30;
     return {
       key: `opp:${o.opportunity_id}`, kind: 'opportunity', event: 'new_opportunity',
-      href: `/opportunities/${o.opportunity_id}`,
+      href: `/tenders/${o.opportunity_id}`,
       headline: p?.headline || titleOf(o), body: p ? p.body : firstEnglish(o.summary),
       category: o.opportunity_type || 'rfp', categoryLabel: oppCategoryLabel(o.opportunity_type), kindLabel: 'Opportunity',
       country: o.country, at, score, combined: Math.round(score * decay(at)), movement: 'same',

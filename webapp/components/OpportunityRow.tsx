@@ -63,7 +63,7 @@ export default function OpportunityRow({ o, copy, countryName, updates = [] }: {
   const urgent = days != null && days <= 14;
 
   return (
-    <Link href={`/opportunities/${o.opportunity_id}`} className="opp-row">
+    <Link href={`/tenders/${o.opportunity_id}`} className="opp-row">
       <div className="opp-where">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img className="flag" src={`https://flagcdn.com/${flagCode(o.country)}.svg`} alt="" width={44} height={33} loading="lazy" />

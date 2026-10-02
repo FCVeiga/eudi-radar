@@ -68,7 +68,7 @@ export default async function DatabasePage({
     if (searchParams.country) p.set('country', searchParams.country);
     p.set('sort', key);
     if (sort === key && !reversed) p.set('dir', 'rev');
-    return `/database?${p.toString()}`;
+    return `/history?${p.toString()}`;
   };
   const SortHead = ({ k, label, num }: { k: SortKey; label: string; num?: boolean }) => {
     const on = sort === k;
@@ -114,7 +114,7 @@ export default async function DatabasePage({
               const status = displayStatus(o as any);
               return (
                 <tr key={o.opportunity_id} className="data-row">
-                  <td className="title-cell"><Link href={`/opportunities/${o.opportunity_id}`}>{titleOf(o as any)}</Link></td>
+                  <td className="title-cell"><Link href={`/tenders/${o.opportunity_id}`}>{titleOf(o as any)}</Link></td>
                   <td className="mono" title={o.country ? countryName.get(o.country) ?? '' : ''}>{o.country || '—'}</td>
                   <td>{o.opportunity_type && <span className={`tag ${o.opportunity_type}`}>{oppCategoryLabel(o.opportunity_type)}</span>}</td>
                   <td>

@@ -32,7 +32,7 @@ export default async function NewsView({ view }: { view: View }) {
     const at = new Date(o.publication_date || o.first_detected || now);
     const score = o.opportunity_relevance_score ?? 30;
     return {
-      key: `signal:${o.opportunity_id}`, kind: 'opportunity', event: 'signal', href: `/opportunities/${o.opportunity_id}`,
+      key: `signal:${o.opportunity_id}`, kind: 'opportunity', event: 'signal', href: `/tenders/${o.opportunity_id}`,
       headline: firstEnglish(p?.headline) ?? titleOf(o), body: firstEnglish(p?.body, o.summary),
       category: 'signal', categoryLabel: 'Signal', kindLabel: 'Planned procurement',
       country: o.country, at, score, combined: Math.round(newsScore(score, at, now)),

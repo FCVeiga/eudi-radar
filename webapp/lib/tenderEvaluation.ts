@@ -70,7 +70,7 @@ async function runEvaluation(opportunityId: string) {
       .eq('opportunity_id', opportunityId),
     db.from('award_criteria').select('criterion, weight, subcriteria').eq('opportunity_id', opportunityId),
   ]);
-  if (!o) throw new Error('Opportunity not found.');
+  if (!o) throw new Error('Tender not found.');
   if (!o.tender_summary && !(reqs || []).length) {
     throw new Error('the Tender Analysis Agent has not read this tender yet');
   }

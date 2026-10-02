@@ -110,7 +110,7 @@ export function daysUntil(iso: string | null, now = new Date()) {
  * Active = status OPEN or SIGNAL (set only once the pipeline has confirmed it
  * against TED's structured data or the source page — "no deadline" alone never
  * counts), the deadline hasn't passed, and signals are under 6 months old.
- * Closed, awarded and unverified items only appear on the Database page.
+ * Closed, awarded and unverified items only appear on the History page.
  */
 export async function getActiveOpportunities(category?: string) {
   const supabase = getSupabaseServerClient();

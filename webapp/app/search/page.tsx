@@ -14,9 +14,9 @@ export default async function SearchPage({ searchParams }: { searchParams: { q?:
           <div className="eyebrow">Search</div>
           <h1>{q ? <>Results for “{q}”</> : 'Search'}</h1>
           <p className="page-sub">
-            {!q ? 'Type in the search box above to find opportunities and news.'
+            {!q ? 'Type in the search box above to find tenders and news.'
               : !searchWords(q).length ? 'Use at least one word of two or more letters.'
-                : `${total} result${total === 1 ? '' : 's'} — ${opportunities.length} opportunit${opportunities.length === 1 ? 'y' : 'ies'}, ${news.length} news.`}
+                : `${total} result${total === 1 ? '' : 's'} — ${opportunities.length} tender${opportunities.length === 1 ? '' : 's'}, ${news.length} news.`}
           </p>
         </div>
       </div>
@@ -27,7 +27,7 @@ export default async function SearchPage({ searchParams }: { searchParams: { q?:
 
       {opportunities.length > 0 && (
         <section className="search-section">
-          <h2 className="search-h2">Opportunities <span className="mono">{opportunities.length}</span></h2>
+          <h2 className="search-h2">Tenders <span className="mono">{opportunities.length}</span></h2>
           <div className="feed">{opportunities.map((i) => <FeedCard key={i.key} item={i} now={now} />)}</div>
         </section>
       )}

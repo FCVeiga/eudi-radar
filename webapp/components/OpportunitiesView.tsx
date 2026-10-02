@@ -7,7 +7,7 @@ import SectionTabs from './SectionTabs';
 type View = 'all' | 'new' | (typeof OPP_CATEGORIES)[number]['slug'];
 
 const TITLES: Record<string, string> = {
-  all: 'Opportunities', new: 'New opportunities',
+  all: 'Tenders', new: 'New tenders',
   ...Object.fromEntries(OPP_CATEGORIES.map((c) => [c.slug, c.label])),
 };
 
@@ -21,10 +21,10 @@ export default async function OpportunitiesView({ view }: { view: View }) {
     view === 'all' ? active : view === 'new' ? newOnes : active.filter((o) => o.opportunity_type === view);
 
   const tabs = [
-    { href: '/opportunities', label: 'All active', count: active.length },
-    { href: '/opportunities/new', label: 'New', count: newOnes.length },
+    { href: '/tenders', label: 'All active', count: active.length },
+    { href: '/tenders/new', label: 'New', count: newOnes.length },
     ...TENDER_CATEGORIES.map((c) => ({
-      href: `/opportunities/${c.path}`,
+      href: `/tenders/${c.path}`,
       label: c.label,
       count: active.filter((o) => o.opportunity_type === c.slug).length,
     })),
@@ -42,8 +42,8 @@ export default async function OpportunitiesView({ view }: { view: View }) {
   const copy = new Map((posts || []).map((p: any) => [p.post_id.slice(4), p]));
   const names = new Map((countries || []).map((c: any) => [c.code, c.name]));
 
-  const activeHref = view === 'all' ? '/opportunities' : view === 'new' ? '/opportunities/new'
-    : `/opportunities/${OPP_CATEGORIES.find((c) => c.slug === view)!.path}`;
+  const activeHref = view === 'all' ? '/tenders' : view === 'new' ? '/tenders/new'
+    : `/tenders/${OPP_CATEGORIES.find((c) => c.slug === view)!.path}`;
 
   return (
     <div>
@@ -51,14 +51,14 @@ export default async function OpportunitiesView({ view }: { view: View }) {
       <SectionTabs tabs={tabs} active={activeHref} />
 
       {error && (
-        <div className="callout error"><strong>Error loading opportunities.</strong> {error.message}</div>
+        <div className="callout error"><strong>Error loading tenders.</strong> {error.message}</div>
       )}
       {!error && shown.length === 0 && (
         <div className="callout">
           <strong>Nothing here right now.</strong>{' '}
           {view === 'new'
-            ? `No active opportunity has appeared in the last ${NEW_WINDOW_DAYS} days.`
-            : 'No active opportunities in this category. Closed and awarded ones are on the Database page.'}
+            ? `No active tender has appeared in the last ${NEW_WINDOW_DAYS} days.`
+            : 'No active tenders in this category. Closed and awarded ones are on the History page.'}
         </div>
       )}
       <RingGradients />

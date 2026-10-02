@@ -60,8 +60,8 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
   if (error || !o) {
     return (
       <div>
-        <Link className="back-link" href="/opportunities">← Back to Opportunities</Link>
-        <div className="detail-block"><h2>Not found</h2><p>{error?.message || 'No opportunity with this ID.'}</p></div>
+        <Link className="back-link" href="/tenders">← Back to Tenders</Link>
+        <div className="detail-block"><h2>Not found</h2><p>{error?.message || 'No tender with this ID.'}</p></div>
       </div>
     );
   }
@@ -98,7 +98,7 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
 
   return (
     <div>
-      <Link className="back-link" href="/opportunities">← Opportunities</Link>
+      <Link className="back-link" href="/tenders">← Tenders</Link>
 
       <div className="detail-head">
         <div className="opp-tags"><StatusTags o={o as Opportunity} /></div>
@@ -123,7 +123,7 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
               <h2>Summary</h2>
               {summary.map((p: string, i: number) => <p key={i}>{p}</p>)}
               {o.tender_summary
-                ? <p className="summary-note">Tender Analysis Agent · from the notice and {o.official_url?.includes('ted.europa.eu') ? 'the tender documents' : 'the opportunity page'}</p>
+                ? <p className="summary-note">Tender Analysis Agent · from the notice and {o.official_url?.includes('ted.europa.eu') ? 'the tender documents' : 'the tender page'}</p>
                 : <p className="summary-note">Short summary from triage — the Tender Analysis Agent replaces it with the full summary and the requirements.</p>}
             </div>
           )}
@@ -217,7 +217,7 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
               <p className="muted">
                 {o.tender_analysed_at
                   ? 'The published documents state no requirements yet — the Tender Analysis Agent will list them when the buyer publishes the tender documents.'
-                  : 'Pending — the Tender Analysis Agent writes the requirements (eligibility criteria, project references, human resources, technical & project requirements) together with the full summary, in the pipeline run that adds the opportunity.'}
+                  : 'Pending — the Tender Analysis Agent writes the requirements (eligibility criteria, project references, human resources, technical & project requirements) together with the full summary, in the pipeline run that adds the tender.'}
               </p>
             ) : REQ_GROUPS.map((g) => ({ ...g, rows: reqs.filter((r) => groupOf(r) === g.key) })).filter((g) => g.rows.length).map((g) => (
               <div key={g.key} className="req-category-block">

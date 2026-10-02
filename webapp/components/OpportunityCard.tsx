@@ -38,7 +38,7 @@ export function ScoreBar({ label, value, kind }: { label: string; value: number 
 
 export default function OpportunityCard({ o }: { o: Opportunity }) {
   return (
-    <Link href={`/opportunities/${o.opportunity_id}`} className="opp-card">
+    <Link href={`/tenders/${o.opportunity_id}`} className="opp-card">
       <div className="opp-card-top">
         <div className="opp-tags"><StatusTags o={o} /></div>
         {o.country && <span className="country-chip">{o.country}</span>}

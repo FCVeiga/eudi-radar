@@ -749,7 +749,7 @@ tr.data-row:hover td { background: #FAFBFD; }
 .req-source { font-family: var(--font-mono-stack); font-size: 10.5px; color: var(--subtle); margin-top: 3px; }
 .req-match-note { font-size: 11.5px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
 
-/* Tender History (Database page): inline dropdown filters + sortable columns */
+/* Tender History (History page): inline dropdown filters + sortable columns */
 .filter-inline { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
 .filter-select { display: inline-flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 4px 6px 4px 14px; font-size: 13px; }
 .filter-select span { font-family: var(--font-mono-stack); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--subtle); }

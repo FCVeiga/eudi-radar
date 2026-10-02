@@ -32,19 +32,20 @@ export default async function OpportunitiesView({ view }: { view: View }) {
 
   return (
     <div>
-      <div className="hero">
+      <div className="page-head">
         <div>
+          <div className="eyebrow">Opportunities</div>
           <h1>{HEADINGS[view].title}</h1>
-          <div className="hero-sub">{HEADINGS[view].sub}</div>
+          <p className="page-sub">{HEADINGS[view].sub}</p>
         </div>
       </div>
       <SectionTabs tabs={tabs} active={activeHref} />
 
       {error && (
-        <div className="detail-block"><h2>Error loading opportunities</h2><p>{error.message}</p></div>
+        <div className="callout error"><strong>Error loading opportunities.</strong> {error.message}</div>
       )}
       {!error && shown.length === 0 && (
-        <div className="sample-note">
+        <div className="callout">
           <strong>Nothing here right now.</strong>{' '}
           {view === 'new'
             ? `No active opportunity has appeared in the last ${NEW_WINDOW_DAYS} days.`

@@ -20,26 +20,27 @@ export default async function NewsView({ view }: { view: View }) {
 
   return (
     <div>
-      <div className="hero">
+      <div className="page-head">
         <div>
-          <h1>{heading ? heading.label : 'News'}</h1>
-          <div className="hero-sub">{heading ? heading.blurb : 'Regulation, industry and market news on digital identity wallets'}</div>
+          <div className="eyebrow">News</div>
+          <h1>{heading ? heading.label : 'All news'}</h1>
+          <p className="page-sub">{heading ? heading.blurb : 'Regulation, industry and market news on digital identity wallets'}</p>
         </div>
       </div>
       <SectionTabs tabs={tabs} active={view === 'all' ? '/news' : `/news/${view}`} />
 
-      {error && <div className="detail-block"><h2>Error loading news</h2><p>{error.message}</p></div>}
+      {error && <div className="callout error"><strong>Error loading news.</strong> {error.message}</div>}
       {!error && shown.length === 0 && (
-        <div className="sample-note"><strong>No news in this section yet.</strong></div>
+        <div className="callout"><strong>No news in this section yet.</strong></div>
       )}
 
       <div className="news-layout">
-        <div>{shown.map((n) => <NewsRow key={n.news_id} n={n} />)}</div>
-        <div className="tracked-panel">
-          <h3 className="serif" style={{ fontSize: 14 }}>Tracked Accounts</h3>
-          <div className="sidebar-sub">LinkedIn &amp; Twitter/X accounts monitored for this feed</div>
+        <div className="news-list">{shown.map((n) => <NewsRow key={n.news_id} n={n} />)}</div>
+        <aside className="panel tracked-panel">
+          <div className="panel-head"><h3>Tracked accounts</h3></div>
+          <div className="panel-empty">LinkedIn &amp; Twitter/X accounts monitored for this feed</div>
           {(tracked || []).map((a) => (
-            <div key={a.id} className="tracked-item" style={{ opacity: a.active ? 1 : 0.5 }}>
+            <div key={a.id} className={`tracked-item ${a.active ? '' : 'inactive'}`}>
               <div>
                 <div>{a.display_name}</div>
                 <div className="tracked-cat">{a.category} · {a.platform === 'linkedin' ? 'LinkedIn' : 'Twitter/X'}</div>
@@ -47,9 +48,9 @@ export default async function NewsView({ view }: { view: View }) {
             </div>
           ))}
           {(!tracked || tracked.length === 0) && (
-            <div className="sidebar-sub">No accounts configured — populate config/tracked_accounts.yaml and sync to the tracked_accounts table.</div>
+            <div className="panel-empty">No accounts configured — populate config/tracked_accounts.yaml and sync to the tracked_accounts table.</div>
           )}
-        </div>
+        </aside>
       </div>
     </div>
   );

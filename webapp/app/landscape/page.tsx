@@ -19,11 +19,15 @@ export default async function LandscapePage() {
 
   return (
     <div>
-      <div className="hero">
-        <div><h1>Landscape</h1><div className="hero-sub">National digital identity trust frameworks &amp; wallet-space companies by country</div></div>
+      <div className="page-head">
+        <div>
+          <div className="eyebrow">Landscape</div>
+          <h1>National ID &amp; wallet landscape</h1>
+          <p className="page-sub">National digital identity trust frameworks and wallet-space companies by country. Hover a country for details.</p>
+        </div>
       </div>
-      {error && <div className="detail-block"><h2>Error</h2><p>{error.message}</p></div>}
-      <div className="sample-note">
+      {error && <div className="callout error"><strong>Error.</strong> {error.message}</div>}
+      <div className="callout">
         <strong>Company data not yet populated.</strong> ID system status comes
         from config/countries.yaml (real, sourced data). Wallet-space company
         listings per country require agents/consortium.py's partner graph to

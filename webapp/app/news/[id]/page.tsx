@@ -22,23 +22,25 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
 
   return (
     <div>
-      <Link className="back-link" href="/news">← Back to News</Link>
-      <div className="hero">
-        <div>
+      <Link className="back-link" href="/news">← News</Link>
+      <div className="detail-head">
+        <div className="opp-tags">
           <span className={`tag ${n.category}`}>{newsCategoryLabel(n.category)}</span>
           {n.unverified && <span className="tag unverified">Unverified</span>}
-          <h1 style={{ marginTop: 10 }}>{n.title}</h1>
-          <div className="hero-sub">{n.region} — {n.published_date ? new Date(n.published_date).toLocaleDateString() : ''}</div>
         </div>
+        <h1>{n.title}</h1>
+        <p className="page-sub">
+          {n.region}{n.published_date ? ` · ${new Date(n.published_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}` : ''}
+        </p>
       </div>
       <div className="detail-block"><h2>Summary</h2><p>{n.summary}</p></div>
-      <div className="detail-block impact-block"><h2>Biometrid Impact Note</h2><p>{n.impact_note}</p></div>
+      <div className="detail-block impact-block"><h2>Why it matters</h2><p>{n.impact_note}</p></div>
       <div className="detail-block">
         <h2>Source</h2>
         <p className="mono">{n.source_name}</p>
-        {n.source_url && <p><a href={n.source_url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--brass)' }}>{n.source_url}</a></p>}
+        {n.source_url && <p><a className="ext-link" href={n.source_url} target="_blank" rel="noopener noreferrer">{n.source_url} ↗</a></p>}
         {n.unverified && (
-          <p style={{ marginTop: 6, color: 'var(--muted)' }}>
+          <p className="muted">
             This came from a tracked social account, not a primary source — treat as unconfirmed until cross-checked.
           </p>
         )}

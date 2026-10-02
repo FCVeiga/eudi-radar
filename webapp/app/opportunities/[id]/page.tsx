@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getSupabaseServerClient } from '@/lib/supabase';
-import { oppCategoryLabel } from '@/lib/data';
+import { Opportunity, oppCategoryLabel } from '@/lib/data';
+import { DeadlineText, StatusTags } from '@/components/OpportunityCard';
 
 const REQ_CATEGORY_GROUPS: Record<string, string[]> = {
   Certifications: ['CERTIFICATION', 'PERSONAL_CERTIFICATION'],
@@ -67,23 +68,19 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
 
   return (
     <div>
-      <Link className="back-link" href="/opportunities">← Back to Opportunities</Link>
+      <Link className="back-link" href="/opportunities">← Opportunities</Link>
 
-      <div className="hero">
-        <div>
-          <div className="opp-tags" style={{ marginBottom: 10 }}>
-            {o.opportunity_type && <span className={`tag ${o.opportunity_type}`}>{oppCategoryLabel(o.opportunity_type)}</span>}
-          </div>
-          <h1 className="serif" style={{ fontSize: 24 }}>{o.title}</h1>
-          <div className="hero-sub">{[o.authority, o.country].filter(Boolean).join(' — ') || 'International'}</div>
-        </div>
+      <div className="detail-head">
+        <div className="opp-tags"><StatusTags o={o as Opportunity} /></div>
+        <h1>{o.title}</h1>
+        <p className="page-sub">{[o.authority, o.country].filter(Boolean).join(' · ') || 'International'}</p>
       </div>
 
-      <div className="score-panel">
-        <div><div className="stat-num">{o.opportunity_relevance_score ?? '—'}</div><div className="stat-label">Relevance</div></div>
-        <div><div className="stat-num fit">{o.bid_readiness_score ?? '—'}</div><div className="stat-label">Fit for Biometrid</div></div>
-        <div><div className="stat-num" style={{ color: 'var(--parchment)', fontSize: 19 }}>{o.estimated_value ? `${o.currency || ''} ${o.estimated_value.toLocaleString()}` : 'Not disclosed'}</div><div className="stat-label">Value</div></div>
-        <div><div className="stat-num mono" style={{ color: 'var(--parchment)', fontSize: 16 }}>{o.deadline ? new Date(o.deadline).toLocaleDateString() : '—'}</div><div className="stat-label">Deadline</div></div>
+      <div className="stat-grid">
+        <div className="stat"><div className="stat-label">Relevance</div><div className="stat-num">{o.opportunity_relevance_score ?? '—'}</div></div>
+        <div className="stat"><div className="stat-label">Fit</div><div className="stat-num">{o.bid_readiness_score ?? '—'}</div></div>
+        <div className="stat"><div className="stat-label">Value</div><div className="stat-num small">{o.estimated_value ? `${o.currency || ''} ${o.estimated_value.toLocaleString()}` : 'Not disclosed'}</div></div>
+        <div className="stat"><div className="stat-label">Deadline</div><div className="stat-num small"><DeadlineText deadline={o.deadline} /></div></div>
       </div>
 
       <div className="opp-detail-grid">
@@ -94,7 +91,7 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
               <h2>Updates</h2>
               {changes.map((c) => (
                 <div key={c.id} className="change-row">
-                  <span className="news-date">{new Date(c.detected_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                  <span className="date-badge">{new Date(c.detected_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                   <span>{c.description}</span>
                 </div>
               ))}
@@ -111,7 +108,7 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
           <div className="detail-block">
             <h2>Source</h2>
             {o.official_url
-              ? <p><a href={o.official_url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--brass)' }}>{o.official_url}</a></p>
+              ? <p><a className="ext-link" href={o.official_url} target="_blank" rel="noopener noreferrer">{o.official_url} ↗</a></p>
               : <p className="mono">Not recorded</p>}
           </div>
 

@@ -3,21 +3,21 @@ import {
   NEW_WINDOW_DAYS, Opportunity, appearedAt, daysUntil, getActiveOpportunities, getNews, getRecentChanges,
   isNew, isUpdated, oppCategoryLabel,
 } from '@/lib/data';
-import { DeadlineText } from '@/components/OpportunityCard';
-import NewsRow, { formatDate } from '@/components/NewsRow';
+import { DeadlineText, StatusTags } from '@/components/OpportunityCard';
+import NewsRow from '@/components/NewsRow';
 
 const CLOSING_SOON_DAYS = 30;
 
 function OppRow({ o }: { o: Opportunity }) {
   return (
-    <Link href={`/opportunities/${o.opportunity_id}`} className="news-item compact">
-      <div>
-        {isNew(o) ? <span className="tag new">New</span> : isUpdated(o) ? <span className="tag updated">Updated</span> : null}{' '}
-        {o.opportunity_type && <span className={`tag ${o.opportunity_type}`}>{oppCategoryLabel(o.opportunity_type)}</span>}
-        <div className="news-title">{o.title}</div>
-        <div className="news-meta">{o.country || 'International'} · <DeadlineText deadline={o.deadline} /></div>
+    <Link href={`/opportunities/${o.opportunity_id}`} className="list-row">
+      <div className="list-row-main">
+        <div className="opp-tags"><StatusTags o={o} /></div>
+        <div className="list-row-title">{o.title}</div>
+        <div className="list-row-meta">
+          {o.country || 'Intl'} <span className="sep">·</span> <DeadlineText deadline={o.deadline} />
+        </div>
       </div>
-      <div className="news-date">{formatDate(appearedAt(o)?.toISOString() ?? null)}</div>
     </Link>
   );
 }
@@ -28,6 +28,7 @@ export default async function HomePage() {
     await Promise.all([getActiveOpportunities(), getNews(), getRecentChanges(14)]);
 
   const newOnes = active.filter((o) => isNew(o, now));
+  const updated = active.filter((o) => !isNew(o, now) && isUpdated(o, now));
   const closingSoon = active
     .filter((o) => { const d = daysUntil(o.deadline, now); return d !== null && d >= 0 && d <= CLOSING_SOON_DAYS; })
     .sort((a, b) => new Date(a.deadline!).getTime() - new Date(b.deadline!).getTime());
@@ -44,84 +45,113 @@ export default async function HomePage() {
 
   return (
     <div>
-      <div className="hero">
+      <div className="page-head">
         <div>
+          <div className="eyebrow">{today}</div>
           <h1>Today&apos;s briefing</h1>
-          <div className="hero-sub">{today}</div>
+          <p className="page-sub">Open digital-identity and wallet opportunities, deadline changes and market news.</p>
         </div>
       </div>
 
       {(oppError || newsError) && (
-        <div className="detail-block"><h2>Error loading data</h2><p>{oppError?.message || newsError?.message}</p></div>
+        <div className="callout error"><strong>Error loading data.</strong> {oppError?.message || newsError?.message}</div>
       )}
 
       <div className="kpi-row">
-        <Link href="/opportunities" className="kpi"><div className="stat-num">{active.length}</div><div className="stat-label">Active opportunities</div></Link>
-        <Link href="/opportunities/new" className="kpi"><div className="stat-num">{newOnes.length}</div><div className="stat-label">New in the last {NEW_WINDOW_DAYS} days</div></Link>
-        <div className="kpi"><div className="stat-num rust">{closingSoon.length}</div><div className="stat-label">Closing within {CLOSING_SOON_DAYS} days</div></div>
-        <Link href="/news" className="kpi"><div className="stat-num fit">{newsThisWeek.length}</div><div className="stat-label">News items this week</div></Link>
+        <Link href="/opportunities" className="kpi">
+          <div className="kpi-label">Active opportunities</div>
+          <div className="kpi-num">{active.length}</div>
+        </Link>
+        <Link href="/opportunities/new" className="kpi">
+          <div className="kpi-label">New · last {NEW_WINDOW_DAYS} days</div>
+          <div className="kpi-num">{newOnes.length}</div>
+          {updated.length > 0 && <div className="kpi-note">+{updated.length} updated</div>}
+        </Link>
+        <div className="kpi">
+          <div className="kpi-label">Closing · next {CLOSING_SOON_DAYS} days</div>
+          <div className={`kpi-num ${closingSoon.length ? 'warn' : ''}`}>{closingSoon.length}</div>
+        </div>
+        <Link href="/news" className="kpi">
+          <div className="kpi-label">News · this week</div>
+          <div className="kpi-num">{newsThisWeek.length}</div>
+        </Link>
       </div>
 
       <div className="home-grid">
         <section>
-          <h2 className="section-title">Highlights</h2>
-          {highlights.length === 0 && <div className="sample-note">No active opportunities yet.</div>}
-          {highlights.map((o) => (
-            <Link key={o.opportunity_id} href={`/opportunities/${o.opportunity_id}`} className="highlight">
-              <div className="opp-tags">
-                {isNew(o, now) ? <span className="tag new">New</span> : isUpdated(o, now) ? <span className="tag updated">Updated</span> : null}
-                {o.opportunity_type && <span className={`tag ${o.opportunity_type}`}>{oppCategoryLabel(o.opportunity_type)}</span>}
-                <span className="highlight-score">Relevance {o.opportunity_relevance_score ?? '—'}</span>
-              </div>
-              <div className="opp-card-title">{o.title}</div>
-              {o.summary && <p className="highlight-summary">{o.summary}</p>}
-              <div className="news-meta">{o.country || 'International'}{o.authority ? ` · ${o.authority}` : ''} · <DeadlineText deadline={o.deadline} /></div>
-            </Link>
-          ))}
-        </section>
-
-        <aside className="closing-panel">
-          <h2 className="section-title">Closing soon</h2>
-          {closingSoon.length === 0 && <div className="sidebar-sub">No deadlines in the next {CLOSING_SOON_DAYS} days.</div>}
-          {closingSoon.slice(0, 6).map((o) => {
-            const d = daysUntil(o.deadline, now)!;
-            return (
-              <Link key={o.opportunity_id} href={`/opportunities/${o.opportunity_id}`} className="closing-item">
-                <div className={`closing-days ${d <= 14 ? 'due-soon' : ''}`}>{d === 0 ? 'Today' : `${d}d`}</div>
-                <div>
-                  <div className="closing-title">{o.title}</div>
-                  <div className="doc-type">{o.country || 'Intl'} · {oppCategoryLabel(o.opportunity_type)}</div>
+          <div className="section-head">
+            <h2 className="section-title">Highlights</h2>
+            <Link href="/opportunities" className="section-more">All opportunities →</Link>
+          </div>
+          {highlights.length === 0 && <div className="callout">No active opportunities right now.</div>}
+          <div className="highlight-list">
+            {highlights.map((o) => (
+              <Link key={o.opportunity_id} href={`/opportunities/${o.opportunity_id}`} className="highlight">
+                <div className="highlight-top">
+                  <div className="opp-tags"><StatusTags o={o} /></div>
+                  <span className="score-pill" title="Relevance score">{o.opportunity_relevance_score ?? '—'}</span>
+                </div>
+                <div className="highlight-title">{o.title}</div>
+                {o.authority && <div className="opp-card-authority">{o.authority}</div>}
+                {o.summary && <p className="highlight-summary">{o.summary}</p>}
+                <div className="list-row-meta">
+                  <span className="country-chip">{o.country || 'Intl'}</span>
+                  <span className="foot-label">Deadline</span> <DeadlineText deadline={o.deadline} />
                 </div>
               </Link>
-            );
-          })}
+            ))}
+          </div>
+        </section>
 
-          <h2 className="section-title" style={{ marginTop: 22 }}>Recent updates</h2>
-          {changes.length === 0 && <div className="sidebar-sub">No changes to tracked opportunities in the last 14 days.</div>}
-          {changes.map((c) => (
-            <Link key={c.id} href={`/opportunities/${c.opportunity_id}`} className="closing-item">
-              <div className="closing-days">{c.detected_at ? new Date(c.detected_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : ''}</div>
-              <div>
-                <div className="closing-title">{c.opportunities?.title}</div>
-                <div className="doc-type">{c.description}</div>
-              </div>
-            </Link>
-          ))}
+        <aside className="side-stack">
+          <div className="panel">
+            <div className="panel-head"><h3>Closing soon</h3></div>
+            {closingSoon.length === 0 && <div className="panel-empty">No deadlines in the next {CLOSING_SOON_DAYS} days.</div>}
+            {closingSoon.slice(0, 6).map((o) => {
+              const d = daysUntil(o.deadline, now)!;
+              return (
+                <Link key={o.opportunity_id} href={`/opportunities/${o.opportunity_id}`} className="panel-row">
+                  <span className={`day-badge ${d <= 14 ? 'due-soon' : ''}`}>{d === 0 ? 'today' : `${d}d`}</span>
+                  <span className="panel-row-body">
+                    <span className="panel-row-title">{o.title}</span>
+                    <span className="panel-row-meta">{o.country || 'Intl'} · {oppCategoryLabel(o.opportunity_type)}</span>
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+
+          <div className="panel">
+            <div className="panel-head"><h3>Recent updates</h3></div>
+            {changes.length === 0 && <div className="panel-empty">No changes to tracked opportunities in the last 14 days.</div>}
+            {changes.map((c) => (
+              <Link key={c.id} href={`/opportunities/${c.opportunity_id}`} className="panel-row">
+                <span className="date-badge">
+                  {c.detected_at ? new Date(c.detected_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : ''}
+                </span>
+                <span className="panel-row-body">
+                  <span className="panel-row-title">{c.opportunities?.title}</span>
+                  <span className="panel-row-meta change">{c.description}</span>
+                </span>
+              </Link>
+            ))}
+          </div>
         </aside>
       </div>
 
       <div className="latest-grid">
-        <section>
-          <div className="section-head">
-            <h2 className="section-title">Latest opportunities</h2>
-            <Link href="/opportunities" className="section-more">All opportunities →</Link>
+        <section className="panel">
+          <div className="panel-head">
+            <h3>Latest opportunities</h3>
+            <Link href="/opportunities" className="section-more">View all →</Link>
           </div>
+          {latestOpps.length === 0 && <div className="panel-empty">Nothing yet.</div>}
           {latestOpps.map((o) => <OppRow key={o.opportunity_id} o={o} />)}
         </section>
-        <section>
-          <div className="section-head">
-            <h2 className="section-title">Latest news</h2>
-            <Link href="/news" className="section-more">All news →</Link>
+        <section className="panel">
+          <div className="panel-head">
+            <h3>Latest news</h3>
+            <Link href="/news" className="section-more">View all →</Link>
           </div>
           {news.slice(0, 6).map((n) => <NewsRow key={n.news_id} n={n} compact />)}
         </section>

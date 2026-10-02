@@ -8,6 +8,7 @@ Needs DATABASE_URL and ANTHROPIC_API_KEY. TAVILY_API_KEY is optional (web
 search is skipped without it; TED is keyless). Tunables via env:
 TAVILY_QUERIES_PER_RUN (default 20), MAX_TRIAGE_PER_RUN (default 400).
 """
+import json
 import os
 import re
 import sys
@@ -187,6 +188,33 @@ def classify_opportunity(candidate: Candidate, t: dict):
     return category, False
 
 
+def apply_language_change(session) -> bool:
+    """When the Translator Agent's target language changed since the last run,
+    queue what agents wrote in the old one: tender analyses re-run, news reports
+    regenerate when opened, feed posts are rewritten (the translator re-does
+    titles, names, summaries and notes by itself, from their language markers)."""
+    from sqlalchemy import text as sql
+    name, code = S.target_language()
+    row = session.execute(sql("select value from app_settings where key = 'language'")).first()
+    applied = (row.value or {}).get("applied") if row else "en"
+    if applied == code:
+        return False
+    session.execute(sql("update opportunities set tender_analysed_at = null where status in ('OPEN','SIGNAL','UNVERIFIED')"))
+    session.execute(sql("update news_items set summary_long = null, key_facts = null, analysis = null, analysed_at = null"))
+    session.execute(sql("insert into app_settings (key, value) values ('language', cast(:v as jsonb)) "
+                        "on conflict (key) do update set value = excluded.value, updated_at = now()"),
+                    {"v": json.dumps({"applied": code, "name": name})})
+    session.commit()
+    print(f"Language: {applied} -> {code} ({name}); analyses, news reports and feed posts will be redone")
+    return True
+
+
+def _written_lang(fields: dict) -> dict:
+    """{column: platform language} for the columns triage filled."""
+    code = S.target_language()[1]
+    return {k: code for k, v in fields.items() if v}
+
+
 def promote(session, candidate: Candidate, t: dict, country_names: dict):
     """Turn a triaged candidate into an Opportunity or NewsItem row.
     Returns ("opportunity"|"news", row), ("updated", opp, [change, ...]) or None."""
@@ -219,6 +247,8 @@ def promote(session, candidate: Candidate, t: dict, country_names: dict):
             publication_date=_parse_date(candidate.publication_date),
             official_url=candidate.source_url, last_checked=now,
             relevance_score=relevance, opportunity_relevance_score=relevance,
+            # Triage writes these in the platform language (Translator Agent's target).
+            lang=_written_lang({"title_en": t.get("title_en"), "authority_en": t.get("authority"), "summary": summary}),
         )
         if reference:
             fields["reference"] = reference
@@ -292,6 +322,7 @@ def promote(session, candidate: Candidate, t: dict, country_names: dict):
             excerpt=(candidate.description or "")[:400], summary=summary,
             impact_note=t.get("reason") or "",
             relevance_score=int(t.get("importance") or 0) or None,
+            lang=_written_lang({"title_en": t.get("title_en"), "summary": summary}),
         )
         existing = session.get(NewsItem, candidate.candidate_id)
         if existing:  # re-triage: refresh in place
@@ -378,6 +409,7 @@ def main():
         print(f"Switched off on Settings: {', '.join(off)}")
     if scope:
         print(f"Search scope: {scope.get('topic') or 'custom'} ({len(scope.get('ted_phrases') or [])} TED phrases)")
+    language_changed = apply_language_change(session)
 
     # --- 1. Discovery (Search Agent) ----------------------------------------
     from adapters.ted import TedSearchProvider
@@ -508,7 +540,8 @@ def main():
 
     # --- 4. Feed: agents post new events, then the feed is re-ranked ---------
     from agents.feed_writer import publish_new_posts, rank_posts
-    posted = publish_new_posts(session, errors) if S.enabled("feed_writer") else 0
+    # After a language change every post is rewritten in the new language.
+    posted = publish_new_posts(session, errors, rewrite=language_changed) if S.enabled("feed_writer") else 0
     ranked = rank_posts(session)
     print(f"Feed: {posted} new posts, {ranked} posts ranked")
 

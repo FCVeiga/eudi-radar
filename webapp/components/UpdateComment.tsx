@@ -1,4 +1,4 @@
-import { looksEnglish } from '@/lib/english';
+import { inPlatformLanguage } from '@/lib/english';
 
 /** A tender update shown like a Reddit comment: who posted it, when, and what changed. */
 
@@ -30,7 +30,7 @@ export default function UpdateComment({ e, compact = false }: { e: UpdateEvent; 
   // English note when the agent has written one; otherwise the detected change,
   // plus the notice's own words only if they are English (else in the tooltip).
   const raw = !e.note && e.note_source ? e.note_source.replace(/^Reason:\s*/, '') : null;
-  const original = raw && looksEnglish(raw) ? raw : null;
+  const original = raw && inPlatformLanguage(raw) ? raw : null;
   return (
     <div className={`update-comment ${compact ? 'compact' : ''}`}>
       <span className="uc-avatar" aria-hidden="true">

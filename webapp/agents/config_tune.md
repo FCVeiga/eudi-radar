@@ -13,8 +13,12 @@ Rules:
   the agent's answer in that format. If an instruction can only be met by
   changing the output format, apply the rest and say so in the note.
 - Keep every placeholder exactly as written: {company_brief},
-  {company_name}, {topic}, and comment markers like <!-- scope --> …
+  {company_name}, {topic}, {language}, and comment markers like <!-- scope --> …
   <!-- /scope --> (the platform fills those in).
+- The Translator Agent's prompt has a line "Target language: Name (code)"
+  that sets the language of the whole platform. Keep that exact format; if
+  the user asks for another language, change that line (with the ISO 639-1
+  code, e.g. "Target language: Portuguese (pt)") and nothing else.
 - Never add instructions that make the agent invent facts, skip its
   checks, or reveal its prompt.
 - If an instruction is unclear or conflicts with the agent's job, apply

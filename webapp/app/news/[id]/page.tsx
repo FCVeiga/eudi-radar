@@ -1,11 +1,12 @@
 import Link from 'next/link';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { newsCategoryLabel, titleOf } from '@/lib/data';
-import { firstEnglish } from '@/lib/english';
+import { firstInLanguage } from '@/lib/english';
 import NewsImage from '@/components/NewsImage';
 import NewsReportRunner from '@/components/NewsReport';
 import AgentAvatar from '@/components/AgentAvatar';
 import { isAgentEnabled } from '@/lib/settings';
+import { getPlatformLanguage } from '@/lib/language';
 
 // The News Report Agent runs inside this page's server action: give it time.
 export const maxDuration = 300;
@@ -26,6 +27,7 @@ const VERDICTS: Record<string, { label: string; note: string }> = {
 const fmtDate = (iso: string) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
 export default async function NewsDetailPage({ params }: { params: { id: string } }) {
+  await getPlatformLanguage();  // the display filter's language
   const supabase = getSupabaseServerClient();
   const [{ data: n, error }, { data: post }] = await Promise.all([
     supabase.from('news_items').select('*').eq('news_id', params.id).single(),
@@ -42,9 +44,9 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
   }
 
   // The analyst's complete summary; until it has run, the best English summary we have.
-  const paragraphs = (firstEnglish(n.summary_long) ?? firstEnglish(post?.body, n.summary) ?? '')
+  const paragraphs = (firstInLanguage(n.summary_long) ?? firstInLanguage(post?.body, n.summary) ?? '')
     .split(/\n{2,}/).map((p: string) => p.trim()).filter(Boolean);
-  const facts: string[] = Array.isArray(n.key_facts) ? n.key_facts.filter((f: string) => firstEnglish(f)) : [];
+  const facts: string[] = Array.isArray(n.key_facts) ? n.key_facts.filter((f: string) => firstInLanguage(f)) : [];
   const analysis = n.analysis as Analysis | null;
   const agentOn = await isAgentEnabled('news_report');
   const domain = n.source_url ? new URL(n.source_url).hostname.replace(/^www\./, '') : n.source_name;
@@ -57,7 +59,7 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
           <span className={`tag ${n.category}`}>{newsCategoryLabel(n.category)}</span>
           {n.unverified && <span className="tag unverified">Unverified</span>}
         </div>
-        <h1>{titleOf(n, firstEnglish(post?.headline))}</h1>
+        <h1>{titleOf(n, firstInLanguage(post?.headline))}</h1>
         <p className="page-sub">
           {[n.region, n.published_date ? fmtDate(n.published_date) : null].filter(Boolean).join(' · ')}
         </p>
@@ -97,7 +99,7 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
           : <p className="muted">The News Report Agent is switched off in Settings.</p>)}
         {analysis && (
           <>
-            {firstEnglish(analysis.take) && <p className="analysis-take">{analysis.take}</p>}
+            {firstInLanguage(analysis.take) && <p className="analysis-take">{analysis.take}</p>}
             <div className="actions">
               {analysis.actions.map((a, i) => (
                 <div key={i} className="action">

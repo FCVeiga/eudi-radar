@@ -49,7 +49,7 @@ subcontractor), "consider" (discuss — open questions decide it), or
 - next_steps: concrete actions with a deadline when the tender gives one
   (Q&A deadline, submission deadline, site visit…).
 
-Be concrete and honest. Write everything in English.
+Be concrete and honest. Write everything in {language}.
 
 ## Output (JSON only)
 ```json

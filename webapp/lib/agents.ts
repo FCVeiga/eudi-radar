@@ -41,7 +41,7 @@ export const AGENTS: AgentDef[] = [
   {
     key: 'tender_analysis', name: 'Tender Analysis Agent', runs: 'pipeline', prompt: 'prompts/tender_requirements.md', fineTune: true,
     role: 'Reads each tender’s notice and documents and writes its summary and full list of requirements.',
-    face: { colors: ['#00FFCC', '#00B3FF'], eyes: 'wide', top: 'antenna', mouth: 'flat' },
+    face: { colors: ['#A5B4FC', '#4F46E5'], eyes: 'wide', top: 'antenna', mouth: 'flat' },
   },
   {
     key: 'tender_evaluation', name: 'Tender Evaluation Agent', runs: 'on click', prompt: 'webapp/agents/tender_evaluation.md', fineTune: true,
@@ -65,7 +65,7 @@ export const AGENTS: AgentDef[] = [
   },
   {
     key: 'translator', name: 'Translator Agent', runs: 'pipeline', prompt: 'prompts/translation.md', fineTune: true,
-    role: 'Translates titles, names, document names and update notes from any source language into the platform’s language — English by default, or any language you set in its fine-tuning.',
+    role: 'Once a tender or story is on the platform, translates its titles, buyer names, documents, summaries and update notes from any language into the platform language set in its config — English by default.',
     face: { colors: ['#C084FC', '#7C3AED'], eyes: 'round', top: 'leaf', mouth: 'smile' },
   },
 ];

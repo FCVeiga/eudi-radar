@@ -1,4 +1,4 @@
-import { firstEnglish } from '@/lib/english';
+import { firstInLanguage } from '@/lib/english';
 
 export type Doc = {
   document_id: string; name: string; name_en: string | null; document_type: string | null;
@@ -40,7 +40,7 @@ export default function TenderDocuments({ docs }: { docs: Doc[] }) {
             const k = linkKind(d.url);
             return (
               <a key={d.document_id} className="doc-item" href={d.url ?? '#'} target="_blank" rel="noopener noreferrer" title={k?.title}>
-                <span className="doc-name">{firstEnglish(d.name_en) ?? d.name}</span>
+                <span className="doc-name">{firstInLanguage(d.name_en) ?? d.name}</span>
                 {k && <span className={`doc-download ${k.label === 'Open on portal' ? 'portal' : ''}`}>{k.label === 'Download' ? 'Download ↓' : k.label === 'PDF' ? 'PDF ↓' : 'Portal ↗'}</span>}
               </a>
             );

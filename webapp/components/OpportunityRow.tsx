@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Opportunity, buyerOf, daysUntil, isNew, isUpdated, oppCategoryLabel, titleOf } from '@/lib/data';
-import { firstEnglish } from '@/lib/english';
+import { firstInLanguage } from '@/lib/english';
 import UpdateComment, { UpdateEvent } from './UpdateComment';
 
 export type RowCopy = { headline: string | null; body: string | null } | undefined;
@@ -58,7 +58,7 @@ export default function OpportunityRow({ o, copy, countryName, updates = [] }: {
 }) {
   const days = daysUntil(o.deadline);
   const value = money(o.estimated_value, o.currency);
-  const description = firstEnglish(copy?.body, o.summary);
+  const description = firstInLanguage(copy?.body, o.summary);
   const buyer = buyerOf(o);
   const urgent = days != null && days <= 14;
 

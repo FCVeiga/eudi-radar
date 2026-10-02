@@ -47,7 +47,7 @@ Be concrete: name the consultation, group, outlet or organisation; give the
 angle of a post; put a deadline when the story states one. Never invent
 facts, deadlines or relationships {company_name} doesn't have.
 
-The article may be in any language; write everything in English.
+The article may be in any language; write everything in {language}.
 
 ## Output (JSON only)
 ```json

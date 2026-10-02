@@ -359,6 +359,7 @@ class Opportunity(Base):
     opportunity_relevance_score = Column(Integer)   # 0-100, section 47
     bid_readiness_score = Column(Integer)            # 0-100, section 48
     action_priority = Column(Enum(ActionPriority))
+    lang = Column(JSON_TYPE, default=dict)           # {column: language} of displayed text (migration 017)
     tender_summary = Column(Text)                    # agents/tender_analysis.py
     tender_analysed_at = Column(DateTime)
     evaluation = Column(JSON_TYPE)                   # Evaluation Report Agent (webapp)
@@ -559,6 +560,7 @@ class NewsItem(Base):
     relevance_score = Column(Integer)  # triage "importance", 0-100 — ranks the home feed
     image_url = Column(Text)           # share image of the source page (og:image)
     image_checked_at = Column(DateTime)
+    lang = Column(JSON_TYPE, default=dict)  # {column: language} of displayed text (migration 017)
     summary_long = Column(Text)        # News Report Agent: complete summary of the story
     key_facts = Column(JSON_TYPE)
     analysis = Column(JSON_TYPE)       # News Report Agent: {verdict, take, actions: [...]}

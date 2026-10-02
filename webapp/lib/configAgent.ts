@@ -10,6 +10,7 @@
 import { readFile } from 'fs/promises';
 import path from 'path';
 import Anthropic from '@anthropic-ai/sdk';
+import { TARGET_LINE } from '@/lib/language';
 
 const MODEL = 'claude-opus-5-5';
 
@@ -71,7 +72,7 @@ export function validateSearchConfig(out: any) {
   return config;
 }
 
-const PLACEHOLDERS = ['{company_brief}', '{company_name}', '{topic}', '<!-- scope -->', '<!-- /scope -->', '<!-- importance -->', '<!-- /importance -->'];
+const PLACEHOLDERS = ['{company_brief}', '{company_name}', '{topic}', '{language}', '<!-- scope -->', '<!-- /scope -->', '<!-- importance -->', '<!-- /importance -->'];
 // The "## Output" section alone (up to the next heading): the format the code parses.
 const outputSection = (p: string) => {
   p = p.replace(/\r\n?/g, '\n');
@@ -88,6 +89,9 @@ export function validatePrompt(defaultPrompt: string, next: string) {
   if (next.trim().length < 50) throw new Error('the configuration is empty');
   const lost = PLACEHOLDERS.filter((p) => defaultPrompt.includes(p) && !next.includes(p));
   if (lost.length) throw new Error(`it must keep ${lost.join(', ')}`);
+  if (TARGET_LINE.test(defaultPrompt) && !TARGET_LINE.test(next)) {
+    throw new Error('it must keep the line “Target language: Name (code)”, e.g. “Target language: Portuguese (pt)” — it sets the platform language');
+  }
   if (defaultPrompt.includes('## Output') && outputSection(next).trim() !== outputSection(defaultPrompt).trim()) {
     throw new Error('the “## Output” section must stay exactly as in the default — the platform reads the agent’s answer in that format');
   }

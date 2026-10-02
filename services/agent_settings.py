@@ -82,6 +82,18 @@ def agent_config(agent_key: str):
     return _state["overrides"].get(agent_key)
 
 
+_TARGET = re.compile(r"^Target language:\s*(.+?)\s*\(([a-z]{2,3})\)\s*$", re.M | re.I)
+
+
+def target_language() -> tuple:
+    """The platform language, from the Translator Agent's config line
+    "Target language: English (en)" → ("English", "en"). Every text the
+    platform shows is written or translated into it."""
+    prompt = _state["overrides"].get("translator") or open(os.path.join(_ROOT, AGENT_PROMPTS["translator"])).read()
+    m = _TARGET.search(prompt)
+    return (m.group(1).strip(), m.group(2).lower()) if m else ("English", "en")
+
+
 def company_name() -> str:
     return _state["company"]
 
@@ -103,4 +115,5 @@ def prompt_for(prompt_filename: str, default: str) -> str:
                             lambda _m: f"<!-- {marker} -->\n{cfg[field].strip()}\n<!-- /{marker} -->", prompt, flags=re.S)
     if cfg.get("topic"):
         prompt = prompt.replace("{topic}", cfg["topic"])
-    return prompt.replace("{topic}", "EUDI Wallet").replace("{company_name}", company_name())
+    return (prompt.replace("{topic}", "EUDI Wallet").replace("{company_name}", company_name())
+            .replace("{language}", target_language()[0]))

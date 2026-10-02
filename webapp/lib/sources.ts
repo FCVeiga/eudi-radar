@@ -8,7 +8,8 @@
 import { XMLParser } from 'fast-xml-parser';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { Source, SourceActivity } from '@/lib/sourceMeta';
-import { firstEnglish } from '@/lib/english';
+import { firstInLanguage } from '@/lib/english';
+import { getPlatformLanguage } from '@/lib/language';
 
 const FEED_REFRESH_MINUTES = 10;
 const FETCH_TIMEOUT_MS = 9000;
@@ -142,6 +143,7 @@ const OPPORTUNITY_KINDS = ['TENDER', 'RFI', 'GRANT', 'CONSORTIUM_CALL', 'PILOT',
  *    results carry no publication date, so they can't be trusted to be new.
  */
 export async function getActivity(limit = 30) {
+  await getPlatformLanguage();  // the display filter's language
   const db = getSupabaseServerClient();
   const now = new Date();
   const cols = 'id, source_id, title, title_en, kind, url, published_at, relevant, sources!inner(name, source_type, handle, method)';
@@ -172,7 +174,7 @@ export async function getActivity(limit = 30) {
   return ([...((feeds.data || []) as unknown as SourceActivity[]), ...current])
     .sort((a, b) => new Date(b.published_at || 0).getTime() - new Date(a.published_at || 0).getTime())
     // English only: an item waits until it has an English title.
-    .map((a) => ({ ...a, title_en: firstEnglish(a.title_en, a.title) }))
+    .map((a) => ({ ...a, title_en: firstInLanguage(a.title_en, a.title) }))
     .filter((a) => {
       if (!a.title_en) return false;
       const k = `${a.source_id}|${a.title_en.toLowerCase().trim()}`;

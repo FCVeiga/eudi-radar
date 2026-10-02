@@ -5,6 +5,7 @@
 import { readFile } from 'fs/promises';
 import path from 'path';
 import { getSupabaseServerClient } from '@/lib/supabase';
+import { getPlatformLanguage } from '@/lib/language';
 
 export const DEFAULT_COMPANY = 'WalliD';
 export const DOC_KINDS = [
@@ -71,7 +72,8 @@ export async function agentPrompt(key: string, file: string) {
     companyName(),
     readFile(path.join(process.cwd(), 'agents', file), 'utf8'),
   ]);
-  return (data?.prompt_override || fallback).replaceAll('{company_name}', name);
+  const language = await getPlatformLanguage();
+  return (data?.prompt_override || fallback).replaceAll('{company_name}', name).replaceAll('{language}', language.name);
 }
 
 const BRIEF_CHARS = { context: 30_000, docs: 160_000 };

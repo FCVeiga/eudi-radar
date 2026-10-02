@@ -63,7 +63,6 @@ export default async function SettingsPage() {
             );
           })}
         </div>
-        <p className="field-hint">The Config Agent itself is internal: it only runs when you apply a search scope or plain-language instructions here.</p>
       </section>
     </div>
   );

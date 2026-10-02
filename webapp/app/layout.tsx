@@ -7,6 +7,7 @@ import SearchBox from '@/components/SearchBox';
 import SideNav from '@/components/SideNav';
 import SourcesSidebar from '@/components/SourcesSidebar';
 import WorkingAgents from '@/components/WorkingAgents';
+import { getPlatformLanguage } from '@/lib/language';
 import { BottomNav, MenuBackdrop, MenuButton } from '@/components/MobileNav';
 
 // Every page reads live from Supabase. Without this, Next prerenders pages
@@ -27,9 +28,10 @@ export const metadata = {
 
 // Reddit-style shell: fixed navbar, fixed left sidebar (sections + followed
 // accounts); pages render in the remaining area.
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const language = await getPlatformLanguage();
   return (
-    <html lang="en" className={`${sans.variable} ${mono.variable}`}>
+    <html lang={language.code} className={`${sans.variable} ${mono.variable}`}>
       <body>
         <header className="topbar">
           <Link href="/" className="brand" aria-label="EUDI Radar home">

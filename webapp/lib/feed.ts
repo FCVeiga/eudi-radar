@@ -13,6 +13,7 @@
  */
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { getActiveOpportunities, newsCategoryLabel, oppCategoryLabel } from '@/lib/data';
+import { getPlatformLanguage } from '@/lib/language';
 
 export const HALF_LIFE_DAYS = 4;
 const UNSCORED = 30;
@@ -70,6 +71,7 @@ const decay = (at: Date, now: Date) =>
   Math.pow(0.5, Math.max(0, (now.getTime() - at.getTime()) / 86400_000) / HALF_LIFE_DAYS);
 
 export async function getFeed(view: FeedView, now = new Date()) {
+  await getPlatformLanguage();  // the display filter's language
   const [{ data, error }, { opportunities }] = await Promise.all([
     getSupabaseServerClient().from('feed_posts').select('*').order('posted_at', { ascending: false }).limit(1000),
     getActiveOpportunities(),

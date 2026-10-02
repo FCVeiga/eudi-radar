@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { Opportunity, buyerOf, oppCategoryLabel, titleOf } from '@/lib/data';
-import { firstEnglish } from '@/lib/english';
+import { firstInLanguage } from '@/lib/english';
 import { DeadlineText, StatusTags } from '@/components/OpportunityCard';
 import UpdateComment, { UpdateEvent } from '@/components/UpdateComment';
 import TenderDocuments, { Doc } from '@/components/TenderDocuments';
@@ -9,6 +9,7 @@ import AgentAvatar from '@/components/AgentAvatar';
 import { isAgentEnabled } from '@/lib/settings';
 import TenderEvaluationRunner from '@/components/TenderEvaluationRunner';
 import ProposalRunner from '@/components/ProposalRunner';
+import { getPlatformLanguage } from '@/lib/language';
 
 // The Tender Evaluation Agent runs inside this page's server action: give it time.
 export const maxDuration = 300;
@@ -51,6 +52,7 @@ function matchClass(m: string | null) {
 }
 
 export default async function OpportunityDetailPage({ params }: { params: { id: string } }) {
+  await getPlatformLanguage();  // the display filter's language
   const supabase = getSupabaseServerClient();
 
   const { data: o, error } = await supabase
@@ -91,10 +93,10 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
     .eq('opportunity_id', params.id)
     .order('detected_at', { ascending: false });
 
-  const reqs = (requirements || []).filter((r) => firstEnglish(r.requirement_text));
+  const reqs = (requirements || []).filter((r) => firstInLanguage(r.requirement_text));
   const evaluated = reqs.some((r) => r.requirement_matches?.length);
   const evaluation = o.evaluation as Evaluation | null;
-  const summary = (firstEnglish(o.tender_summary) ?? firstEnglish(o.summary) ?? '')
+  const summary = (firstInLanguage(o.tender_summary) ?? firstInLanguage(o.summary) ?? '')
     .split(/\n{2,}/).map((p: string) => p.trim()).filter(Boolean);
   const [evaluatorOn, proposerOn] = await Promise.all([isAgentEnabled('tender_evaluation'), isAgentEnabled('proposal_manager')]);
   const proposing = !!o.proposal_started_at && Date.now() - new Date(o.proposal_started_at).getTime() < 6 * 60_000;
@@ -152,7 +154,7 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
             {evaluation && (
               <div className="eval-report">
                 <div className="eval-score"><span className="eval-score-num">{evaluation.fit_score}</span><span className="eval-score-label">Fit score</span></div>
-                {firstEnglish(evaluation.take) && <p className="analysis-take">{evaluation.take}</p>}
+                {firstInLanguage(evaluation.take) && <p className="analysis-take">{evaluation.take}</p>}
                 <div className="eval-cols">
                   {evaluation.strengths.length > 0 && (
                     <div><h3>Strengths</h3><ul>{evaluation.strengths.map((x, i) => <li key={i}>{x}</li>)}</ul></div>
@@ -222,7 +224,7 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
               <h2>Award criteria</h2>
               <div className="award-list">
                 {(award || []).map((a: any) => {
-                  const what = firstEnglish(a.subcriteria?.name_en, a.subcriteria?.name, a.subcriteria?.description_en, a.subcriteria?.description);
+                  const what = firstInLanguage(a.subcriteria?.name_en, a.subcriteria?.name, a.subcriteria?.description_en, a.subcriteria?.description);
                   return (
                     <div key={a.id} className="award-row">
                       <span className="award-label">{a.criterion}{what ? <em> — {what}</em> : null}</span>
@@ -253,10 +255,10 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
                       <tr key={r.requirement_id}>
                         <td>
                           {r.requirement_text}
-                          {firstEnglish(r.evidence_required) && <div className="req-evidence">Evidence: {r.evidence_required}</div>}
+                          {firstInLanguage(r.evidence_required) && <div className="req-evidence">Evidence: {r.evidence_required}</div>}
                           {r.document && <div className="req-source">{r.document}</div>}
                         </td>
-                        <td>{firstEnglish(r.threshold) ?? ''}</td>
+                        <td>{firstInLanguage(r.threshold) ?? ''}</td>
                         <td>{r.mandatory ? <span className="mand-yes">Mandatory</span> : <span className="mand-no">Optional</span>}</td>
                         {evaluated && (
                           <td>

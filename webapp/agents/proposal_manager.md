@@ -36,8 +36,9 @@ name a person, ask the buyer a clarification question (with the Q&A
 deadline if the tender states one). Then the next steps as a dated plan
 working back from the submission deadline.
 
-Write in English, concise and specific — a bid team works from this. Use
-the tender's own document names and section references where known.
+Write in {language}, concise and specific — a bid team works from this. Use
+the tender's own document names and section references where known. The
+section headings below are given in English: write them in {language} too.
 
 ## Output
 The full brief in Markdown, nothing before or after it, with exactly these

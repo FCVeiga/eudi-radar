@@ -7,7 +7,8 @@
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { NewsItem, Opportunity, isNew, newsCategoryLabel, oppCategoryLabel, titleOf } from '@/lib/data';
 import { FeedItem, HALF_LIFE_DAYS } from '@/lib/feed';
-import { firstEnglish } from '@/lib/english';
+import { firstInLanguage } from '@/lib/english';
+import { getPlatformLanguage } from '@/lib/language';
 
 const MAX_WORDS = 6;
 
@@ -33,6 +34,7 @@ function statusLabel(o: Opportunity, now: Date) {
 }
 
 export async function search(q: string, now = new Date()) {
+  await getPlatformLanguage();  // the display filter's language
   const words = searchWords(q);
   if (!words.length) return { opportunities: [] as FeedItem[], news: [] as FeedItem[] };
   const db = getSupabaseServerClient();
@@ -74,7 +76,7 @@ export async function search(q: string, now = new Date()) {
     return {
       key: `opp:${o.opportunity_id}`, kind: 'opportunity', event: 'new_opportunity',
       href: `/tenders/${o.opportunity_id}`,
-      headline: p?.headline || titleOf(o), body: p ? p.body : firstEnglish(o.summary),
+      headline: p?.headline || titleOf(o), body: p ? p.body : firstInLanguage(o.summary),
       category: o.opportunity_type || 'rfp', categoryLabel: oppCategoryLabel(o.opportunity_type), kindLabel: 'Opportunity',
       country: o.country, at, score, combined: Math.round(score * decay(at)), movement: 'same',
       deadline: o.deadline, isNew: isNew(o, now), statusLabel: statusLabel(o, now),
@@ -86,7 +88,7 @@ export async function search(q: string, now = new Date()) {
     const score = n.relevance_score ?? 30;
     return {
       key: `news:${n.news_id}`, kind: 'news', event: 'news', href: `/news/${n.news_id}`,
-      headline: p?.headline || titleOf(n), body: p ? p.body : firstEnglish(n.summary, n.excerpt),
+      headline: p?.headline || titleOf(n), body: p ? p.body : firstInLanguage(n.summary, n.excerpt),
       category: n.category || 'market', categoryLabel: newsCategoryLabel(n.category), kindLabel: 'News',
       country: n.country, at, score, combined: Math.round(score * decay(at)), movement: 'same',
       deadline: null, isNew: now.getTime() - at.getTime() <= 2 * 86400_000,

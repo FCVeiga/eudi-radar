@@ -68,7 +68,7 @@ covers voice-of-customer feedback and analytics services."
 
 ## Rules
 - Only use facts in the input. If something isn't stated, leave it out.
-- Source material may be in any language; always write in English.
+- Source material may be in any language; always write in {language}.
 - Sentence case, no emojis, no hype. Dates as "5 Oct 2026"; money as "€15.7M".
 
 ## Output (JSON only)

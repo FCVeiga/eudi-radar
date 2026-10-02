@@ -70,7 +70,7 @@ opportunity relevance, job postings.
   "news_category": "regulation | industry | market | null  (only for NEWS_ONLY — see below)",
   "importance": 0,
   "language": "ISO 639-1 code of the input's language, e.g. de, el, fr, en",
-  "title_en": "the title in clear English (translated if needed; drop CPV/category boilerplate and reference numbers)"
+  "title_en": "the title in clear {language} (translated if needed; drop CPV/category boilerplate and reference numbers)"
 }
 ```
 
@@ -80,9 +80,9 @@ says — never guess. Use null when unknown.
 ## Languages
 The input may be in any language (procurement notices usually are in the
 buyer's language). Read and judge it in that language, but write every text
-field — `reason`, `summary`, `title_en` — in English. Keep `authority` as the
-official name, followed by an English rendering in parentheses when it isn't
-already English, e.g. "Υφυπουργείο Ψηφιακής Πολιτικής (Deputy Ministry of
+field — `reason`, `summary`, `title_en` (the title, in {language}) — in
+{language}. Keep `authority` as the official name, followed by a {language}
+rendering in parentheses when it isn't already in {language}, e.g. "Υφυπουργείο Ψηφιακής Πολιτικής (Deputy Ministry of
 Digital Policy)".
 
 ## News categories (NEWS_ONLY only)

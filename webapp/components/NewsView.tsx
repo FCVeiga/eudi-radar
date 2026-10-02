@@ -1,6 +1,6 @@
 import { NEWS_CATEGORIES, getActiveOpportunities, getNews, newsCategoryLabel, titleOf } from '@/lib/data';
 import { FeedItem, newsScore } from '@/lib/feed';
-import { firstEnglish } from '@/lib/english';
+import { firstInLanguage } from '@/lib/english';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import FeedCard from './FeedCard';
 import SectionTabs from './SectionTabs';
@@ -33,7 +33,7 @@ export default async function NewsView({ view }: { view: View }) {
     const score = o.opportunity_relevance_score ?? 30;
     return {
       key: `signal:${o.opportunity_id}`, kind: 'opportunity', event: 'signal', href: `/tenders/${o.opportunity_id}`,
-      headline: firstEnglish(p?.headline) ?? titleOf(o), body: firstEnglish(p?.body, o.summary),
+      headline: firstInLanguage(p?.headline) ?? titleOf(o), body: firstInLanguage(p?.body, o.summary),
       category: 'signal', categoryLabel: 'Signal', kindLabel: 'Planned procurement',
       country: o.country, at, score, combined: Math.round(newsScore(score, at, now)),
       movement: !p || p.rank == null ? 'same' : p.prev_rank == null || p.rank < p.prev_rank ? 'up' : p.rank > p.prev_rank ? 'down' : 'same',
@@ -51,8 +51,8 @@ export default async function NewsView({ view }: { view: View }) {
         : p.prev_rank == null || p.rank < p.prev_rank ? 'up' : p.rank > p.prev_rank ? 'down' : 'same';
       return {
         key: n.news_id, kind: 'news', event: 'news', href: `/news/${n.news_id}`,
-        headline: firstEnglish(p?.headline) ?? titleOf(n),
-        body: firstEnglish(p?.body, n.summary),
+        headline: firstInLanguage(p?.headline) ?? titleOf(n),
+        body: firstInLanguage(p?.body, n.summary),
         category: n.category || 'market', categoryLabel: newsCategoryLabel(n.category), kindLabel: 'News',
         country: n.region && n.region !== 'EU / International' ? n.region : null,
         at, score, combined: Math.round(newsScore(score, at, now)), movement,

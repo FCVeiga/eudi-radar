@@ -3,6 +3,7 @@ import { getSupabaseServerClient } from '@/lib/supabase';
 import { TENDER_CATEGORIES, oppCategoryLabel, titleOf } from '@/lib/data';
 import FilterSelect from '@/components/FilterSelect';
 import SortSelect from '@/components/SortSelect';
+import { getPlatformLanguage } from '@/lib/language';
 
 // Status as of now: a stored OPEN/SIGNAL whose deadline has passed is closed.
 function displayStatus(o: { status: string | null; deadline: string | null }) {
@@ -41,6 +42,7 @@ export default async function DatabasePage({
 }: {
   searchParams: { type?: string; country?: string; sort?: string; dir?: string };
 }) {
+  await getPlatformLanguage();  // the display filter's language
   const supabase = getSupabaseServerClient();
 
   let query = supabase.from('opportunities').select('*')

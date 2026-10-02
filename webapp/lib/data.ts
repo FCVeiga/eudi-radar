@@ -1,5 +1,6 @@
 import { getSupabaseServerClient } from '@/lib/supabase';
-import { TRANSLATION_PENDING, englishName, firstEnglish, looksEnglish } from '@/lib/english';
+import { TRANSLATION_PENDING, nameInLanguage, firstInLanguage, inPlatformLanguage } from '@/lib/english';
+import { getPlatformLanguage } from '@/lib/language';
 
 // Opportunity categories — must match OPPORTUNITY_TYPES values in run_daily.py.
 export const OPP_CATEGORIES = [
@@ -72,10 +73,10 @@ export type NewsItem = {
 /** English title: title_en, else a cleaner English fallback (e.g. the agent's headline),
  * else the original only if it is English. */
 export const titleOf = (x: { title: string; title_en?: string | null; language?: string | null }, ...fallbacks: (string | null | undefined)[]) =>
-  firstEnglish(x.title_en, ...fallbacks, looksEnglish(x.title, x.language) ? x.title : null) ?? TRANSLATION_PENDING;
+  firstInLanguage(x.title_en, ...fallbacks, inPlatformLanguage(x.title, x.language) ? x.title : null) ?? TRANSLATION_PENDING;
 
 /** Buyer / organisation in English (null when no English form exists yet). */
-export const buyerOf = (o: { authority: string | null; authority_en?: string | null }) => englishName(o.authority_en, o.authority);
+export const buyerOf = (o: { authority: string | null; authority_en?: string | null }) => nameInLanguage(o.authority_en, o.authority);
 
 export function oppCategoryLabel(slug: string | null) {
   return OPP_CATEGORIES.find((c) => c.slug === slug)?.label.replace(/s$/, '') ?? slug ?? '';
@@ -113,6 +114,7 @@ export function daysUntil(iso: string | null, now = new Date()) {
  * Closed, awarded and unverified items only appear on the History page.
  */
 export async function getActiveOpportunities(category?: string) {
+  await getPlatformLanguage();  // the display filter's language
   const supabase = getSupabaseServerClient();
   let q = supabase
     .from('opportunities')
@@ -130,6 +132,7 @@ export async function getActiveOpportunities(category?: string) {
 }
 
 export async function getNews(category?: string, limit?: number) {
+  await getPlatformLanguage();  // the display filter's language
   const supabase = getSupabaseServerClient();
   let q = supabase.from('news_items').select('*').order('published_date', { ascending: false });
   if (category) q = q.eq('category', category);

@@ -16,7 +16,7 @@ You describe the tender only. Do NOT judge any bidder's fit or chances —
 the Tender Evaluation Agent does that.
 
 ## 1. Summary
-200–400 words in 2–4 short paragraphs, in English:
+200–400 words in 2–4 short paragraphs, in {language}:
 - what is being procured and why, for whom (buyer), and its lots;
 - scope of work: deliverables, services, technologies and standards named
   (EUDI Wallet, ARF, OpenID4VC, SD-JWT, mdoc, eIDAS…);
@@ -63,9 +63,9 @@ sources state no requirements yet (a prior information notice, an announced
 plan), return an empty list and say in the summary what is still to come.
 
 ## 3. Award criteria
-Each criterion with its weight in percent and what is assessed, in English.
+Each criterion with its weight in percent and what is assessed, in {language}.
 
-## Output (JSON only, English)
+## Output (JSON only, text in {language})
 ```json
 {
   "summary": "paragraphs separated by \n\n",

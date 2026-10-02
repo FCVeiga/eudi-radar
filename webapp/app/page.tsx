@@ -1,6 +1,9 @@
 import Link from 'next/link';
 import { daysUntil } from '@/lib/data';
 import { FEED_VIEWS, FeedItem, FeedView, getFeed, timeAgo } from '@/lib/feed';
+import { getActivity } from '@/lib/accounts';
+import AccountsSidebar from '@/components/AccountsSidebar';
+import LiveActivity from '@/components/LiveActivity';
 
 const PAGE = 30;
 
@@ -59,7 +62,7 @@ function FeedRow({ item, now, view }: { item: FeedItem; now: Date; view: FeedVie
 export default async function FeedPage({ searchParams }: { searchParams: { view?: string; n?: string } }) {
   const now = new Date();
   const view = (FEED_VIEWS.find((v) => v.slug === searchParams.view)?.slug ?? 'top') as FeedView;
-  const { items, error } = await getFeed(view, now);
+  const [{ items, error }, activity] = await Promise.all([getFeed(view, now), getActivity(30)]);
   const shown = Math.max(PAGE, Number(searchParams.n) || PAGE);
   const href = (v: FeedView, n?: number) => {
     const p = new URLSearchParams();
@@ -70,31 +73,35 @@ export default async function FeedPage({ searchParams }: { searchParams: { view?
   };
 
   return (
-    <div className="feed-page">
-      <h1 className="feed-h1">EUDI Radar</h1>
+    <div className="home-layout">
+      <aside className="home-left"><AccountsSidebar /></aside>
+      <div className="feed-page">
+        <h1 className="feed-h1">EUDI Radar</h1>
 
-      <nav className="feed-sort" aria-label="Sort and filter the feed">
-        {FEED_VIEWS.map((v) => (
-          <Link key={v.slug} href={href(v.slug)} className={`feed-sort-link ${v.slug === view ? 'active' : ''}`}
-                aria-current={v.slug === view ? 'page' : undefined}>
-            <svg className="feed-sort-icon" viewBox="0 0 16 16" aria-hidden="true">{VIEW_ICONS[v.slug]}</svg>
-            {v.label}
+        <nav className="feed-sort" aria-label="Sort and filter the feed">
+          {FEED_VIEWS.map((v) => (
+            <Link key={v.slug} href={href(v.slug)} className={`feed-sort-link ${v.slug === view ? 'active' : ''}`}
+                  aria-current={v.slug === view ? 'page' : undefined}>
+              <svg className="feed-sort-icon" viewBox="0 0 16 16" aria-hidden="true">{VIEW_ICONS[v.slug]}</svg>
+              {v.label}
+            </Link>
+          ))}
+        </nav>
+
+        {error && <div className="callout error"><strong>Error loading the feed.</strong> {error.message}</div>}
+        {!error && items.length === 0 && <div className="callout">Nothing here yet.</div>}
+
+        <div className="feed">
+          {items.slice(0, shown).map((item) => <FeedRow key={item.key} item={item} now={now} view={view} />)}
+        </div>
+
+        {items.length > shown && (
+          <Link href={href(view, shown + PAGE)} scroll={false} className="feed-more">
+            Show more <span className="mono">({items.length - shown} left)</span>
           </Link>
-        ))}
-      </nav>
-
-      {error && <div className="callout error"><strong>Error loading the feed.</strong> {error.message}</div>}
-      {!error && items.length === 0 && <div className="callout">Nothing here yet.</div>}
-
-      <div className="feed">
-        {items.slice(0, shown).map((item) => <FeedRow key={item.key} item={item} now={now} view={view} />)}
+        )}
       </div>
-
-      {items.length > shown && (
-        <Link href={href(view, shown + PAGE)} scroll={false} className="feed-more">
-          Show more <span className="mono">({items.length - shown} left)</span>
-        </Link>
-      )}
+      <aside className="home-right"><LiveActivity initial={activity} /></aside>
     </div>
   );
 }

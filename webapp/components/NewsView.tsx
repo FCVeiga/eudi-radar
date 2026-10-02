@@ -1,16 +1,16 @@
-import { NEWS_CATEGORIES, getNews, newsCategoryLabel, titleOf } from '@/lib/data';
+import { NEWS_CATEGORIES, getActiveOpportunities, getNews, newsCategoryLabel, titleOf } from '@/lib/data';
 import { FeedItem, newsScore } from '@/lib/feed';
 import { firstEnglish } from '@/lib/english';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import FeedCard from './FeedCard';
 import SectionTabs from './SectionTabs';
 
-type View = 'all' | (typeof NEWS_CATEGORIES)[number]['slug'];
+type View = 'all' | 'signals' | (typeof NEWS_CATEGORIES)[number]['slug'];
 
 export default async function NewsView({ view }: { view: View }) {
   const now = new Date();
-  const { news: all, error } = await getNews();
-  const heading = NEWS_CATEGORIES.find((c) => c.slug === view);
+  const [{ news: all, error }, { opportunities: signals }] = await Promise.all([getNews(), getActiveOpportunities('signal')]);
+  const heading = view === 'signals' ? { label: 'Signals' } : NEWS_CATEGORIES.find((c) => c.slug === view);
 
   // The agents' post for each story: substance-first English copy, and the
   // feed ranks behind the movement arrows.
@@ -19,8 +19,29 @@ export default async function NewsView({ view }: { view: View }) {
         .in('post_id', all.map((n) => `news:${n.news_id}`))
     : { data: [] as any[] };
   const post = new Map((posts || []).map((p: any) => [p.post_id.slice(5), p]));
+  // Signals (a named buyer announced a procurement that isn't open yet) sit
+  // with the news: their latest agent post, else the triage summary.
+  const { data: signalPosts } = signals.length
+    ? await getSupabaseServerClient().from('feed_posts').select('opportunity_id, headline, body, posted_at, rank, prev_rank')
+        .in('opportunity_id', signals.map((o) => o.opportunity_id)).order('posted_at', { ascending: false })
+    : { data: [] as any[] };
+  const signalPost = new Map<string, any>();
+  for (const p of signalPosts || []) if (!signalPost.has(p.opportunity_id)) signalPost.set(p.opportunity_id, p);
+  const signalItems: FeedItem[] = signals.map((o): FeedItem => {
+    const p = signalPost.get(o.opportunity_id);
+    const at = new Date(o.publication_date || o.first_detected || now);
+    const score = o.opportunity_relevance_score ?? 30;
+    return {
+      key: `signal:${o.opportunity_id}`, kind: 'opportunity', event: 'signal', href: `/opportunities/${o.opportunity_id}`,
+      headline: firstEnglish(p?.headline) ?? titleOf(o), body: firstEnglish(p?.body, o.summary),
+      category: 'signal', categoryLabel: 'Signal', kindLabel: 'Planned procurement',
+      country: o.country, at, score, combined: Math.round(newsScore(score, at, now)),
+      movement: !p || p.rank == null ? 'same' : p.prev_rank == null || p.rank < p.prev_rank ? 'up' : p.rank > p.prev_rank ? 'down' : 'same',
+      deadline: o.deadline, isNew: now.getTime() - at.getTime() <= 2 * 86400_000,
+    };
+  });
 
-  const items: FeedItem[] = all
+  const newsItems: FeedItem[] = all
     .filter((n) => view === 'all' || n.category === view)
     .map((n): FeedItem => {
       const p = post.get(n.news_id);
@@ -38,14 +59,16 @@ export default async function NewsView({ view }: { view: View }) {
         deadline: null, isNew: now.getTime() - at.getTime() <= 2 * 86400_000,
         image: n.image_url,
       };
-    })
+    });
+  const items = (view === 'signals' ? signalItems : view === 'all' ? [...newsItems, ...signalItems] : newsItems)
     .sort((a, b) => b.combined - a.combined || b.at.getTime() - a.at.getTime());
 
   const tabs = [
-    { href: '/news', label: 'All', count: all.length },
+    { href: '/news', label: 'All', count: all.length + signals.length },
     ...NEWS_CATEGORIES.map((c) => ({
       href: `/news/${c.slug}`, label: c.label, count: all.filter((n) => n.category === c.slug).length,
     })),
+    { href: '/news/signals', label: 'Signals', count: signals.length },
   ];
 
   return (
@@ -54,7 +77,12 @@ export default async function NewsView({ view }: { view: View }) {
       <SectionTabs tabs={tabs} active={view === 'all' ? '/news' : `/news/${view}`} />
 
       {error && <div className="callout error"><strong>Error loading news.</strong> {error.message}</div>}
-      {!error && items.length === 0 && <div className="callout"><strong>No news in this section yet.</strong></div>}
+      {!error && items.length === 0 && (
+        <div className="callout">
+          <strong>{view === 'signals' ? 'No confirmed signals right now.' : 'No news in this section yet.'}</strong>
+          {view === 'signals' && ' A signal is a named buyer announcing a procurement that isn’t open yet — a prior information notice, an approved budget, a mandated system. They appear here, and on the home feed, once the pipeline has checked them against the source.'}
+        </div>
+      )}
 
       <div className="feed">
         {items.map((i) => <FeedCard key={i.key} item={i} now={now} />)}

@@ -7,7 +7,7 @@ import { getSupabaseServerClient } from '@/lib/supabase';
 import { AGENTS, agentByKey } from '@/lib/agents';
 import { DOC_KINDS } from '@/lib/settings';
 import { fileText } from '@/lib/fileText';
-import { friendlyError, parseSearchScope, tunePrompt } from '@/lib/configAgent';
+import { friendlyError, parseSearchScope, tunePrompt, validatePrompt, validateSearchConfig } from '@/lib/configAgent';
 
 export type FormState = { ok: boolean; message: string } | null;
 const BUCKET = 'company-files';
@@ -123,8 +123,10 @@ export async function saveAgentTuning(_prev: FormState, form: FormData): Promise
   }
   const base = await defaultPrompt(key);
   if (!base) return { ok: false, message: 'This agent’s default configuration hasn’t been synced yet — it is after the next pipeline run.' };
+  const { data: row } = await db.from('agent_settings').select('prompt_override').eq('agent_key', key).maybeSingle();
   try {
-    const { prompt, note } = await tunePrompt(agent.name, agent.role, base, instructions);
+    // From the agent's current configuration, so hand edits made in "Open config" are kept.
+    const { prompt, note } = await tunePrompt(agent.name, agent.role, base, row?.prompt_override || base, instructions);
     await db.from('agent_settings').upsert({ agent_key: key, instructions, prompt_override: prompt, status: 'applied', error: null, updated_at: now });
     revalidatePath('/settings');
     return { ok: true, message: note ? `Applied. ${note}` : 'Applied — the agent uses its new configuration from its next run.' };
@@ -134,4 +136,39 @@ export async function saveAgentTuning(_prev: FormState, form: FormData): Promise
     revalidatePath('/settings');
     return { ok: false, message: `Saved your text, but the Config Agent couldn’t apply it: ${message}. The agent keeps its current configuration.` };
   }
+}
+
+/** "Open config" → Save: the configuration as edited by hand becomes the one the agent runs on. */
+export async function saveAgentConfig(_prev: FormState, form: FormData): Promise<FormState> {
+  const key = String(form.get('agent') || '');
+  // Browsers submit textareas with CRLF line breaks; the prompts use LF.
+  const config = String(form.get('config') || '').replace(/\r\n?/g, '\n');
+  if (!AGENTS.some((a) => a.key === key && (a.fineTune || a.key === 'search'))) return { ok: false, message: 'This agent has no editable configuration.' };
+  const db = getSupabaseServerClient();
+  const now = new Date().toISOString();
+  if (key === 'search') {
+    let parsed;
+    try { parsed = validateSearchConfig(JSON.parse(config)); }
+    catch (e: any) { return { ok: false, message: `Not saved: ${e instanceof SyntaxError ? 'that isn’t valid JSON' : e.message}.` }; }
+    const { data: current } = await db.from('app_settings').select('value').eq('key', 'search').maybeSingle();
+    await saveSetting('search', { ...(current?.value || {}), config: parsed, status: 'applied', error: null, parsed_at: now, edited: true });
+    revalidatePath('/settings');
+    return { ok: true, message: 'Saved — the Search and Triage Agents use it from the next run.' };
+  }
+  const base = await defaultPrompt(key);
+  if (!base) return { ok: false, message: 'This agent’s default configuration hasn’t been synced yet.' };
+  try { validatePrompt(base, config); } catch (e: any) { return { ok: false, message: `Not saved: ${e.message}.` }; }
+  const same = config.trim() === base.trim();
+  await db.from('agent_settings').upsert({ agent_key: key, prompt_override: same ? null : config, status: same ? null : 'applied', error: null, updated_at: now });
+  revalidatePath('/settings');
+  return { ok: true, message: same ? 'Matches the default — the agent runs on its default configuration.' : 'Saved — the agent uses this configuration from its next run.' };
+}
+
+/** Back to the built-in configuration (and no fine-tuning). */
+export async function resetAgentConfig(key: string) {
+  if (!AGENTS.some((a) => a.key === key)) return;
+  const db = getSupabaseServerClient();
+  if (key === 'search') await saveSetting('search', {});
+  else await db.from('agent_settings').upsert({ agent_key: key, instructions: null, prompt_override: null, status: null, error: null, updated_at: new Date().toISOString() });
+  revalidatePath('/settings');
 }

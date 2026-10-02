@@ -48,6 +48,12 @@ export async function parseSearchScope(scope: string, triageDefault: string) {
   const text = await ask(system, `Search scope written by the user:\n\n${scope}`, 16000);
   const start = text.indexOf('{');
   const out = JSON.parse(text.slice(start, text.lastIndexOf('}') + 1));
+  return validateSearchConfig(out);
+}
+
+/** A search configuration (from the Config Agent or edited by hand), cleaned and checked. */
+export function validateSearchConfig(out: any) {
+  if (!out || typeof out !== 'object' || Array.isArray(out)) throw new Error('the configuration must be a JSON object');
   const config = {
     topic: String(out.topic || '').slice(0, 80),
     ted_phrases: list(out.ted_phrases, 100),
@@ -59,31 +65,41 @@ export async function parseSearchScope(scope: string, triageDefault: string) {
     relevance_rubric: String(out.relevance_rubric || ''),
     importance_rubric: String(out.importance_rubric || ''),
   };
-  if (config.ted_phrases.length < 5 || !config.web_queries.length || !config.relevance_rubric.includes('## Task')) {
-    throw new Error('the Config Agent returned an incomplete configuration — try describing the scope in more detail');
-  }
+  if (config.ted_phrases.length < 5) throw new Error('it needs at least 5 ted_phrases');
+  if (!config.web_queries.length) throw new Error('it needs web_queries');
+  if (config.relevance_rubric && !config.relevance_rubric.includes('## Task')) throw new Error('relevance_rubric must keep its "## Task" section');
   return config;
 }
 
 const PLACEHOLDERS = ['{company_brief}', '{company_name}', '{topic}', '<!-- scope -->', '<!-- /scope -->', '<!-- importance -->', '<!-- /importance -->'];
 // The "## Output" section alone (up to the next heading): the format the code parses.
 const outputSection = (p: string) => {
+  p = p.replace(/\r\n?/g, '\n');
   const rest = p.slice(p.indexOf('## Output'));
   const next = rest.indexOf('\n## ', 3);
   return next < 0 ? rest : rest.slice(0, next);
 };
 
-/** An agent's default prompt + the user's fine-tuning → the agent's new prompt. */
-export async function tunePrompt(agentName: string, role: string, defaultPrompt: string, instructions: string) {
+/**
+ * A new prompt (rewritten or edited by hand) must keep the default's
+ * placeholders and its "## Output" section — the code depends on both.
+ */
+export function validatePrompt(defaultPrompt: string, next: string) {
+  if (next.trim().length < 50) throw new Error('the configuration is empty');
+  const lost = PLACEHOLDERS.filter((p) => defaultPrompt.includes(p) && !next.includes(p));
+  if (lost.length) throw new Error(`it must keep ${lost.join(', ')}`);
+  if (defaultPrompt.includes('## Output') && outputSection(next).trim() !== outputSection(defaultPrompt).trim()) {
+    throw new Error('the “## Output” section must stay exactly as in the default — the platform reads the agent’s answer in that format');
+  }
+}
+
+/** The agent's current prompt (default or already edited) + the user's fine-tuning → its new prompt. */
+export async function tunePrompt(agentName: string, role: string, defaultPrompt: string, current: string, instructions: string) {
   const text = await ask(await prompt('config_tune.md'),
-    `Agent: ${agentName} — ${role}\n\nThe user's fine-tuning:\n${instructions}\n\nDEFAULT prompt:\n<default>\n${defaultPrompt}\n</default>`, 16000);
+    `Agent: ${agentName} — ${role}\n\nThe user's fine-tuning:\n${instructions}\n\nCURRENT prompt:\n<current>\n${current}\n</current>`, 16000);
   const next = text.match(/<prompt>\s*([\s\S]*?)\s*<\/prompt>/)?.[1];
   const note = text.match(/<note>\s*([\s\S]*?)\s*<\/note>/)?.[1]?.trim() ?? null;
   if (!next) throw new Error('the Config Agent did not return a prompt');
-  const lost = PLACEHOLDERS.filter((p) => defaultPrompt.includes(p) && !next.includes(p));
-  if (lost.length) throw new Error(`the rewrite dropped ${lost.join(', ')} — not applied`);
-  if (defaultPrompt.includes('## Output') && outputSection(next).trim() !== outputSection(defaultPrompt).trim()) {
-    throw new Error('the rewrite changed the agent’s output format — not applied');
-  }
+  try { validatePrompt(defaultPrompt, next); } catch (e: any) { throw new Error(`the rewrite was not applied: ${e.message}`); }
   return { prompt: next, note };
 }

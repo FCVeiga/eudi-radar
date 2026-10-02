@@ -31,6 +31,7 @@ from agents.discovery import run_discovery, build_query_combinations  # noqa: E4
 from agents.triage import heuristic_prefilter, run_triage_llm, apply_triage_result  # noqa: E402
 from services.deduplicator import fingerprint  # noqa: E402
 from services import agent_settings as S  # noqa: E402
+from agents.source_monitor import SITE_QUERY  # noqa: E402
 
 CONFIG_DIR = os.path.join(os.path.dirname(__file__), "config")
 
@@ -366,7 +367,11 @@ def main():
     country_names = {c.code: c.name for c in countries}
 
     # Settings page: agents on/off, fine-tuned prompts, the search scope.
-    S.load(session)
+    S.load(session, search_defaults={
+        "topic": "EUDI Wallet & digital identity", "ted_phrases": TED_PHRASES,
+        "web_queries": tavily_queries_for_today(10_000), "news_queries": NEWS_QUERIES,
+        "site_query": "EUDI eIDAS " + SITE_QUERY,
+    })
     scope = S.search_config()
     off = [a for a in S.ALL_AGENTS if not S.enabled(a)]
     if off:

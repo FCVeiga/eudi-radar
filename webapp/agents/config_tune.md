@@ -6,8 +6,8 @@ want the agent to behave differently. Rewrite the agent's prompt so it
 does that, and nothing else changes.
 
 Rules:
-- Start from the DEFAULT prompt you are given and apply ALL of the user's
-  instructions to it. Keep everything the instructions don't touch, word for
+- Start from the CURRENT prompt you are given (it may already carry earlier
+  changes — keep them) and apply the user's instructions to it. Keep everything the instructions don't touch, word for
   word.
 - Keep the "## Output" section exactly as it is — the platform's code parses
   the agent's answer in that format. If an instruction can only be met by

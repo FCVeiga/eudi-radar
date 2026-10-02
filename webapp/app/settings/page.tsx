@@ -2,7 +2,6 @@ import { readFile } from 'fs/promises';
 import path from 'path';
 import { AGENTS } from '@/lib/agents';
 import { DEFAULT_COMPANY, DOC_KINDS, getSettings } from '@/lib/settings';
-import AgentAvatar from '@/components/AgentAvatar';
 import AgentCard from '@/components/settings/AgentCard';
 import { CompanyForm, DocumentGroup, SearchScopeForm } from '@/components/settings/SettingsForms';
 
@@ -41,48 +40,34 @@ export default async function SettingsPage() {
         <p className="field-hint">PDF, Word, PowerPoint, Excel or text, up to 50 MB each. Files are stored privately; only the agents read them.</p>
       </section>
 
-      <section className="detail-block" id="search">
-        <h2>Search scope</h2>
-        <div className="scope-status">
-          <AgentAvatar agent="search" size={30} />
-          {cfg ? (
-            <span><strong>{cfg.topic || 'Custom scope'}</strong> · applied {search.parsed_at ? fmt(search.parsed_at) : ''} · {cfg.ted_phrases?.length ?? 0} TED phrases, {cfg.web_queries?.length ?? 0} web and {cfg.news_queries?.length ?? 0} news queries</span>
-          ) : (
-            <span><strong>Built-in scope: EUDI Wallet &amp; digital identity</strong> · write your own below to replace it</span>
-          )}
-        </div>
-        {search.status === 'error' && search.error && <p className="form-msg err">Your latest text wasn’t applied: {search.error}.</p>}
-        <SearchScopeForm scope={search.scope} />
-        {cfg && (
-          <details className="scope-config">
-            <summary>See what the Config Agent set up</summary>
-            <h4>TED phrases</h4><p className="chips-line">{(cfg.ted_phrases || []).map((p: string) => <span key={p} className="chip">{p}</span>)}</p>
-            <h4>Web queries</h4><p className="chips-line">{(cfg.web_queries || []).map((p: string) => <span key={p} className="chip">{p}</span>)}</p>
-            <h4>News queries</h4><p className="chips-line">{(cfg.news_queries || []).map((p: string) => <span key={p} className="chip">{p}</span>)}</p>
-            <h4>Triage Agent’s relevance rules</h4><pre className="config-view">{cfg.relevance_rubric}{'\n\nImportance:\n'}{cfg.importance_rubric}</pre>
-          </details>
-        )}
-      </section>
-
       <section className="detail-block" id="agents">
         <h2>Agents</h2>
         <p className="settings-intro">
-          Switch an agent off to stop its work; fine-tune it in plain language and the Config Agent rewrites its
-          configuration, keeping the format the platform reads.
+          Switch an agent off to stop its work. Tell it what to change in plain language and the Config Agent rewrites
+          its configuration — or open the configuration and edit it yourself. Whatever is saved is what the agent runs on.
         </p>
         <div className="agent-grid">
           {AGENTS.map((a) => {
             const s = agents.get(a.key);
-            const config = a.key === 'search'
-              ? (cfg ? JSON.stringify(cfg, null, 2) : 'Built-in EUDI Wallet scope (run_daily.py, config/languages.yaml, config/keywords.yaml). Write a search scope above to replace it.')
-              : s?.prompt_override || s?.default_prompt || null;
+            if (a.key === 'search') {
+              // The Search Agent's instructions are the search scope; its config, the parsed search.
+              return (
+                <AgentCard key={a.key} agent={a} enabled={s?.enabled ?? true} instructions={search.scope || null}
+                  config={cfg ? JSON.stringify(cfg, null, 2) : s?.default_prompt ?? null} custom={!!cfg}
+                  status={search.status} error={search.error}
+                  summary={cfg
+                    ? `${cfg.topic || 'Custom scope'} · ${cfg.ted_phrases?.length ?? 0} TED phrases, ${cfg.web_queries?.length ?? 0} web and ${cfg.news_queries?.length ?? 0} news queries${search.parsed_at ? ` · since ${fmt(search.parsed_at)}` : ''}`
+                    : 'Built-in scope: EUDI Wallet & digital identity'} />
+              );
+            }
             return (
               <AgentCard key={a.key} agent={a} enabled={s?.enabled ?? true} instructions={s?.instructions ?? null}
-                config={config} tuned={!!s?.prompt_override} status={s?.status ?? null} error={s?.error ?? null} />
+                config={a.fineTune ? s?.prompt_override || s?.default_prompt || null : null} custom={!!s?.prompt_override}
+                status={s?.status ?? null} error={s?.error ?? null} />
             );
           })}
         </div>
-        <p className="field-hint">The Config Agent itself is internal: it only runs when you apply a search scope or a fine-tuning here.</p>
+        <p className="field-hint">The Config Agent itself is internal: it only runs when you apply a search scope or plain-language instructions here.</p>
       </section>
     </div>
   );

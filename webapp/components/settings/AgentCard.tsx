@@ -1,25 +1,38 @@
 'use client';
 
-import { useRef, useState, useTransition } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { useFormState, useFormStatus } from 'react-dom';
+import { useRouter } from 'next/navigation';
 import AgentAvatar from '@/components/AgentAvatar';
-import { FormState, saveAgentTuning, setAgentEnabled } from '@/app/settings/actions';
+import {
+  FormState, resetAgentConfig, saveAgentConfig, saveAgentTuning, saveSearchScope, setAgentEnabled,
+} from '@/app/settings/actions';
 import type { AgentDef } from '@/lib/agents';
 
-function Apply() {
+function Submit({ label, busy, primary }: { label: string; busy: string; primary?: boolean }) {
   const { pending } = useFormStatus();
-  return <button type="submit" className="btn" disabled={pending}>{pending ? 'The Config Agent is rewriting…' : 'Apply'}</button>;
+  return <button type="submit" className={`btn ${primary ? 'primary' : ''}`} disabled={pending}>{pending ? busy : label}</button>;
 }
 
-/** One agent on Settings: face, name, on/off, its config file, plain-language fine-tuning. */
-export default function AgentCard({ agent, enabled, instructions, config, tuned, status, error }: {
+/**
+ * One agent on Settings: face, name, on/off, plain-language instructions
+ * (for the Search Agent: the search scope), and its configuration — shown
+ * and editable under "Open config"; what is saved there is what it runs on.
+ */
+export default function AgentCard({ agent, enabled, instructions, config, custom, status, error, summary }: {
   agent: AgentDef; enabled: boolean; instructions: string | null; config: string | null;
-  tuned: boolean; status: string | null; error: string | null;
+  custom: boolean; status: string | null; error: string | null; summary?: string | null;
 }) {
+  const router = useRouter();
+  const search = agent.key === 'search';
+  const editable = agent.fineTune || search;
   const [on, setOn] = useState(enabled);
   const [, start] = useTransition();
   const dialog = useRef<HTMLDialogElement>(null);
-  const [state, action] = useFormState<FormState, FormData>(saveAgentTuning, null);
+  const [tuneState, tune] = useFormState<FormState, FormData>(search ? saveSearchScope : saveAgentTuning, null);
+  const [editState, save] = useFormState<FormState, FormData>(saveAgentConfig, null);
+  const [draft, setDraft] = useState(config ?? '');
+  useEffect(() => setDraft(config ?? ''), [config]);  // a fresh config after a save or a rewrite
 
   return (
     <div className={`agent-card ${on ? '' : 'off'}`}>
@@ -27,7 +40,7 @@ export default function AgentCard({ agent, enabled, instructions, config, tuned,
         <AgentAvatar agent={agent.key} size={42} off={!on} />
         <div className="agent-card-id">
           <h3>{agent.name}</h3>
-          <span className="agent-runs">{agent.runs === 'pipeline' ? 'Daily pipeline' : agent.runs === 'on click' ? 'On click' : 'When a story is opened'}{tuned ? ' · fine-tuned' : ''}</span>
+          <span className="agent-runs">{agent.runs === 'pipeline' ? 'Daily pipeline' : agent.runs === 'on click' ? 'On click' : 'When a story is opened'}{custom ? ' · customised' : ''}</span>
         </div>
         <button type="button" role="switch" aria-checked={on} aria-label={`${agent.name} ${on ? 'on' : 'off'}`}
           className={`switch ${on ? 'on' : ''}`}
@@ -36,42 +49,68 @@ export default function AgentCard({ agent, enabled, instructions, config, tuned,
         </button>
       </div>
       <p className="agent-role">{agent.role}</p>
+      {summary && <p className="agent-summary">{summary}</p>}
 
-      <div className="agent-card-actions">
-        <button type="button" className="btn" onClick={() => dialog.current?.showModal()} disabled={!config && !agent.prompt}>
-          Open config
-        </button>
-      </div>
+      {config && (
+        <div className="agent-card-actions">
+          <button type="button" className="btn" onClick={() => dialog.current?.showModal()}>Open config</button>
+        </div>
+      )}
 
-      {agent.fineTune && (
-        <form action={action} className="agent-tune">
+      {editable && (
+        <form action={tune} className="agent-tune">
           <input type="hidden" name="agent" value={agent.key} />
           <label className="field">
-            <span>Fine-tuning <em>— in plain language</em></span>
-            <textarea name="instructions" rows={3} defaultValue={instructions ?? ''} maxLength={6000}
+            <span>{search ? <>Search scope <em>— what should the radar look for?</em></> : <>Fine-tuning <em>— in plain language</em></>}</span>
+            <textarea name={search ? 'scope' : 'instructions'} rows={search ? 6 : 3} defaultValue={instructions ?? ''} maxLength={search ? 8000 : 6000}
               placeholder={`e.g. ${EXAMPLES[agent.key] ?? 'Be more concise.'}`} />
           </label>
-          {state ? <p className={`form-msg ${state.ok ? 'ok' : 'err'}`}>{state.message}</p>
+          {search && <p className="field-hint">The Config Agent turns this into the search phrases and queries, in every country’s languages, and the Triage Agent’s relevance rules — which decide what reaches the feed, News and Tenders.</p>}
+          {tuneState ? <p className={`form-msg ${tuneState.ok ? 'ok' : 'err'}`}>{tuneState.message}</p>
             : status === 'error' && error ? <p className="form-msg err">Last attempt not applied: {error}.</p> : null}
-          <div className="settings-actions"><Apply /></div>
+          <div className="settings-actions"><Submit label="Apply" busy="The Config Agent is working…" /></div>
         </form>
       )}
 
       <dialog ref={dialog} className="modal modal-wide" onClick={(e) => { if (e.target === dialog.current) dialog.current?.close(); }}>
-        <div className="modal-body">
+        <form action={save} className="modal-body">
+          <input type="hidden" name="agent" value={agent.key} />
           <div className="modal-head">
-            <h2>{agent.name} — {tuned ? 'fine-tuned configuration' : 'default configuration'}</h2>
+            <h2>{agent.name} — {custom ? 'customised configuration' : 'default configuration'}</h2>
             <button type="button" className="modal-close" aria-label="Close" onClick={() => dialog.current?.close()}>×</button>
           </div>
-          {agent.prompt && <p className="field-hint mono">{tuned ? `${agent.prompt}, rewritten by the Config Agent` : agent.prompt}</p>}
-          <pre className="config-view">{config ?? 'This configuration is synced from the repository on the next pipeline run.'}</pre>
-        </div>
+          <p className="field-hint">
+            {search
+              ? 'JSON: the TED phrases, web and news queries, site-search terms and the Triage Agent’s relevance rules. Applying a new search scope replaces it.'
+              : editable
+                ? <>The agent’s instructions{agent.prompt ? <> (<span className="mono">{agent.prompt}</span>)</> : null}. Edit freely, but keep the <span className="mono">## Output</span> section and the placeholders in braces — the platform depends on them.</>
+                : 'This agent doesn’t use AI instructions; nothing to configure.'}
+          </p>
+          {editable
+            ? <textarea name="config" className="config-edit" value={draft} onChange={(e) => setDraft(e.target.value)} spellCheck={false} />
+            : <pre className="config-view">{config}</pre>}
+          {editState && <p className={`form-msg ${editState.ok ? 'ok' : 'err'}`}>{editState.message}</p>}
+          {editable && (
+            <div className="modal-actions">
+              {custom && (
+                <button type="button" className="btn" onClick={() => {
+                  if (confirm(`Reset ${agent.name} to its default configuration${search ? '' : ' and clear its fine-tuning'}?`)) {
+                    start(async () => { await resetAgentConfig(agent.key); router.refresh(); });
+                  }
+                }}>Reset to default</button>
+              )}
+              <button type="button" className="btn" onClick={() => setDraft(config ?? '')}>Discard changes</button>
+              <Submit label="Save" busy="Saving…" primary />
+            </div>
+          )}
+        </form>
       </dialog>
     </div>
   );
 }
 
 const EXAMPLES: Record<string, string> = {
+  search: 'Public tenders, grants and market consultations for digital identity wallets in Europe: EUDI Wallet development and certification, PID and (Q)EAA issuers, relying-party integration, mobile driving licences. Buyers: governments, digital agencies, banks and telcos in the EU, EEA and UK. Not: crypto or payment wallets, generic IAM.',
   triage: 'Score anything about mobile driving licences at least 80. Treat banking KYC tenders as relevant.',
   verification: 'Treat a call as open only if the page shows a deadline.',
   tender_analysis: 'Also list the languages the bid must be written in, and every insurance requirement with its amount.',

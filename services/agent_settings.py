@@ -12,6 +12,7 @@ load() also copies every agent's default prompt into agent_settings, so the
 Settings page can show it ("Open config") without access to the repo.
 Without a database row, everything falls back to the built-in defaults.
 """
+import json
 import os
 import re
 
@@ -35,12 +36,23 @@ DEFAULT_COMPANY = "WalliD"
 _state = {"loaded": False, "enabled": {}, "overrides": {}, "search": None, "company": DEFAULT_COMPANY}
 
 
-def load(session) -> None:
-    """Read the settings and sync the default prompts. Safe to call when the tables don't exist yet."""
+def builtin_rules() -> dict:
+    """The Triage Agent's built-in relevance and importance rules (between the markers in prompts/triage.md)."""
+    triage = open(os.path.join(_ROOT, AGENT_PROMPTS["triage"])).read()
+    grab = lambda m: (re.search(rf"<!-- {m} -->(.*?)<!-- /{m} -->", triage, re.S) or [None, ""])[1].strip()
+    return {"relevance_rubric": grab("scope"), "importance_rubric": grab("importance")}
+
+
+def load(session, search_defaults: dict = None) -> None:
+    """Read the settings and sync the default prompts — and, for the Search Agent,
+    the built-in search configuration (search_defaults), shown and editable on
+    Settings. Safe to call when the tables don't exist yet."""
     try:
         for key in ALL_AGENTS:
             path = AGENT_PROMPTS.get(key)
             default = open(os.path.join(_ROOT, path)).read() if path else None
+            if key == "search" and search_defaults:
+                default = json.dumps({**search_defaults, **builtin_rules()}, ensure_ascii=False, indent=2)
             session.execute(text("""insert into agent_settings (agent_key, default_prompt) values (:k, :p)
                     on conflict (agent_key) do update set default_prompt = excluded.default_prompt"""), {"k": key, "p": default})
         session.commit()

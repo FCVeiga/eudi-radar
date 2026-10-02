@@ -86,8 +86,8 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
         <div className="agent-head">
           <AgentAvatar agent="news_report" working={!analysis && agentOn} off={!agentOn && !analysis} />
           <div className="agent-id">
-            <h2>Agent Analysis</h2>
-            <span className="agent-name">News Report Agent{n.analysed_at ? ` · report from ${fmtDate(n.analysed_at)}` : ''}</span>
+            <h2>News Report Agent Analysis</h2>
+            {n.analysed_at && <span className="agent-name">Report from {fmtDate(n.analysed_at)}</span>}
           </div>
           {analysis && <span className={`verdict ${analysis.verdict}`} title={VERDICTS[analysis.verdict]?.note}>{VERDICTS[analysis.verdict]?.label}</span>}
         </div>

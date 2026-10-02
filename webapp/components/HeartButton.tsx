@@ -9,13 +9,14 @@ import { toggleLike } from '@/app/auth/actions';
  * under Following on their profile. Signed out, it leads to log in.
  */
 export default function HeartButton({ type, id, liked: initial, signedIn, className = '' }: {
-  type: 'tender' | 'news'; id: string; liked: boolean; signedIn: boolean; className?: string;
+  type: 'tender' | 'news' | 'post'; id: string; liked: boolean; signedIn: boolean; className?: string;
 }) {
   const [liked, setLiked] = useState(initial);
   const [pending, start] = useTransition();
   const router = useRouter();
   const path = usePathname();
-  const label = liked ? `Unlike this ${type === 'tender' ? 'tender' : 'story'}` : `Like this ${type === 'tender' ? 'tender' : 'story'}`;
+  const noun = type === 'tender' ? 'tender' : type === 'post' ? 'post' : 'story';
+  const label = liked ? `Unlike this ${noun}` : `Like this ${noun}`;
 
   return (
     <button type="button" className={`heart ${liked ? 'on' : ''} ${className}`} aria-pressed={liked} aria-label={label} title={label}

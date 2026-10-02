@@ -1,7 +1,7 @@
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 
-export type LikeType = 'tender' | 'news';
+export type LikeType = 'tender' | 'news' | 'post';
 export type LikeState = { signedIn: boolean; liked: Set<string> };
 
 /** Which of these items the signed-in user has liked (hearts on cards and pages). */
@@ -23,6 +23,6 @@ export async function getFeedLikes(hrefs: string[]): Promise<LikeState> {
 
 /** "/tenders/abc" → ["tender", "abc"], "/news/xyz" → ["news", "xyz"]. */
 export function likeTarget(href: string): [LikeType, string] | null {
-  const m = href.match(/^\/(tenders|news)\/([\w-]{6,64})$/);
-  return m ? [m[1] === 'tenders' ? 'tender' : 'news', m[2]] : null;
+  const m = href.match(/^\/(tenders|news|posts)\/([\w-]{6,64})$/);
+  return m ? [m[1] === 'tenders' ? 'tender' : m[1] === 'posts' ? 'post' : 'news', m[2]] : null;
 }

@@ -32,20 +32,62 @@ export async function markNotificationsRead(ids?: string[]) {
 
 /* ---------------- Posts ---------------- */
 
+const MEDIA = /\.(png|jpe?g|webp|gif|mp4|webm|mov)$/i;
+
+/** Post media: a one-time upload URL in the public 'post-media' bucket (images and videos, up to 50 MB). */
+export async function createPostMediaUpload(filename: string, size: number) {
+  const user = await getCurrentUser();
+  if (!user) return { error: 'Log in to post.' };
+  const ext = filename.match(MEDIA)?.[1]?.toLowerCase();
+  if (!ext) return { error: 'Use PNG, JPG, WebP, GIF, MP4, WebM or MOV files.' };
+  if (size > 50 * 1024 * 1024) return { error: 'Files up to 50 MB.' };
+  const path = `${user.id}/${crypto.randomUUID()}.${ext === 'jpeg' ? 'jpg' : ext}`;
+  const { data, error } = await db().storage.from('post-media').createSignedUploadUrl(path);
+  if (error || !data) return { error: error?.message || 'Could not start the upload.' };
+  return { path, url: data.signedUrl, publicUrl: db().storage.from('post-media').getPublicUrl(path).data.publicUrl,
+           type: /^(mp4|webm|mov)$/.test(ext) ? 'video' as const : 'image' as const };
+}
+
 export async function createPost(_prev: FormState, form: FormData): Promise<FormState> {
   const user = await getCurrentUser();
   if (!user) return { ok: false, message: 'Log in to post.' };
   const title = String(form.get('title') || '').trim();
   const body = String(form.get('body') || '').trim();
-  const ref = String(form.get('item') || '').match(/^(tender|news):([\w-]{6,64})$/);
   if (title.length < 3) return { ok: false, message: 'Give your post a title.' };
   if (title.length > 300) return { ok: false, message: 'Titles are up to 300 characters.' };
+  let tags: string[] = [];
+  let media: { type: string; url: string; path: string }[] = [];
+  try {
+    tags = (JSON.parse(String(form.get('tags') || '[]')) as unknown[]).map((t) => String(t).trim().toLowerCase().slice(0, 50)).filter(Boolean);
+    media = (JSON.parse(String(form.get('media') || '[]')) as any[]).filter((m) =>
+      (m?.type === 'image' || m?.type === 'video') && typeof m.path === 'string' && m.path.startsWith(`${user.id}/`)).slice(0, 10);
+  } catch { return { ok: false, message: 'Something went wrong with the tags or media — try again.' }; }
+  const bucket = db().storage.from('post-media');
   const { data, error } = await db().from('posts').insert({
-    user_id: user.id, title, body: body.slice(0, 20000) || null, item_type: ref?.[1] ?? null, item_id: ref?.[2] ?? null,
+    user_id: user.id, title, body: body.slice(0, 40000) || null, tags: Array.from(new Set(tags)).slice(0, 10),
+    media: media.map((m) => ({ type: m.type, path: m.path, url: bucket.getPublicUrl(m.path).data.publicUrl })),
   }).select('id').single();
   if (error || !data) return { ok: false, message: error?.message || 'Could not publish the post.' };
+  revalidatePath('/community');
   revalidatePath(`/u/${user.username}`);
   redirect(`/posts/${data.id}`);
+}
+
+/** Follow / unfollow a member: their posts rank higher in your Community Feed. */
+export async function toggleFollow(username: string) {
+  const user = await getCurrentUser();
+  if (!user) return { error: 'login' as const };
+  const { data: target } = await db().from('profiles').select('id, username').ilike('username', username.replace(/_/g, '\\_')).maybeSingle();
+  if (!target || target.id === user.id) return { error: 'invalid' as const };
+  const key = { follower_id: user.id, followee_id: target.id };
+  const { data } = await db().from('user_follows').select('followee_id').match(key).maybeSingle();
+  if (data) await db().from('user_follows').delete().match(key);
+  else {
+    await db().from('user_follows').insert(key);
+    await notify(target.id, { type: 'follow', title: `u/${user.username} started following you`, link: `/u/${user.username}`, actorId: user.id });
+  }
+  revalidatePath(`/u/${target.username}`);
+  return { following: !data };
 }
 
 export async function addComment(_prev: FormState, form: FormData): Promise<FormState> {

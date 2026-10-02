@@ -19,15 +19,19 @@ export async function getProfile(username: string): Promise<Profile | null> {
 
 export async function getProfileStats(userId: string) {
   const db = getSupabaseServerClient();
-  const [posts, comments, likes] = await Promise.all([
-    db.from('posts').select('score').eq('user_id', userId),
+  const [posts, comments, likes, followers, followingPeople] = await Promise.all([
+    db.from('posts').select('score, like_count').eq('user_id', userId),
     db.from('comments').select('score').eq('user_id', userId),
     db.from('likes').select('item_id', { count: 'exact', head: true }).eq('user_id', userId),
+    db.from('user_follows').select('follower_id', { count: 'exact', head: true }).eq('followee_id', userId),
+    db.from('user_follows').select('followee_id', { count: 'exact', head: true }).eq('follower_id', userId),
   ]);
   const sum = (rows: any[] | null) => (rows || []).reduce((n, r) => n + (r.score || 0), 0);
   return {
     posts: posts.data?.length ?? 0, comments: comments.data?.length ?? 0, following: likes.count ?? 0,
-    postCred: sum(posts.data), commentCred: sum(comments.data),  // aura (lib/terms.ts)
+    // Aura (lib/terms.ts): what the community gave — likes on posts, plus scores.
+    postCred: sum(posts.data) + (posts.data || []).reduce((n: number, p: any) => n + (p.like_count || 0), 0), commentCred: sum(comments.data),
+    followers: followers.count ?? 0, followingPeople: followingPeople.count ?? 0,
   };
 }
 

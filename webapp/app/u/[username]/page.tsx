@@ -9,6 +9,10 @@ import UserAvatar from '@/components/UserAvatar';
 import { CRED } from '@/lib/terms';
 import StartChatButton from '@/components/social/StartChatButton';
 import ImageEditButton from '@/components/auth/ImageEditButton';
+import FollowButton from '@/components/social/FollowButton';
+import CommunityCard from '@/components/social/CommunityCard';
+import { getLikedPosts } from '@/lib/community';
+import { getSupabaseServerClient } from '@/lib/supabase';
 
 const TABS = [
   { key: 'posts', label: 'Posts' },
@@ -32,6 +36,8 @@ export default async function ProfilePage({ params, searchParams }: { params: { 
   const own = me?.id === profile.id;
   const tab: Tab = (TABS.find((t) => t.key === searchParams.tab)?.key ?? 'posts');
   const stats = await getProfileStats(profile.id);
+  const iFollow = !own && me ? !!(await getSupabaseServerClient().from('user_follows').select('followee_id')
+    .eq('follower_id', me.id).eq('followee_id', profile.id).maybeSingle()).data : false;
   const now = new Date();
 
   let body: React.ReactNode;
@@ -49,14 +55,16 @@ export default async function ProfilePage({ params, searchParams }: { params: { 
     if (!own) {
       body = <div className="profile-empty"><p className="profile-empty-title">Only u/{profile.username} can see what they follow.</p></div>;
     } else {
-      const items = await getFollowing(profile.id);
+      const [items, likedPosts] = await Promise.all([getFollowing(profile.id), getLikedPosts(profile.id, now)]);
       const likes = await getFeedLikes(items.map((i) => i.href));
-      body = items.length
-        ? <div className="feed">{items.map((i) => {
-            const t = likeTarget(i.href);
-            return <FeedCard key={i.key} item={i} now={now} like={{ liked: !!t && likes.liked.has(`${t[0]}:${t[1]}`), signedIn: true }} />;
-          })}</div>
-        : <Empty own hint="Tap the heart on any tender or news story to follow it — it lands here." who={profile.username} what="follows" />;
+      // Tenders, news and posts together, most recently liked first.
+      const all = [
+        ...items.map((i) => ({ at: i.at.getTime(), node: (() => { const t = likeTarget(i.href); return <FeedCard key={i.key} item={i} now={now} like={{ liked: !!t && likes.liked.has(`${t[0]}:${t[1]}`), signedIn: true }} />; })() })),
+        ...likedPosts.map(({ post, likedAt }) => ({ at: new Date(likedAt).getTime(), node: <CommunityCard key={`post:${post.id}`} post={post} now={now} liked signedIn /> })),
+      ].sort((a, b) => b.at - a.at);
+      body = all.length
+        ? <div className="feed">{all.map((x) => x.node)}</div>
+        : <Empty own hint="Tap the heart on any tender, news story or post to follow it — it lands here." who={profile.username} what="follows" />;
     }
   } else {
     body = (
@@ -93,7 +101,7 @@ export default async function ProfilePage({ params, searchParams }: { params: { 
             <span className="profile-handle">u/{profile.username}</span>
           </div>
           {own && <Link href="/profile/edit" className="btn profile-edit-top">Edit profile</Link>}
-          {!own && me && <span className="profile-chat-top"><StartChatButton username={profile.username} /></span>}
+          {!own && me && <span className="profile-chat-top"><FollowButton username={profile.username} following={iFollow} /><StartChatButton username={profile.username} /></span>}
           {!own && !me && <Link href={`/login?next=/u/${profile.username}`} className="btn profile-chat-top">Log in to chat</Link>}
         </header>
 
@@ -126,12 +134,14 @@ export default async function ProfilePage({ params, searchParams }: { params: { 
             <span className="profile-handle">u/{profile.username}</span>
             {profile.bio && <p className="profile-card-bio">{profile.bio}</p>}
             {own && <Link href="/profile/edit" className="btn primary profile-card-edit">Edit profile</Link>}
-            {!own && me && <div className="profile-card-edit"><StartChatButton username={profile.username} /></div>}
+            {!own && me && <div className="profile-card-edit profile-card-actions"><FollowButton username={profile.username} following={iFollow} /><StartChatButton username={profile.username} /></div>}
             <dl className="profile-stats">
               <div><dt>{stats.postCred}</dt><dd>Post {CRED}</dd></div>
               <div><dt>{stats.commentCred}</dt><dd>Comment {CRED}</dd></div>
+              <div><dt>{stats.followers}</dt><dd>Followers</dd></div>
+              <div><dt>{stats.followingPeople}</dt><dd>Following</dd></div>
               <div><dt>{fmt(profile.createdAt)}</dt><dd>Membership day</dd></div>
-              <div><dt>{own ? stats.following : '—'}</dt><dd>Following</dd></div>
+              <div><dt>{own ? stats.following : '—'}</dt><dd>Liked items</dd></div>
             </dl>
             <div className="profile-card-section">
               <h3>Trophy case</h3>

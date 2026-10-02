@@ -114,6 +114,7 @@ export async function getPost(id: string) {
   }
   return {
     id: post.id, title: post.title, body: post.body, score: post.score, createdAt: post.created_at, author: who.get(post.user_id) ?? null, authorId: post.user_id,
+    tags: (post.tags || []) as string[], media: (Array.isArray(post.media) ? post.media : []) as { type: 'image' | 'video'; url: string }[], likes: post.like_count || 0,
     item, comments: (comments || []).map((c: any) => ({ id: c.id, body: c.body, score: c.score, createdAt: c.created_at, author: who.get(c.user_id) ?? null })),
   };
 }

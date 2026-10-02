@@ -31,12 +31,12 @@ export function MenuBackdrop() {
   return <div className="menu-backdrop" onClick={() => setMenu(false)} aria-hidden="true" />;
 }
 
-/** Phones: the app's sections as a bottom tab bar. */
+/** Phones: the app's sections as a bottom tab bar (Settings is in the menu drawer). */
 export function BottomNav() {
   const path = usePathname() || '/';
   return (
     <nav className="bottom-nav" aria-label="Sections">
-      {LINKS.map((l) => {
+      {LINKS.filter((l) => l.href !== '/settings').map((l) => {
         const active = isActive(l.href, path);
         return (
           <Link key={l.href} href={l.href} className={`bottom-link ${active ? 'active' : ''}`} aria-current={active ? 'page' : undefined}>

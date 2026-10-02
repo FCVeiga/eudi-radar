@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import HeartButton from './HeartButton';
+import { likeTarget } from '@/lib/likes';
 import { daysUntil } from '@/lib/data';
 import { FeedItem, timeAgo } from '@/lib/feed';
 import NewsImage from './NewsImage';
@@ -28,8 +30,11 @@ function Deadline({ deadline, now }: { deadline: string; now: Date }) {
 }
 
 /** One post: the same card on the home feed and in search results. */
-export default function FeedCard({ item, now, value }: { item: FeedItem; now: Date; value?: number }) {
-  return (
+export default function FeedCard({ item, now, value, like }: {
+  item: FeedItem; now: Date; value?: number; like?: { liked: boolean; signedIn: boolean };
+}) {
+  const target = like ? likeTarget(item.href) : null;
+  const card = (
     <Link href={item.href} className={`feed-item ${item.kind}`}>
       <Votes item={item} value={value ?? item.combined} />
       <div className="feed-body">
@@ -47,5 +52,13 @@ export default function FeedCard({ item, now, value }: { item: FeedItem; now: Da
         {item.deadline && <Deadline deadline={item.deadline} now={now} />}
       </div>
     </Link>
+  );
+  if (!target || !like) return card;
+  // The heart sits beside the link (a button can't live inside a link).
+  return (
+    <div className="likeable">
+      {card}
+      <HeartButton type={target[0]} id={target[1]} liked={like.liked} signedIn={like.signedIn} className="card-heart" />
+    </div>
   );
 }

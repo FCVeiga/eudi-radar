@@ -5,6 +5,8 @@ import { firstInLanguage } from '@/lib/english';
 import NewsImage from '@/components/NewsImage';
 import NewsReportRunner from '@/components/NewsReport';
 import AgentAvatar from '@/components/AgentAvatar';
+import HeartButton from '@/components/HeartButton';
+import { getLikes } from '@/lib/likes';
 import { isAgentEnabled } from '@/lib/settings';
 import { getPlatformLanguage } from '@/lib/language';
 
@@ -48,16 +50,19 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
     .split(/\n{2,}/).map((p: string) => p.trim()).filter(Boolean);
   const facts: string[] = Array.isArray(n.key_facts) ? n.key_facts.filter((f: string) => firstInLanguage(f)) : [];
   const analysis = n.analysis as Analysis | null;
-  const agentOn = await isAgentEnabled('news_report');
+  const [agentOn, likes] = await Promise.all([isAgentEnabled('news_report'), getLikes('news', [n.news_id])]);
   const domain = n.source_url ? new URL(n.source_url).hostname.replace(/^www\./, '') : n.source_name;
 
   return (
     <div className="news-detail">
       <Link className="back-link" href="/news">← News</Link>
       <div className="detail-head">
-        <div className="opp-tags">
+        <div className="detail-tags-row">
+          <div className="opp-tags">
           <span className={`tag ${n.category}`}>{newsCategoryLabel(n.category)}</span>
           {n.unverified && <span className="tag unverified">Unverified</span>}
+        </div>
+          <HeartButton type="news" id={n.news_id} liked={likes.liked.has(n.news_id)} signedIn={likes.signedIn} className="page-heart" />
         </div>
         <h1>{titleOf(n, firstInLanguage(post?.headline))}</h1>
         <p className="page-sub">

@@ -3,6 +3,12 @@ import { FEED_VIEWS, FeedView, getFeed } from '@/lib/feed';
 import { getActivity } from '@/lib/sources';
 import FeedCard from '@/components/FeedCard';
 import LiveActivity from '@/components/LiveActivity';
+import { getFeedLikes, likeTarget } from '@/lib/likes';
+
+const likeOf = (likes: { signedIn: boolean; liked: Set<string> }, href: string) => {
+  const t = likeTarget(href);
+  return { liked: !!t && likes.liked.has(`${t[0]}:${t[1]}`), signedIn: likes.signedIn };
+};
 
 const PAGE = 30;
 
@@ -18,6 +24,7 @@ export default async function FeedPage({ searchParams }: { searchParams: { view?
   const view = (FEED_VIEWS.find((v) => v.slug === searchParams.view)?.slug ?? 'top') as FeedView;
   const [{ items, error }, activity] = await Promise.all([getFeed(view, now), getActivity(30)]);
   const shown = Math.max(PAGE, Number(searchParams.n) || PAGE);
+  const likes = await getFeedLikes(items.map((i) => i.href));
   const href = (v: FeedView, n?: number) => {
     const p = new URLSearchParams();
     if (v !== 'top') p.set('view', v);
@@ -45,7 +52,7 @@ export default async function FeedPage({ searchParams }: { searchParams: { view?
         {!error && items.length === 0 && <div className="callout">Nothing here yet.</div>}
         <div className="feed">
           {items.slice(0, shown).map((item) => (
-            <FeedCard key={item.key} item={item} now={now} value={view === 'relevance' ? item.score : item.combined} />
+            <FeedCard key={item.key} item={item} now={now} value={view === 'relevance' ? item.score : item.combined} like={likeOf(likes, item.href)} />
           ))}
         </div>
         {items.length > shown && (

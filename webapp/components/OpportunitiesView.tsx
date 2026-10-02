@@ -1,5 +1,6 @@
 import { OPP_CATEGORIES, TENDER_CATEGORIES, NEW_WINDOW_DAYS, getActiveOpportunities, isNew } from '@/lib/data';
 import { getSupabaseServerClient } from '@/lib/supabase';
+import { getLikes } from '@/lib/likes';
 import OpportunityRow, { RingGradients } from './OpportunityRow';
 import type { UpdateEvent } from './UpdateComment';
 import SectionTabs from './SectionTabs';
@@ -37,6 +38,7 @@ export default async function OpportunitiesView({ view }: { view: View }) {
     db.from('countries').select('code, name'),
     ids.length ? db.from('change_events').select('*').in('opportunity_id', ids).order('detected_at', { ascending: false }) : Promise.resolve({ data: [] as any[] }),
   ]);
+  const likes = await getLikes('tender', ids);
   const updates = new Map<string, UpdateEvent[]>();
   for (const c of (changes || []) as UpdateEvent[]) updates.set(c.opportunity_id, [...(updates.get(c.opportunity_id) || []), c]);
   const copy = new Map((posts || []).map((p: any) => [p.post_id.slice(4), p]));
@@ -65,6 +67,7 @@ export default async function OpportunitiesView({ view }: { view: View }) {
       <div className="opp-rows">
         {shown.map((o) => (
           <OpportunityRow key={o.opportunity_id} o={o} copy={copy.get(o.opportunity_id)}
+                          like={{ liked: likes.liked.has(o.opportunity_id), signedIn: likes.signedIn }}
                           countryName={o.country ? names.get(o.country) ?? null : null}
                           updates={updates.get(o.opportunity_id) ?? []} />
         ))}

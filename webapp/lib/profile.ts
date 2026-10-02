@@ -1,0 +1,93 @@
+/** Profile pages (/u/[username]): the user, their counts, and what they follow. */
+import { getSupabaseServerClient } from '@/lib/supabase';
+import { newsCategoryLabel, oppCategoryLabel, titleOf } from '@/lib/data';
+import { firstInLanguage } from '@/lib/english';
+import type { FeedItem } from '@/lib/feed';
+
+export type Profile = { id: string; username: string; displayName: string; avatarUrl: string | null; bio: string | null; createdAt: string };
+
+export async function getProfile(username: string): Promise<Profile | null> {
+  if (!/^[A-Za-z0-9_]{3,24}$/.test(username)) return null;
+  const { data } = await getSupabaseServerClient().from('profiles')
+    .select('id, username, display_name, avatar_url, bio, created_at')
+    .ilike('username', username.replace(/_/g, '\\_')).maybeSingle();
+  return data && {
+    id: data.id, username: data.username, displayName: data.display_name || data.username,
+    avatarUrl: data.avatar_url, bio: data.bio, createdAt: data.created_at,
+  };
+}
+
+export async function getProfileStats(userId: string) {
+  const db = getSupabaseServerClient();
+  const [posts, comments, likes] = await Promise.all([
+    db.from('posts').select('score').eq('user_id', userId),
+    db.from('comments').select('score').eq('user_id', userId),
+    db.from('likes').select('item_id', { count: 'exact', head: true }).eq('user_id', userId),
+  ]);
+  const sum = (rows: any[] | null) => (rows || []).reduce((n, r) => n + (r.score || 0), 0);
+  return {
+    posts: posts.data?.length ?? 0, comments: comments.data?.length ?? 0, following: likes.count ?? 0,
+    postKarma: sum(posts.data), commentKarma: sum(comments.data),
+  };
+}
+
+export async function getPosts(userId: string) {
+  const { data } = await getSupabaseServerClient().from('posts').select('id, title, body, score, created_at')
+    .eq('user_id', userId).order('created_at', { ascending: false }).limit(50);
+  return data || [];
+}
+
+export async function getComments(userId: string) {
+  const { data } = await getSupabaseServerClient().from('comments').select('id, body, score, created_at, posts(title)')
+    .eq('user_id', userId).order('created_at', { ascending: false }).limit(50);
+  return data || [];
+}
+
+/** The tenders and news the user liked, newest like first, as feed cards. */
+export async function getFollowing(userId: string): Promise<FeedItem[]> {
+  const db = getSupabaseServerClient();
+  const { data: likes } = await db.from('likes').select('item_type, item_id, created_at')
+    .eq('user_id', userId).order('created_at', { ascending: false }).limit(200);
+  const ids = (t: string) => (likes || []).filter((l: any) => l.item_type === t).map((l: any) => l.item_id);
+  const [{ data: opps }, { data: news }] = await Promise.all([
+    ids('tender').length ? db.from('opportunities').select('*').in('opportunity_id', ids('tender')) : Promise.resolve({ data: [] as any[] }),
+    ids('news').length ? db.from('news_items').select('*').in('news_id', ids('news')) : Promise.resolve({ data: [] as any[] }),
+  ]);
+  const opp = new Map((opps || []).map((o: any) => [o.opportunity_id, o]));
+  const story = new Map((news || []).map((n: any) => [n.news_id, n]));
+  const now = Date.now();
+  return (likes || []).flatMap((l: any): FeedItem[] => {
+    const at = new Date(l.created_at);
+    if (l.item_type === 'tender') {
+      const o = opp.get(l.item_id);
+      if (!o) return [];
+      const closed = o.deadline && new Date(o.deadline).getTime() < now;
+      return [{
+        key: `tender:${o.opportunity_id}`, kind: 'opportunity', event: 'liked', href: `/tenders/${o.opportunity_id}`,
+        headline: titleOf(o), body: firstInLanguage(o.tender_summary, o.summary)?.split(/\n{2,}/)[0] ?? null,
+        category: o.opportunity_type || 'rfp', categoryLabel: oppCategoryLabel(o.opportunity_type), kindLabel: 'Tender',
+        country: o.country, at, score: o.opportunity_relevance_score ?? 0, combined: o.opportunity_relevance_score ?? 0,
+        movement: 'same', deadline: closed ? null : o.deadline, isNew: false,
+        statusLabel: closed ? 'Closed' : o.status === 'AWARDED' ? 'Awarded' : null,
+      }];
+    }
+    const n = story.get(l.item_id);
+    if (!n) return [];
+    return [{
+      key: `news:${n.news_id}`, kind: 'news', event: 'liked', href: `/news/${n.news_id}`,
+      headline: titleOf(n), body: firstInLanguage(n.summary), category: n.category || 'market',
+      categoryLabel: newsCategoryLabel(n.category), kindLabel: 'News', country: n.region && n.region !== 'EU / International' ? n.region : null,
+      at, score: n.relevance_score ?? 0, combined: n.relevance_score ?? 0, movement: 'same', deadline: null, isNew: false,
+      image: n.image_url,
+    }];
+  });
+}
+
+/** The trophy case — earned later (streaks, comments, posts); shown locked until then. */
+export const ACHIEVEMENTS = [
+  { key: 'streak10', name: '10-day streak', how: 'Visit EUDI Radar 10 days in a row', icon: '🔥' },
+  { key: 'comments20', name: 'Conversationalist', how: 'Write 20 comments', icon: '💬' },
+  { key: 'firstpost', name: 'First post', how: 'Publish your first post', icon: '✍️' },
+  { key: 'follow10', name: 'Tender scout', how: 'Follow 10 tenders', icon: '🔭' },
+  { key: 'year1', name: 'One year club', how: 'One year on EUDI Radar', icon: '🎂' },
+];

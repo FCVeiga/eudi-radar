@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { getSupabaseServerClient } from '@/lib/supabase';
+import { getCurrentUser } from '@/lib/auth';
 import { refreshDueFeeds, resolveSource } from '@/lib/sources';
 import { FREQUENCIES, METHODS, Method, NOT_CONNECTABLE, SOURCE_TYPES } from '@/lib/sourceMeta';
 
@@ -9,6 +10,7 @@ export type SaveSourceState = { ok: boolean; message: string } | null;
 
 /** Add a source (no source_id) or update one, from the Following sidebar's modal. */
 export async function saveSource(_prev: SaveSourceState, form: FormData): Promise<SaveSourceState> {
+  if (!(await getCurrentUser())) return { ok: false, message: 'Log in to add or change sources.' };
   const id = String(form.get('source_id') || '');
   const type = String(form.get('source_type') || '');
   const name = String(form.get('name') || '').trim();
@@ -86,6 +88,7 @@ export async function startNewsReport(newsId: string) {
 
 /** The opportunity page's "Run" button: starts the Tender Evaluation Agent. */
 export async function startTenderEvaluation(opportunityId: string) {
+  if (!(await getCurrentUser())) return { status: 'error' as const, message: 'log in to run this agent' };
   if (!/^[0-9a-f]{12,40}$/.test(opportunityId)) return { status: 'error' as const, message: 'unknown opportunity' };
   const { ensureEvaluation } = await import('@/lib/tenderEvaluation');
   const result = await ensureEvaluation(opportunityId);
@@ -95,6 +98,7 @@ export async function startTenderEvaluation(opportunityId: string) {
 
 /** The tender page's "Prepare proposal brief" button: starts the Proposal Manager Agent. */
 export async function startProposalBrief(opportunityId: string) {
+  if (!(await getCurrentUser())) return { status: 'error' as const, message: 'log in to run this agent' };
   if (!/^[0-9a-f]{12,40}$/.test(opportunityId)) return { status: 'error' as const, message: 'unknown tender' };
   const { ensureProposal } = await import('@/lib/proposalManager');
   const result = await ensureProposal(opportunityId);

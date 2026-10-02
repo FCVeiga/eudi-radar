@@ -9,6 +9,9 @@ import AgentAvatar from '@/components/AgentAvatar';
 import { isAgentEnabled } from '@/lib/settings';
 import TenderEvaluationRunner from '@/components/TenderEvaluationRunner';
 import ProposalRunner from '@/components/ProposalRunner';
+import HeartButton from '@/components/HeartButton';
+import { getLikes } from '@/lib/likes';
+import { getCurrentUser } from '@/lib/auth';
 import { getPlatformLanguage } from '@/lib/language';
 
 // The Tender Evaluation Agent runs inside this page's server action: give it time.
@@ -98,7 +101,12 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
   const evaluation = o.evaluation as Evaluation | null;
   const summary = (firstInLanguage(o.tender_summary) ?? firstInLanguage(o.summary) ?? '')
     .split(/\n{2,}/).map((p: string) => p.trim()).filter(Boolean);
-  const [evaluatorOn, proposerOn] = await Promise.all([isAgentEnabled('tender_evaluation'), isAgentEnabled('proposal_manager')]);
+  const [evaluatorOn, proposerOn, likes, user] = await Promise.all([
+    isAgentEnabled('tender_evaluation'), isAgentEnabled('proposal_manager'), getLikes('tender', [o.opportunity_id]), getCurrentUser(),
+  ]);
+  const loginToRun = (agent: string) => (
+    <p className="muted"><Link href={`/login?next=/tenders/${o.opportunity_id}`}>Log in</Link> to run the {agent}.</p>
+  );
   const proposing = !!o.proposal_started_at && Date.now() - new Date(o.proposal_started_at).getTime() < 6 * 60_000;
   const running = !!o.evaluation_started_at && Date.now() - new Date(o.evaluation_started_at).getTime() < 5 * 60_000;
 
@@ -107,7 +115,10 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
       <Link className="back-link" href="/tenders">← Tenders</Link>
 
       <div className="detail-head">
-        <div className="opp-tags"><StatusTags o={o as Opportunity} /></div>
+        <div className="detail-tags-row">
+          <div className="opp-tags"><StatusTags o={o as Opportunity} /></div>
+          <HeartButton type="tender" id={o.opportunity_id} liked={likes.liked.has(o.opportunity_id)} signedIn={likes.signedIn} className="page-heart" />
+        </div>
         <h1>{titleOf(o)}</h1>
         <p className="page-sub">{[buyerOf(o), o.country].filter(Boolean).join(' · ') || 'International'}</p>
         {titleOf(o) !== o.title && (
@@ -173,7 +184,7 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
                 )}
               </div>
             )}
-            {!evaluatorOn ? <p className="muted">The Tender Evaluation Agent is switched off in Settings.</p> : <TenderEvaluationRunner opportunityId={o.opportunity_id} evaluatedAt={o.evaluated_at ?? null} running={running}
+            {!evaluatorOn ? <p className="muted">The Tender Evaluation Agent is switched off in Settings.</p> : !user ? loginToRun('Tender Evaluation Agent') : <TenderEvaluationRunner opportunityId={o.opportunity_id} evaluatedAt={o.evaluated_at ?? null} running={running}
                               ready={!!o.tender_summary || reqs.length > 0} lastError={o.evaluation_error ?? null} />}
 
             {evaluation && proposerOn && (
@@ -191,8 +202,8 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
                   supports (who fills each role, which references and certificates); the documents to submit; the gaps
                   and the next steps.
                 </p>
-                <ProposalRunner opportunityId={o.opportunity_id} proposalAt={o.proposal_at ?? null} running={proposing}
-                                lastError={o.proposal_error ?? null} />
+                {user ? <ProposalRunner opportunityId={o.opportunity_id} proposalAt={o.proposal_at ?? null} running={proposing}
+                                lastError={o.proposal_error ?? null} /> : loginToRun('Proposal Manager Agent')}
               </div>
             )}
           </section>

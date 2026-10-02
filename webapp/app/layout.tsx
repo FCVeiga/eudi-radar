@@ -8,6 +8,10 @@ import SideNav from '@/components/SideNav';
 import SourcesSidebar from '@/components/SourcesSidebar';
 import WorkingAgents from '@/components/WorkingAgents';
 import { getPlatformLanguage } from '@/lib/language';
+import { getCurrentUser } from '@/lib/auth';
+import UserMenu from '@/components/auth/UserMenu';
+import UserAvatar from '@/components/UserAvatar';
+import { logOut } from '@/app/auth/actions';
 import { BottomNav, MenuBackdrop, MenuButton } from '@/components/MobileNav';
 
 // Every page reads live from Supabase. Without this, Next prerenders pages
@@ -29,7 +33,7 @@ export const metadata = {
 // Reddit-style shell: fixed navbar, fixed left sidebar (sections + followed
 // accounts); pages render in the remaining area.
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const language = await getPlatformLanguage();
+  const [language, user] = await Promise.all([getPlatformLanguage(), getCurrentUser()]);
   return (
     <html lang={language.code} className={`${sans.variable} ${mono.variable}`}>
       <body>
@@ -41,8 +45,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </Link>
           <Suspense fallback={<div className="search-box" />}><SearchBox /></Suspense>
           <div className="auth-buttons">
-            <button type="button" className="btn" title="Coming soon">Log in</button>
-            <button type="button" className="btn primary" title="Coming soon">Sign up</button>
+            {user ? <UserMenu user={{ username: user.username, displayName: user.displayName, avatarUrl: user.avatarUrl }} /> : (
+              <>
+                <Link href="/login" className="btn">Log in</Link>
+                <Link href="/signup" className="btn primary">Sign up</Link>
+              </>
+            )}
           </div>
           <MenuButton />
         </header>
@@ -54,10 +62,23 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <SourcesSidebar />
             <div className="sidebar-rule" />
             <WorkingAgents />
-            <div className="sidebar-auth">
-              <button type="button" className="btn" title="Coming soon">Log in</button>
-              <button type="button" className="btn primary" title="Coming soon">Sign up</button>
-            </div>
+            {user ? (
+              <div className="sidebar-user">
+                <Link href={`/u/${user.username}`} className="sidebar-user-card">
+                  <UserAvatar name={user.username} src={user.avatarUrl} size={40} />
+                  <span><strong>{user.displayName}</strong><em>u/{user.username}</em></span>
+                </Link>
+                <nav className="sidebar-user-links">
+                  <Link href="/help">Help</Link><Link href="/terms">Terms &amp; Conditions</Link><Link href="/privacy">Privacy policy</Link>
+                </nav>
+                <form action={logOut}><button type="submit" className="btn">Log out</button></form>
+              </div>
+            ) : (
+              <div className="sidebar-auth">
+                <Link href="/login" className="btn">Log in</Link>
+                <Link href="/signup" className="btn primary">Sign up</Link>
+              </div>
+            )}
             <div className="sidebar-foot">WalliD · EUDI Radar<br /><span className="mono">TED · Tavily · official portals</span></div>
           </aside>
           <main className="content">{children}</main>

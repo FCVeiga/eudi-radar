@@ -1,10 +1,17 @@
 import FeedCard from '@/components/FeedCard';
 import { search, searchWords } from '@/lib/search';
+import { getFeedLikes, likeTarget } from '@/lib/likes';
+
+const likeOf = (likes: { signedIn: boolean; liked: Set<string> }, href: string) => {
+  const t = likeTarget(href);
+  return { liked: !!t && likes.liked.has(`${t[0]}:${t[1]}`), signedIn: likes.signedIn };
+};
 
 export default async function SearchPage({ searchParams }: { searchParams: { q?: string } }) {
   const q = (searchParams.q || '').trim();
   const now = new Date();
   const { opportunities, news } = await search(q, now);
+  const likes = await getFeedLikes([...opportunities, ...news].map((i) => i.href));
   const total = opportunities.length + news.length;
 
   return (
@@ -28,13 +35,13 @@ export default async function SearchPage({ searchParams }: { searchParams: { q?:
       {opportunities.length > 0 && (
         <section className="search-section">
           <h2 className="search-h2">Tenders <span className="mono">{opportunities.length}</span></h2>
-          <div className="feed">{opportunities.map((i) => <FeedCard key={i.key} item={i} now={now} />)}</div>
+          <div className="feed">{opportunities.map((i) => <FeedCard key={i.key} item={i} now={now} like={likeOf(likes, i.href)} />)}</div>
         </section>
       )}
       {news.length > 0 && (
         <section className="search-section">
           <h2 className="search-h2">News <span className="mono">{news.length}</span></h2>
-          <div className="feed">{news.map((i) => <FeedCard key={i.key} item={i} now={now} />)}</div>
+          <div className="feed">{news.map((i) => <FeedCard key={i.key} item={i} now={now} like={likeOf(likes, i.href)} />)}</div>
         </section>
       )}
     </div>

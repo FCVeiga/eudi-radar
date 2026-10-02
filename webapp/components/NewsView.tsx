@@ -4,6 +4,12 @@ import { firstInLanguage } from '@/lib/english';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import FeedCard from './FeedCard';
 import SectionTabs from './SectionTabs';
+import { getFeedLikes, likeTarget } from '@/lib/likes';
+
+const likeOf = (likes: { signedIn: boolean; liked: Set<string> }, href: string) => {
+  const t = likeTarget(href);
+  return { liked: !!t && likes.liked.has(`${t[0]}:${t[1]}`), signedIn: likes.signedIn };
+};
 
 type View = 'all' | 'signals' | (typeof NEWS_CATEGORIES)[number]['slug'];
 
@@ -63,6 +69,7 @@ export default async function NewsView({ view }: { view: View }) {
   const items = (view === 'signals' ? signalItems : view === 'all' ? [...newsItems, ...signalItems] : newsItems)
     .sort((a, b) => b.combined - a.combined || b.at.getTime() - a.at.getTime());
 
+  const likes = await getFeedLikes(items.map((i) => i.href));
   const tabs = [
     { href: '/news', label: 'All', count: all.length + signals.length },
     ...NEWS_CATEGORIES.map((c) => ({
@@ -85,7 +92,7 @@ export default async function NewsView({ view }: { view: View }) {
       )}
 
       <div className="feed">
-        {items.map((i) => <FeedCard key={i.key} item={i} now={now} />)}
+        {items.map((i) => <FeedCard key={i.key} item={i} now={now} like={likeOf(likes, i.href)} />)}
       </div>
     </div>
   );

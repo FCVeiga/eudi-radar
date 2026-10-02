@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import HeartButton from './HeartButton';
 import { Opportunity, buyerOf, daysUntil, isNew, isUpdated, oppCategoryLabel, titleOf } from '@/lib/data';
 import { firstInLanguage } from '@/lib/english';
 import UpdateComment, { UpdateEvent } from './UpdateComment';
@@ -53,8 +54,9 @@ export function RingGradients() {
   );
 }
 
-export default function OpportunityRow({ o, copy, countryName, updates = [] }: {
+export default function OpportunityRow({ o, copy, countryName, updates = [], like }: {
   o: Opportunity; copy: RowCopy; countryName: string | null; updates?: UpdateEvent[];
+  like?: { liked: boolean; signedIn: boolean };
 }) {
   const days = daysUntil(o.deadline);
   const value = money(o.estimated_value, o.currency);
@@ -62,7 +64,7 @@ export default function OpportunityRow({ o, copy, countryName, updates = [] }: {
   const buyer = buyerOf(o);
   const urgent = days != null && days <= 14;
 
-  return (
+  const row = (
     <Link href={`/tenders/${o.opportunity_id}`} className="opp-row">
       <div className="opp-where">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -111,5 +113,12 @@ export default function OpportunityRow({ o, copy, countryName, updates = [] }: {
         </div>
       )}
     </Link>
+  );
+  if (!like) return row;
+  return (
+    <div className="likeable">
+      {row}
+      <HeartButton type="tender" id={o.opportunity_id} liked={like.liked} signedIn={like.signedIn} className="row-heart" />
+    </div>
   );
 }

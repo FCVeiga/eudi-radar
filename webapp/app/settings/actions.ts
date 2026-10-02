@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { readFile } from 'fs/promises';
 import path from 'path';
 import { getSupabaseServerClient } from '@/lib/supabase';
+import { getCurrentUser } from '@/lib/auth';
 import { AGENTS, agentByKey } from '@/lib/agents';
 import { DOC_KINDS } from '@/lib/settings';
 import { fileText } from '@/lib/fileText';
@@ -23,6 +24,7 @@ async function saveSetting(key: string, value: Record<string, any>) {
 }
 
 export async function saveCompany(_prev: FormState, form: FormData): Promise<FormState> {
+  if (!(await getCurrentUser())) return { ok: false, message: 'Log in to change settings.' };
   const name = String(form.get('name') || '').trim().slice(0, 120);
   const context = String(form.get('context') || '').trim().slice(0, 30_000);
   if (!name) return { ok: false, message: 'Add the company name.' };
@@ -33,6 +35,7 @@ export async function saveCompany(_prev: FormState, form: FormData): Promise<For
 
 /** Step 1 of an upload: a one-time URL the browser sends the file to, straight to storage. */
 export async function createCompanyUpload(kind: string, filename: string, size: number) {
+  if (!(await getCurrentUser())) return { error: 'log in first' };
   if (!DOC_KINDS.some((k) => k.kind === kind)) return { error: 'unknown document type' };
   if (!FILE_TYPES.test(filename)) return { error: 'use PDF, Word, PowerPoint, Excel or text files' };
   if (size > MAX_BYTES) return { error: 'files up to 50 MB' };
@@ -45,6 +48,7 @@ export async function createCompanyUpload(kind: string, filename: string, size: 
 
 /** Step 2: read the uploaded file's text for the agents and list it. */
 export async function registerCompanyDocument(kind: string, storagePath: string, name: string, size: number) {
+  if (!(await getCurrentUser())) return { error: 'log in first' };
   if (!DOC_KINDS.some((k) => k.kind === kind) || !storagePath.startsWith(`${kind}/`)) return { error: 'unknown upload' };
   const db = getSupabaseServerClient();
   const { data: blob, error } = await db.storage.from(BUCKET).download(storagePath);
@@ -62,6 +66,7 @@ export async function registerCompanyDocument(kind: string, storagePath: string,
 }
 
 export async function deleteCompanyDocument(id: string) {
+  if (!(await getCurrentUser())) return;
   const db = getSupabaseServerClient();
   const { data } = await db.from('company_documents').select('storage_path').eq('id', id).maybeSingle();
   if (!data) return;
@@ -72,6 +77,7 @@ export async function deleteCompanyDocument(id: string) {
 
 /** The search scope: saved as written, then parsed by the Config Agent into the search configuration. */
 export async function saveSearchScope(_prev: FormState, form: FormData): Promise<FormState> {
+  if (!(await getCurrentUser())) return { ok: false, message: 'Log in to change settings.' };
   const scope = String(form.get('scope') || '').trim().slice(0, 8000);
   const db = getSupabaseServerClient();
   const { data: current } = await db.from('app_settings').select('value').eq('key', 'search').maybeSingle();
@@ -97,6 +103,7 @@ export async function saveSearchScope(_prev: FormState, form: FormData): Promise
 }
 
 export async function setAgentEnabled(key: string, enabled: boolean) {
+  if (!(await getCurrentUser())) return;
   if (!AGENTS.some((a) => a.key === key)) return;
   await getSupabaseServerClient().from('agent_settings')
     .upsert({ agent_key: key, enabled, updated_at: new Date().toISOString() });
@@ -112,6 +119,7 @@ async function defaultPrompt(key: string) {
 
 /** Fine-tuning in plain language → the Config Agent rewrites the agent's prompt. */
 export async function saveAgentTuning(_prev: FormState, form: FormData): Promise<FormState> {
+  if (!(await getCurrentUser())) return { ok: false, message: 'Log in to change settings.' };
   const key = String(form.get('agent') || '');
   const agent = AGENTS.find((a) => a.key === key && a.fineTune);
   if (!agent) return { ok: false, message: 'Unknown agent.' };
@@ -145,6 +153,7 @@ export async function saveAgentTuning(_prev: FormState, form: FormData): Promise
 
 /** "Open config" → Save: the configuration as edited by hand becomes the one the agent runs on. */
 export async function saveAgentConfig(_prev: FormState, form: FormData): Promise<FormState> {
+  if (!(await getCurrentUser())) return { ok: false, message: 'Log in to change settings.' };
   const key = String(form.get('agent') || '');
   // Browsers submit textareas with CRLF line breaks; the prompts use LF.
   const config = String(form.get('config') || '').replace(/\r\n?/g, '\n');
@@ -175,6 +184,7 @@ export async function saveAgentConfig(_prev: FormState, form: FormData): Promise
 
 /** Back to the built-in configuration (and no fine-tuning). */
 export async function resetAgentConfig(key: string) {
+  if (!(await getCurrentUser())) return;
   if (!AGENTS.some((a) => a.key === key)) return;
   const db = getSupabaseServerClient();
   if (key === 'search') await saveSetting('search', {});

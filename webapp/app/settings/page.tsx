@@ -1,6 +1,8 @@
 import { readFile } from 'fs/promises';
 import path from 'path';
+import { redirect } from 'next/navigation';
 import { AGENTS } from '@/lib/agents';
+import { getCurrentUser } from '@/lib/auth';
 import { DEFAULT_COMPANY, DOC_KINDS, getSettings } from '@/lib/settings';
 import AgentCard from '@/components/settings/AgentCard';
 import { CompanyForm, DocumentGroup, SearchScopeForm } from '@/components/settings/SettingsForms';
@@ -10,6 +12,7 @@ export const maxDuration = 300;
 
 
 export default async function SettingsPage() {
+  if (!(await getCurrentUser())) redirect('/login?next=/settings');
   const { company, search, agents, docs } = await getSettings();
   const cfg = search.config;
   // Until the company is saved, show what the agents use today: the built-in brief.

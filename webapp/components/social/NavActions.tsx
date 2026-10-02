@@ -22,7 +22,7 @@ export function openChat(username?: string) {
   window.dispatchEvent(new CustomEvent('eudi:open-chat', { detail: { username } }));
 }
 
-/** Navbar, signed in: notifications bell, + New Post, chat bubble (opens the chat window). */
+/** Navbar, signed in: chat bubble (opens the chat window), + New Post, notifications bell. */
 export default function NavActions() {
   const [count, setCount] = useState({ notifications: 0, chat: 0 });
   const [bellOpen, setBellOpen] = useState(false);
@@ -62,6 +62,17 @@ export default function NavActions() {
 
   return (
     <div className="nav-actions">
+      <button type="button" className="nav-icon" aria-label={`Chat${count.chat ? ` (${count.chat} new)` : ''}`}
+        onClick={() => { if (onChatPage) return; setComposeTo(null); setChatOpen(!chatOpen); }}>
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 4.5h13v8.6h-7.2L5.6 16v-2.9H3.5z" /><path d="M7 8.8h.01M10 8.8h.01M13 8.8h.01" /></svg>
+        {count.chat > 0 && <span className="nav-badge">{count.chat > 9 ? '9+' : count.chat}</span>}
+      </button>
+
+      <Link href="/posts/new" className="btn nav-new-post" aria-label="Create a new post">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" /></svg>
+        <span>New Post</span>
+      </Link>
+
       <div className="nav-bell" ref={bell}>
         <button type="button" className="nav-icon" aria-label={`Notifications${count.notifications ? ` (${count.notifications} new)` : ''}`} aria-expanded={bellOpen} onClick={toggleBell}>
           <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.8a4.6 4.6 0 0 0-4.6 4.6v2.7L4 12.9h12l-1.4-2.8V7.4A4.6 4.6 0 0 0 10 2.8zM8.2 15.6a1.9 1.9 0 0 0 3.6 0" /></svg>
@@ -88,17 +99,6 @@ export default function NavActions() {
           </div>
         )}
       </div>
-
-      <Link href="/posts/new" className="btn nav-new-post" aria-label="Create a new post">
-        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" /></svg>
-        <span>New Post</span>
-      </Link>
-
-      <button type="button" className="nav-icon" aria-label={`Chat${count.chat ? ` (${count.chat} new)` : ''}`}
-        onClick={() => { if (onChatPage) return; setComposeTo(null); setChatOpen(!chatOpen); }}>
-        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 4.5h13v8.6h-7.2L5.6 16v-2.9H3.5z" /><path d="M7 8.8h.01M10 8.8h.01M13 8.8h.01" /></svg>
-        {count.chat > 0 && <span className="nav-badge">{count.chat > 9 ? '9+' : count.chat}</span>}
-      </button>
 
       {chatOpen && !onChatPage && (
         <div className="chat-popup" role="dialog" aria-label="Chat">

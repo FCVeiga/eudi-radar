@@ -1203,3 +1203,13 @@ a.profile-post:hover { border-color: var(--border-strong); }
 .profile-empty-cta { margin-top: 14px; }
 .profile-chat-top { margin-left: auto; }
 .profile-card-edit .btn { width: 100%; }
+/* Profile card: pencil buttons to change the banner and the picture (owner only) */
+.profile-banner { position: relative; background-size: cover; background-position: center; }
+.profile-card-avatar-wrap { position: relative; display: inline-block; }
+.image-edit { position: absolute; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border); background: rgba(255, 255, 255, 0.92); color: var(--ink); cursor: pointer; box-shadow: var(--shadow-sm); padding: 0; }
+.image-edit:hover { background: #fff; }
+.image-edit svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; }
+.image-edit .dots { width: 14px; }
+.banner-edit { top: 10px; right: 10px; }
+.avatar-edit { right: -6px; bottom: -2px; width: 26px; height: 26px; }
+.image-edit-error { display: block; font-size: 11.5px; color: var(--bad); margin-top: 6px; }

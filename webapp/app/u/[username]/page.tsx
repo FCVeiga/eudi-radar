@@ -8,6 +8,7 @@ import FeedCard from '@/components/FeedCard';
 import UserAvatar from '@/components/UserAvatar';
 import { CRED } from '@/lib/terms';
 import StartChatButton from '@/components/social/StartChatButton';
+import ImageEditButton from '@/components/auth/ImageEditButton';
 
 const TABS = [
   { key: 'posts', label: 'Posts' },
@@ -113,9 +114,14 @@ export default async function ProfilePage({ params, searchParams }: { params: { 
 
       <aside className="profile-side">
         <div className="profile-card">
-          <div className="profile-banner" />
+          <div className="profile-banner" style={profile.bannerUrl ? { backgroundImage: `url(${JSON.stringify(profile.bannerUrl)})` } : undefined}>
+            {own && <ImageEditButton kind="banner" className="banner-edit" />}
+          </div>
           <div className="profile-card-body">
-            <UserAvatar name={profile.username} src={profile.avatarUrl} size={56} className="profile-card-avatar" />
+            <div className="profile-card-avatar-wrap">
+              <UserAvatar name={profile.username} src={profile.avatarUrl} size={56} className="profile-card-avatar" />
+              {own && <ImageEditButton kind="avatar" className="avatar-edit" />}
+            </div>
             <h2>{profile.displayName}</h2>
             <span className="profile-handle">u/{profile.username}</span>
             {profile.bio && <p className="profile-card-bio">{profile.bio}</p>}
@@ -124,7 +130,7 @@ export default async function ProfilePage({ params, searchParams }: { params: { 
             <dl className="profile-stats">
               <div><dt>{stats.postCred}</dt><dd>Post {CRED}</dd></div>
               <div><dt>{stats.commentCred}</dt><dd>Comment {CRED}</dd></div>
-              <div><dt>{fmt(profile.createdAt)}</dt><dd>Cake day</dd></div>
+              <div><dt>{fmt(profile.createdAt)}</dt><dd>Membership day</dd></div>
               <div><dt>{own ? stats.following : '—'}</dt><dd>Following</dd></div>
             </dl>
             <div className="profile-card-section">

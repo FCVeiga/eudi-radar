@@ -660,3 +660,5 @@ alter table notifications enable row level security;
 alter table conversations enable row level security;
 alter table conversation_members enable row level security;
 alter table messages enable row level security;
+-- Profile card banner image (public 'avatars' bucket, path <user>/banner-*).
+alter table profiles add column if not exists banner_url text;

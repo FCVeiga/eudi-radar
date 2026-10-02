@@ -4,16 +4,16 @@ import { newsCategoryLabel, oppCategoryLabel, titleOf } from '@/lib/data';
 import { firstInLanguage } from '@/lib/english';
 import type { FeedItem } from '@/lib/feed';
 
-export type Profile = { id: string; username: string; displayName: string; avatarUrl: string | null; bio: string | null; createdAt: string };
+export type Profile = { id: string; username: string; displayName: string; avatarUrl: string | null; bannerUrl: string | null; bio: string | null; createdAt: string };
 
 export async function getProfile(username: string): Promise<Profile | null> {
   if (!/^[A-Za-z0-9_]{3,24}$/.test(username)) return null;
   const { data } = await getSupabaseServerClient().from('profiles')
-    .select('id, username, display_name, avatar_url, bio, created_at')
+    .select('id, username, display_name, avatar_url, banner_url, bio, created_at')
     .ilike('username', username.replace(/_/g, '\\_')).maybeSingle();
   return data && {
     id: data.id, username: data.username, displayName: data.display_name || data.username,
-    avatarUrl: data.avatar_url, bio: data.bio, createdAt: data.created_at,
+    avatarUrl: data.avatar_url, bannerUrl: data.banner_url, bio: data.bio, createdAt: data.created_at,
   };
 }
 
@@ -27,7 +27,7 @@ export async function getProfileStats(userId: string) {
   const sum = (rows: any[] | null) => (rows || []).reduce((n, r) => n + (r.score || 0), 0);
   return {
     posts: posts.data?.length ?? 0, comments: comments.data?.length ?? 0, following: likes.count ?? 0,
-    postCred: sum(posts.data), commentCred: sum(comments.data),  // Bidcred (lib/terms.ts)
+    postCred: sum(posts.data), commentCred: sum(comments.data),  // aura (lib/terms.ts)
   };
 }
 

@@ -98,26 +98,28 @@ export async function updateProfile(_prev: AuthState, form: FormData): Promise<A
   return { ok: true, message: 'Profile saved.' };
 }
 
-/** Avatar: a one-time upload URL in the public 'avatars' bucket, then saved on the profile. */
-export async function createAvatarUpload(filename: string, size: number) {
+/** Profile picture or card banner: a one-time upload URL in the public 'avatars' bucket, then saved on the profile. */
+export async function createAvatarUpload(filename: string, size: number, kind: 'avatar' | 'banner' = 'avatar') {
   const user = await getCurrentUser();
   if (!user) return { error: 'log in first' };
   const ext = (filename.match(/\.(png|jpe?g|webp|gif)$/i)?.[1] || '').toLowerCase();
   if (!ext) return { error: 'use a PNG, JPG, WebP or GIF image' };
   if (size > 5 * 1024 * 1024) return { error: 'images up to 5 MB' };
-  const path = `${user.id}/${crypto.randomUUID()}.${ext === 'jpeg' ? 'jpg' : ext}`;
+  const path = `${user.id}/${kind === 'banner' ? 'banner-' : ''}${crypto.randomUUID()}.${ext === 'jpeg' ? 'jpg' : ext}`;
   const { data, error } = await getSupabaseServerClient().storage.from('avatars').createSignedUploadUrl(path);
   if (error || !data) return { error: error?.message || 'could not start the upload' };
   return { path, url: data.signedUrl };
 }
 
-export async function setAvatar(path: string) {
+export async function setAvatar(path: string, kind: 'avatar' | 'banner' = 'avatar') {
   const user = await getCurrentUser();
-  if (!user || !path.startsWith(`${user.id}/`)) return { error: 'not allowed' };
+  if (!user || !path.startsWith(`${user.id}/`) || (kind === 'banner') !== path.startsWith(`${user.id}/banner-`)) return { error: 'not allowed' };
   const db = getSupabaseServerClient();
   const { data } = db.storage.from('avatars').getPublicUrl(path);
-  const old = user.avatarUrl?.split('/avatars/')[1];
-  await db.from('profiles').update({ avatar_url: data.publicUrl, updated_at: new Date().toISOString() }).eq('id', user.id);
+  const column = kind === 'banner' ? 'banner_url' : 'avatar_url';
+  const { data: current } = await db.from('profiles').select(column).eq('id', user.id).maybeSingle();
+  const old = (current as any)?.[column]?.split('/avatars/')[1];
+  await db.from('profiles').update({ [column]: data.publicUrl, updated_at: new Date().toISOString() }).eq('id', user.id);
   if (old && old.startsWith(`${user.id}/`)) await db.storage.from('avatars').remove([old]);
   revalidatePath('/', 'layout');
   return { ok: true };

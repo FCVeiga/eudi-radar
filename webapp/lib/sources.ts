@@ -129,19 +129,46 @@ export async function getCountryOptions() {
   return (data || []) as { code: string; name: string }[];
 }
 
-/** Latest activity: everything from feeds; site-search finds only once triage marked them relevant. */
+const FEED_MAX_AGE_DAYS = 30;
+const OPPORTUNITY_KINDS = ['TENDER', 'RFI', 'GRANT', 'CONSORTIUM_CALL', 'PILOT', 'PIPELINE_SIGNAL'];
+
+/**
+ * Latest activity, current and on-topic only:
+ *  - feed items (RSS/Reddit) from the last FEED_MAX_AGE_DAYS that triage
+ *    hasn't rejected as off-topic (not-yet-triaged ones show meanwhile);
+ *  - site-search finds only once they became an opportunity that is open
+ *    right now (same rule as the Opportunities page), dated from it — search
+ *    results carry no publication date, so they can't be trusted to be new.
+ */
 export async function getActivity(limit = 30) {
   const db = getSupabaseServerClient();
+  const now = new Date();
   const cols = 'id, source_id, title, title_en, kind, url, published_at, relevant, sources!inner(name, source_type, handle, method)';
+  const since = new Date(now.getTime() - FEED_MAX_AGE_DAYS * 86400_000).toISOString();
   const [feeds, finds] = await Promise.all([
     db.from('source_activity').select(cols).neq('sources.method', 'site_search')
+      .gte('published_at', since).or('kind.is.null,kind.neq.FALSE_POSITIVE')
       .order('published_at', { ascending: false }).limit(limit),
     db.from('source_activity').select(cols).eq('sources.method', 'site_search').eq('relevant', true)
-      .order('published_at', { ascending: false }).limit(limit),
+      .in('kind', OPPORTUNITY_KINDS).order('fetched_at', { ascending: false }).limit(100),
   ]);
+
+  // Keep site-search finds whose opportunity is open now; take its date.
+  let current: SourceActivity[] = [];
+  const findRows = (finds.data || []) as unknown as SourceActivity[];
+  if (findRows.length) {
+    const { data: opps } = await db.from('opportunities')
+      .select('official_url, publication_date, first_detected, deadline, status')
+      .in('official_url', findRows.map((f) => f.url).filter(Boolean) as string[])
+      .in('status', ['OPEN', 'SIGNAL'])
+      .or(`deadline.is.null,deadline.gte.${now.toISOString()}`);
+    const open = new Map((opps || []).map((o: any) => [o.official_url, o.publication_date || o.first_detected]));
+    current = findRows.filter((f) => f.url && open.has(f.url)).map((f) => ({ ...f, published_at: open.get(f.url!) }));
+  }
+
   // Sites often serve one document under several URLs: one entry per source and title.
   const seen = new Set<string>();
-  return ([...(feeds.data || []), ...(finds.data || [])] as unknown as SourceActivity[])
+  return ([...((feeds.data || []) as unknown as SourceActivity[]), ...current])
     .sort((a, b) => new Date(b.published_at || 0).getTime() - new Date(a.published_at || 0).getTime())
     .filter((a) => {
       const k = `${a.source_id}|${(a.title_en || a.title || '').toLowerCase().trim()}`;

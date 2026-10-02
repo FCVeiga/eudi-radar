@@ -2,8 +2,9 @@
  * EUDI Radar feed: posts written by the feed-writer agent
  * (agents/feed_writer.py) about opportunities, their updates, and news.
  *
- * Ranking ("Relevance" view) works like Reddit's hot, with the AI score in
- * place of upvotes:  hot = score × 0.5^(age / HALF_LIFE_DAYS)
+ * "Top" (the default) works like Reddit's hot, with the AI score in place of
+ * upvotes:  top = score × 0.5^(age / HALF_LIFE_DAYS). "Relevance" is the AI
+ * score alone; "New" is newest first.
  * Keep HALF_LIFE_DAYS in sync with agents/feed_writer.py.
  *
  * Movement arrows compare the post's rank at the last pipeline run with the
@@ -16,12 +17,11 @@ import { getActiveOpportunities, newsCategoryLabel, oppCategoryLabel } from '@/l
 export const HALF_LIFE_DAYS = 4;
 const UNSCORED = 30;
 
+// Top (default) = AI score × novelty; Relevance = AI score alone; New = newest first.
 export const FEED_VIEWS = [
+  { slug: 'top', label: 'Top' },
   { slug: 'relevance', label: 'Relevance' },
   { slug: 'new', label: 'New' },
-  { slug: 'top', label: 'Top' },
-  { slug: 'opportunities', label: 'Opportunities' },
-  { slug: 'news', label: 'News' },
 ] as const;
 export type FeedView = (typeof FEED_VIEWS)[number]['slug'];
 
@@ -87,13 +87,10 @@ export async function getFeed(view: FeedView, now = new Date()) {
       };
     });
 
-  const byHot = (a: FeedItem, b: FeedItem) => b.score * decay(b.at, now) - a.score * decay(a.at, now);
   const sorted =
     view === 'new' ? items.sort((a, b) => b.at.getTime() - a.at.getTime())
-      : view === 'top' ? items.sort((a, b) => b.score - a.score || b.at.getTime() - a.at.getTime())
-        : view === 'opportunities' ? items.filter((i) => i.kind === 'opportunity').sort(byHot)
-          : view === 'news' ? items.filter((i) => i.kind === 'news').sort(byHot)
-            : items.sort(byHot);
+      : view === 'relevance' ? items.sort((a, b) => b.score - a.score || b.at.getTime() - a.at.getTime())
+        : items.sort((a, b) => b.score * decay(b.at, now) - a.score * decay(a.at, now));
   return { items: sorted, error };
 }
 

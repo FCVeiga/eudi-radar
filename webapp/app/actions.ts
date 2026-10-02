@@ -84,10 +84,10 @@ export async function startNewsReport(newsId: string) {
   return result;
 }
 
-/** The opportunity page's "Run" button: starts the Evaluation Report Agent. */
-export async function startEvaluationReport(opportunityId: string) {
+/** The opportunity page's "Run" button: starts the Tender Evaluation Agent. */
+export async function startTenderEvaluation(opportunityId: string) {
   if (!/^[0-9a-f]{12,40}$/.test(opportunityId)) return { status: 'error' as const, message: 'unknown opportunity' };
-  const { ensureEvaluation } = await import('@/lib/evaluationReport');
+  const { ensureEvaluation } = await import('@/lib/tenderEvaluation');
   const result = await ensureEvaluation(opportunityId);
   if (result.status === 'done') revalidatePath(`/opportunities/${opportunityId}`);
   return result;

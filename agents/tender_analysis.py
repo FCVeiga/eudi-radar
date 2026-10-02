@@ -9,8 +9,11 @@ Tender analysis — what a tender asks for, for the opportunity pages.
      tender plus every requirement, grouped as eligibility, project
      references, human resources and technical / project requirements.
 
-It describes the tender only. WalliD's fit is the Evaluation Report Agent's
-job (webapp/lib/evaluationReport.ts), run from the opportunity page.
+Runs in the same pipeline run that adds an opportunity, so its page shows the
+summary and requirements together; re-runs when new clarifications, Q&A or
+specifications are published. It describes the tender only — WalliD's fit is
+the Tender Evaluation Agent's job (webapp/lib/tenderEvaluation.ts), run from
+the opportunity page.
 """
 import io
 import json
@@ -168,28 +171,63 @@ def extract_requirements(description: str, criteria: dict, doc_names: list, docs
     return call_llm_json_premium(load_prompt("tender_requirements.md"), listing, max_tokens=16000, effort="medium")
 
 
-def analyse_tenders(session, errors: list, limit: int = 10) -> dict:
-    """Award criteria for every tracked TED notice; summary + requirements (LLM) for active ones not analysed yet."""
+def page_text(url: str) -> str:
+    """Readable text of a non-TED opportunity's own page (Tavily's extractor when configured)."""
     import requests
-    opps = session.execute(text("""select opportunity_id, official_url, status, deadline, tender_analysed_at
-            from opportunities o where official_url like '%ted.europa.eu%'""")).fetchall()
+    key = os.environ.get("TAVILY_API_KEY")
+    if key:
+        try:
+            r = requests.post("https://api.tavily.com/extract", json={"urls": [url]},
+                              headers={"Authorization": f"Bearer {key}"}, timeout=40)
+            body = ((r.json().get("results") or [{}])[0] or {}).get("raw_content") or ""
+            if len(body) > 300:
+                return body[:DOC_CHARS]
+        except Exception:
+            pass
+    try:
+        page = requests.get(url, timeout=40, headers={"User-Agent": "Mozilla/5.0 EUDI-Radar/1.0"}).text
+    except Exception:
+        return ""
+    page = re.sub(r"<(script|style|noscript)[^>]*>.*?</\1>", " ", page, flags=re.S | re.I)
+    return _clean(page)[:DOC_CHARS]
+
+
+def analyse_tenders(session, errors: list, limit: int = 40) -> dict:
+    """Award criteria for every tracked TED notice; summary + requirements (LLM)
+    for every active opportunity not analysed yet, or with new clarifications /
+    Q&A / specifications since its last analysis — so a page never has a
+    summary without its requirements."""
+    import requests
+    opps = session.execute(text("""select opportunity_id, official_url, status, deadline, tender_analysed_at,
+            exists (select 1 from documents d where d.opportunity_id = o.opportunity_id and d.downloaded_at > o.tender_analysed_at
+                    and d.document_type in ('CLARIFICATION','Q_AND_A','CORRIGENDUM','TENDER_SPECIFICATIONS','TECHNICAL_SPECIFICATIONS')) as new_docs
+            from opportunities o where official_url is not null""")).fetchall()
     done = {"award": 0, "requirements": 0}
     llm_budget = limit
     for o in opps:
-        pub = o.official_url.rstrip("/").split("/")[-1]
-        try:
-            xml = requests.get(f"https://ted.europa.eu/en/notice/{pub}/xml", timeout=40).text
-        except Exception as e:
-            errors.append(f"tender analysis {o.opportunity_id}: {e}"[:200]); continue
-        crit = notice_criteria(xml)
-        done["award"] += store_award_criteria(session, o.opportunity_id, crit["award"])
-        active = o.status in ("OPEN", "SIGNAL") and (o.deadline is None or o.deadline >= datetime.utcnow())
-        if not active or o.tender_analysed_at or llm_budget <= 0:
+        ted = "ted.europa.eu" in o.official_url
+        xml, crit = "", {"selection": [], "tenderer": [], "award": []}
+        active = o.status in ("OPEN", "SIGNAL", "UNVERIFIED") and (o.deadline is None or o.deadline >= datetime.utcnow())
+        if ted:
+            pub = o.official_url.rstrip("/").split("/")[-1]
+            try:
+                xml = requests.get(f"https://ted.europa.eu/en/notice/{pub}/xml", timeout=40).text
+            except Exception as e:
+                errors.append(f"tender analysis {o.opportunity_id}: {e}"[:200]); continue
+            crit = notice_criteria(xml)
+            done["award"] += store_award_criteria(session, o.opportunity_id, crit["award"])
+        if not active or (o.tender_analysed_at and not o.new_docs) or llm_budget <= 0:
             continue
         llm_budget -= 1
         names = [r.name for r in session.execute(text("select name from documents where opportunity_id = :o"), {"o": o.opportunity_id})]
+        docs = document_texts(session, o.opportunity_id)
+        description = notice_description(xml) if ted else ""
+        if not ted:
+            body = page_text(o.official_url)
+            if body:
+                docs = [("Opportunity page " + o.official_url, body)] + docs
         try:
-            out = extract_requirements(notice_description(xml), crit, names, document_texts(session, o.opportunity_id))
+            out = extract_requirements(description, crit, names, docs)
         except Exception as e:
             errors.append(f"requirements {o.opportunity_id}: {e}"[:300])
             if "credit" in str(e).lower():

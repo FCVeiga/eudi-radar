@@ -1,16 +1,16 @@
 /**
- * Evaluation Report Agent — run from an opportunity's page with a button.
- * Reads the tender (the Tender Analysis agent's summary and requirements,
+ * Tender Evaluation Agent — run from an opportunity's page with a button.
+ * Reads the tender (the Tender Analysis Agent's summary and requirements,
  * plus the award criteria) against the company brief, and writes a match
  * status for each requirement, a fit score and a bid report.
- * (prompt: agents/evaluation_report.md; company context: agents/company_brief.md.)
+ * (prompt: agents/tender_evaluation.md; company context: agents/company_brief.md.)
  */
 import { readFile } from 'fs/promises';
 import path from 'path';
 import Anthropic from '@anthropic-ai/sdk';
 import { getSupabaseServerClient } from '@/lib/supabase';
 
-export const EVALUATION_AGENT = 'Evaluation Report Agent';
+export const EVALUATION_AGENT = 'Tender Evaluation Agent';
 const MODEL = 'claude-opus-5-5';
 const MATCHES = ['MATCH', 'PARTIAL_MATCH', 'PARTNER_NEEDED', 'NO_MATCH', 'UNKNOWN'];
 const VERDICTS = ['bid', 'bid_with_partner', 'consider', 'no_bid'];
@@ -22,7 +22,7 @@ export type EvaluationStatus = 'done' | 'running' | 'error';
 async function systemPrompt() {
   const dir = path.join(process.cwd(), 'agents');
   const [prompt, brief] = await Promise.all([
-    readFile(path.join(dir, 'evaluation_report.md'), 'utf8'),
+    readFile(path.join(dir, 'tender_evaluation.md'), 'utf8'),
     readFile(path.join(dir, 'company_brief.md'), 'utf8'),
   ]);
   return prompt.replace('{company_brief}', brief);
@@ -72,7 +72,7 @@ async function runEvaluation(opportunityId: string) {
   ]);
   if (!o) throw new Error('Opportunity not found.');
   if (!o.tender_summary && !(reqs || []).length) {
-    throw new Error('the Tender Analysis agent has not read this tender yet');
+    throw new Error('the Tender Analysis Agent has not read this tender yet');
   }
 
   // Short ids keep the prompt and the answer compact.

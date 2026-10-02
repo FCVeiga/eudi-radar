@@ -6,12 +6,12 @@ import { DeadlineText, StatusTags } from '@/components/OpportunityCard';
 import UpdateComment, { UpdateEvent } from '@/components/UpdateComment';
 import TenderDocuments, { Doc } from '@/components/TenderDocuments';
 import { AgentFace } from '@/components/NewsReport';
-import EvaluationRunner from '@/components/EvaluationRunner';
+import TenderEvaluationRunner from '@/components/TenderEvaluationRunner';
 
-// The Evaluation Report Agent runs inside this page's server action: give it time.
+// The Tender Evaluation Agent runs inside this page's server action: give it time.
 export const maxDuration = 300;
 
-// The Tender Analysis agent's four groups; older rows without a group fall back on their category.
+// The Tender Analysis Agent's four groups; older rows without a group fall back on their category.
 const REQ_GROUPS: { key: string; label: string; categories: string[] }[] = [
   { key: 'ELIGIBILITY', label: 'Eligibility criteria',
     categories: ['LEGAL', 'FINANCIAL', 'TURNOVER', 'INSURANCE', 'CERTIFICATION', 'LOCAL_PRESENCE', 'CONSORTIUM', 'SUBCONTRACTING', 'EVIDENCE'] },
@@ -122,7 +122,9 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
             <div className="detail-block">
               <h2>Summary</h2>
               {summary.map((p: string, i: number) => <p key={i}>{p}</p>)}
-              {!o.tender_summary && <p className="summary-note">Short summary — the Tender Analysis agent replaces it with a full one once it has read the tender documents.</p>}
+              {o.tender_summary
+                ? <p className="summary-note">Tender Analysis Agent · from the notice and {o.official_url?.includes('ted.europa.eu') ? 'the tender documents' : 'the opportunity page'}</p>
+                : <p className="summary-note">Short summary from triage — the Tender Analysis Agent replaces it with the full summary and the requirements.</p>}
             </div>
           )}
 
@@ -130,8 +132,8 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
             <div className="agent-head">
               <AgentFace working={running} />
               <div className="agent-id">
-                <h2>Evaluation Report</h2>
-                <span className="agent-name">Evaluation Report Agent{o.evaluated_at ? ` · report from ${fmtDate(o.evaluated_at)}` : ''}</span>
+                <h2>Tender Evaluation</h2>
+                <span className="agent-name">Tender Evaluation Agent{o.evaluated_at ? ` · report from ${fmtDate(o.evaluated_at)}` : ''}</span>
               </div>
               {evaluation && <span className={`verdict eval-${evaluation.verdict}`}>{VERDICTS[evaluation.verdict] ?? evaluation.verdict}</span>}
             </div>
@@ -139,6 +141,9 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
               <p className="agent-intro">
                 Checks every requirement of this tender against WalliD&apos;s profile, scores the fit and recommends whether to bid.
               </p>
+            )}
+            {evaluation && o.tender_analysed_at && o.evaluated_at && o.tender_analysed_at > o.evaluated_at && (
+              <p className="summary-note">The requirements were updated after this report (new tender documents) — re-run the evaluation.</p>
             )}
             {evaluation && (
               <div className="eval-report">
@@ -162,7 +167,7 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
                 )}
               </div>
             )}
-            <EvaluationRunner opportunityId={o.opportunity_id} evaluatedAt={o.evaluated_at ?? null} running={running}
+            <TenderEvaluationRunner opportunityId={o.opportunity_id} evaluatedAt={o.evaluated_at ?? null} running={running}
                               ready={!!o.tender_summary || reqs.length > 0} lastError={o.evaluation_error ?? null} />
           </section>
           {changes && changes.length > 0 && (
@@ -210,9 +215,9 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
             <h2>{evaluated ? <>Requirements &amp; Match Status</> : 'Requirements'} {reqs.length > 0 && <span className="uc-count">{reqs.length}</span>}</h2>
             {reqs.length === 0 ? (
               <p className="muted">
-                Not extracted yet. The Tender Analysis agent reads the notice and the tender documents and lists every
-                requirement: eligibility criteria, project references, human resources, and technical &amp; project
-                requirements. It runs in the daily pipeline for open tenders.
+                {o.tender_analysed_at
+                  ? 'The published documents state no requirements yet — the Tender Analysis Agent will list them when the buyer publishes the tender documents.'
+                  : 'Pending — the Tender Analysis Agent writes the requirements (eligibility criteria, project references, human resources, technical & project requirements) together with the full summary, in the pipeline run that adds the opportunity.'}
               </p>
             ) : REQ_GROUPS.map((g) => ({ ...g, rows: reqs.filter((r) => groupOf(r) === g.key) })).filter((g) => g.rows.length).map((g) => (
               <div key={g.key} className="req-category-block">

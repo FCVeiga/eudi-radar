@@ -547,6 +547,10 @@ class NewsItem(Base):
     relevance_score = Column(Integer)  # triage "importance", 0-100 — ranks the home feed
     image_url = Column(Text)           # share image of the source page (og:image)
     image_checked_at = Column(DateTime)
+    summary_long = Column(Text)        # news analyst: complete summary of the story
+    key_facts = Column(JSON_TYPE)
+    analysis = Column(JSON_TYPE)       # {verdict, take, actions: [...]} — what WalliD should do
+    analysed_at = Column(DateTime)
     unverified = Column(Boolean, default=False)  # true for social-sourced items
     created_at = Column(DateTime, default=datetime.utcnow)
 

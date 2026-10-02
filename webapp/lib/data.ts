@@ -61,6 +61,8 @@ export type NewsItem = {
   relevance_score: number | null;
   created_at: string | null;
   image_url: string | null;
+  summary_long?: string | null;
+  analysis?: unknown;
 };
 
 /** English title: title_en, else a cleaner English fallback (e.g. the agent's headline),

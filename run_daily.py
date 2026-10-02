@@ -460,6 +460,11 @@ def main():
     if translated:
         print(f"Translation: {translated} titles given an English version")
 
+    from agents.news_analyst import analyse_news
+    analysed = analyse_news(session, errors)
+    if analysed:
+        print(f"News analysis: {analysed} stories summarised and analysed")
+
     from agents.news_images import fetch_news_images
     images = fetch_news_images(session)
     if images:

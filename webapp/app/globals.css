@@ -96,6 +96,7 @@ h1, h2, h3 { color: var(--ink); letter-spacing: -0.02em; line-height: 1.25; }
   display: flex; flex-direction: column; padding: 16px 12px 12px; overflow-y: auto;
   background: var(--surface); border-right: 1px solid var(--border);
 }
+.sidebar > * { flex-shrink: 0; }  /* scroll the sidebar rather than squeeze the list under the footer */
 .side-nav { display: flex; flex-direction: column; gap: 2px; }
 .side-link {
   display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 12px; border-radius: 8px;
@@ -452,6 +453,9 @@ h1, h2, h3 { color: var(--ink); letter-spacing: -0.02em; line-height: 1.25; }
 .feed-sort-icon { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linejoin: round; stroke-linecap: round; }
 .feed-sort-link:hover { background: var(--surface); color: var(--ink); }
 .feed-sort-link.active { background: var(--ink); color: #fff; }
+.pill-count { font-family: var(--font-mono-stack); font-size: 11px; color: var(--subtle); margin-left: 2px; }
+.feed-sort-link.active .pill-count { color: rgba(255, 255, 255, 0.65); }
+.section-tabs { margin-bottom: 20px; }
 .feed { display: flex; flex-direction: column; gap: 10px; }
 .feed-item {
   display: flex; background: var(--surface); border: 1px solid var(--border);

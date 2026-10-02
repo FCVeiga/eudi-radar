@@ -62,9 +62,10 @@ export type NewsItem = {
   created_at: string | null;
 };
 
-/** English title: triage/translator's title_en, else the original only if it is English. */
+/** English title: title_en, else a cleaner English fallback (e.g. the agent's headline),
+ * else the original only if it is English. */
 export const titleOf = (x: { title: string; title_en?: string | null; language?: string | null }, ...fallbacks: (string | null | undefined)[]) =>
-  firstEnglish(x.title_en, looksEnglish(x.title, x.language) ? x.title : null, ...fallbacks) ?? TRANSLATION_PENDING;
+  firstEnglish(x.title_en, ...fallbacks, looksEnglish(x.title, x.language) ? x.title : null) ?? TRANSLATION_PENDING;
 
 /** Buyer / organisation in English (null when no English form exists yet). */
 export const buyerOf = (o: { authority: string | null; authority_en?: string | null }) => englishName(o.authority_en, o.authority);

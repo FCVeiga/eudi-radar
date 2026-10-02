@@ -18,13 +18,7 @@ export default async function NewsView({ view }: { view: View }) {
 
   return (
     <div>
-      <div className="page-head">
-        <div>
-          <div className="eyebrow">News</div>
-          <h1>{heading ? heading.label : 'All news'}</h1>
-          <p className="page-sub">{heading ? heading.blurb : 'Regulation, industry and market news on digital identity wallets'}</p>
-        </div>
-      </div>
+      <h1 className="opps-h1">{heading ? heading.label : 'EUDI News'}</h1>
       <SectionTabs tabs={tabs} active={view === 'all' ? '/news' : `/news/${view}`} />
 
       {error && <div className="callout error"><strong>Error loading news.</strong> {error.message}</div>}

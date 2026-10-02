@@ -19,9 +19,9 @@ function Submit({ label, busy, primary }: { label: string; busy: string; primary
  * (for the Search Agent: the search scope), and its configuration — shown
  * and editable under "Open config"; what is saved there is what it runs on.
  */
-export default function AgentCard({ agent, enabled, instructions, config, custom, status, error, summary }: {
+export default function AgentCard({ agent, enabled, instructions, config, custom, status, error }: {
   agent: AgentDef; enabled: boolean; instructions: string | null; config: string | null;
-  custom: boolean; status: string | null; error: string | null; summary?: string | null;
+  custom: boolean; status: string | null; error: string | null;
 }) {
   const router = useRouter();
   const search = agent.key === 'search';
@@ -49,7 +49,6 @@ export default function AgentCard({ agent, enabled, instructions, config, custom
         </button>
       </div>
       <p className="agent-role">{agent.role}</p>
-      {summary && <p className="agent-summary">{summary}</p>}
 
       {config && (
         <div className="agent-card-actions">
@@ -61,11 +60,10 @@ export default function AgentCard({ agent, enabled, instructions, config, custom
         <form action={tune} className="agent-tune">
           <input type="hidden" name="agent" value={agent.key} />
           <label className="field">
-            <span>{search ? <>Search scope <em>— what should the radar look for?</em></> : <>Fine-tuning <em>— in plain language</em></>}</span>
-            <textarea name={search ? 'scope' : 'instructions'} rows={search ? 6 : 3} defaultValue={instructions ?? ''} maxLength={search ? 8000 : 6000}
+            <span>Fine-tuning <em>— in plain language</em></span>
+            <textarea name={search ? 'scope' : 'instructions'} rows={3} defaultValue={instructions ?? ''} maxLength={search ? 8000 : 6000}
               placeholder={`e.g. ${EXAMPLES[agent.key] ?? 'Be more concise.'}`} />
           </label>
-          {search && <p className="field-hint">The Config Agent turns this into the search phrases and queries, in every country’s languages, and the Triage Agent’s relevance rules — which decide what reaches the feed, News and Tenders.</p>}
           {tuneState ? <p className={`form-msg ${tuneState.ok ? 'ok' : 'err'}`}>{tuneState.message}</p>
             : status === 'error' && error ? <p className="form-msg err">Last attempt not applied: {error}.</p> : null}
           <div className="settings-actions"><Submit label="Apply" busy="The Config Agent is working…" /></div>
@@ -81,8 +79,10 @@ export default function AgentCard({ agent, enabled, instructions, config, custom
           </div>
           <p className="field-hint">
             {search
-              ? 'JSON: the TED phrases, web and news queries, site-search terms and the Triage Agent’s relevance rules. Applying a new search scope replaces it.'
-              : editable
+              ? 'JSON: the TED phrases, web and news queries, site-search terms and the Triage Agent’s relevance rules. Fine-tuning describes the search scope and replaces it.'
+              : agent.key === 'tender_documents'
+                ? 'JSON: how files are sorted by name (type_patterns, first match wins), which new files post an update (alert_on_new), which are skipped, and whether only open tenders are covered.'
+                : editable
                 ? <>The agent’s instructions{agent.prompt ? <> (<span className="mono">{agent.prompt}</span>)</> : null}. Edit freely, but keep the <span className="mono">## Output</span> section and the placeholders in braces — the platform depends on them.</>
                 : 'This agent doesn’t use AI instructions; nothing to configure.'}
           </p>
@@ -110,7 +110,8 @@ export default function AgentCard({ agent, enabled, instructions, config, custom
 }
 
 const EXAMPLES: Record<string, string> = {
-  search: 'Public tenders, grants and market consultations for digital identity wallets in Europe: EUDI Wallet development and certification, PID and (Q)EAA issuers, relying-party integration, mobile driving licences. Buyers: governments, digital agencies, banks and telcos in the EU, EEA and UK. Not: crypto or payment wallets, generic IAM.',
+  search: 'Tenders and grants for digital identity wallets in the EU and UK: wallet development, PID/(Q)EAA issuers, mDL. Not crypto or payment wallets.',
+  tender_documents: 'Treat files named “Leistungsverzeichnis” as technical specifications. Post an update when a new contract draft appears.',
   triage: 'Score anything about mobile driving licences at least 80. Treat banking KYC tenders as relevant.',
   verification: 'Treat a call as open only if the page shows a deadline.',
   tender_analysis: 'Also list the languages the bid must be written in, and every insurance requirement with its amount.',

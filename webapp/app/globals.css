@@ -820,6 +820,5 @@ th.num .sort-head { justify-content: flex-end; }
 .agent-scan { animation: scan 2.4s ease-in-out infinite alternate; }
 @keyframes scan { from { transform: translateX(0); } to { transform: translateX(9px); } }
 @media (prefers-reduced-motion: reduce) { .agent-scan { animation: none; } }
-.agent-summary { font-family: var(--font-mono-stack); font-size: 11px; color: var(--accent); margin: -2px 0 0; }
 .config-edit { width: 100%; min-height: 58vh; font-family: var(--font-mono-stack); font-size: 11.5px; line-height: 1.55; color: var(--ink); background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; resize: vertical; tab-size: 2; }
 .config-edit:focus { outline: 2px solid var(--brand-a); outline-offset: -1px; border-color: transparent; background: var(--surface); }

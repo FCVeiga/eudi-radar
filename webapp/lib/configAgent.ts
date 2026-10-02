@@ -103,3 +103,34 @@ export async function tunePrompt(agentName: string, role: string, defaultPrompt:
   try { validatePrompt(defaultPrompt, next); } catch (e: any) { throw new Error(`the rewrite was not applied: ${e.message}`); }
   return { prompt: next, note };
 }
+
+const DOC_TYPES = ['CONTRACT_NOTICE', 'PROGRAMME', 'TENDER_SPECIFICATIONS', 'TERMS_OF_REFERENCE', 'TECHNICAL_SPECIFICATIONS',
+  'SELECTION_CRITERIA', 'AWARD_CRITERIA', 'FINANCIAL_PROPOSAL', 'CONTRACT', 'ANNEX', 'CLARIFICATION', 'CORRIGENDUM', 'Q_AND_A', 'FORM', 'OTHER'];
+
+/** The Tender Documents Agent's settings (JSON — it uses no AI instructions), checked. */
+export function validateDocumentsConfig(out: any) {
+  if (!out || typeof out !== 'object' || Array.isArray(out)) throw new Error('the settings must be a JSON object');
+  const patterns = out.type_patterns;
+  if (!Array.isArray(patterns) || !patterns.length) throw new Error('type_patterns must list [type, pattern] pairs');
+  for (const p of patterns) {
+    if (!Array.isArray(p) || p.length !== 2 || !DOC_TYPES.includes(p[0])) throw new Error(`each type_patterns entry is [type, pattern], type one of ${DOC_TYPES.join(', ')}`);
+    try { new RegExp(p[1]); } catch { throw new Error(`“${p[1]}” isn’t a valid pattern`); }
+  }
+  const alerts = out.alert_on_new ?? [];
+  if (!Array.isArray(alerts) || alerts.some((t: any) => !DOC_TYPES.includes(t))) throw new Error('alert_on_new must list document types');
+  const skip = out.skip_extensions ?? [];
+  if (!Array.isArray(skip) || skip.some((x: any) => typeof x !== 'string')) throw new Error('skip_extensions must list file extensions like ".xml"');
+  if (out.only_active !== undefined && typeof out.only_active !== 'boolean') throw new Error('only_active must be true or false');
+  return { type_patterns: patterns, alert_on_new: alerts, skip_extensions: skip, only_active: out.only_active ?? true };
+}
+
+/** Plain-language fine-tuning of a JSON configuration (the Tender Documents Agent's). */
+export async function tuneJson(agentName: string, role: string, current: string, instructions: string) {
+  const text = await ask(await prompt('config_tune_json.md'),
+    `Agent: ${agentName} — ${role}\n\nThe user's fine-tuning:\n${instructions}\n\nCURRENT settings:\n${current}`, 8000);
+  const start = text.indexOf('{');
+  let parsed;
+  try { parsed = JSON.parse(text.slice(start, text.lastIndexOf('}') + 1)); } catch { throw new Error('the Config Agent did not return valid settings'); }
+  const note = typeof parsed.note === 'string' ? parsed.note : null;
+  return { config: validateDocumentsConfig(parsed.settings ?? parsed), note };
+}

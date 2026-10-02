@@ -51,10 +51,13 @@ def load(session, search_defaults: dict = None) -> None:
         for key in ALL_AGENTS:
             path = AGENT_PROMPTS.get(key)
             default = open(os.path.join(_ROOT, path)).read() if path else None
+            if key == "tender_documents":
+                from agents.tender_documents import DEFAULT_CONFIG
+                default = json.dumps(DEFAULT_CONFIG, ensure_ascii=False, indent=2)
             if key == "search" and search_defaults:
                 default = json.dumps({**search_defaults, **builtin_rules()}, ensure_ascii=False, indent=2)
             session.execute(text("""insert into agent_settings (agent_key, default_prompt) values (:k, :p)
-                    on conflict (agent_key) do update set default_prompt = excluded.default_prompt"""), {"k": key, "p": default})
+                    on conflict (agent_key) do update set default_prompt = coalesce(excluded.default_prompt, agent_settings.default_prompt)"""), {"k": key, "p": default})
         session.commit()
         rows = session.execute(text("select agent_key, enabled, prompt_override from agent_settings")).fetchall()
         _state["enabled"] = {r.agent_key: bool(r.enabled) for r in rows}
@@ -70,6 +73,11 @@ def load(session, search_defaults: dict = None) -> None:
 
 def enabled(agent_key: str) -> bool:
     return _state["enabled"].get(agent_key, True)
+
+
+def agent_config(agent_key: str):
+    """The agent's saved configuration from Settings (a prompt, or JSON for the Tender Documents Agent), or None."""
+    return _state["overrides"].get(agent_key)
 
 
 def company_name() -> str:

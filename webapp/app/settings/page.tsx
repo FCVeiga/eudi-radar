@@ -8,7 +8,6 @@ import { CompanyForm, DocumentGroup, SearchScopeForm } from '@/components/settin
 // The Config Agent runs inside this page's server actions: give it time.
 export const maxDuration = 300;
 
-const fmt = (iso: string) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
 export default async function SettingsPage() {
   const { company, search, agents, docs } = await getSettings();
@@ -54,10 +53,7 @@ export default async function SettingsPage() {
               return (
                 <AgentCard key={a.key} agent={a} enabled={s?.enabled ?? true} instructions={search.scope || null}
                   config={cfg ? JSON.stringify(cfg, null, 2) : s?.default_prompt ?? null} custom={!!cfg}
-                  status={search.status} error={search.error}
-                  summary={cfg
-                    ? `${cfg.topic || 'Custom scope'} · ${cfg.ted_phrases?.length ?? 0} TED phrases, ${cfg.web_queries?.length ?? 0} web and ${cfg.news_queries?.length ?? 0} news queries${search.parsed_at ? ` · since ${fmt(search.parsed_at)}` : ''}`
-                    : 'Built-in scope: EUDI Wallet & digital identity'} />
+                  status={search.status} error={search.error} />
               );
             }
             return (

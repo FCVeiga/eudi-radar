@@ -14,6 +14,7 @@ an update under the opportunity and as a feed post. No LLM involved.
 """
 import hashlib
 import html
+import json
 import re
 import time
 from datetime import datetime
@@ -41,11 +42,38 @@ _TYPES = [
 ]
 
 
+# The agent's settings (editable on Settings → Tender Documents Agent; JSON):
+#   type_patterns — how a file is sorted, by its name: [type, regex], first match wins
+#   alert_on_new  — types that, published after the first collection, post an update
+#   skip_extensions — files never listed (machine-readable copies)
+#   only_active   — collect for open tenders only
+DEFAULT_CONFIG = {
+    "type_patterns": [list(t) for t in _TYPES],
+    "alert_on_new": ["CLARIFICATION", "Q_AND_A", "CORRIGENDUM", "FINANCIAL_PROPOSAL", "TECHNICAL_SPECIFICATIONS"],
+    "skip_extensions": [".xml"],
+    "only_active": True,
+}
+
+
+def config() -> dict:
+    """DEFAULT_CONFIG with the Settings page's edits on top (ignored if unreadable)."""
+    from services.agent_settings import agent_config
+    out = dict(DEFAULT_CONFIG)
+    try:
+        out.update({k: v for k, v in json.loads(agent_config("tender_documents") or "{}").items() if k in DEFAULT_CONFIG})
+    except (ValueError, AttributeError):
+        pass
+    return out
+
+
 def classify(name: str) -> str:
     low = (name or "").lower()
-    for doc_type, pattern in _TYPES:
-        if re.search(pattern, low):
-            return doc_type
+    for doc_type, pattern in config()["type_patterns"]:
+        try:
+            if re.search(pattern, low):
+                return doc_type
+        except re.error:
+            continue
     return "ANNEX"
 
 
@@ -99,7 +127,7 @@ def _epps_documents(url: str) -> list:
             if not link:
                 continue
             cells = [re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", c)).strip() for c in re.findall(r"<td[^>]*>(.*?)</td>", row, re.S)]
-            if link.group(2).strip().lower().endswith(".xml"):
+            if link.group(2).strip().lower().endswith(tuple(config()["skip_extensions"])):
                 continue  # machine-readable copies (ESPD request, c4t) of files listed as PDF
             title = next((c for c in cells if c and not c.isdigit() and c != link.group(2).strip() and c.upper() != "N/A"), "")
             docs[link.group(1)] = (html.unescape(title), html.unescape(link.group(2)).strip(),
@@ -174,7 +202,7 @@ def collect_documents(session, opportunity_id: str, procedure_id: str) -> dict:
                                 values (:d, :o, :n, cast(:t as documenttype), :u, :v, :p, :now)"""),
                         {"d": doc_id, "o": opportunity_id, "n": name[:500], "t": doc_type, "u": url[:1000],
                          "v": version, "p": published, "now": now})
-        if had_any and doc_type in ("CLARIFICATION", "Q_AND_A", "CORRIGENDUM", "FINANCIAL_PROPOSAL", "TECHNICAL_SPECIFICATIONS"):
+        if had_any and doc_type in config()["alert_on_new"]:
             new_names.append(name)
     if new_names:
         desc = (f"New document published: {new_names[0]}" if len(new_names) == 1
@@ -187,8 +215,10 @@ def collect_documents(session, opportunity_id: str, procedure_id: str) -> dict:
     return {"documents": len(rows), "new": new_names}
 
 
-def collect_all(session, errors: list, only_active: bool = True) -> dict:
-    """Refresh documents for tracked TED procurements (the active ones by default)."""
+def collect_all(session, errors: list, only_active: bool = None) -> dict:
+    """Refresh documents for tracked TED procurements (the active ones, unless the settings say otherwise)."""
+    if only_active is None:
+        only_active = bool(config()["only_active"])
     where = "reference like 'TED:%'" + (" and status in ('OPEN','SIGNAL') and (deadline is null or deadline >= now())" if only_active else "")
     opps = session.execute(text(f"select opportunity_id, reference from opportunities where {where}")).fetchall()
     total, new = 0, 0

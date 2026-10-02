@@ -37,7 +37,7 @@ export const AGENTS: AgentDef[] = [
     face: { colors: ['#5EEAD4', '#0D9488'], eyes: 'visor', top: 'cap', mouth: 'smile' },
   },
   {
-    key: 'tender_documents', name: 'Tender Documents Agent', runs: 'pipeline', prompt: null, fineTune: false,
+    key: 'tender_documents', name: 'Tender Documents Agent', runs: 'pipeline', prompt: 'agents/tender_documents.py — settings (JSON)', fineTune: true,
     role: 'Collects every tender’s notices and documents from TED and the buyer portals, and spots new clarifications.',
     face: { colors: ['#94A3B8', '#475569'], eyes: 'round', top: 'twin', mouth: 'o' },
   },

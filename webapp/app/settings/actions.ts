@@ -7,7 +7,9 @@ import { getSupabaseServerClient } from '@/lib/supabase';
 import { AGENTS, agentByKey } from '@/lib/agents';
 import { DOC_KINDS } from '@/lib/settings';
 import { fileText } from '@/lib/fileText';
-import { friendlyError, parseSearchScope, tunePrompt, validatePrompt, validateSearchConfig } from '@/lib/configAgent';
+import {
+  friendlyError, parseSearchScope, tuneJson, tunePrompt, validateDocumentsConfig, validatePrompt, validateSearchConfig,
+} from '@/lib/configAgent';
 
 export type FormState = { ok: boolean; message: string } | null;
 const BUCKET = 'company-files';
@@ -126,7 +128,10 @@ export async function saveAgentTuning(_prev: FormState, form: FormData): Promise
   const { data: row } = await db.from('agent_settings').select('prompt_override').eq('agent_key', key).maybeSingle();
   try {
     // From the agent's current configuration, so hand edits made in "Open config" are kept.
-    const { prompt, note } = await tunePrompt(agent.name, agent.role, base, row?.prompt_override || base, instructions);
+    const current = row?.prompt_override || base;
+    const { prompt, note } = key === 'tender_documents'
+      ? await tuneJson(agent.name, agent.role, current, instructions).then((r) => ({ prompt: JSON.stringify(r.config, null, 2), note: r.note }))
+      : await tunePrompt(agent.name, agent.role, base, current, instructions);
     await db.from('agent_settings').upsert({ agent_key: key, instructions, prompt_override: prompt, status: 'applied', error: null, updated_at: now });
     revalidatePath('/settings');
     return { ok: true, message: note ? `Applied. ${note}` : 'Applied — the agent uses its new configuration from its next run.' };
@@ -157,9 +162,13 @@ export async function saveAgentConfig(_prev: FormState, form: FormData): Promise
   }
   const base = await defaultPrompt(key);
   if (!base) return { ok: false, message: 'This agent’s default configuration hasn’t been synced yet.' };
-  try { validatePrompt(base, config); } catch (e: any) { return { ok: false, message: `Not saved: ${e.message}.` }; }
-  const same = config.trim() === base.trim();
-  await db.from('agent_settings').upsert({ agent_key: key, prompt_override: same ? null : config, status: same ? null : 'applied', error: null, updated_at: now });
+  let value = config;
+  try {
+    if (key === 'tender_documents') value = JSON.stringify(validateDocumentsConfig(JSON.parse(config)), null, 2);
+    else validatePrompt(base, config);
+  } catch (e: any) { return { ok: false, message: `Not saved: ${e instanceof SyntaxError ? 'that isn’t valid JSON' : e.message}.` }; }
+  const same = key === 'tender_documents' ? JSON.stringify(JSON.parse(value)) === JSON.stringify(JSON.parse(base)) : value.trim() === base.trim();
+  await db.from('agent_settings').upsert({ agent_key: key, prompt_override: same ? null : value, status: same ? null : 'applied', error: null, updated_at: now });
   revalidatePath('/settings');
   return { ok: true, message: same ? 'Matches the default — the agent runs on its default configuration.' : 'Saved — the agent uses this configuration from its next run.' };
 }

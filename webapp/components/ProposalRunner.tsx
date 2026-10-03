@@ -8,8 +8,8 @@ const POLL_MS = 5000;
 const GIVE_UP_MS = 6 * 60_000;
 
 /** The Proposal Manager Agent's button: writes the proposal brief, then offers it as a download. */
-export default function ProposalRunner({ opportunityId, proposalAt, running, lastError }: {
-  opportunityId: string; proposalAt: string | null; running: boolean; lastError: string | null;
+export default function ProposalRunner({ opportunityId, scopeId, proposalAt, running, lastError }: {
+  opportunityId: string; scopeId: string; proposalAt: string | null; running: boolean; lastError: string | null;
 }) {
   const router = useRouter();
   const [state, setState] = useState<'idle' | 'working' | 'error'>(running ? 'working' : 'idle');
@@ -34,7 +34,7 @@ export default function ProposalRunner({ opportunityId, proposalAt, running, las
   async function run() {
     setState('working'); setMessage(null);
     try {
-      const r = await startProposalBrief(opportunityId);
+      const r = await startProposalBrief(opportunityId, scopeId);
       if (r.status === 'done') { setState('idle'); router.refresh(); }
       else if (r.status === 'running') waitForBrief();
       else { setState('error'); setMessage(r.message ?? 'unknown error'); }
@@ -50,7 +50,7 @@ export default function ProposalRunner({ opportunityId, proposalAt, running, las
   }
   return (
     <div className="eval-run">
-      {proposalAt && <a className="btn-agent" href={`/tenders/${opportunityId}/proposal`} download>Download proposal brief (.md)</a>}
+      {proposalAt && <a className="btn-agent" href={`/tenders/${opportunityId}/proposal?scope=${scopeId}`} download>Download proposal brief (.md)</a>}
       <button type="button" className={proposalAt ? 'btn' : 'btn-agent'} onClick={run}>
         {proposalAt ? 'Regenerate' : 'Prepare proposal brief'}
       </button>

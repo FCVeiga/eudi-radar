@@ -9,6 +9,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { agentPrompt, companyBrief, isAgentEnabled } from '@/lib/settings';
+import { friendly, lockRow, unlockRow } from '@/lib/scopeWork';
 
 const MODEL = 'claude-opus-5-5';
 const LOCK_MINUTES = 6;
@@ -18,45 +19,39 @@ const GROUPS: Record<string, string> = {
 
 export type ProposalStatus = 'done' | 'running' | 'error';
 
-export async function ensureProposal(opportunityId: string): Promise<{ status: ProposalStatus; message?: string }> {
-  if (!(await isAgentEnabled('proposal_manager'))) return { status: 'error', message: 'the Proposal Manager Agent is switched off in Settings' };
-  const db = getSupabaseServerClient();
-  const cutoff = new Date(Date.now() - LOCK_MINUTES * 60_000).toISOString();
-  const { data: locked } = await db.from('opportunities')
-    .update({ proposal_started_at: new Date().toISOString(), proposal_error: null })
-    .eq('opportunity_id', opportunityId)
-    .or(`proposal_started_at.is.null,proposal_started_at.lt.${cutoff}`)
-    .select('opportunity_id');
-  if (!locked?.length) return { status: 'running' };
+export async function ensureProposal(opportunityId: string, scopeId: string): Promise<{ status: ProposalStatus; message?: string }> {
+  if (!(await isAgentEnabled('proposal_manager', scopeId))) return { status: 'error', message: 'the Proposal Manager Agent is switched off for this scope' };
+  const key = { scope_id: scopeId, opportunity_id: opportunityId };
+  if (!(await lockRow('scope_evaluations', key, 'proposal_started_at', 'proposal_error', LOCK_MINUTES))) return { status: 'running' };
   try {
-    await runProposal(opportunityId);
-    await db.from('opportunities').update({ proposal_started_at: null }).eq('opportunity_id', opportunityId);
+    await runProposal(opportunityId, scopeId);
+    await unlockRow('scope_evaluations', key, 'proposal_started_at', 'proposal_error', null);
     return { status: 'done' };
   } catch (e: any) {
-    const raw = String(e?.message || e);
-    const message = /credit balance/i.test(raw) ? 'the Anthropic API account is out of credit' : raw.slice(0, 200);
-    await db.from('opportunities').update({ proposal_started_at: null, proposal_error: message }).eq('opportunity_id', opportunityId);
+    const message = friendly(e);
+    await unlockRow('scope_evaluations', key, 'proposal_started_at', 'proposal_error', message);
     return { status: 'error', message };
   }
 }
 
-async function runProposal(opportunityId: string) {
+async function runProposal(opportunityId: string, scopeId: string) {
   if (!process.env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY is not configured on the server.');
   const db = getSupabaseServerClient();
-  const [{ data: o }, { data: reqs }, { data: award }, { data: docs }] = await Promise.all([
+  const [{ data: o }, { data: reqs }, { data: award }, { data: docs }, { data: se }] = await Promise.all([
     db.from('opportunities').select('*').eq('opportunity_id', opportunityId).single(),
-    db.from('requirements').select('requirement_group, category, requirement_text, mandatory, threshold, evidence_required, document, requirement_matches(match_status, notes)')
+    db.from('requirements').select('requirement_group, category, requirement_text, mandatory, threshold, evidence_required, document, requirement_matches(match_status, notes, scope_id)')
       .eq('opportunity_id', opportunityId),
     db.from('award_criteria').select('criterion, weight, subcriteria').eq('opportunity_id', opportunityId).order('weight', { ascending: false }),
     db.from('documents').select('name, name_en, document_type').eq('opportunity_id', opportunityId),
+    db.from('scope_evaluations').select('evaluation').match({ scope_id: scopeId, opportunity_id: opportunityId }).maybeSingle(),
   ]);
   if (!o) throw new Error('Tender not found.');
-  if (!o.evaluation) throw new Error('run the Tender Evaluation Agent first');
+  if (!se?.evaluation) throw new Error('run the Tender Evaluation Agent for this scope first');
 
-  const ev = o.evaluation;
+  const ev = se.evaluation;
   const title = o.title_en || o.title;
   const reqLines = (reqs || []).map((r: any, i: number) => {
-    const m = r.requirement_matches?.[0];
+    const m = (r.requirement_matches || []).find((x: any) => x.scope_id === scopeId);
     return `R${i + 1} [${GROUPS[r.requirement_group] ?? r.category}${r.mandatory ? ', mandatory' : ', optional'}] ${r.requirement_text}`
       + (r.threshold ? ` — threshold: ${r.threshold}` : '') + (r.evidence_required ? ` — evidence: ${r.evidence_required}` : '')
       + (r.document ? ` — source: ${r.document}` : '') + (m ? ` — evaluation: ${m.match_status}${m.notes ? ` (${m.notes})` : ''}` : '');
@@ -76,7 +71,7 @@ async function runProposal(opportunityId: string) {
     `\nPublished tender documents:\n${(docs || []).map((d: any) => `- [${d.document_type}] ${d.name_en || d.name}`).join('\n') || '(none listed)'}`,
   ].filter(Boolean).join('\n');
 
-  const [prompt, brief] = await Promise.all([agentPrompt('proposal_manager', 'proposal_manager.md'), companyBrief({ withDocuments: true })]);
+  const [prompt, brief] = await Promise.all([agentPrompt('proposal_manager', 'proposal_manager.md', scopeId), companyBrief({ withDocuments: true, scopeId })]);
   const client = new Anthropic({
     defaultHeaders: process.env.ANTHROPIC_WORKSPACE_ID ? { 'anthropic-workspace-id': process.env.ANTHROPIC_WORKSPACE_ID } : undefined,
   });
@@ -97,8 +92,8 @@ async function runProposal(opportunityId: string) {
   if (!markdown.startsWith('#')) throw new Error('The agent did not return a brief.');
   if (response.stop_reason === 'max_tokens') markdown += '\n\n> _The brief was cut short at the length limit — re-run to regenerate it._\n';
 
-  const { error } = await db.from('opportunities').update({
+  const { error } = await db.from('scope_evaluations').update({
     proposal_brief: markdown, proposal_at: new Date().toISOString(), proposal_error: null,
-  }).eq('opportunity_id', opportunityId);
+  }).match({ scope_id: scopeId, opportunity_id: opportunityId });
   if (error) throw new Error(error.message);
 }

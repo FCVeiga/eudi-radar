@@ -9,6 +9,7 @@ import { NewsItem, Opportunity, isNew, newsCategoryLabel, oppCategoryLabel, titl
 import { FeedItem, HALF_LIFE_DAYS } from '@/lib/feed';
 import { firstInLanguage } from '@/lib/english';
 import { getPlatformLanguage } from '@/lib/language';
+import { getScopeItems } from '@/lib/scopes';
 
 const MAX_WORDS = 6;
 
@@ -69,10 +70,15 @@ export async function search(q: string, now = new Date()) {
   const posted = new Map((copy.data || []).map((p: any) => [p.post_id, p]));
   const decay = (at: Date) => Math.pow(0.5, Math.max(0, (now.getTime() - at.getTime()) / 86400_000) / HALF_LIFE_DAYS);
 
-  const oppItems: FeedItem[] = [...(opps.data || []), ...(extraOpps.data || [])].map((o: Opportunity) => {
+  // Only what the viewer's scopes found, scored with their relevance.
+  const [tenderScope, newsScope] = await Promise.all([getScopeItems('tender'), getScopeItems('news')]);
+  const oppRows = [...(opps.data || []), ...(extraOpps.data || [])].filter((o: Opportunity) => !tenderScope || tenderScope.relevance.has(o.opportunity_id));
+  const newsRows = [...(news.data || []), ...(extraNews.data || [])].filter((n: NewsItem) => !newsScope || newsScope.relevance.has(n.news_id));
+
+  const oppItems: FeedItem[] = oppRows.map((o: Opportunity) => {
     const p = posted.get(`opp:${o.opportunity_id}`);
     const at = new Date(o.first_detected || o.publication_date || now);
-    const score = o.opportunity_relevance_score ?? 30;
+    const score = tenderScope?.relevance.get(o.opportunity_id) ?? o.opportunity_relevance_score ?? 30;
     return {
       key: `opp:${o.opportunity_id}`, kind: 'opportunity', event: 'new_opportunity',
       href: `/tenders/${o.opportunity_id}`,
@@ -82,10 +88,10 @@ export async function search(q: string, now = new Date()) {
       deadline: o.deadline, isNew: isNew(o, now), statusLabel: statusLabel(o, now),
     };
   });
-  const newsItems: FeedItem[] = [...(news.data || []), ...(extraNews.data || [])].map((n: NewsItem) => {
+  const newsItems: FeedItem[] = newsRows.map((n: NewsItem) => {
     const p = posted.get(`news:${n.news_id}`);
     const at = new Date(n.published_date || n.created_at || now);
-    const score = n.relevance_score ?? 30;
+    const score = newsScope?.relevance.get(n.news_id) ?? n.relevance_score ?? 30;
     return {
       key: `news:${n.news_id}`, kind: 'news', event: 'news', href: `/news/${n.news_id}`,
       headline: p?.headline || titleOf(n), body: p ? p.body : firstInLanguage(n.summary, n.excerpt),

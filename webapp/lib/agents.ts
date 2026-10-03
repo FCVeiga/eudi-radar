@@ -1,6 +1,7 @@
 /**
  * The platform's agents, as shown on Settings and in the sidebar's
- * "Working Agents". (The Verification Agent, which checks each tender is
+ * "Working Agents". Search, Triage, Tender Evaluation, Proposal Manager and
+ * News Report work per scope (lib/scopes.ts); the rest are platform agents. (The Verification Agent, which checks each tender is
  * really open, runs internally on the platform's own configuration and is
  * not listed.) Keys match agent_settings.agent_key and the pipeline's
  * services/agent_settings.py (AGENT_PROMPTS).
@@ -25,7 +26,7 @@ export type AgentDef = {
 export const AGENTS: AgentDef[] = [
   {
     key: 'search', name: 'Search Agent', runs: 'pipeline', prompt: 'search scope (Settings → Search scope)', fineTune: false,
-    role: 'Searches TED, the web, news and every followed source for what your search scope describes, in each country’s languages.',
+    role: 'Searches TED, the web, news and every followed source for what this scope describes, in each country’s languages.',
     face: { colors: ['#00CCFF', '#3D7BFF'], eyes: 'scan', top: 'dish', mouth: 'flat' },
   },
   {
@@ -45,17 +46,17 @@ export const AGENTS: AgentDef[] = [
   },
   {
     key: 'tender_evaluation', name: 'Tender Evaluation Agent', runs: 'on click', prompt: 'webapp/agents/tender_evaluation.md', fineTune: true,
-    role: 'Checks a tender’s requirements against your company material, scores the fit and recommends whether to bid.',
+    role: 'Checks a tender’s requirements against the scope’s instructions and context, scores the fit and recommends whether to bid.',
     face: { colors: ['#FF5FA2', '#B5367F'], eyes: 'visor', top: 'halo', mouth: 'grin' },
   },
   {
     key: 'proposal_manager', name: 'Proposal Manager Agent', runs: 'on click', prompt: 'webapp/agents/proposal_manager.md', fineTune: true,
-    role: 'After the evaluation, writes the proposal brief: requirements mapped to your team, references and certifications, the documents to submit, gaps and next steps.',
+    role: 'After the evaluation, writes the proposal brief: requirements mapped to the scope’s team, references and certifications, the documents to submit, gaps and next steps.',
     face: { colors: ['#5EEAD4', '#0D9488'], eyes: 'round', top: 'cap', mouth: 'smile' },
   },
   {
     key: 'news_report', name: 'News Report Agent', runs: 'on page open', prompt: 'webapp/agents/news_report.md', fineTune: true,
-    role: 'Reads a news story in full when it is opened, summarises it and recommends what your company should do.',
+    role: 'Reads a news story in full when it is opened, summarises it and recommends what to do about it for this scope.',
     face: { colors: ['#00CCFF', '#00FFCC'], eyes: 'happy', top: 'antenna', mouth: 'smile' },
   },
   {

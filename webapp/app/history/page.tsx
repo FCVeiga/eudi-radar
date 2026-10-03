@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { TENDER_CATEGORIES, oppCategoryLabel, titleOf } from '@/lib/data';
 import FilterSelect from '@/components/FilterSelect';
+import { getScopeItems } from '@/lib/scopes';
 import SortSelect from '@/components/SortSelect';
 import { getPlatformLanguage } from '@/lib/language';
 
@@ -60,9 +61,12 @@ export default async function DatabasePage({
     .map((c) => ({ value: c as string, label: countryName.get(c) ?? c }))
     .sort((a, b) => a.label.localeCompare(b.label));
 
+  // Only the tenders the viewer's scopes found (lib/scopes.ts), with their relevance.
+  const scopeItems = await getScopeItems('tender');
   const sort: SortKey = (Object.keys(SORTS) as SortKey[]).find((k) => k === searchParams.sort) ?? 'deadline';
   const reversed = searchParams.dir === 'rev';
-  const all = (data || []) as Row[];
+  const all = ((data || []) as Row[]).filter((r) => !scopeItems || scopeItems.relevance.has(r.opportunity_id))
+    .map((r) => (scopeItems ? { ...r, opportunity_relevance_score: scopeItems.relevance.get(r.opportunity_id) ?? r.opportunity_relevance_score } : r));
   const rows = [...all.filter(HAS[sort]).sort((a, b) => (reversed ? -1 : 1) * SORTS[sort](a, b)), ...all.filter((r) => !HAS[sort](r))];
 
   const sortHref = (key: SortKey) => {

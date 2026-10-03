@@ -19,9 +19,10 @@ function Submit({ label, busy, primary }: { label: string; busy: string; primary
  * (for the Search Agent: the search scope), and its configuration — shown
  * and editable under "Open config"; what is saved there is what it runs on.
  */
-export default function AgentCard({ agent, enabled, instructions, config, custom, status, error }: {
+export default function AgentCard({ agent, enabled, instructions, config, custom, status, error, scopeId = null }: {
   agent: AgentDef; enabled: boolean; instructions: string | null; config: string | null;
   custom: boolean; status: string | null; error: string | null;
+  scopeId?: string | null;   // scope agents: the scope they belong to; platform agents: null
 }) {
   const router = useRouter();
   const search = agent.key === 'search';
@@ -44,7 +45,7 @@ export default function AgentCard({ agent, enabled, instructions, config, custom
         </div>
         <button type="button" role="switch" aria-checked={on} aria-label={`${agent.name} ${on ? 'on' : 'off'}`}
           className={`switch ${on ? 'on' : ''}`}
-          onClick={() => { const next = !on; setOn(next); start(() => setAgentEnabled(agent.key, next)); }}>
+          onClick={() => { const next = !on; setOn(next); start(() => setAgentEnabled(agent.key, next, scopeId)); }}>
           <span />
         </button>
       </div>
@@ -59,6 +60,7 @@ export default function AgentCard({ agent, enabled, instructions, config, custom
       {editable && (
         <form action={tune} className="agent-tune">
           <input type="hidden" name="agent" value={agent.key} />
+          {scopeId && <input type="hidden" name="scopeId" value={scopeId} />}
           <label className="field">
             <span>Fine-tuning <em>— in plain language</em></span>
             <textarea name={search ? 'scope' : 'instructions'} rows={3} defaultValue={instructions ?? ''} maxLength={search ? 8000 : 6000}
@@ -73,6 +75,7 @@ export default function AgentCard({ agent, enabled, instructions, config, custom
       <dialog ref={dialog} className="modal modal-wide" onClick={(e) => { if (e.target === dialog.current) dialog.current?.close(); }}>
         <form action={save} className="modal-body">
           <input type="hidden" name="agent" value={agent.key} />
+          {scopeId && <input type="hidden" name="scopeId" value={scopeId} />}
           <div className="modal-head">
             <h2>{agent.name} — {custom ? 'customised configuration' : 'default configuration'}</h2>
             <button type="button" className="modal-close" aria-label="Close" onClick={() => dialog.current?.close()}>×</button>
@@ -95,7 +98,7 @@ export default function AgentCard({ agent, enabled, instructions, config, custom
               {custom && (
                 <button type="button" className="btn" onClick={() => {
                   if (confirm(`Reset ${agent.name} to its default configuration${search ? '' : ' and clear its fine-tuning'}?`)) {
-                    start(async () => { await resetAgentConfig(agent.key); router.refresh(); });
+                    start(async () => { await resetAgentConfig(agent.key, scopeId); router.refresh(); });
                   }
                 }}>Reset to default</button>
               )}

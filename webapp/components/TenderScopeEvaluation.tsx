@@ -1,0 +1,78 @@
+import Link from 'next/link';
+import AgentAvatar from '@/components/AgentAvatar';
+import TenderEvaluationRunner from '@/components/TenderEvaluationRunner';
+import ProposalRunner from '@/components/ProposalRunner';
+import { firstInLanguage } from '@/lib/english';
+
+export type Evaluation = {
+  fit_score: number; verdict: string; take?: string; strengths: string[]; gaps: string[];
+  partners: { role: string; why?: string }[]; next_steps: { title: string; deadline?: string | null }[];
+};
+const VERDICTS: Record<string, string> = { bid: 'Bid', bid_with_partner: 'Bid with a partner', consider: 'Consider', no_bid: 'No bid' };
+const fmtDate = (iso: string) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+/** One scope's evaluation of a tender (and its proposal brief), on the tender page. */
+export default function TenderScopeEvaluation({ opportunityId, scope, row, showName, canRun, signedIn, evaluatorOn, proposerOn, ready, analysedAt }: {
+  opportunityId: string; scope: { id: string; name: string }; row: any; showName: boolean; canRun: boolean; signedIn: boolean;
+  evaluatorOn: boolean; proposerOn: boolean; ready: boolean; analysedAt: string | null;
+}) {
+  const evaluation = (row?.evaluation ?? null) as Evaluation | null;
+  const running = !!row?.evaluation_started_at && Date.now() - new Date(row.evaluation_started_at).getTime() < 5 * 60_000;
+  const proposing = !!row?.proposal_started_at && Date.now() - new Date(row.proposal_started_at).getTime() < 6 * 60_000;
+  const login = <p className="muted"><Link href={`/login?next=/tenders/${opportunityId}`}>Log in</Link> and create a scope to evaluate tenders against your own context.</p>;
+
+  return (
+    <section className="detail-block analysis-block" id={`evaluation-${scope.id}`}>
+      <div className="agent-head">
+        <AgentAvatar agent="tender_evaluation" working={running} off={!evaluatorOn} />
+        <div className="agent-id">
+          <h2>Tender Evaluation{showName && <span className="scope-name-chip">{scope.name}</span>}</h2>
+          <span className="agent-name">Tender Evaluation Agent{row?.evaluated_at ? ` · report from ${fmtDate(row.evaluated_at)}` : ''}</span>
+        </div>
+        {evaluation && <span className={`verdict eval-${evaluation.verdict}`}>{VERDICTS[evaluation.verdict] ?? evaluation.verdict}</span>}
+      </div>
+      {!evaluation && <p className="agent-intro">Checks every requirement of this tender against the scope’s instructions and context, scores the fit and recommends whether to bid.</p>}
+      {evaluation && analysedAt && row?.evaluated_at && analysedAt > row.evaluated_at && (
+        <p className="summary-note">The requirements were updated after this report (new tender documents) — re-run the evaluation.</p>
+      )}
+      {evaluation && (
+        <div className="eval-report">
+          <div className="eval-score"><span className="eval-score-num">{evaluation.fit_score}</span><span className="eval-score-label">Fit score</span></div>
+          {firstInLanguage(evaluation.take) && <p className="analysis-take">{evaluation.take}</p>}
+          <div className="eval-cols">
+            {evaluation.strengths.length > 0 && <div><h3>Strengths</h3><ul>{evaluation.strengths.map((x, i) => <li key={i}>{x}</li>)}</ul></div>}
+            {evaluation.gaps.length > 0 && <div><h3>Gaps &amp; to confirm</h3><ul>{evaluation.gaps.map((x, i) => <li key={i}>{x}</li>)}</ul></div>}
+          </div>
+          {evaluation.partners.length > 0 && <div><h3>Partners needed</h3><ul>{evaluation.partners.map((p, i) => <li key={i}><strong>{p.role}</strong>{p.why ? ` — ${p.why}` : ''}</li>)}</ul></div>}
+          {evaluation.next_steps.length > 0 && (
+            <div><h3>Next steps</h3><ul>{evaluation.next_steps.map((n, i) => (
+              <li key={i}>{n.title}{n.deadline ? <span className="action-deadline"> by {fmtDate(n.deadline)}</span> : null}</li>
+            ))}</ul></div>
+          )}
+        </div>
+      )}
+      {!evaluatorOn ? <p className="muted">The Tender Evaluation Agent is switched off for this scope.</p>
+        : !canRun ? (signedIn ? null : login)
+          : <TenderEvaluationRunner opportunityId={opportunityId} scopeId={scope.id} evaluatedAt={row?.evaluated_at ?? null} running={running}
+              ready={ready} lastError={row?.evaluation_error ?? null} />}
+
+      {evaluation && proposerOn && canRun && (
+        <div className="proposal-block" id={`proposal-${scope.id}`}>
+          <div className="agent-head">
+            <AgentAvatar agent="proposal_manager" size={36} working={proposing} />
+            <div className="agent-id">
+              <h3>Proposal Manager Agent</h3>
+              <span className="agent-name">{row?.proposal_at ? `Proposal brief from ${fmtDate(row.proposal_at)}` : 'Next step after the evaluation'}</span>
+            </div>
+          </div>
+          <p className="agent-intro">
+            Writes the proposal brief for the bid team: the tender summary, deadlines and evaluation criteria; every eligibility,
+            reference, team, technical and project requirement with the answer the scope’s context supports (who fills each role,
+            which references and certificates); the documents to submit; the gaps and the next steps.
+          </p>
+          <ProposalRunner opportunityId={opportunityId} scopeId={scope.id} proposalAt={row?.proposal_at ?? null} running={proposing} lastError={row?.proposal_error ?? null} />
+        </div>
+      )}
+    </section>
+  );
+}

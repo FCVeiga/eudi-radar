@@ -13,6 +13,7 @@
  */
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { getActiveOpportunities, newsCategoryLabel, oppCategoryLabel } from '@/lib/data';
+import { getScopeItems } from '@/lib/scopes';
 import { getPlatformLanguage } from '@/lib/language';
 
 export const HALF_LIFE_DAYS = 4;
@@ -77,13 +78,21 @@ export async function getFeed(view: FeedView, now = new Date()) {
     getActiveOpportunities(),
   ]);
   const active = new Map(opportunities.map((o) => [o.opportunity_id, o]));
+  // The viewer's scopes: which items count, and the relevance each scope gave them.
+  const [tenderItems, newsItems] = await Promise.all([getScopeItems('tender'), getScopeItems('news')]);
+  const inScope = (p: PostRow) => p.kind === 'news'
+    ? !newsItems || (!!p.news_id && newsItems.relevance.has(p.news_id))
+    : !tenderItems || (!!p.opportunity_id && tenderItems.relevance.has(p.opportunity_id));
+  const scopeScore = (p: PostRow) => p.kind === 'news'
+    ? (p.news_id ? newsItems?.relevance.get(p.news_id) : undefined)
+    : (p.opportunity_id ? tenderItems?.relevance.get(p.opportunity_id) : undefined);
 
   const items: FeedItem[] = ((data || []) as PostRow[])
     // Opportunity posts only while the opportunity is still open; awards and news always.
-    .filter((p) => p.kind === 'news' || p.event === 'awarded' || (p.opportunity_id && active.has(p.opportunity_id)))
+    .filter((p) => inScope(p) && (p.kind === 'news' || p.event === 'awarded' || (p.opportunity_id && active.has(p.opportunity_id))))
     .map((p) => {
       const at = new Date(p.posted_at || p.created_at || now);
-      const score = p.score ?? UNSCORED;
+      const score = scopeScore(p) ?? p.score ?? UNSCORED;
       const opp = p.opportunity_id ? active.get(p.opportunity_id) : undefined;
       const movement: FeedItem['movement'] =
         p.rank === null ? 'same'

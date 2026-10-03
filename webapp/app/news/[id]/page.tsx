@@ -10,6 +10,7 @@ import CommentsSection from '@/components/social/CommentsSection';
 import { getLikes } from '@/lib/likes';
 import { isAgentEnabled } from '@/lib/settings';
 import { getPlatformLanguage } from '@/lib/language';
+import { getViewScopes } from '@/lib/scopes';
 
 // The News Report Agent runs inside this page's server action: give it time.
 export const maxDuration = 300;
@@ -50,8 +51,14 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
   const paragraphs = (firstInLanguage(n.summary_long) ?? firstInLanguage(post?.body, n.summary) ?? '')
     .split(/\n{2,}/).map((p: string) => p.trim()).filter(Boolean);
   const facts: string[] = Array.isArray(n.key_facts) ? n.key_facts.filter((f: string) => firstInLanguage(f)) : [];
-  const analysis = n.analysis as Analysis | null;
-  const [agentOn, likes] = await Promise.all([isAgentEnabled('news_report'), getLikes('news', [n.news_id])]);
+  // One report per scope the viewer looks through (their active scopes, or the default scope).
+  const { scopes: viewScopes } = await getViewScopes();
+  const [likes, { data: reports }, agentFlags] = await Promise.all([
+    getLikes('news', [n.news_id]),
+    supabase.from('scope_news_reports').select('*').eq('news_id', n.news_id).in('scope_id', viewScopes.map((sc) => sc.id)),
+    Promise.all(viewScopes.map(async (sc) => [sc.id, await isAgentEnabled('news_report', sc.id)] as const)),
+  ]);
+  const agentOnFor = new Map(agentFlags);
   const domain = n.source_url ? new URL(n.source_url).hostname.replace(/^www\./, '') : n.source_name;
 
   return (
@@ -90,39 +97,45 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
         {n.unverified && <p className="muted">From a tracked social account, not a primary source — treat as unconfirmed.</p>}
       </section>
 
-      <section className="detail-block analysis-block">
-        <div className="agent-head">
-          <AgentAvatar agent="news_report" working={!analysis && agentOn} off={!agentOn && !analysis} />
-          <div className="agent-id">
-            <h2>News Report Agent Analysis</h2>
-            {n.analysed_at && <span className="agent-name">Report from {fmtDate(n.analysed_at)}</span>}
-          </div>
-          {analysis && <span className={`verdict ${analysis.verdict}`} title={VERDICTS[analysis.verdict]?.note}>{VERDICTS[analysis.verdict]?.label}</span>}
-        </div>
-
-        {!analysis && (agentOn
-          ? <NewsReportRunner newsId={n.news_id} lastError={n.report_error ?? null} />
-          : <p className="muted">The News Report Agent is switched off in Settings.</p>)}
-        {analysis && (
-          <>
-            {firstInLanguage(analysis.take) && <p className="analysis-take">{analysis.take}</p>}
-            <div className="actions">
-              {analysis.actions.map((a, i) => (
-                <div key={i} className="action">
-                  <div className="action-top">
-                    <span className={`action-type at-${a.type}`}>{ACTION_LABELS[a.type] ?? a.type}</span>
-                    {a.priority && <span className={`action-priority ${a.priority}`}>{a.priority} priority</span>}
-                    {a.deadline && <span className="action-deadline">by {fmtDate(a.deadline)}</span>}
-                  </div>
-                  <h3>{a.title}</h3>
-                  {a.why && <p className="action-why">{a.why}</p>}
-                  {a.next_step && <p className="action-next"><span>Next step</span>{a.next_step}</p>}
-                </div>
-              ))}
+      {viewScopes.map((scope) => {
+        const r = (reports || []).find((x: any) => x.scope_id === scope.id);
+        const analysis = (r?.analysis ?? null) as Analysis | null;
+        const agentOn = agentOnFor.get(scope.id) ?? true;
+        return (
+          <section key={scope.id} className="detail-block analysis-block">
+            <div className="agent-head">
+              <AgentAvatar agent="news_report" working={!analysis && agentOn} off={!agentOn && !analysis} />
+              <div className="agent-id">
+                <h2>News Report Agent Analysis{viewScopes.length > 1 && <span className="scope-name-chip">{scope.name}</span>}</h2>
+                {r?.analysed_at && <span className="agent-name">Report from {fmtDate(r.analysed_at)}</span>}
+              </div>
+              {analysis && <span className={`verdict ${analysis.verdict}`} title={VERDICTS[analysis.verdict]?.note}>{VERDICTS[analysis.verdict]?.label}</span>}
             </div>
-          </>
-        )}
-      </section>
+            {!analysis && (agentOn
+              ? <NewsReportRunner newsId={n.news_id} scopeId={scope.id} lastError={r?.error ?? null} />
+              : <p className="muted">The News Report Agent is switched off for this scope.</p>)}
+            {analysis && (
+              <>
+                {firstInLanguage(analysis.take) && <p className="analysis-take">{analysis.take}</p>}
+                <div className="actions">
+                  {analysis.actions.map((a, i) => (
+                    <div key={i} className="action">
+                      <div className="action-top">
+                        <span className={`action-type at-${a.type}`}>{ACTION_LABELS[a.type] ?? a.type}</span>
+                        {a.priority && <span className={`action-priority ${a.priority}`}>{a.priority} priority</span>}
+                        {a.deadline && <span className="action-deadline">by {fmtDate(a.deadline)}</span>}
+                      </div>
+                      <h3>{a.title}</h3>
+                      {a.why && <p className="action-why">{a.why}</p>}
+                      {a.next_step && <p className="action-next"><span>Next step</span>{a.next_step}</p>}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </section>
+        );
+      })}
       <CommentsSection itemType="news" itemId={n.news_id} loginNext={`/news/${n.news_id}`} />
     </div>
   );

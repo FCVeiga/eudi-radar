@@ -7,11 +7,11 @@ import UpdateComment, { UpdateEvent } from '@/components/UpdateComment';
 import TenderDocuments, { Doc } from '@/components/TenderDocuments';
 import AgentAvatar from '@/components/AgentAvatar';
 import { isAgentEnabled } from '@/lib/settings';
-import TenderEvaluationRunner from '@/components/TenderEvaluationRunner';
-import ProposalRunner from '@/components/ProposalRunner';
 import HeartButton from '@/components/HeartButton';
 import { getLikes } from '@/lib/likes';
 import { getCurrentUser } from '@/lib/auth';
+import { getScopeItems, getViewScopes } from '@/lib/scopes';
+import TenderScopeEvaluation from '@/components/TenderScopeEvaluation';
 import { getPlatformLanguage } from '@/lib/language';
 
 // The Tender Evaluation Agent runs inside this page's server action: give it time.
@@ -75,7 +75,7 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
 
   const { data: requirements } = await supabase
     .from('requirements')
-    .select('*, requirement_matches(match_status, matched_evidence, notes)')
+    .select('*, requirement_matches(match_status, matched_evidence, notes, scope_id)')
     .eq('opportunity_id', params.id);
 
   const { data: documents } = await supabase
@@ -97,18 +97,23 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
     .order('detected_at', { ascending: false });
 
   const reqs = (requirements || []).filter((r) => firstInLanguage(r.requirement_text));
-  const evaluated = reqs.some((r) => r.requirement_matches?.length);
-  const evaluation = o.evaluation as Evaluation | null;
+  // Scopes: the viewer's active scopes (or the default scope): relevance, evaluations, match columns.
+  const { scopes: viewScopes, own } = await getViewScopes();
+  const { data: scopeEvals } = await supabase.from('scope_evaluations').select('*').eq('opportunity_id', params.id)
+    .in('scope_id', viewScopes.map((s) => s.id));
+  const evalOf = (scopeId: string) => (scopeEvals || []).find((r: any) => r.scope_id === scopeId) ?? null;
+  const evaluatedScopes = viewScopes.filter((s) => evalOf(s.id)?.evaluation);
+  const scopeItems = await getScopeItems('tender');
+  const relevance = scopeItems?.relevance.get(params.id) ?? o.opportunity_relevance_score;
+  const fits = evaluatedScopes.map((s) => evalOf(s.id).evaluation.fit_score as number);
+  const matchOf = (r: any, scopeId: string) => (r.requirement_matches || []).find((m: any) => m.scope_id === scopeId);
   const summary = (firstInLanguage(o.tender_summary) ?? firstInLanguage(o.summary) ?? '')
     .split(/\n{2,}/).map((p: string) => p.trim()).filter(Boolean);
-  const [evaluatorOn, proposerOn, likes, user] = await Promise.all([
-    isAgentEnabled('tender_evaluation'), isAgentEnabled('proposal_manager'), getLikes('tender', [o.opportunity_id]), getCurrentUser(),
+  const [likes, user, agentFlags] = await Promise.all([
+    getLikes('tender', [o.opportunity_id]), getCurrentUser(),
+    Promise.all(viewScopes.map(async (s) => [s.id, await isAgentEnabled('tender_evaluation', s.id), await isAgentEnabled('proposal_manager', s.id)] as const)),
   ]);
-  const loginToRun = (agent: string) => (
-    <p className="muted"><Link href={`/login?next=/tenders/${o.opportunity_id}`}>Log in</Link> to run the {agent}.</p>
-  );
-  const proposing = !!o.proposal_started_at && Date.now() - new Date(o.proposal_started_at).getTime() < 6 * 60_000;
-  const running = !!o.evaluation_started_at && Date.now() - new Date(o.evaluation_started_at).getTime() < 5 * 60_000;
+  const flags = new Map(agentFlags.map(([id, e, p]) => [id, { evaluator: e, proposer: p }]));
 
   return (
     <div>
@@ -127,8 +132,8 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
       </div>
 
       <div className="stat-grid">
-        <div className="stat"><div className="stat-label">Relevance</div><div className="stat-num">{o.opportunity_relevance_score ?? '—'}</div></div>
-        <div className="stat"><div className="stat-label">Fit</div><div className="stat-num">{evaluation?.fit_score ?? '—'}</div></div>
+        <div className="stat"><div className="stat-label">Relevance</div><div className="stat-num">{relevance ?? '—'}</div></div>
+        <div className="stat"><div className="stat-label">Fit</div><div className="stat-num">{fits.length ? Math.max(...fits) : '—'}</div></div>
         <div className="stat"><div className="stat-label">Value</div><div className="stat-num small">{o.estimated_value ? `${o.currency || ''} ${o.estimated_value.toLocaleString()}` : 'Not disclosed'}</div></div>
         <div className="stat"><div className="stat-label">Deadline</div><div className="stat-num small"><DeadlineText deadline={o.deadline} /></div></div>
       </div>
@@ -145,68 +150,12 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
             </div>
           )}
 
-          <section className="detail-block analysis-block" id="evaluation">
-            <div className="agent-head">
-              <AgentAvatar agent="tender_evaluation" working={running} off={!evaluatorOn} />
-              <div className="agent-id">
-                <h2>Tender Evaluation</h2>
-                <span className="agent-name">Tender Evaluation Agent{o.evaluated_at ? ` · report from ${fmtDate(o.evaluated_at)}` : ''}</span>
-              </div>
-              {evaluation && <span className={`verdict eval-${evaluation.verdict}`}>{VERDICTS[evaluation.verdict] ?? evaluation.verdict}</span>}
-            </div>
-            {!evaluation && (
-              <p className="agent-intro">
-                Checks every requirement of this tender against WalliD&apos;s profile, scores the fit and recommends whether to bid.
-              </p>
-            )}
-            {evaluation && o.tender_analysed_at && o.evaluated_at && o.tender_analysed_at > o.evaluated_at && (
-              <p className="summary-note">The requirements were updated after this report (new tender documents) — re-run the evaluation.</p>
-            )}
-            {evaluation && (
-              <div className="eval-report">
-                <div className="eval-score"><span className="eval-score-num">{evaluation.fit_score}</span><span className="eval-score-label">Fit score</span></div>
-                {firstInLanguage(evaluation.take) && <p className="analysis-take">{evaluation.take}</p>}
-                <div className="eval-cols">
-                  {evaluation.strengths.length > 0 && (
-                    <div><h3>Strengths</h3><ul>{evaluation.strengths.map((x, i) => <li key={i}>{x}</li>)}</ul></div>
-                  )}
-                  {evaluation.gaps.length > 0 && (
-                    <div><h3>Gaps &amp; to confirm</h3><ul>{evaluation.gaps.map((x, i) => <li key={i}>{x}</li>)}</ul></div>
-                  )}
-                </div>
-                {evaluation.partners.length > 0 && (
-                  <div><h3>Partners needed</h3><ul>{evaluation.partners.map((p, i) => <li key={i}><strong>{p.role}</strong>{p.why ? ` — ${p.why}` : ''}</li>)}</ul></div>
-                )}
-                {evaluation.next_steps.length > 0 && (
-                  <div><h3>Next steps</h3><ul>{evaluation.next_steps.map((n, i) => (
-                    <li key={i}>{n.title}{n.deadline ? <span className="action-deadline"> by {fmtDate(n.deadline)}</span> : null}</li>
-                  ))}</ul></div>
-                )}
-              </div>
-            )}
-            {!evaluatorOn ? <p className="muted">The Tender Evaluation Agent is switched off in Settings.</p> : !user ? loginToRun('Tender Evaluation Agent') : <TenderEvaluationRunner opportunityId={o.opportunity_id} evaluatedAt={o.evaluated_at ?? null} running={running}
-                              ready={!!o.tender_summary || reqs.length > 0} lastError={o.evaluation_error ?? null} />}
-
-            {evaluation && proposerOn && (
-              <div className="proposal-block" id="proposal">
-                <div className="agent-head">
-                  <AgentAvatar agent="proposal_manager" size={36} working={proposing} />
-                  <div className="agent-id">
-                    <h3>Proposal Manager Agent</h3>
-                    <span className="agent-name">{o.proposal_at ? `Proposal brief from ${fmtDate(o.proposal_at)}` : 'Next step after the evaluation'}</span>
-                  </div>
-                </div>
-                <p className="agent-intro">
-                  Writes the proposal brief for the bid team: the tender summary, deadlines and evaluation criteria; every
-                  eligibility, reference, team, technical and project requirement with the answer your company material
-                  supports (who fills each role, which references and certificates); the documents to submit; the gaps
-                  and the next steps.
-                </p>
-                {user ? <ProposalRunner opportunityId={o.opportunity_id} proposalAt={o.proposal_at ?? null} running={proposing}
-                                lastError={o.proposal_error ?? null} /> : loginToRun('Proposal Manager Agent')}
-              </div>
-            )}
-          </section>
+          {viewScopes.map((scope) => (
+            <TenderScopeEvaluation key={scope.id} opportunityId={o.opportunity_id} scope={{ id: scope.id, name: scope.name }}
+              row={evalOf(scope.id)} showName={viewScopes.length > 1 || !own} canRun={own} signedIn={!!user}
+              evaluatorOn={flags.get(scope.id)?.evaluator ?? true} proposerOn={flags.get(scope.id)?.proposer ?? true}
+              ready={!!o.tender_summary || reqs.length > 0} analysedAt={o.tender_analysed_at ?? null} />
+          ))}
           {changes && changes.length > 0 && (
             <div className="detail-block" id="updates">
               <h2>Updates <span className="uc-count">{changes.length}</span></h2>
@@ -249,7 +198,7 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
           )}
 
           <div className="detail-block" id="requirements">
-            <h2>{evaluated ? <>Requirements &amp; Match Status</> : 'Requirements'} {reqs.length > 0 && <span className="uc-count">{reqs.length}</span>}</h2>
+            <h2>{evaluatedScopes.length ? <>Requirements &amp; Match Status</> : 'Requirements'} {reqs.length > 0 && <span className="uc-count">{reqs.length}</span>}</h2>
             {reqs.length === 0 ? (
               <p className="muted">
                 {o.tender_analysed_at
@@ -260,7 +209,7 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
               <div key={g.key} className="req-category-block">
                 <div className="req-category-title">{g.label} <span className="uc-count">{g.rows.length}</span></div>
                 <table className="req-table">
-                  <thead><tr><th>Requirement</th><th>Threshold</th><th>Mandatory</th>{evaluated && <th>Match</th>}</tr></thead>
+                  <thead><tr><th>Requirement</th><th>Threshold</th><th>Mandatory</th>{evaluatedScopes.map((sc) => <th key={sc.id}>{evaluatedScopes.length > 1 ? `Match · ${sc.name}` : 'Match'}</th>)}</tr></thead>
                   <tbody>
                     {g.rows.map((r) => (
                       <tr key={r.requirement_id}>
@@ -271,14 +220,15 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
                         </td>
                         <td>{firstInLanguage(r.threshold) ?? ''}</td>
                         <td>{r.mandatory ? <span className="mand-yes">Mandatory</span> : <span className="mand-no">Optional</span>}</td>
-                        {evaluated && (
-                          <td>
-                            <span className={`badge-match ${matchClass(r.requirement_matches?.[0]?.match_status)}`}>
-                              {matchLabel(r.requirement_matches?.[0]?.match_status)}
-                            </span>
-                            {r.requirement_matches?.[0]?.notes && <div className="req-match-note">{r.requirement_matches[0].notes}</div>}
-                          </td>
-                        )}
+                        {evaluatedScopes.map((sc) => {
+                          const m = matchOf(r, sc.id);
+                          return (
+                            <td key={sc.id}>
+                              <span className={`badge-match ${matchClass(m?.match_status)}`}>{matchLabel(m?.match_status)}</span>
+                              {m?.notes && <div className="req-match-note">{m.notes}</div>}
+                            </td>
+                          );
+                        })}
                       </tr>
                     ))}
                   </tbody>

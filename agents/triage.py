@@ -39,7 +39,7 @@ def heuristic_prefilter(candidate: Candidate) -> bool:
     return not any(term in text for term in _SUPPRESS_TERMS)
 
 
-def run_triage_llm(candidate: Candidate) -> dict:
+def run_triage_llm(candidate: Candidate, system_prompt: str = None) -> dict:
     """Real LLM call — sends the candidate to the cheap model against
     prompts/triage.md, returns the parsed JSON output (spec section 17)."""
     user_content = (
@@ -51,7 +51,7 @@ def run_triage_llm(candidate: Candidate) -> dict:
         f"Discovery query: {candidate.discovery_query or 'N/A'}\n"
     )
     return call_llm_json(
-        system_prompt=_get_triage_prompt(), user_content=user_content,
+        system_prompt=system_prompt or _get_triage_prompt(), user_content=user_content,
         model=CHEAP_MODEL, max_tokens=1024,
     )
 

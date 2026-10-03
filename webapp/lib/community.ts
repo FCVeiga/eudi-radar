@@ -3,8 +3,8 @@
  *
  * Score (0–100) = 100 × (0.35·relevance + 0.20·following + 0.20·likes + 0.25·recency)
  *   relevance — how well the post's tags (and title) match the reader's
- *               interests: the Search Agent's scope plus the tags of posts they
- *               wrote or liked
+ *               interests: their active scopes' search configurations plus the
+ *               tags of posts they wrote or liked
  *   following — the author is someone the reader follows (or the reader)
  *   likes     — total hearts, on a log scale (100 likes ≈ full marks)
  *   recency   — halves every 3 days
@@ -12,6 +12,7 @@
  */
 import 'server-only';
 import { getSupabaseServerClient } from '@/lib/supabase';
+import { getViewScopes } from '@/lib/scopes';
 
 export type CommunityView = 'best' | 'new' | 'top';
 export const COMMUNITY_VIEWS: { slug: CommunityView; label: string }[] = [
@@ -40,17 +41,19 @@ export function excerpt(md: string | null, max = 280): string | null {
   return text ? (text.length > max ? `${text.slice(0, max).trimEnd()}…` : text) : null;
 }
 
-/** What the reader cares about: the Search Agent's scope, plus tags of their own and liked posts. */
+/** What the reader cares about: their active scopes' search configurations, plus tags of their own and liked posts. */
 async function interests(userId: string | null): Promise<Set<string>> {
   const db = getSupabaseServerClient();
   const terms = new Set<string>();
-  const [{ data: search }, { data: agent }] = await Promise.all([
-    db.from('app_settings').select('value').eq('key', 'search').maybeSingle(),
+  const [{ scopes }, { data: agent }] = await Promise.all([
+    getViewScopes(),
     db.from('agent_settings').select('default_prompt').eq('agent_key', 'search').maybeSingle(),
   ]);
-  let cfg: any = search?.value?.config;
-  if (!cfg) { try { cfg = JSON.parse(agent?.default_prompt || '{}'); } catch { cfg = {}; } }
-  for (const p of [cfg.topic || '', ...(cfg.ted_phrases || []).slice(0, 40), ...(cfg.news_queries || [])]) words(String(p)).forEach((w) => terms.add(w));
+  let builtin: any = {};
+  try { builtin = JSON.parse(agent?.default_prompt || '{}'); } catch { /* none */ }
+  for (const cfg of (scopes.length ? scopes.map((s) => s.searchConfig || builtin) : [builtin])) {
+    for (const p of [cfg.topic || '', ...(cfg.ted_phrases || []).slice(0, 40), ...(cfg.news_queries || [])]) words(String(p)).forEach((w) => terms.add(w));
+  }
   if (userId) {
     const [{ data: own }, { data: liked }] = await Promise.all([
       db.from('posts').select('tags').eq('user_id', userId).limit(100),

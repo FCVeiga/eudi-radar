@@ -1,20 +1,25 @@
 """
-Settings page → pipeline. Read once at the start of a run (load()):
+Settings page → pipeline. Read once at the start of a run (load()).
 
-  - which agents are switched on (agent_settings.enabled)
-  - each agent's fine-tuned prompt, if the Config Agent wrote one
-    (agent_settings.prompt_override), used in place of the file in prompts/
-  - the search scope's parsed config (app_settings 'search'): TED phrases,
-    web and news queries, the site-search query and triage's relevance rules
-  - the company name the prompts address ({company_name})
+Scopes (migration 025): each scope has a name, instructions, a search
+configuration and its own agents — Search, Triage, Tender Evaluation,
+Proposal Manager, News Report. The pipeline runs every scope that is active
+(or the default scope): it searches and triages per scope. These agents are
+configured per scope in scope_agent_settings.
+
+Platform agents work on the shared data for all scopes — Tender Documents,
+Tender Analysis, Feed Writer, Translator — and are configured once in
+agent_settings (switch, fine-tuned prompt). The Verification Agent is
+internal and always runs.
 
 load() also copies every agent's default prompt into agent_settings, so the
 Settings page can show it ("Open config") without access to the repo.
-Without a database row, everything falls back to the built-in defaults.
+Without database rows, everything falls back to the built-in defaults.
 """
 import json
 import os
 import re
+from types import SimpleNamespace
 
 from sqlalchemy import text
 
@@ -29,13 +34,12 @@ AGENT_PROMPTS = {
     "news_report": "webapp/agents/news_report.md",
     "proposal_manager": "webapp/agents/proposal_manager.md",
 }
-# Configurable on Settings. The Verification Agent is internal: it always runs,
-# on prompts/verification.md, and has no switch or fine-tuning.
-ALL_AGENTS = ["search", "triage", "tender_documents", "tender_analysis",
-              "tender_evaluation", "proposal_manager", "news_report", "feed_writer", "translator"]
-DEFAULT_COMPANY = "WalliD"
+SCOPE_AGENTS = ["search", "triage", "tender_evaluation", "proposal_manager", "news_report"]
+PLATFORM_AGENTS = ["tender_documents", "tender_analysis", "feed_writer", "translator"]
+ALL_AGENTS = SCOPE_AGENTS + PLATFORM_AGENTS
+DEFAULT_SCOPE_NAME = "EUDI Wallet & digital identity"
 
-_state = {"loaded": False, "enabled": {}, "overrides": {}, "search": None, "company": DEFAULT_COMPANY}
+_state = {"loaded": False, "enabled": {}, "overrides": {}, "scopes": [], "default": None}
 
 
 def builtin_rules() -> dict:
@@ -46,9 +50,9 @@ def builtin_rules() -> dict:
 
 
 def load(session, search_defaults: dict = None) -> None:
-    """Read the settings and sync the default prompts — and, for the Search Agent,
-    the built-in search configuration (search_defaults), shown and editable on
-    Settings. Safe to call when the tables don't exist yet."""
+    """Read the settings and scopes, and sync the default prompts — and, for the
+    Search Agent, the built-in search configuration (search_defaults), shown and
+    editable on Settings. Safe to call when the tables don't exist yet."""
     try:
         for key in ALL_AGENTS:
             path = AGENT_PROMPTS.get(key)
@@ -62,23 +66,46 @@ def load(session, search_defaults: dict = None) -> None:
                     on conflict (agent_key) do update set default_prompt = coalesce(excluded.default_prompt, agent_settings.default_prompt)"""), {"k": key, "p": default})
         session.commit()
         rows = session.execute(text("select agent_key, enabled, prompt_override from agent_settings")).fetchall()
-        _state["enabled"] = {r.agent_key: bool(r.enabled) for r in rows}
-        _state["overrides"] = {r.agent_key: r.prompt_override for r in rows if r.prompt_override}
-        settings = dict(session.execute(text("select key, value from app_settings")).fetchall())
-        _state["search"] = (settings.get("search") or {}).get("config") or None
-        _state["company"] = ((settings.get("company") or {}).get("name") or "").strip() or DEFAULT_COMPANY
-    except Exception as e:  # missing tables (migration 015 not applied): run on defaults
+        _state["enabled"] = {r.agent_key: bool(r.enabled) for r in rows if r.agent_key in PLATFORM_AGENTS}
+        _state["overrides"] = {r.agent_key: r.prompt_override for r in rows if r.prompt_override and r.agent_key in PLATFORM_AGENTS + ["translator"]}
+
+        scopes = session.execute(text("""select id, name, instructions, active, is_default, search_config from scopes
+                                         where active or is_default order by is_default desc, created_at""")).fetchall()
+        agents = session.execute(text("select scope_id, agent_key, enabled, prompt_override from scope_agent_settings")).fetchall()
+        _state["scopes"] = []
+        for s in scopes:
+            mine = [a for a in agents if a.scope_id == s.id]
+            _state["scopes"].append(SimpleNamespace(
+                id=str(s.id), name=s.name, instructions=s.instructions, is_default=s.is_default,
+                search=s.search_config or {},
+                enabled={a.agent_key: bool(a.enabled) for a in mine},
+                overrides={a.agent_key: a.prompt_override for a in mine if a.prompt_override},
+            ))
+        _state["default"] = next((s for s in _state["scopes"] if s.is_default), _state["scopes"][0] if _state["scopes"] else None)
+    except Exception as e:  # missing tables (migrations 015 / 025 not applied): run on defaults
         session.rollback()
         print(f"Settings: using defaults ({str(e)[:120]})")
     _state["loaded"] = True
 
 
-def enabled(agent_key: str) -> bool:
+def scopes():
+    """The scopes this run works for (active ones, plus the default scope)."""
+    return _state["scopes"]
+
+
+def default_scope():
+    return _state["default"]
+
+
+def enabled(agent_key: str, scope=None) -> bool:
+    """Platform agent switch, or — with a scope — that scope's agent switch."""
+    if scope is not None:
+        return scope.enabled.get(agent_key, True)
     return _state["enabled"].get(agent_key, True)
 
 
 def agent_config(agent_key: str):
-    """The agent's saved configuration from Settings (a prompt, or JSON for the Tender Documents Agent), or None."""
+    """A platform agent's saved configuration from Settings (a prompt, or JSON for the Tender Documents Agent), or None."""
     return _state["overrides"].get(agent_key)
 
 
@@ -94,26 +121,33 @@ def target_language() -> tuple:
     return (m.group(1).strip(), m.group(2).lower()) if m else ("English", "en")
 
 
-def company_name() -> str:
-    return _state["company"]
+def company_name(scope=None) -> str:
+    s = scope or default_scope()
+    return (s.name if s else None) or DEFAULT_SCOPE_NAME
 
 
-def search_config() -> dict:
-    """The parsed search scope, or {} to use the built-in EUDI defaults."""
-    return _state["search"] or {}
+def search_config(scope=None) -> dict:
+    """A scope's parsed search configuration (default scope if none given), or {} for the built-in EUDI defaults."""
+    s = scope or default_scope()
+    return (s.search if s else None) or {}
 
 
-def prompt_for(prompt_filename: str, default: str) -> str:
-    """The agent's fine-tuned prompt if there is one, with the search scope's
-    relevance rules and the company name filled in."""
+def prompt_for(prompt_filename: str, default: str, scope=None) -> str:
+    """The agent's prompt: the scope's fine-tuned version for scope agents (or
+    the platform's for platform agents), with the scope's relevance rules,
+    topic, name and the platform language filled in."""
     key = next((k for k, p in AGENT_PROMPTS.items() if p.endswith("/" + prompt_filename)), None)
-    prompt = _state["overrides"].get(key) or default
-    cfg = search_config()
+    s = scope or default_scope()
+    if key in SCOPE_AGENTS:
+        prompt = (s.overrides.get(key) if s else None) or default
+    else:
+        prompt = _state["overrides"].get(key) or default
+    cfg = search_config(s)
     for marker, field in (("scope", "relevance_rubric"), ("importance", "importance_rubric")):
         if cfg.get(field):
             prompt = re.sub(rf"<!-- {marker} -->.*?<!-- /{marker} -->",
                             lambda _m: f"<!-- {marker} -->\n{cfg[field].strip()}\n<!-- /{marker} -->", prompt, flags=re.S)
     if cfg.get("topic"):
         prompt = prompt.replace("{topic}", cfg["topic"])
-    return (prompt.replace("{topic}", "EUDI Wallet").replace("{company_name}", company_name())
+    return (prompt.replace("{topic}", "EUDI Wallet").replace("{company_name}", company_name(s))
             .replace("{language}", target_language()[0]))

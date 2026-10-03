@@ -1,13 +1,13 @@
 import Link from 'next/link';
 import { AGENTS } from '@/lib/agents';
-import { disabledAgents } from '@/lib/settings';
+import { workingAgentKeys } from '@/lib/settings';
 import AgentAvatar from './AgentAvatar';
 
-/** Sidebar: the agents switched on in Settings, each with its face and a green light. */
+/** Sidebar: the agents at work for your active scopes (and the platform's), each with its face and a green light. */
 export default async function WorkingAgents() {
-  let off = new Set<string>();
-  try { off = await disabledAgents(); } catch { /* settings tables missing: all on */ }
-  const active = AGENTS.filter((a) => !off.has(a.key));
+  let on: Set<string> | null = null;
+  try { on = await workingAgentKeys(); } catch { /* settings tables missing: all on */ }
+  const active = AGENTS.filter((a) => !on || on.has(a.key));
   return (
     <div className="side-panel working-agents">
       <div className="side-head">

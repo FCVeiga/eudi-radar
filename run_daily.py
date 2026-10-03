@@ -32,6 +32,7 @@ from agents.discovery import run_discovery, build_query_combinations  # noqa: E4
 from agents.triage import heuristic_prefilter, run_triage_llm, apply_triage_result  # noqa: E402
 from services.deduplicator import fingerprint  # noqa: E402
 from services import agent_settings as S  # noqa: E402
+from sqlalchemy import text as sql_text  # noqa: E402
 from agents.source_monitor import SITE_QUERY  # noqa: E402
 
 CONFIG_DIR = os.path.join(os.path.dirname(__file__), "config")
@@ -201,6 +202,7 @@ def apply_language_change(session) -> bool:
         return False
     session.execute(sql("update opportunities set tender_analysed_at = null where status in ('OPEN','SIGNAL','UNVERIFIED')"))
     session.execute(sql("update news_items set summary_long = null, key_facts = null, analysis = null, analysed_at = null"))
+    session.execute(sql("update scope_news_reports set analysis = null, analysed_at = null"))
     session.execute(sql("insert into app_settings (key, value) values ('language', cast(:v as jsonb)) "
                         "on conflict (key) do update set value = excluded.value, updated_at = now()"),
                     {"v": json.dumps({"applied": code, "name": name})})
@@ -270,7 +272,7 @@ def promote(session, candidate: Candidate, t: dict, country_names: dict):
             held, incoming = ted_notice_order(existing.official_url), ted_notice_order(candidate.source_url)
             if held and incoming and incoming < held:
                 existing.last_checked = now
-                return None  # an older notice of a procurement we hold a newer version of
+                return "unchanged", existing  # an older notice of a procurement we hold a newer version of
             # publication_date = when the procurement first appeared (drives "New");
             # a later notice is an update, not a new opportunity.
             old_pub = existing.publication_date.replace(tzinfo=None) if existing.publication_date else None
@@ -304,7 +306,7 @@ def promote(session, candidate: Candidate, t: dict, country_names: dict):
             if changes:
                 existing.last_change = now
                 return "updated", existing, changes
-            return None
+            return "unchanged", existing
         opp = Opportunity(opportunity_id=opp_id, first_detected=now, **fields)
         session.add(opp)
         return "opportunity", opp
@@ -325,10 +327,10 @@ def promote(session, candidate: Candidate, t: dict, country_names: dict):
             lang=_written_lang({"title_en": t.get("title_en"), "summary": summary}),
         )
         existing = session.get(NewsItem, candidate.candidate_id)
-        if existing:  # re-triage: refresh in place
+        if existing:  # re-triage (or another scope): refresh in place
             for k, v in fields.items():
                 setattr(existing, k, v)
-            return None
+            return "unchanged_news", existing
         item = NewsItem(news_id=candidate.candidate_id, **fields)
         session.add(item)
         return "news", item
@@ -397,113 +399,158 @@ def main():
     country_codes = [c.code for c in countries]
     country_names = {c.code: c.name for c in countries}
 
-    # Settings page: agents on/off, fine-tuned prompts, the search scope.
+    # Settings page: scopes (each with its search, triage and agents), platform agents.
     S.load(session, search_defaults={
         "topic": "EUDI Wallet & digital identity", "ted_phrases": TED_PHRASES,
         "web_queries": tavily_queries_for_today(10_000), "news_queries": NEWS_QUERIES,
         "site_query": "EUDI eIDAS " + SITE_QUERY,
     })
-    scope = S.search_config()
-    off = [a for a in S.ALL_AGENTS if not S.enabled(a)]
+    run_scopes = S.scopes()
+    print(f"Scopes: {', '.join(s.name for s in run_scopes) or 'none — built-in defaults only'}")
+    off = [a for a in S.PLATFORM_AGENTS if not S.enabled(a)]
     if off:
-        print(f"Switched off on Settings: {', '.join(off)}")
-    if scope:
-        print(f"Search scope: {scope.get('topic') or 'custom'} ({len(scope.get('ted_phrases') or [])} TED phrases)")
+        print(f"Platform agents switched off on Settings: {', '.join(off)}")
     language_changed = apply_language_change(session)
 
-    # --- 1. Discovery (Search Agent) ----------------------------------------
+    def link(cids, scope_ids):
+        """Queue candidates for triage by these scopes (once per pair)."""
+        for cid in cids:
+            for sid in scope_ids:
+                session.execute(sql_text("insert into candidate_scopes (candidate_id, scope_id) values (:c, cast(:s as uuid)) on conflict do nothing"),
+                                {"c": cid, "s": sid})
+        session.commit()
+
+    # --- 1. Discovery (each scope's Search Agent) ----------------------------
     from adapters.ted import TedSearchProvider
-    ted_phrases = scope.get("ted_phrases") or TED_PHRASES
-    news_queries = scope.get("news_queries") or NEWS_QUERIES
     query_count = 0
     candidates = []
-    if S.enabled("search"):
-        query_count = len(ted_phrases)
-        candidates = run_discovery(session, TedSearchProvider(), {"ted": ted_phrases},
-                                   country_codes, errors=errors)
-        print(f"TED: {len(candidates)} new candidates from {len(ted_phrases)} phrases")
-
-    if not S.enabled("search"):
-        pass
-    elif os.environ.get("TAVILY_API_KEY"):
+    tavily = None
+    if os.environ.get("TAVILY_API_KEY"):
         from adapters.tavily import TavilySearchProvider
-        per_run = int(os.environ.get("TAVILY_QUERIES_PER_RUN", 20))
-        web_queries = rotate(scope["web_queries"], per_run) if scope.get("web_queries") else tavily_queries_for_today(per_run)
-        query_count += len(web_queries)
-        web = run_discovery(session, TavilySearchProvider(), {"web": web_queries},
-                            country_codes, errors=errors)
-        candidates += web
-        print(f"Tavily: {len(web)} new candidates from {len(web_queries)} queries")
-        news = run_discovery(session, TavilySearchProvider(topic="news", days=30),
-                             {"news": news_queries}, country_codes, errors=errors)
-        query_count += len(news_queries)
-        candidates += news
-        print(f"Tavily news: {len(news)} new candidates from {len(news_queries)} queries")
+        tavily = True
     else:
         errors.append("TAVILY_API_KEY not set — web search skipped")
+    per_run = int(os.environ.get("TAVILY_QUERIES_PER_RUN", 20))
+    for scope in run_scopes:
+        if not S.enabled("search", scope):
+            print(f"[{scope.name}] Search Agent switched off")
+            continue
+        cfg = scope.search or {}
+        ted_phrases = cfg.get("ted_phrases") or TED_PHRASES
+        news_queries = cfg.get("news_queries") or NEWS_QUERIES
+        found = set()
+        new = run_discovery(session, TedSearchProvider(), {"ted": ted_phrases}, country_codes, errors=errors, found=found)
+        query_count += len(ted_phrases)
+        if tavily:
+            web_queries = rotate(cfg["web_queries"], per_run) if cfg.get("web_queries") else tavily_queries_for_today(per_run)
+            new += run_discovery(session, TavilySearchProvider(), {"web": web_queries}, country_codes, errors=errors, found=found)
+            new += run_discovery(session, TavilySearchProvider(topic="news", days=30), {"news": news_queries}, country_codes, errors=errors, found=found)
+            query_count += len(web_queries) + len(news_queries)
+        link(found, [scope.id])
+        candidates += new
+        print(f"[{scope.name}] search: {len(found)} results, {len(new)} new candidates")
 
     # Followed sources (Following sidebar): RSS feeds and domain searches on
-    # their own schedules; whatever they surface joins the triage queue.
+    # their own schedules; whatever they surface joins every scope's queue.
     from agents.source_monitor import check_sources, ingest_activity
-    monitored = check_sources(session, errors) if S.enabled("search") else {"checked": 0, "total": 0, "found": 0}
+    monitored = check_sources(session, errors) if any(S.enabled("search", s) for s in run_scopes) else {"checked": 0, "total": 0, "found": 0}
     from_sources = ingest_activity(session)
+    unlinked = [r.candidate_id for r in session.execute(sql_text(
+        "select candidate_id from candidates c where not c.processed and not exists (select 1 from candidate_scopes cs where cs.candidate_id = c.candidate_id)"))]
+    link(unlinked, [s.id for s in run_scopes])
     print(f"Sources: {monitored['checked']} of {monitored['total']} monitored sources due and checked, "
           f"{monitored['found']} new items, {from_sources} new candidates")
 
-    # --- 2. Triage (all unprocessed, including leftovers from earlier runs) --
+    # --- 2. Triage (per scope, with that scope's rules) ----------------------
     max_triage = int(os.environ.get("MAX_TRIAGE_PER_RUN", 400))
-    pending = (session.query(Candidate).filter(Candidate.processed.is_(False))
-               .order_by(Candidate.discovered_at).limit(max_triage).all()) if S.enabled("triage") else []
-    to_llm = []
-    for c in pending:
-        if heuristic_prefilter(c):
-            to_llm.append(c)
-        else:
-            apply_triage_result(session, c, {
-                "relevance": 0, "type": "FALSE_POSITIVE",
-                "reason": "Matched automatic suppression term list.",
-            })
-
-    # Worker threads get detached copies: ORM objects are expired on every
-    # commit and must not be lazy-loaded from other threads.
-    snapshots = [SimpleNamespace(title=c.title, description=c.description,
-                                 source_url=c.source_url, country=c.country,
-                                 discovery_query=c.discovery_query) for c in to_llm]
-
-    def _triage(snap):
-        try:
-            return run_triage_llm(snap), None
-        except Exception as e:
-            return None, e
-
     new_opps, new_news, updates = [], [], []
-    failures = streak = 0
-    with ThreadPoolExecutor(max_workers=8) as pool:
-        for i, (c, (result, err)) in enumerate(zip(to_llm, pool.map(_triage, snapshots)), 1):
-            if err:
-                errors.append(f"triage {c.candidate_id}: {err}")
-                failures += 1
-                streak += 1
-                # Bad key, no credit, outage: stop instead of failing the whole queue.
-                if (i >= 5 and failures == i) or streak >= 10:
-                    errors.append(f"Triage aborted after {streak} consecutive failures: {err}"[:300])
-                    pool.shutdown(wait=False, cancel_futures=True)
-                    break
-                continue
-            streak = 0
-            apply_triage_result(session, c, result)
-            promoted = promote(session, c, result, country_names)
-            if promoted and promoted[0] == "opportunity":
-                new_opps.append(promoted[1])
-            elif promoted and promoted[0] == "updated":
-                updates.append({"opportunity": promoted[1].title, "change": "; ".join(promoted[2]),
-                                "action": f"Review: {promoted[1].official_url}"})
-            elif promoted:
-                new_news.append(promoted[1])
-            session.commit()
-            if i % 25 == 0:
-                print(f"  triaged {i}/{len(to_llm)}")
-    print(f"Triage: {len(to_llm)} LLM calls -> {len(new_opps)} opportunities, {len(updates)} updates, {len(new_news)} news items")
+    llm_calls = 0
+    for scope in run_scopes:
+        if not S.enabled("triage", scope):
+            print(f"[{scope.name}] Triage Agent switched off")
+            continue
+        prompt = S.prompt_for("triage.md", open(os.path.join(os.path.dirname(__file__), "prompts", "triage.md")).read(), scope)
+        pending_ids = [r.candidate_id for r in session.execute(sql_text(
+            """select cs.candidate_id from candidate_scopes cs join candidates c using (candidate_id)
+               where cs.scope_id = cast(:s as uuid) and cs.processed_at is null order by c.discovered_at limit :n"""),
+            {"s": scope.id, "n": max(20, max_triage // max(1, len(run_scopes)))})]
+        pending = session.query(Candidate).filter(Candidate.candidate_id.in_(pending_ids)).all() if pending_ids else []
+
+        def done(c, result):
+            session.execute(sql_text("""update candidate_scopes set processed_at = now(), relevance = :r, candidate_type = :t
+                                        where candidate_id = :c and scope_id = cast(:s as uuid)"""),
+                            {"r": int(result.get("relevance") or 0), "t": result.get("type"), "c": c.candidate_id, "s": scope.id})
+
+        to_llm = []
+        for c in pending:
+            if heuristic_prefilter(c):
+                to_llm.append(c)
+            else:
+                result = {"relevance": 0, "type": "FALSE_POSITIVE", "reason": "Matched automatic suppression term list."}
+                apply_triage_result(session, c, result)
+                done(c, result)
+        session.commit()
+
+        # Worker threads get detached copies: ORM objects are expired on every
+        # commit and must not be lazy-loaded from other threads.
+        snapshots = [SimpleNamespace(title=c.title, description=c.description, source_url=c.source_url,
+                                     country=c.country, discovery_query=c.discovery_query) for c in to_llm]
+
+        def _triage(snap):
+            try:
+                return run_triage_llm(snap, prompt), None
+            except Exception as e:
+                return None, e
+
+        failures = streak = 0
+        aborted = False
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            for i, (c, (result, err)) in enumerate(zip(to_llm, pool.map(_triage, snapshots)), 1):
+                if err:
+                    errors.append(f"triage {c.candidate_id}: {err}")
+                    failures += 1
+                    streak += 1
+                    # Bad key, no credit, outage: stop instead of failing the whole queue.
+                    if (i >= 5 and failures == i) or streak >= 10:
+                        errors.append(f"Triage aborted after {streak} consecutive failures: {err}"[:300])
+                        pool.shutdown(wait=False, cancel_futures=True)
+                        aborted = True
+                        break
+                    continue
+                streak = 0
+                llm_calls += 1
+                apply_triage_result(session, c, result)
+                done(c, result)
+                promoted = promote(session, c, result, country_names)
+                if promoted:
+                    kind, row = promoted[0], promoted[1]
+                    is_news = kind in ("news", "unchanged_news")
+                    item_id = row.news_id if is_news else row.opportunity_id
+                    score = int(result.get("importance") or 0) if is_news else int(result.get("relevance") or 0)
+                    session.execute(sql_text("""insert into scope_items (scope_id, item_type, item_id, relevance, candidate_type, reason)
+                            values (cast(:s as uuid), :t, :i, :r, :ct, :why)
+                            on conflict (scope_id, item_type, item_id) do update set relevance = excluded.relevance, reason = excluded.reason"""),
+                                    {"s": scope.id, "t": "news" if is_news else "tender", "i": item_id, "r": score,
+                                     "ct": result.get("type"), "why": (result.get("reason") or "")[:500]})
+                    if kind == "opportunity":
+                        new_opps.append(row)
+                    elif kind == "updated":
+                        updates.append({"opportunity": row.title, "change": "; ".join(promoted[2]),
+                                        "action": f"Review: {row.official_url}"})
+                    elif kind == "news":
+                        new_news.append(row)
+                session.commit()
+                if i % 25 == 0:
+                    print(f"  [{scope.name}] triaged {i}/{len(to_llm)}")
+        print(f"[{scope.name}] triage: {len(pending)} queued, {len(to_llm)} LLM calls")
+        if aborted:
+            break
+    # A tender's own relevance is the best any scope gave it (cards then show the viewer's scopes').
+    session.execute(sql_text("""update opportunities o set opportunity_relevance_score = m.r, relevance_score = m.r
+        from (select item_id, max(relevance) r from scope_items where item_type = 'tender' group by item_id) m
+        where m.item_id = o.opportunity_id and m.r is distinct from o.opportunity_relevance_score"""))
+    session.commit()
+    print(f"Triage: {llm_calls} LLM calls -> {len(new_opps)} opportunities, {len(updates)} updates, {len(new_news)} news items")
 
     from agents.source_monitor import mark_relevance
     mark_relevance(session)

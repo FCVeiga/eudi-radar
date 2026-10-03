@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
+import { getOwnScope, getViewScopes } from '@/lib/scopes';
 import { refreshDueFeeds, resolveSource } from '@/lib/sources';
 import { FREQUENCIES, METHODS, Method, NOT_CONNECTABLE, SOURCE_TYPES } from '@/lib/sourceMeta';
 
@@ -77,31 +78,38 @@ export async function saveSource(_prev: SaveSourceState, form: FormData): Promis
   return { ok: true, message: `${row.name}: ${enabled ? how : 'paused'}.` };
 }
 
-/** Opening a news page starts the News Report Agent if the story has no report yet. */
-export async function startNewsReport(newsId: string) {
+/** Opening a news page starts the News Report Agent for a scope the viewer is looking through. */
+export async function startNewsReport(newsId: string, scopeId: string) {
   if (!/^[0-9a-f]{16}$/.test(newsId)) return { status: 'error' as const, message: 'unknown news item' };
+  const { scopes } = await getViewScopes();
+  if (!scopes.some((s) => s.id === scopeId)) return { status: 'error' as const, message: 'that scope isn’t one you’re viewing' };
   const { ensureNewsReport } = await import('@/lib/newsReport');
-  const result = await ensureNewsReport(newsId);
+  const result = await ensureNewsReport(newsId, scopeId);
   if (result.status === 'done') revalidatePath(`/news/${newsId}`);
   return result;
 }
 
-/** The opportunity page's "Run" button: starts the Tender Evaluation Agent. */
-export async function startTenderEvaluation(opportunityId: string) {
-  if (!(await getCurrentUser())) return { status: 'error' as const, message: 'log in to run this agent' };
+async function ownsScope(scopeId: string) {
+  const user = await getCurrentUser();
+  return !!user && !!(await getOwnScope(scopeId, user.id));
+}
+
+/** The tender page's "Run" button: starts the Tender Evaluation Agent for one of your scopes. */
+export async function startTenderEvaluation(opportunityId: string, scopeId: string) {
+  if (!(await ownsScope(scopeId))) return { status: 'error' as const, message: 'log in, and pick one of your scopes' };
   if (!/^[0-9a-f]{12,40}$/.test(opportunityId)) return { status: 'error' as const, message: 'unknown opportunity' };
   const { ensureEvaluation } = await import('@/lib/tenderEvaluation');
-  const result = await ensureEvaluation(opportunityId);
+  const result = await ensureEvaluation(opportunityId, scopeId);
   if (result.status === 'done') revalidatePath(`/tenders/${opportunityId}`);
   return result;
 }
 
-/** The tender page's "Prepare proposal brief" button: starts the Proposal Manager Agent. */
-export async function startProposalBrief(opportunityId: string) {
-  if (!(await getCurrentUser())) return { status: 'error' as const, message: 'log in to run this agent' };
+/** The tender page's "Prepare proposal brief" button: starts the Proposal Manager Agent for one of your scopes. */
+export async function startProposalBrief(opportunityId: string, scopeId: string) {
+  if (!(await ownsScope(scopeId))) return { status: 'error' as const, message: 'log in, and pick one of your scopes' };
   if (!/^[0-9a-f]{12,40}$/.test(opportunityId)) return { status: 'error' as const, message: 'unknown tender' };
   const { ensureProposal } = await import('@/lib/proposalManager');
-  const result = await ensureProposal(opportunityId);
+  const result = await ensureProposal(opportunityId, scopeId);
   if (result.status === 'done') revalidatePath(`/tenders/${opportunityId}`);
   return result;
 }

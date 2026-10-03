@@ -4,7 +4,7 @@ import { useRef, useState, useTransition } from 'react';
 import { useFormState, useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import {
-  FormState, createCompanyUpload, deleteCompanyDocument, registerCompanyDocument, saveCompany, saveSearchScope,
+  FormState, createCompanyUpload, deleteCompanyDocument, deleteScope, registerCompanyDocument, saveScope,
 } from '@/app/settings/actions';
 
 function Submit({ label, busy }: { label: string; busy: string }) {
@@ -13,22 +13,36 @@ function Submit({ label, busy }: { label: string; busy: string }) {
 }
 const Msg = ({ state }: { state: FormState }) => state && <p className={`form-msg ${state.ok ? 'ok' : 'err'}`}>{state.message}</p>;
 
-export function CompanyForm({ name, context }: { name: string; context: string }) {
-  const [state, action] = useFormState<FormState, FormData>(saveCompany, null);
+export function ScopeForm({ scopeId, name, instructions }: { scopeId: string; name: string; instructions: string }) {
+  const [state, action] = useFormState<FormState, FormData>(saveScope, null);
   return (
     <form action={action} className="settings-form">
+      <input type="hidden" name="scope" value={scopeId} />
       <label className="field">
-        <span>Company name</span>
-        <input name="name" defaultValue={name} placeholder="e.g. WalliD" maxLength={120} required />
+        <span>Scope name</span>
+        <input name="name" defaultValue={name} placeholder="e.g. EUDI Wallet — public sector" maxLength={120} required />
       </label>
       <label className="field">
-        <span>Company context <em>— what the agents should know about you</em></span>
-        <textarea name="context" defaultValue={context} rows={9} maxLength={30000}
-          placeholder={'What you sell and to whom; products and the standards they implement; certifications (ISO 27001…); company size, turnover and locations; partners; the kind of contracts you bid for and the ones you don’t.'} />
+        <span>Scope instructions <em>— what this scope’s agents should know</em></span>
+        <textarea name="instructions" defaultValue={instructions} rows={9} maxLength={30000}
+          placeholder={'Who the scope is for (a company, a department, a project); what you sell and to whom; products and the standards they implement; certifications; size, turnover and locations; partners; the contracts you go for and the ones you don’t.'} />
       </label>
-      <p className="field-hint">Every agent that writes about your company reads this: the Tender Evaluation Agent, the News Report Agent and the Feed Writer Agent.</p>
+      <p className="field-hint">This scope’s Tender Evaluation, Proposal Manager and News Report agents read these instructions.</p>
       <Msg state={state} />
-      <div className="settings-actions"><Submit label="Save company" busy="Saving…" /></div>
+      <div className="settings-actions"><Submit label="Save scope" busy="Saving…" /></div>
+    </form>
+  );
+}
+
+export function DeleteScopeForm({ scopeId, name }: { scopeId: string; name: string }) {
+  const [state, action] = useFormState<FormState, FormData>(deleteScope, null);
+  return (
+    <form action={action} className="settings-form">
+      <input type="hidden" name="scope" value={scopeId} />
+      <p className="settings-intro">Deletes the scope with its instructions, context documents, agent settings, evaluations and proposal briefs. Tenders and news it found stay on the platform for other scopes.</p>
+      <label className="field"><span>Type <strong>{name}</strong> to confirm</span><input name="confirm" autoComplete="off" required /></label>
+      <Msg state={state} />
+      <div className="settings-actions"><button type="submit" className="btn danger">Delete scope</button></div>
     </form>
   );
 }
@@ -37,7 +51,7 @@ type Doc = { id: string; name: string; size_bytes: number | null; chars: number 
 const kb = (n: number | null) => (!n ? '' : n > 1e6 ? `${(n / 1e6).toFixed(1)} MB` : `${Math.max(1, Math.round(n / 1e3))} KB`);
 
 /** One kind of company material: its files, an upload button, delete. */
-export function DocumentGroup({ kind, label, hint, docs }: { kind: string; label: string; hint: string; docs: Doc[] }) {
+export function DocumentGroup({ scopeId, kind, label, hint, docs }: { scopeId: string; kind: string; label: string; hint: string; docs: Doc[] }) {
   const router = useRouter();
   const input = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState<string | null>(null);
@@ -48,7 +62,7 @@ export function DocumentGroup({ kind, label, hint, docs }: { kind: string; label
     setError(null);
     for (const [i, file] of Array.from(files).entries()) {
       setStatus(`Uploading ${file.name}${files.length > 1 ? ` (${i + 1}/${files.length})` : ''}…`);
-      const target = await createCompanyUpload(kind, file.name, file.size);
+      const target = await createCompanyUpload(scopeId, kind, file.name, file.size);
       if ('error' in target) { setError(`${file.name}: ${target.error}`); continue; }
       // Straight to storage, so large decks don't pass through the web server.
       const body = new FormData();
@@ -57,7 +71,7 @@ export function DocumentGroup({ kind, label, hint, docs }: { kind: string; label
       const res = await fetch(target.url!, { method: 'PUT', body, headers: { 'x-upsert': 'false' } });
       if (!res.ok) { setError(`${file.name}: upload failed (${res.status})`); continue; }
       setStatus(`Reading ${file.name}…`);
-      const done = await registerCompanyDocument(kind, target.path!, file.name, file.size);
+      const done = await registerCompanyDocument(scopeId, kind, target.path!, file.name, file.size);
       if ('error' in done && done.error) setError(`${file.name}: ${done.error}`);
     }
     setStatus(null);
@@ -88,21 +102,5 @@ export function DocumentGroup({ kind, label, hint, docs }: { kind: string; label
       {status && <p className="report-progress"><span className="dots" /> {status}</p>}
       {error && <p className="form-msg err">{error}</p>}
     </div>
-  );
-}
-
-export function SearchScopeForm({ scope }: { scope: string }) {
-  const [state, action] = useFormState<FormState, FormData>(saveSearchScope, null);
-  return (
-    <form action={action} className="settings-form">
-      <label className="field">
-        <span>What should the radar look for?</span>
-        <textarea name="scope" defaultValue={scope} rows={8} maxLength={8000}
-          placeholder={'e.g. Public tenders, grants and market consultations for digital identity wallets in Europe: EUDI Wallet development and certification, PID and (Q)EAA issuers, relying-party integration, mobile driving licences, trust services. Buyers: national governments, digital agencies, banks and telcos in the EU, EEA and UK. Not interested in: crypto wallets, payment wallets, generic IAM or cybersecurity tenders.'} />
-      </label>
-      <p className="field-hint">The Config Agent turns this into the Search Agent’s phrases and queries (in every country’s languages) and the Triage Agent’s relevance rules, which decide what reaches the feed, News and Tenders.</p>
-      <Msg state={state} />
-      <div className="settings-actions"><Submit label="Save & apply" busy="The Config Agent is working — about a minute…" /></div>
-    </form>
   );
 }

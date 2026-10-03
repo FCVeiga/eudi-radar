@@ -11,8 +11,8 @@ const GIVE_UP_MS = 4 * 60_000;
  * The Tender Evaluation Agent's button. Starts the agent (or, if someone
  * already did, waits for it) and refreshes the page when the report is in.
  */
-export default function TenderEvaluationRunner({ opportunityId, evaluatedAt, running, ready, lastError }: {
-  opportunityId: string; evaluatedAt: string | null; running: boolean; ready: boolean; lastError: string | null;
+export default function TenderEvaluationRunner({ opportunityId, scopeId, evaluatedAt, running, ready, lastError }: {
+  opportunityId: string; scopeId: string; evaluatedAt: string | null; running: boolean; ready: boolean; lastError: string | null;
 }) {
   const router = useRouter();
   const [state, setState] = useState<'idle' | 'working' | 'error'>(running ? 'working' : 'idle');
@@ -38,7 +38,7 @@ export default function TenderEvaluationRunner({ opportunityId, evaluatedAt, run
   async function run() {
     setState('working'); setMessage(null);
     try {
-      const r = await startTenderEvaluation(opportunityId);
+      const r = await startTenderEvaluation(opportunityId, scopeId);
       if (r.status === 'done') { setState('idle'); router.refresh(); }
       else if (r.status === 'running') waitForReport();
       else { setState('error'); setMessage(r.message ?? 'unknown error'); }

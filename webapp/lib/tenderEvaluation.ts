@@ -1,13 +1,15 @@
 /**
- * Tender Evaluation Agent — run from an opportunity's page with a button.
+ * Tender Evaluation Agent — per scope, run from a tender's page with a button.
  * Reads the tender (the Tender Analysis Agent's summary and requirements,
- * plus the award criteria) against the company brief, and writes a match
- * status for each requirement, a fit score and a bid report.
- * (prompt: agents/tender_evaluation.md; company context: agents/company_brief.md.)
+ * plus the award criteria) against the scope's instructions and context
+ * documents, and writes — for that scope — a match status for each
+ * requirement, a fit score and a bid report (scope_evaluations).
+ * (prompt: agents/tender_evaluation.md, or the scope's fine-tuned version.)
  */
 import Anthropic from '@anthropic-ai/sdk';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { agentPrompt, companyBrief, isAgentEnabled } from '@/lib/settings';
+import { friendly, lockRow, unlockRow } from '@/lib/scopeWork';
 
 export const EVALUATION_AGENT = 'Tender Evaluation Agent';
 const MODEL = 'claude-opus-5-5';
@@ -20,8 +22,8 @@ export type EvaluationStatus = 'done' | 'running' | 'error';
 
 // Its fine-tuned prompt from Settings (or agents/tender_evaluation.md), with the company's
 // context and uploaded material in place of {company_brief}.
-async function systemPrompt() {
-  const [prompt, brief] = await Promise.all([agentPrompt('tender_evaluation', 'tender_evaluation.md'), companyBrief({ withDocuments: true })]);
+async function systemPrompt(scopeId: string) {
+  const [prompt, brief] = await Promise.all([agentPrompt('tender_evaluation', 'tender_evaluation.md', scopeId), companyBrief({ withDocuments: true, scopeId })]);
   return prompt.replace('{company_brief}', brief);
 }
 
@@ -37,29 +39,22 @@ function parseJson(text: string) {
  * Run the evaluation unless one is already running (two clicks, or two
  * people, share one run: the second gets 'running' and waits for the page).
  */
-export async function ensureEvaluation(opportunityId: string): Promise<{ status: EvaluationStatus; message?: string }> {
-  if (!(await isAgentEnabled('tender_evaluation'))) return { status: 'error', message: 'the Tender Evaluation Agent is switched off in Settings' };
-  const db = getSupabaseServerClient();
-  const cutoff = new Date(Date.now() - LOCK_MINUTES * 60_000).toISOString();
-  const { data: locked } = await db.from('opportunities')
-    .update({ evaluation_started_at: new Date().toISOString(), evaluation_error: null })
-    .eq('opportunity_id', opportunityId)
-    .or(`evaluation_started_at.is.null,evaluation_started_at.lt.${cutoff}`)
-    .select('opportunity_id');
-  if (!locked?.length) return { status: 'running' };
+export async function ensureEvaluation(opportunityId: string, scopeId: string): Promise<{ status: EvaluationStatus; message?: string }> {
+  if (!(await isAgentEnabled('tender_evaluation', scopeId))) return { status: 'error', message: 'the Tender Evaluation Agent is switched off for this scope' };
+  const key = { scope_id: scopeId, opportunity_id: opportunityId };
+  if (!(await lockRow('scope_evaluations', key, 'evaluation_started_at', 'evaluation_error', LOCK_MINUTES))) return { status: 'running' };
   try {
-    await runEvaluation(opportunityId);
-    await db.from('opportunities').update({ evaluation_started_at: null }).eq('opportunity_id', opportunityId);
+    await runEvaluation(opportunityId, scopeId);
+    await unlockRow('scope_evaluations', key, 'evaluation_started_at', 'evaluation_error', null);
     return { status: 'done' };
   } catch (e: any) {
-    const raw = String(e?.message || e);
-    const message = /credit balance/i.test(raw) ? 'the Anthropic API account is out of credit' : raw.slice(0, 200);
-    await db.from('opportunities').update({ evaluation_started_at: null, evaluation_error: message }).eq('opportunity_id', opportunityId);
+    const message = friendly(e);
+    await unlockRow('scope_evaluations', key, 'evaluation_started_at', 'evaluation_error', message);
     return { status: 'error', message };
   }
 }
 
-async function runEvaluation(opportunityId: string) {
+async function runEvaluation(opportunityId: string, scopeId: string) {
   if (!process.env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY is not configured on the server.');
   const db = getSupabaseServerClient();
   const [{ data: o }, { data: reqs }, { data: award }] = await Promise.all([
@@ -94,7 +89,7 @@ async function runEvaluation(opportunityId: string) {
   const response: any = await client.beta.messages.create({
     model: MODEL,
     max_tokens: 16000,
-    system: await systemPrompt(),
+    system: await systemPrompt(scopeId),
     messages: [{ role: 'user', content: tender }],
     betas: ['server-side-fallback-2026-07-01'],
     output_config: { effort: 'medium' },
@@ -106,13 +101,13 @@ async function runEvaluation(opportunityId: string) {
   const matches = (Array.isArray(out.matches) ? out.matches : [])
     .filter((m: any) => ids.has(m?.id))
     .map((m: any) => ({
-      requirement_id: ids.get(m.id)!,
+      requirement_id: ids.get(m.id)!, scope_id: scopeId,
       match_status: MATCHES.includes(String(m.match).toUpperCase()) ? String(m.match).toUpperCase() : 'UNKNOWN',
       notes: m.note ? String(m.note).slice(0, 1000) : null,
     }));
   const reqIds = Array.from(ids.values());
   if (reqIds.length) {
-    const { error } = await db.from('requirement_matches').delete().in('requirement_id', reqIds);
+    const { error } = await db.from('requirement_matches').delete().eq('scope_id', scopeId).in('requirement_id', reqIds);
     if (error) throw new Error(error.message);
   }
   if (matches.length) {
@@ -133,8 +128,8 @@ async function runEvaluation(opportunityId: string) {
     next_steps: list(out.next_steps).filter((s: any) => s?.title).slice(0, 8),
     model: response.model ?? MODEL,
   };
-  const { error } = await db.from('opportunities').update({
-    evaluation, evaluated_at: new Date().toISOString(), evaluation_error: null, bid_readiness_score: fit,
-  }).eq('opportunity_id', opportunityId);
+  const { error } = await db.from('scope_evaluations').update({
+    evaluation, evaluated_at: new Date().toISOString(), evaluation_error: null,
+  }).match({ scope_id: scopeId, opportunity_id: opportunityId });
   if (error) throw new Error(error.message);
 }

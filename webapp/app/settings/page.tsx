@@ -1,64 +1,74 @@
-import { readFile } from 'fs/promises';
-import path from 'path';
 import { redirect } from 'next/navigation';
 import { AGENTS } from '@/lib/agents';
 import { getCurrentUser } from '@/lib/auth';
-import { DEFAULT_COMPANY, DOC_KINDS, getSettings } from '@/lib/settings';
+import { getSupabaseServerClient } from '@/lib/supabase';
+import { MAX_ACTIVE_SCOPES, PLATFORM_AGENT_KEYS, SCOPE_AGENT_KEYS, getMyScopes } from '@/lib/scopes';
+import { getAgentDefaults } from '@/lib/settings';
 import AgentCard from '@/components/settings/AgentCard';
-import { CompanyForm, DocumentGroup, SearchScopeForm } from '@/components/settings/SettingsForms';
+import ScopeCard from '@/components/settings/ScopeCard';
+import { createScope } from './actions';
 
-// The Config Agent runs inside this page's server actions: give it time.
+// The Config Agent runs inside the platform agents' server actions: give it time.
 export const maxDuration = 300;
 
-
+/** Settings: your scopes (each with its own instructions, context, search and agents) and the platform agents. */
 export default async function SettingsPage() {
-  if (!(await getCurrentUser())) redirect('/login?next=/settings');
-  const { company, search, agents, docs } = await getSettings();
-  const cfg = search.config;
-  // Until the company is saved, show what the agents use today: the built-in brief.
-  const builtIn = !company.name && !company.context;
-  const brief = builtIn ? await readFile(path.join(process.cwd(), 'agents', 'company_brief.md'), 'utf8').catch(() => '') : '';
+  const user = await getCurrentUser();
+  if (!user) redirect('/login?next=/settings');
+  const db = getSupabaseServerClient();
+  const scopes = await getMyScopes(user.id);
+  const ids = scopes.map((s) => s.id);
+  const [agentDefaults, { data: docs }, { data: agentRows }, { data: items }] = await Promise.all([
+    getAgentDefaults(),
+    ids.length ? db.from('company_documents').select('scope_id').in('scope_id', ids) : Promise.resolve({ data: [] as any[] }),
+    ids.length ? db.from('scope_agent_settings').select('scope_id, agent_key, enabled').in('scope_id', ids) : Promise.resolve({ data: [] as any[] }),
+    ids.length ? db.from('scope_items').select('scope_id').in('scope_id', ids).limit(50000) : Promise.resolve({ data: [] as any[] }),
+  ]);
+  const count = (rows: any[] | null, id: string) => (rows || []).filter((r) => r.scope_id === id).length;
+  const activeCount = scopes.filter((s) => s.active).length;
 
   return (
     <div className="settings">
-      <h1 className="opps-h1">Settings</h1>
+      <div className="community-head">
+        <h1 className="opps-h1">Settings</h1>
+        <form action={createScope}><button type="submit" className="btn primary">+ New scope</button></form>
+      </div>
 
-      <section className="detail-block" id="company">
-        <h2>Company</h2>
-        {builtIn && <p className="settings-intro">Prefilled with the built-in brief the agents use today — edit it and save to make it yours.</p>}
-        <CompanyForm name={company.name || DEFAULT_COMPANY} context={company.context || brief} />
-      </section>
-
-      <section className="detail-block" id="material">
-        <h2>Company material</h2>
+      <section className="detail-block" id="scopes">
+        <h2>Scopes <span className="uc-count">{scopes.length}</span></h2>
         <p className="settings-intro">
-          What the Tender Evaluation Agent checks each tender against: it reads the text of every file here, alongside
-          the company context. The more specific the material — clients, contract values, dates, team roles — the
-          fewer requirements come back “Unknown”.
+          A scope is one configuration of the radar — for a company, a department or a project: its instructions, context
+          documents, search and agents. Switch on the scopes you’re working on: Home, Community, Tenders, News and History
+          show the results of your active scopes together. Up to {MAX_ACTIVE_SCOPES} can be active at once ({activeCount} now).
         </p>
-        {DOC_KINDS.map((k) => (
-          <DocumentGroup key={k.kind} kind={k.kind} label={k.label} hint={k.hint} docs={docs.filter((d) => d.kind === k.kind)} />
-        ))}
-        <p className="field-hint">PDF, Word, PowerPoint, Excel or text, up to 50 MB each. Files are stored privately; only the agents read them.</p>
+        {scopes.length === 0 ? (
+          <div className="profile-empty">
+            <p className="profile-empty-title">No scopes yet</p>
+            <p className="muted">Until you create one, you see the platform’s default scope (EUDI Wallet &amp; digital identity).</p>
+            <form action={createScope}><button type="submit" className="btn primary profile-empty-cta">Create your first scope</button></form>
+          </div>
+        ) : (
+          <div className="scope-grid">
+            {scopes.map((s) => {
+              const on = SCOPE_AGENT_KEYS.filter((k) => (agentRows || []).find((r: any) => r.scope_id === s.id && r.agent_key === k)?.enabled ?? true).length;
+              return (
+                <ScopeCard key={s.id} scope={{ id: s.id, name: s.name, instructions: s.instructions, active: s.active, isDefault: s.isDefault, topic: s.searchConfig?.topic ?? null }}
+                  docs={count(docs, s.id)} agentsOn={on} agentsTotal={SCOPE_AGENT_KEYS.length} items={count(items, s.id)} />
+              );
+            })}
+          </div>
+        )}
       </section>
 
-      <section className="detail-block" id="agents">
-        <h2>Agents</h2>
+      <section className="detail-block" id="platform-agents">
+        <h2>Platform agents</h2>
         <p className="settings-intro">
-          Switch an agent off to stop its work. Tell it what to change in plain language and the Config Agent rewrites
-          its configuration — or open the configuration and edit it yourself. Whatever is saved is what the agent runs on.
+          These agents work on the shared data every scope draws on — a tender’s documents and requirements, the feed’s posts,
+          translation into the platform language — so they’re configured once, not per scope.
         </p>
         <div className="agent-grid">
-          {AGENTS.map((a) => {
-            const s = agents.get(a.key);
-            if (a.key === 'search') {
-              // The Search Agent's instructions are the search scope; its config, the parsed search.
-              return (
-                <AgentCard key={a.key} agent={a} enabled={s?.enabled ?? true} instructions={search.scope || null}
-                  config={cfg ? JSON.stringify(cfg, null, 2) : s?.default_prompt ?? null} custom={!!cfg}
-                  status={search.status} error={search.error} />
-              );
-            }
+          {AGENTS.filter((a) => PLATFORM_AGENT_KEYS.includes(a.key)).map((a) => {
+            const s = agentDefaults.get(a.key);
             return (
               <AgentCard key={a.key} agent={a} enabled={s?.enabled ?? true} instructions={s?.instructions ?? null}
                 config={a.fineTune ? s?.prompt_override || s?.default_prompt || null : null} custom={!!s?.prompt_override}

@@ -1,13 +1,13 @@
 /**
- * Settings page data: the company, its material for the agents, the search
- * scope and the agents' switches and fine-tuning (migration 015).
+ * Settings data: platform agents (agent_settings) and scopes (lib/scopes.ts) —
+ * each scope's instructions, context documents, search and agents.
  */
 import { readFile } from 'fs/promises';
 import path from 'path';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { getPlatformLanguage } from '@/lib/language';
+import { SCOPE_AGENT_KEYS, getScope, getViewScopes } from '@/lib/scopes';
 
-export const DEFAULT_COMPANY = 'WalliD';
 export const DOC_KINDS = [
   { kind: 'presentation', label: 'Commercial presentations', hint: 'Company and product decks, one-pagers, brochures' },
   { kind: 'reference', label: 'Contracts & project references', hint: 'Signed contracts, reference letters, case studies — with client, value, dates and scope' },
@@ -15,84 +15,88 @@ export const DOC_KINDS = [
 ] as const;
 export type DocKind = (typeof DOC_KINDS)[number]['kind'];
 
-export type Company = { name: string; context: string };
-export type SearchSettings = {
-  scope: string; config: Record<string, any> | null; status: 'applied' | 'error' | null;
-  error: string | null; parsed_at: string | null;
-};
 export type AgentSetting = {
   agent_key: string; enabled: boolean; instructions: string | null; prompt_override: string | null;
-  default_prompt: string | null; status: string | null; error: string | null; updated_at: string | null;
+  default_prompt?: string | null; status: string | null; error: string | null; updated_at: string | null;
 };
-export type CompanyDoc = { id: string; kind: string; name: string; size_bytes: number | null; chars: number | null; uploaded_at: string };
+export type ScopeDoc = { id: string; kind: string; name: string; size_bytes: number | null; chars: number | null; uploaded_at: string };
 
-export async function getSettings() {
+/** Platform agents' settings, plus every agent's default prompt (synced by the pipeline). */
+export async function getAgentDefaults() {
+  const { data } = await getSupabaseServerClient().from('agent_settings').select('*');
+  return new Map(((data || []) as AgentSetting[]).map((a) => [a.agent_key, a]));
+}
+
+export async function getScopeDocs(scopeId: string): Promise<ScopeDoc[]> {
+  const { data } = await getSupabaseServerClient().from('company_documents').select('id, kind, name, size_bytes, chars, uploaded_at')
+    .eq('scope_id', scopeId).order('uploaded_at', { ascending: false });
+  return (data || []) as ScopeDoc[];
+}
+
+/** Agents shown under "Working Agents": on in any of the viewer's scopes, plus platform agents that are on. */
+export async function workingAgentKeys(): Promise<Set<string>> {
   const db = getSupabaseServerClient();
-  const [{ data: rows }, { data: agents }, { data: docs }] = await Promise.all([
-    db.from('app_settings').select('key, value'),
-    db.from('agent_settings').select('*'),
-    db.from('company_documents').select('id, kind, name, size_bytes, chars, uploaded_at').order('uploaded_at', { ascending: false }),
+  const { scopes } = await getViewScopes();
+  const [{ data: platform }, { data: scoped }] = await Promise.all([
+    db.from('agent_settings').select('agent_key, enabled'),
+    scopes.length ? db.from('scope_agent_settings').select('scope_id, agent_key, enabled').in('scope_id', scopes.map((s) => s.id)) : Promise.resolve({ data: [] as any[] }),
   ]);
-  const value = (k: string) => (rows || []).find((r: any) => r.key === k)?.value ?? {};
-  const company = value('company');
-  const search = value('search');
-  return {
-    company: { name: company.name || '', context: company.context || '' } as Company,
-    search: { scope: search.scope || '', config: search.config || null, status: search.status || null,
-              error: search.error || null, parsed_at: search.parsed_at || null } as SearchSettings,
-    agents: new Map(((agents || []) as AgentSetting[]).map((a) => [a.agent_key, a])),
-    docs: (docs || []) as CompanyDoc[],
-  };
+  const keys = new Set<string>();
+  for (const key of SCOPE_AGENT_KEYS) {
+    const on = scopes.some((s) => (scoped || []).find((r: any) => r.scope_id === s.id && r.agent_key === key)?.enabled ?? true);
+    if (on) keys.add(key);
+  }
+  for (const r of platform || []) if (!SCOPE_AGENT_KEYS.includes(r.agent_key) && r.enabled) keys.add(r.agent_key);
+  for (const key of ['tender_documents', 'tender_analysis', 'feed_writer', 'translator']) {
+    if (!(platform || []).some((r: any) => r.agent_key === key)) keys.add(key);
+  }
+  return keys;
 }
 
-/** Agents switched off on Settings (no row = on). */
-export async function disabledAgents(): Promise<Set<string>> {
-  const { data } = await getSupabaseServerClient().from('agent_settings').select('agent_key, enabled');
-  return new Set((data || []).filter((r: any) => !r.enabled).map((r: any) => r.agent_key));
-}
-
-export async function isAgentEnabled(key: string) {
-  const { data } = await getSupabaseServerClient().from('agent_settings').select('enabled').eq('agent_key', key).maybeSingle();
+/** Is an agent on? Scope agents need the scope; platform agents don't. */
+export async function isAgentEnabled(key: string, scopeId?: string) {
+  const db = getSupabaseServerClient();
+  if (SCOPE_AGENT_KEYS.includes(key) && scopeId) {
+    const { data } = await db.from('scope_agent_settings').select('enabled').eq('scope_id', scopeId).eq('agent_key', key).maybeSingle();
+    return data?.enabled ?? true;
+  }
+  const { data } = await db.from('agent_settings').select('enabled').eq('agent_key', key).maybeSingle();
   return data?.enabled ?? true;
 }
 
-export async function companyName() {
-  const { data } = await getSupabaseServerClient().from('app_settings').select('value').eq('key', 'company').maybeSingle();
-  return (data?.value?.name || '').trim() || DEFAULT_COMPANY;
-}
-
 /**
- * The agent's system prompt: its fine-tuned version from Settings when there
- * is one, else the file in agents/; with the company name filled in.
+ * The agent's system prompt: the scope's fine-tuned version (scope agents) or
+ * the platform's (platform agents) when there is one, else the file in
+ * agents/; with the scope's name and the platform language filled in.
  */
-export async function agentPrompt(key: string, file: string) {
+export async function agentPrompt(key: string, file: string, scopeId?: string) {
   const db = getSupabaseServerClient();
-  const [{ data }, name, fallback] = await Promise.all([
-    db.from('agent_settings').select('prompt_override').eq('agent_key', key).maybeSingle(),
-    companyName(),
+  const scope = scopeId ? await getScope(scopeId) : (await getViewScopes()).scopes[0] ?? null;
+  const [{ data }, fallback, language] = await Promise.all([
+    SCOPE_AGENT_KEYS.includes(key) && scope
+      ? db.from('scope_agent_settings').select('prompt_override').eq('scope_id', scope.id).eq('agent_key', key).maybeSingle()
+      : db.from('agent_settings').select('prompt_override').eq('agent_key', key).maybeSingle(),
     readFile(path.join(process.cwd(), 'agents', file), 'utf8'),
+    getPlatformLanguage(),
   ]);
-  const language = await getPlatformLanguage();
-  return (data?.prompt_override || fallback).replaceAll('{company_name}', name).replaceAll('{language}', language.name);
+  return (data?.prompt_override || fallback).replaceAll('{company_name}', scope?.name || 'your organisation').replaceAll('{language}', language.name);
 }
 
 const BRIEF_CHARS = { context: 30_000, docs: 160_000 };
 
 /**
- * What the agents know about the company: the Settings description (or the
- * built-in brief in agents/company_brief.md if none is set), plus — for the
- * Tender Evaluation Agent — the text of every uploaded presentation,
- * reference and CV.
+ * What the agents know for a scope: its instructions (the default scope falls
+ * back on agents/company_brief.md while it has none), plus — for the Tender
+ * Evaluation and Proposal Manager agents — the text of its context documents.
  */
-export async function companyBrief({ withDocuments }: { withDocuments: boolean }) {
+export async function companyBrief({ withDocuments, scopeId }: { withDocuments: boolean; scopeId: string }) {
   const db = getSupabaseServerClient();
-  const { company } = await getSettings();
-  const name = company.name.trim() || DEFAULT_COMPANY;
-  const context = company.context.trim()
-    || await readFile(path.join(process.cwd(), 'agents', 'company_brief.md'), 'utf8');
-  const parts = [`# Company: ${name}`, context.slice(0, BRIEF_CHARS.context)];
+  const scope = await getScope(scopeId);
+  const instructions = scope?.instructions?.trim()
+    || (scope?.isDefault ? await readFile(path.join(process.cwd(), 'agents', 'company_brief.md'), 'utf8') : '');
+  const parts = [`# Scope: ${scope?.name ?? 'Untitled'}`, instructions.slice(0, BRIEF_CHARS.context) || '(No scope instructions yet.)'];
   if (withDocuments) {
-    const { data: docs } = await db.from('company_documents').select('kind, name, text_content').order('kind');
+    const { data: docs } = await db.from('company_documents').select('kind, name, text_content').eq('scope_id', scopeId).order('kind');
     let budget = BRIEF_CHARS.docs;
     for (const k of DOC_KINDS) {
       const items = (docs || []).filter((d: any) => d.kind === k.kind && d.text_content);

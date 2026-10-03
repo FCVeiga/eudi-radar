@@ -12,7 +12,7 @@ const GIVE_UP_MS = 4 * 60_000;
  * (or, if another visitor already did, waits for it) and refreshes the page
  * when the summary and report are ready.
  */
-export default function NewsReportRunner({ newsId, lastError }: { newsId: string; lastError: string | null }) {
+export default function NewsReportRunner({ newsId, scopeId, lastError }: { newsId: string; scopeId: string; lastError: string | null }) {
   const router = useRouter();
   const [state, setState] = useState<'working' | 'error'>('working');
   const [message, setMessage] = useState<string | null>(null);
@@ -22,7 +22,7 @@ export default function NewsReportRunner({ newsId, lastError }: { newsId: string
     if (started.current) return;  // once per page view (React strict mode mounts twice in dev)
     started.current = true;
     let poll: ReturnType<typeof setInterval> | undefined;
-    startNewsReport(newsId).then((r) => {
+    startNewsReport(newsId, scopeId).then((r) => {
       if (r.status === 'done') router.refresh();
       else if (r.status === 'running') {
         const since = Date.now();

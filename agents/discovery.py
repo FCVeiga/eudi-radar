@@ -27,9 +27,11 @@ def _parse_date(value):
 
 
 def run_discovery(session, search_provider, query_packs: dict, countries: list,
-                  errors: Optional[list] = None):
+                  errors: Optional[list] = None, found: Optional[set] = None):
     """Run every query in query_packs. A failing query is recorded in
-    `errors` (when given) and skipped, so one bad source can't sink the run."""
+    `errors` (when given) and skipped, so one bad source can't sink the run.
+    `found` (when given) collects the id of every result, already known or
+    not — a scope triages what its own searches turn up."""
     new_candidates = []
     seen = set()
     for pack_name, queries in query_packs.items():
@@ -43,6 +45,8 @@ def run_discovery(session, search_provider, query_packs: dict, countries: list,
                 continue
             for r in results:
                 cid = _candidate_id(r.url, r.title)
+                if found is not None:
+                    found.add(cid)
                 if cid in seen or session.get(Candidate, cid):
                     continue
                 seen.add(cid)

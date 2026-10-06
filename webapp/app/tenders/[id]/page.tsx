@@ -11,6 +11,7 @@ import HeartButton from '@/components/HeartButton';
 import { getLikes } from '@/lib/likes';
 import { getCurrentUser } from '@/lib/auth';
 import { getScopeItems, getViewScopes } from '@/lib/scopes';
+import { getContext } from '@/lib/accounts';
 import TenderScopeEvaluation from '@/components/TenderScopeEvaluation';
 import { getPlatformLanguage } from '@/lib/language';
 
@@ -98,7 +99,8 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
 
   const reqs = (requirements || []).filter((r) => firstInLanguage(r.requirement_text));
   // Scopes: the viewer's active scopes (or the default scope): relevance, evaluations, match columns.
-  const { scopes: viewScopes, own } = await getViewScopes();
+  const [{ scopes: viewScopes, own, canRun }, ctx] = await Promise.all([getViewScopes(), getContext()]);
+  const locked = !ctx ? null : !ctx.account.plan.customize ? 'plan' : !ctx.isAdmin ? 'member' : null;
   const { data: scopeEvals } = await supabase.from('scope_evaluations').select('*').eq('opportunity_id', params.id)
     .in('scope_id', viewScopes.map((s) => s.id));
   const evalOf = (scopeId: string) => (scopeEvals || []).find((r: any) => r.scope_id === scopeId) ?? null;
@@ -152,7 +154,7 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
 
           {viewScopes.map((scope) => (
             <TenderScopeEvaluation key={scope.id} opportunityId={o.opportunity_id} scope={{ id: scope.id, name: scope.name }}
-              row={evalOf(scope.id)} showName={viewScopes.length > 1 || !own} canRun={own} signedIn={!!user}
+              row={evalOf(scope.id)} showName={viewScopes.length > 1 || !own} canRun={canRun} signedIn={!!user} locked={locked}
               evaluatorOn={flags.get(scope.id)?.evaluator ?? true} proposerOn={flags.get(scope.id)?.proposer ?? true}
               ready={!!o.tender_summary || reqs.length > 0} analysedAt={o.tender_analysed_at ?? null} />
           ))}

@@ -38,6 +38,9 @@ SCOPE_AGENTS = ["search", "triage", "tender_evaluation", "proposal_manager", "ne
 PLATFORM_AGENTS = ["tender_documents", "tender_analysis", "feed_writer", "translator"]
 ALL_AGENTS = SCOPE_AGENTS + PLATFORM_AGENTS
 DEFAULT_SCOPE_NAME = "EUDI Wallet & digital identity"
+# Agent updates per day by plan (keep in sync with webapp/lib/plans.ts); scopes per workspace.
+RUNS_PER_DAY = {"free": 1, "starter": 2, "pro": 3, "teams": 6}
+SCOPES_PER_PLAN = {"free": 0, "starter": 1, "pro": 5, "teams": 1000}
 
 _state = {"loaded": False, "enabled": {}, "overrides": {}, "scopes": [], "default": None}
 
@@ -69,8 +72,12 @@ def load(session, search_defaults: dict = None) -> None:
         _state["enabled"] = {r.agent_key: bool(r.enabled) for r in rows if r.agent_key in PLATFORM_AGENTS}
         _state["overrides"] = {r.agent_key: r.prompt_override for r in rows if r.prompt_override and r.agent_key in PLATFORM_AGENTS + ["translator"]}
 
-        scopes = session.execute(text("""select id, name, instructions, active, is_default, search_config from scopes
-                                         where active or is_default order by is_default desc, created_at""")).fetchall()
+        scopes = session.execute(text("""select s.id, s.name, s.instructions, s.active, s.is_default, s.search_config, s.last_run_at,
+                   s.workspace_id, a.kind, a.plan,
+                   row_number() over (partition by s.workspace_id order by s.created_at) as rank
+            from scopes s left join workspaces w on w.id = s.workspace_id left join accounts a on a.id = w.account_id
+            order by s.is_default desc, s.created_at""")).fetchall()
+        scopes = [s for s in scopes if _due(s)]
         agents = session.execute(text("select scope_id, agent_key, enabled, prompt_override from scope_agent_settings")).fetchall()
         _state["scopes"] = []
         for s in scopes:
@@ -86,6 +93,35 @@ def load(session, search_defaults: dict = None) -> None:
         session.rollback()
         print(f"Settings: using defaults ({str(e)[:120]})")
     _state["loaded"] = True
+
+
+def _due(s) -> bool:
+    """Does this scope run now? Active, covered by its account's plan, and due
+    by the plan's cadence (the default scope: once a day). FORCE_ALL_SCOPES=1
+    runs every eligible scope regardless of cadence."""
+    from datetime import datetime, timezone
+    if s.is_default:
+        runs = 1
+    else:
+        if not s.active:
+            return False
+        if s.kind == "platform":
+            runs = 1
+        else:
+            plan = s.plan or "free"
+            if s.rank > SCOPES_PER_PLAN.get(plan, 0):
+                return False  # beyond the plan's scopes (e.g. after a downgrade), or Free
+            runs = RUNS_PER_DAY.get(plan, 1)
+    if os.environ.get("FORCE_ALL_SCOPES") == "1" or s.last_run_at is None:
+        return True
+    hours = (datetime.now(timezone.utc) - s.last_run_at).total_seconds() / 3600
+    return hours >= 24 / runs - 0.5
+
+
+def mark_ran(session, scope) -> None:
+    """Record that a scope's search and triage ran (its plan's cadence counts from here)."""
+    session.execute(text("update scopes set last_run_at = now() where id = cast(:i as uuid)"), {"i": scope.id})
+    session.commit()
 
 
 def scopes():

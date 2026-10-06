@@ -12,8 +12,9 @@ const VERDICTS: Record<string, string> = { bid: 'Bid', bid_with_partner: 'Bid wi
 const fmtDate = (iso: string) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
 /** One scope's evaluation of a tender (and its proposal brief), on the tender page. */
-export default function TenderScopeEvaluation({ opportunityId, scope, row, showName, canRun, signedIn, evaluatorOn, proposerOn, ready, analysedAt }: {
+export default function TenderScopeEvaluation({ opportunityId, scope, row, showName, canRun, signedIn, evaluatorOn, proposerOn, ready, analysedAt, locked = null }: {
   opportunityId: string; scope: { id: string; name: string }; row: any; showName: boolean; canRun: boolean; signedIn: boolean;
+  locked?: 'plan' | 'member' | null;
   evaluatorOn: boolean; proposerOn: boolean; ready: boolean; analysedAt: string | null;
 }) {
   const evaluation = (row?.evaluation ?? null) as Evaluation | null;
@@ -52,7 +53,9 @@ export default function TenderScopeEvaluation({ opportunityId, scope, row, showN
         </div>
       )}
       {!evaluatorOn ? <p className="muted">The Tender Evaluation Agent is switched off for this scope.</p>
-        : !canRun ? (signedIn ? null : login)
+        : !canRun ? (!signedIn ? login
+          : locked === 'member' ? <p className="muted">Your workspace’s admins run this agent; you see its results here.</p>
+          : locked === 'plan' ? <p className="muted"><Link href="/settings#billing">Upgrade</Link> to evaluate tenders against your own scope’s context.</p> : null)
           : <TenderEvaluationRunner opportunityId={opportunityId} scopeId={scope.id} evaluatedAt={row?.evaluated_at ?? null} running={running}
               ready={ready} lastError={row?.evaluation_error ?? null} />}
 

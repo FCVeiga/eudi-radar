@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { AGENTS } from '@/lib/agents';
 import { getCurrentUser } from '@/lib/auth';
-import { SCOPE_AGENT_KEYS, getOwnScope, getScopeAgents } from '@/lib/scopes';
+import { SCOPE_AGENT_KEYS, getEditableScope, getScopeAgents } from '@/lib/scopes';
 import { DOC_KINDS, getAgentDefaults, getScopeDocs } from '@/lib/settings';
 import AgentCard from '@/components/settings/AgentCard';
 import ScopeCard from '@/components/settings/ScopeCard';
@@ -14,15 +14,15 @@ export const maxDuration = 300;
 /** One scope: name and instructions, context documents, and its agents. */
 export default async function ScopePage({ params }: { params: { id: string } }) {
   const user = await getCurrentUser();
-  if (!user) redirect(`/login?next=/settings/scopes/${params.id}`);
-  const scope = await getOwnScope(params.id, user.id);
+  if (!user) redirect(`/login?next=/workspace/scopes/${params.id}`);
+  const scope = await getEditableScope(params.id);
   if (!scope) notFound();
   const [agents, defaults, docs] = await Promise.all([getScopeAgents(scope.id), getAgentDefaults(), getScopeDocs(scope.id)]);
   const cfg = scope.searchConfig;
 
   return (
     <div className="settings">
-      <Link className="back-link" href="/settings">← Settings</Link>
+      <Link className="back-link" href="/workspace">← Workspace</Link>
       <div className="scope-page-head">
         <h1 className="opps-h1">{scope.name}</h1>
         <div className="scope-page-switch">

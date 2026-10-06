@@ -1,5 +1,5 @@
 /**
- * The platform's agents, as shown on Settings and in the sidebar's
+ * The platform's agents, as shown on Workspace and in the sidebar's
  * "Working Agents". Search, Triage, Tender Evaluation, Proposal Manager and
  * News Report work per scope (lib/scopes.ts); the rest are platform agents. (The Verification Agent, which checks each tender is
  * really open, runs internally on the platform's own configuration and is
@@ -25,7 +25,7 @@ export type AgentDef = {
 
 export const AGENTS: AgentDef[] = [
   {
-    key: 'search', name: 'Search Agent', runs: 'pipeline', prompt: 'search scope (Settings → Search scope)', fineTune: false,
+    key: 'search', name: 'Search Agent', runs: 'pipeline', prompt: 'search scope (Workspace → scope → Search Agent)', fineTune: false,
     role: 'Searches TED, the web, news and every followed source for what this scope describes, in each country’s languages.',
     face: { colors: ['#00CCFF', '#3D7BFF'], eyes: 'scan', top: 'dish', mouth: 'flat' },
   },

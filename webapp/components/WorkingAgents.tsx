@@ -17,7 +17,7 @@ export default async function WorkingAgents() {
       <ul>
         {active.map((a) => (
           <li key={a.key}>
-            <Link href="/settings#agents" title={a.role}>
+            <Link href="/workspace" title={a.role}>
               <AgentAvatar agent={a.key} size={22} />
               <span className="wa-name">{a.name}</span>
               <span className="live-dot" aria-label="active" />

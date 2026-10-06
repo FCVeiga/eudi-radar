@@ -5,7 +5,7 @@ import { useFormState, useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import {
   FormState, createCompanyUpload, deleteCompanyDocument, deleteScope, registerCompanyDocument, saveScope,
-} from '@/app/settings/actions';
+} from '@/app/workspace/actions';
 
 function Submit({ label, busy }: { label: string; busy: string }) {
   const { pending } = useFormStatus();

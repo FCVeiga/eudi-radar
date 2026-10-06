@@ -12,7 +12,7 @@ export default function PrivacyPage() {
         <li><strong>Account:</strong> your email address and password (stored only as a secure hash by our authentication provider), username and sign-up date.</li>
         <li><strong>Profile:</strong> display name, picture and the description you write — shown on your public profile.</li>
         <li><strong>Activity:</strong> the tenders and news you follow (visible only to you), and — when community features launch — your posts and comments.</li>
-        <li><strong>Company material:</strong> files uploaded in Settings (such as presentations, references and team CVs, which can contain other people’s personal data). Upload only what you’re entitled to share.</li>
+        <li><strong>Scope context:</strong> files uploaded to a workspace’s scopes (such as presentations, references and team CVs, which can contain other people’s personal data). Upload only what you’re entitled to share.</li>
         <li><strong>Technical:</strong> a session cookie that keeps you signed in. We don’t use advertising or tracking cookies.</li>
       </ul>
       <h2>Why we use it</h2>

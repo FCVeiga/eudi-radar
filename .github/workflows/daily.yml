@@ -1,8 +1,9 @@
-name: Daily EUDI Wallet Opportunity Radar
+name: EUDI Radar pipeline
 
 on:
   schedule:
-    - cron: "0 6 * * *"
+    # Every 4 hours: each scope runs as often as its plan allows (1, 2, 3 or 6 times a day).
+    - cron: "0 */4 * * *"
   workflow_dispatch: {}
 
 # The last step commits the digest back to the repo.

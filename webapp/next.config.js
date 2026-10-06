@@ -4,7 +4,7 @@ const nextConfig = {
   experimental: {
     // The News Report Agent reads its prompt and the company brief at runtime.
     // So do the Tender Evaluation Agent (tender pages).
-    outputFileTracingIncludes: { '/news/[id]': ['./agents/**/*.md'], '/tenders/[id]': ['./agents/**/*.md'], '/settings': ['./agents/**/*.md'] },
+    outputFileTracingIncludes: { '/news/[id]': ['./agents/**/*.md'], '/tenders/[id]': ['./agents/**/*.md'], '/workspace': ['./agents/**/*.md'], '/workspace/scopes/[id]': ['./agents/**/*.md'] },
   },
   // Old paths (shared links, bookmarks) keep working.
   async redirects() {
@@ -13,7 +13,8 @@ const nextConfig = {
       { source: '/opportunities', destination: '/tenders', permanent: true },
       { source: '/opportunities/:path*', destination: '/tenders/:path*', permanent: true },
       { source: '/database', destination: '/history', permanent: true },
-      { source: '/landscape', destination: '/settings', permanent: false },
+      { source: '/landscape', destination: '/workspace', permanent: false },
+      { source: '/settings/scopes/:id', destination: '/workspace/scopes/:id', permanent: true },
     ];
   },
 };

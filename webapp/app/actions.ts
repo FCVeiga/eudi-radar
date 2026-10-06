@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
-import { getOwnScope, getViewScopes } from '@/lib/scopes';
+import { getEditableScope, getViewScopes } from '@/lib/scopes';
 import { refreshDueFeeds, resolveSource } from '@/lib/sources';
 import { FREQUENCIES, METHODS, Method, NOT_CONNECTABLE, SOURCE_TYPES } from '@/lib/sourceMeta';
 
@@ -89,14 +89,14 @@ export async function startNewsReport(newsId: string, scopeId: string) {
   return result;
 }
 
+/** Running on-click agents is for the workspace's admins (on a plan that allows it); members see the results. */
 async function ownsScope(scopeId: string) {
-  const user = await getCurrentUser();
-  return !!user && !!(await getOwnScope(scopeId, user.id));
+  return !!(await getEditableScope(scopeId));
 }
 
 /** The tender page's "Run" button: starts the Tender Evaluation Agent for one of your scopes. */
 export async function startTenderEvaluation(opportunityId: string, scopeId: string) {
-  if (!(await ownsScope(scopeId))) return { status: 'error' as const, message: 'log in, and pick one of your scopes' };
+  if (!(await ownsScope(scopeId))) return { status: 'error' as const, message: 'only the workspace’s admins can run this agent' };
   if (!/^[0-9a-f]{12,40}$/.test(opportunityId)) return { status: 'error' as const, message: 'unknown opportunity' };
   const { ensureEvaluation } = await import('@/lib/tenderEvaluation');
   const result = await ensureEvaluation(opportunityId, scopeId);

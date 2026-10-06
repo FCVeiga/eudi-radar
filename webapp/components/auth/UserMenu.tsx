@@ -5,17 +5,23 @@ import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import UserAvatar from '@/components/UserAvatar';
 import { logOut } from '@/app/auth/actions';
+import { switchWorkspace } from '@/app/settings/actions';
+
+export type WorkspaceGroup = { label: string; plan: string; items: { id: string; name: string }[] };
 
 const ITEMS = [
   { href: 'profile', label: 'Profile', icon: <><circle cx="8" cy="5.5" r="2.8" /><path d="M2.8 14c.6-2.8 2.7-4.4 5.2-4.4s4.6 1.6 5.2 4.4" /></> },
   { href: '/notifications', label: 'Notifications', icon: <path d="M8 2.3a3.7 3.7 0 0 0-3.7 3.7v2.2L3.2 10.4h9.6l-1.1-2.2V6A3.7 3.7 0 0 0 8 2.3zM6.6 12.5a1.5 1.5 0 0 0 2.8 0" /> },
+  { href: '/settings', label: 'Settings', icon: <><circle cx="8" cy="8" r="2.2" /><path d="M8 1.8v1.6M8 12.6v1.6M14.2 8h-1.6M3.4 8H1.8M12.4 3.6l-1.1 1.1M4.7 11.3l-1.1 1.1M12.4 12.4l-1.1-1.1M4.7 4.7 3.6 3.6" /></> },
   { href: '/help', label: 'Help', icon: <><circle cx="8" cy="8" r="6" /><path d="M6.3 6.3a1.8 1.8 0 1 1 2.5 1.6c-.5.3-.8.6-.8 1.2M8 11.3v.01" /></> },
   { href: '/terms', label: 'Terms & Conditions', icon: <><path d="M4 2.5h5.5L12 5v8.5H4z" /><path d="M9.5 2.5V5H12M6 8h4M6 10.5h4" /></> },
   { href: '/privacy', label: 'Privacy policy', icon: <><path d="M8 2 3 4v4c0 3 2.2 5.2 5 6 2.8-.8 5-3 5-6V4z" /><path d="m6 8 1.5 1.5L10.5 6.5" /></> },
 ];
 
 /** Navbar: the signed-in user's picture, opening their account menu. */
-export default function UserMenu({ user }: { user: { username: string; displayName: string; avatarUrl: string | null } }) {
+export default function UserMenu({ user, groups = [], currentWorkspace }: {
+  user: { username: string; displayName: string; avatarUrl: string | null }; groups?: WorkspaceGroup[]; currentWorkspace?: string | null;
+}) {
   const [open, setOpen] = useState(false);
   const box = useRef<HTMLDivElement>(null);
   const path = usePathname();
@@ -41,6 +47,24 @@ export default function UserMenu({ user }: { user: { username: string; displayNa
             <UserAvatar name={user.username} src={user.avatarUrl} size={36} />
             <div><strong>{user.displayName}</strong><span>u/{user.username}</span></div>
           </div>
+          {groups.length > 0 && (
+            <div className="ws-switch" role="group" aria-label="Workspaces">
+              <div className="ws-switch-title">Workspaces</div>
+              {groups.map((g) => (
+                <div key={g.label} className="ws-group">
+                  <div className="ws-group-label">{g.label}<span>{g.plan}</span></div>
+                  {g.items.map((w) => (
+                    <form key={w.id} action={switchWorkspace.bind(null, w.id, path || '/')}>
+                      <button type="submit" role="menuitemradio" aria-checked={w.id === currentWorkspace} className={`user-menu-item ws-item ${w.id === currentWorkspace ? 'on' : ''}`}>
+                        <span className="ws-check" aria-hidden="true">{w.id === currentWorkspace ? '✓' : ''}</span>{w.name}
+                      </button>
+                    </form>
+                  ))}
+                </div>
+              ))}
+              <Link href="/settings#create-team" className="user-menu-item ws-new">+ Create a team</Link>
+            </div>
+          )}
           {ITEMS.map((i) => (
             <Link key={i.href} role="menuitem" href={i.href === 'profile' ? `/u/${user.username}` : i.href} className="user-menu-item">
               <svg viewBox="0 0 16 16" aria-hidden="true">{i.icon}</svg>{i.label}

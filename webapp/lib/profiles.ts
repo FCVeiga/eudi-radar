@@ -28,5 +28,18 @@ export async function ensureProfile(userId: string, email: string, meta: Record<
   await db.from('profiles').insert({
     id: userId, username, display_name: meta.full_name || meta.name || username, avatar_url: meta.avatar_url || meta.picture || null,
   });
+  await ensurePersonalAccount(userId, username);
+}
+
+/** Everyone gets a personal account (Free) with one workspace, which the site opens on. */
+export async function ensurePersonalAccount(userId: string, name: string) {
+  const db = getSupabaseServerClient();
+  const { data: existing } = await db.from('accounts').select('id').eq('owner_id', userId).eq('kind', 'personal').maybeSingle();
+  if (existing) return;
+  const { data: acc } = await db.from('accounts').insert({ kind: 'personal', name, owner_id: userId, plan: 'free' }).select('id').single();
+  if (!acc) return;
+  await db.from('account_members').insert({ account_id: acc.id, user_id: userId, role: 'admin' });
+  const { data: ws } = await db.from('workspaces').insert({ account_id: acc.id, name: 'My workspace', created_by: userId }).select('id').single();
+  if (ws) await db.from('profiles').update({ current_workspace_id: ws.id }).eq('id', userId);
 }
 

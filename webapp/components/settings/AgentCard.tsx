@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import AgentAvatar from '@/components/AgentAvatar';
 import {
   FormState, resetAgentConfig, saveAgentConfig, saveAgentTuning, saveSearchScope, setAgentEnabled,
-} from '@/app/settings/actions';
+} from '@/app/workspace/actions';
 import type { AgentDef } from '@/lib/agents';
 
 function Submit({ label, busy, primary }: { label: string; busy: string; primary?: boolean }) {
@@ -15,18 +15,19 @@ function Submit({ label, busy, primary }: { label: string; busy: string; primary
 }
 
 /**
- * One agent on Settings: face, name, on/off, plain-language instructions
+ * One agent on Workspace: face, name, on/off, plain-language instructions
  * (for the Search Agent: the search scope), and its configuration — shown
  * and editable under "Open config"; what is saved there is what it runs on.
  */
-export default function AgentCard({ agent, enabled, instructions, config, custom, status, error, scopeId = null }: {
+export default function AgentCard({ agent, enabled, instructions, config, custom, status, error, scopeId = null, readOnly = false }: {
   agent: AgentDef; enabled: boolean; instructions: string | null; config: string | null;
   custom: boolean; status: string | null; error: string | null;
-  scopeId?: string | null;   // scope agents: the scope they belong to; platform agents: null
+  scopeId?: string | null;   // scope agents: the scope they belong to; workspace agents: null
+  readOnly?: boolean;        // members, Free plan, and workspace agents for non–platform admins
 }) {
   const router = useRouter();
   const search = agent.key === 'search';
-  const editable = agent.fineTune || search;
+  const editable = (agent.fineTune || search) && !readOnly;
   const [on, setOn] = useState(enabled);
   const [, start] = useTransition();
   const dialog = useRef<HTMLDialogElement>(null);
@@ -44,7 +45,7 @@ export default function AgentCard({ agent, enabled, instructions, config, custom
           <span className="agent-runs">{agent.runs === 'pipeline' ? 'Daily pipeline' : agent.runs === 'on click' ? 'On click' : 'When a story is opened'}{custom ? ' · customised' : ''}</span>
         </div>
         <button type="button" role="switch" aria-checked={on} aria-label={`${agent.name} ${on ? 'on' : 'off'}`}
-          className={`switch ${on ? 'on' : ''}`}
+          className={`switch ${on ? 'on' : ''}`} disabled={readOnly}
           onClick={() => { const next = !on; setOn(next); start(() => setAgentEnabled(agent.key, next, scopeId)); }}>
           <span />
         </button>
@@ -80,6 +81,7 @@ export default function AgentCard({ agent, enabled, instructions, config, custom
             <h2>{agent.name} — {custom ? 'customised configuration' : 'default configuration'}</h2>
             <button type="button" className="modal-close" aria-label="Close" onClick={() => dialog.current?.close()}>×</button>
           </div>
+          {readOnly && <p className="form-msg readonly-note">Read-only — {scopeId ? 'only this workspace’s admins can change it, on a plan that allows customizing' : 'workspace agents are configured by the platform’s admins'}.</p>}
           <p className="field-hint">
             {search
               ? 'JSON: the TED phrases, web and news queries, site-search terms and the Triage Agent’s relevance rules. Fine-tuning describes the search scope and replaces it.'
@@ -87,7 +89,7 @@ export default function AgentCard({ agent, enabled, instructions, config, custom
                 ? 'JSON: how files are sorted by name (type_patterns, first match wins), which new files post an update (alert_on_new), which are skipped, and whether only open tenders are covered.'
                 : editable
                 ? <>The agent’s instructions{agent.prompt ? <> (<span className="mono">{agent.prompt}</span>)</> : null}. Edit freely, but keep the <span className="mono">## Output</span> section and the placeholders in braces — the platform depends on them.</>
-                : 'This agent doesn’t use AI instructions; nothing to configure.'}
+                : readOnly ? <>The agent’s instructions{agent.prompt ? <> (<span className="mono">{agent.prompt}</span>)</> : null}.</> : 'This agent doesn’t use AI instructions; nothing to configure.'}
           </p>
           {editable
             ? <textarea name="config" className="config-edit" value={draft} onChange={(e) => setDraft(e.target.value)} spellCheck={false} />

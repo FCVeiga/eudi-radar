@@ -1,19 +1,19 @@
 /**
- * Scopes (migration 025). A scope is a user's configuration of the radar:
- * a name, instructions (what the agents should know), context documents, a
- * search configuration and its own agents — Search, Triage, Tender
- * Evaluation, Proposal Manager, News Report. Users create as many as they
- * want and switch them active or inactive.
+ * Scopes (migration 025). A scope is one configuration of the radar inside a
+ * workspace (lib/accounts.ts): a name, instructions (what the agents should
+ * know), context documents, a search configuration and its own agents —
+ * Search, Triage, Tender Evaluation, Proposal Manager, News Report. Workspace
+ * admins create them (as many as the plan allows) and switch them on or off.
  *
  * What you see on Home, Community, Tenders, News and History is the work of
- * your active scopes (or, signed out / with none active, the default scope).
+ * your current workspace's active scopes (signed out, on Free, or with none
+ * active: the default scope).
  */
 import 'server-only';
 import { cache } from 'react';
 import { getSupabaseServerClient } from '@/lib/supabase';
-import { getCurrentUser } from '@/lib/auth';
+import { canEditWorkspace, getContext } from '@/lib/accounts';
 
-export const MAX_ACTIVE_SCOPES = 5;
 export const SCOPE_AGENT_KEYS = ['search', 'triage', 'tender_evaluation', 'proposal_manager', 'news_report'];
 export const PLATFORM_AGENT_KEYS = ['tender_documents', 'tender_analysis', 'feed_writer', 'translator'];
 
@@ -29,16 +29,17 @@ const toScope = (r: any): Scope => ({
   parsedAt: r.search_parsed_at, createdAt: r.created_at,
 });
 
-export async function getMyScopes(userId: string): Promise<Scope[]> {
-  const { data } = await getSupabaseServerClient().from('scopes').select('*').eq('owner_id', userId).order('created_at');
+export async function getWorkspaceScopes(workspaceId: string): Promise<Scope[]> {
+  const { data } = await getSupabaseServerClient().from('scopes').select('*').eq('workspace_id', workspaceId).order('created_at');
   return (data || []).map(toScope);
 }
 
-/** A scope the user owns (null if it isn't theirs). */
-export async function getOwnScope(id: string, userId: string): Promise<Scope | null> {
+/** A scope the user may configure: admin of its workspace, on a plan that allows customizing (else null). */
+export async function getEditableScope(id: string): Promise<(Scope & { workspaceId: string }) | null> {
   if (!/^[0-9a-f-]{36}$/.test(id)) return null;
-  const { data } = await getSupabaseServerClient().from('scopes').select('*').eq('id', id).eq('owner_id', userId).maybeSingle();
-  return data ? toScope(data) : null;
+  const { data } = await getSupabaseServerClient().from('scopes').select('*').eq('id', id).maybeSingle();
+  if (!data?.workspace_id || !(await canEditWorkspace(data.workspace_id))) return null;
+  return { ...toScope(data), workspaceId: data.workspace_id };
 }
 
 export async function getScope(id: string): Promise<Scope | null> {
@@ -48,19 +49,25 @@ export async function getScope(id: string): Promise<Scope | null> {
 }
 
 /**
- * The scopes whose results this viewer sees: their active scopes, or the
- * default scope when signed out or none is active. `own` says whether they
- * are the viewer's own (so they can run agents for them).
+ * The scopes whose results this viewer sees: the current workspace's active
+ * scopes (up to what its plan allows), or the default scope when signed out,
+ * on Free, or none is active. `own` = they're the workspace's scopes;
+ * `canRun` = the viewer may run on-click agents for them (an admin on a plan
+ * that allows customizing; members only see the results).
  */
-export const getViewScopes = cache(async (): Promise<{ scopes: Scope[]; own: boolean }> => {
-  const user = await getCurrentUser();
+export const getViewScopes = cache(async (): Promise<{ scopes: Scope[]; own: boolean; canRun: boolean }> => {
+  const ctx = await getContext();
   const db = getSupabaseServerClient();
-  if (user) {
-    const { data } = await db.from('scopes').select('*').eq('owner_id', user.id).eq('active', true).order('created_at');
-    if (data?.length) return { scopes: data.map(toScope), own: true };
+  if (ctx) {
+    const limit = ctx.account.kind === 'platform' ? 1000 : ctx.account.plan.scopes;
+    const { data } = limit > 0
+      ? await db.from('scopes').select('*').eq('workspace_id', ctx.workspace.id).order('created_at').limit(limit)
+      : { data: [] as any[] };
+    const active = (data || []).filter((s: any) => s.active);
+    if (active.length) return { scopes: active.map(toScope), own: true, canRun: ctx.canCustomize };
   }
   const { data } = await db.from('scopes').select('*').eq('is_default', true).limit(1);
-  return { scopes: (data || []).map(toScope), own: false };
+  return { scopes: (data || []).map(toScope), own: false, canRun: false };
 });
 
 export type ScopeItems = { ids: string[]; relevance: Map<string, number>; scopesOf: Map<string, string[]> };

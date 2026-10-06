@@ -468,6 +468,7 @@ def main():
     for scope in run_scopes:
         if not S.enabled("triage", scope):
             print(f"[{scope.name}] Triage Agent switched off")
+            S.mark_ran(session, scope)
             continue
         prompt = S.prompt_for("triage.md", open(os.path.join(os.path.dirname(__file__), "prompts", "triage.md")).read(), scope)
         pending_ids = [r.candidate_id for r in session.execute(sql_text(
@@ -545,6 +546,7 @@ def main():
         print(f"[{scope.name}] triage: {len(pending)} queued, {len(to_llm)} LLM calls")
         if aborted:
             break
+        S.mark_ran(session, scope)
     # A tender's own relevance is the best any scope gave it (cards then show the viewer's scopes').
     session.execute(sql_text("""update opportunities o set opportunity_relevance_score = m.r, relevance_score = m.r
         from (select item_id, max(relevance) r from scope_items where item_type = 'tender' group by item_id) m
@@ -562,7 +564,13 @@ def main():
     # Tender documents (TED notices + buyer portal lists) and what bidders must meet.
     from agents.tender_documents import collect_all
     from agents.tender_analysis import analyse_tenders
-    if S.enabled("tender_documents"):
+    # Buyer portals: once a day is enough (the pipeline itself runs every 4 hours).
+    last_docs = session.execute(sql_text("select value->>'at' from app_settings where key = 'documents_run'")).scalar()
+    docs_due = not last_docs or (datetime.utcnow() - datetime.fromisoformat(last_docs)).total_seconds() > 20 * 3600
+    if S.enabled("tender_documents") and docs_due:
+        session.execute(sql_text("""insert into app_settings (key, value) values ('documents_run', jsonb_build_object('at', cast(:t as text)))
+                                    on conflict (key) do update set value = excluded.value"""), {"t": datetime.utcnow().isoformat()})
+        session.commit()
         docs = collect_all(session, errors)
         print(f"Documents: {docs['documents']} across {docs['opportunities']} active tenders, {docs['new']} new")
     if S.enabled("tender_analysis"):

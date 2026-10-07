@@ -5,7 +5,7 @@ import { useFormState, useFormStatus } from 'react-dom';
 import { useT, useLocale } from '@/lib/i18n/client';
 import type { Plan } from '@/lib/plans';
 import { DeleteAccountForm } from '@/components/auth/ProfileForms';
-import { ActionRow, Choices, ModalActions, Row, Section, useSave } from '../SettingsUI';
+import { ActionRow, Choices, LinkRow, ModalActions, Row, Section, useSave } from '../SettingsUI';
 import {
   SettingsState, adminSetPlan, changeEmail, changePassword, connectGoogle, disconnectGoogle, logOutEverywhere,
   openBillingPortal, setBirthday, setGender, startCheckout,
@@ -16,13 +16,11 @@ const GENDERS = [
   { value: 'other', label: 'Other' }, { value: 'prefer_not', label: 'Prefer not to say' },
 ];
 
-type Invoice = { id: string; number: string | null; date: number; amount: number; currency: string; status: string | null; url: string | null };
-
 export default function AccountTab(p: {
   userId: string; username: string; email: string; hasPassword: boolean; google: string | null;
   birthday: string | null; gender: string | null;
   plan: { key: string; status: string; periodEnd: string | null; hasBilling: boolean };
-  plans: Plan[]; invoices: Invoice[]; billingReady: boolean; admin: boolean; openPlan: boolean; paid: boolean;
+  plans: Plan[]; billingReady: boolean; admin: boolean; openPlan: boolean; paid: boolean;
 }) {
   const t = useT();
   const locale = useLocale();
@@ -47,6 +45,7 @@ export default function AccountTab(p: {
         <Row label="Plan" value={`${current.name}${p.plan.status === 'comped' ? ` · ${t('complimentary')}` : ''}`} autoOpen={p.openPlan} wide>
           {() => <PlanPanel {...p} current={current} date={date} />}
         </Row>
+        <LinkRow label="Invoice history" href="/settings/account/invoices" />
       </Section>
 
       <Section title="Authorization">
@@ -141,13 +140,11 @@ function LogOutButton() {
 
 function PlanPanel(p: {
   userId: string; plan: { key: string; status: string; periodEnd: string | null; hasBilling: boolean };
-  plans: Plan[]; invoices: Invoice[]; billingReady: boolean; admin: boolean; current: Plan; date: (d: string | number) => string;
+  plans: Plan[]; billingReady: boolean; admin: boolean; current: Plan; date: (d: string | number) => string;
 }) {
   const t = useT();
-  const locale = useLocale();
   const [pending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const money = (cents: number, currency: string) => new Intl.NumberFormat(locale, { style: 'currency', currency: currency.toUpperCase() }).format(cents / 100);
   const run = (fn: () => Promise<{ error?: string }>) => { setError(null); start(async () => { const r = await fn(); if (r?.error) setError(r.error); }); };
   return (
     <div className="st-plan">
@@ -182,17 +179,6 @@ function PlanPanel(p: {
           </label>
         )}
       </div>
-      <h3 className="form-subhead">{t('Invoices')}</h3>
-      {p.invoices.length === 0 ? <p className="field-hint">{t('No invoices yet.')}</p> : (
-        <ul className="st-invoices">
-          {p.invoices.map((i) => (
-            <li key={i.id}>
-              <span>{p.date(i.date)}</span><span>{i.number ?? '—'}</span><span>{money(i.amount, i.currency)}</span>
-              {i.url ? <a href={i.url} target="_blank" rel="noopener noreferrer">PDF</a> : <span />}
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 }

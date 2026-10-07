@@ -21,7 +21,7 @@ export function SettingsTabs() {
   return (
     <nav className="st-tabs" aria-label={t('Settings')}>
       {TABS.map((tab) => (
-        <Link key={tab.href} href={tab.href} className={`st-tab ${path === tab.href ? 'on' : ''}`} aria-current={path === tab.href ? 'page' : undefined}>
+        <Link key={tab.href} href={tab.href} className={`st-tab ${path?.startsWith(tab.href) ? 'on' : ''}`} aria-current={path === tab.href ? 'page' : undefined}>
           {t(tab.label)}
         </Link>
       ))}
@@ -59,6 +59,18 @@ export function Row({ label, hint, value, title, autoOpen = false, wide = false,
       </button>
       {open && <Modal title={t(title ?? label)} wide={wide} onClose={() => setOpen(false)}>{children(() => setOpen(false))}</Modal>}
     </>
+  );
+}
+
+/** A setting that opens its own page. */
+export function LinkRow({ label, hint, value, href }: { label: string; hint?: string; value?: ReactNode; href: string }) {
+  const t = useT();
+  return (
+    <Link href={href} className="st-row">
+      <span className="st-text"><strong>{t(label)}</strong>{hint && <em>{t(hint)}</em>}</span>
+      {value !== undefined && <span className="st-value">{value}</span>}
+      <Chevron />
+    </Link>
   );
 }
 

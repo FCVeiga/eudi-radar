@@ -1769,3 +1769,8 @@ table.data-table th { background: none; }
 :root[data-theme="auto"] input, :root[data-theme="auto"] select, :root[data-theme="auto"] textarea { background: var(--surface-2); color: var(--ink); border-color: var(--border-strong); }
 :root[data-theme="auto"] .switch:not(.on) { background: var(--border-strong); }
 }
+.st-invoice-table td a { color: var(--accent); font-weight: 600; }
+.inv-status { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; background: var(--fill); color: var(--muted); }
+.inv-status.paid { background: var(--ok-soft); color: var(--ok); }
+.inv-status.open, .inv-status.uncollectible { background: var(--warn-soft); color: var(--warn); }
+a.st-row { text-decoration: none; }

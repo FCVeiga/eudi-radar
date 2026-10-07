@@ -1181,5 +1181,96 @@
     "fr": "Profil → <b>Modifier le profil</b>. Vous pouvez changer votre photo, votre nom, votre nom d’utilisateur et votre description, modifier votre mot de passe ou supprimer votre compte et toutes ses données.",
     "de": "Profil → <b>Profil bearbeiten</b>. Dort kannst du Bild, Name, Benutzername und Beschreibung ändern, dein Passwort ändern oder dein Konto mit allen Daten löschen.",
     "it": "Profilo → <b>Modifica profilo</b>. Puoi cambiare foto, nome, nome utente e descrizione, modificare la password o eliminare l’account e tutti i suoi dati."
+  },
+  "Invoice history": {
+    "pt": "Histórico de faturas",
+    "es": "Historial de facturas",
+    "fr": "Historique des factures",
+    "de": "Rechnungsverlauf",
+    "it": "Cronologia fatture"
+  },
+  "Date": {
+    "pt": "Data",
+    "es": "Fecha",
+    "fr": "Date",
+    "de": "Datum",
+    "it": "Data"
+  },
+  "Invoice": {
+    "pt": "Fatura",
+    "es": "Factura",
+    "fr": "Facture",
+    "de": "Rechnung",
+    "it": "Fattura"
+  },
+  "Status": {
+    "pt": "Estado",
+    "es": "Estado",
+    "fr": "Statut",
+    "de": "Status",
+    "it": "Stato"
+  },
+  "Amount": {
+    "pt": "Montante",
+    "es": "Importe",
+    "fr": "Montant",
+    "de": "Betrag",
+    "it": "Importo"
+  },
+  "Download": {
+    "pt": "Transferir",
+    "es": "Descargar",
+    "fr": "Télécharger",
+    "de": "Herunterladen",
+    "it": "Scarica"
+  },
+  "View": {
+    "pt": "Ver",
+    "es": "Ver",
+    "fr": "Voir",
+    "de": "Ansehen",
+    "it": "Visualizza"
+  },
+  "Paid": {
+    "pt": "Paga",
+    "es": "Pagada",
+    "fr": "Payée",
+    "de": "Bezahlt",
+    "it": "Pagata"
+  },
+  "Due": {
+    "pt": "Por pagar",
+    "es": "Pendiente",
+    "fr": "À payer",
+    "de": "Offen",
+    "it": "Da pagare"
+  },
+  "Draft": {
+    "pt": "Rascunho",
+    "es": "Borrador",
+    "fr": "Brouillon",
+    "de": "Entwurf",
+    "it": "Bozza"
+  },
+  "Void": {
+    "pt": "Anulada",
+    "es": "Anulada",
+    "fr": "Annulée",
+    "de": "Storniert",
+    "it": "Annullata"
+  },
+  "Uncollectible": {
+    "pt": "Incobrável",
+    "es": "Incobrable",
+    "fr": "Irrécouvrable",
+    "de": "Uneinbringlich",
+    "it": "Inesigibile"
+  },
+  "Couldn’t load invoices.": {
+    "pt": "Não foi possível carregar as faturas.",
+    "es": "No se pudieron cargar las facturas.",
+    "fr": "Impossible de charger les factures.",
+    "de": "Rechnungen konnten nicht geladen werden.",
+    "it": "Impossibile caricare le fatture."
   }
 }

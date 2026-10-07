@@ -67,7 +67,11 @@ export const getViewScopes = cache(async (): Promise<{ scopes: Scope[]; own: boo
     : { data: [] as any[] };
   const own = (data || []).filter((s: any) => s.active && !s.is_default).map(toScope);
   const seen = new Set(own.map((s) => s.id));
-  return { scopes: [...defaults.filter((d) => !seen.has(d.id)), ...own], own: own.length > 0, canRun: ctx.canCustomize };
+  const { data: ws } = await db.from('workspaces').select('show_default').eq('id', ctx.workspace.id).maybeSingle();
+  // The default stays in the feed until this workspace has another scope switched on and has turned it off.
+  const includeDefault = ws?.show_default !== false || own.length === 0;
+  const defaultsShown = includeDefault ? defaults.filter((d) => !seen.has(d.id)) : [];
+  return { scopes: [...defaultsShown, ...own], own: own.length > 0, canRun: ctx.canCustomize };
 });
 
 export type ScopeItems = { ids: string[]; relevance: Map<string, number>; scopesOf: Map<string, string[]> };

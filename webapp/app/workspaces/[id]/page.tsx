@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { getContext, getMyWorkspaces, getWorkspaceContext } from '@/lib/accounts';
 import { getSupabaseServerClient } from '@/lib/supabase';
@@ -7,6 +7,8 @@ import { SCOPE_AGENT_KEYS, getWorkspaceScopes } from '@/lib/scopes';
 import ScopeCard from '@/components/settings/ScopeCard';
 import { AddMemberButton, DeleteWorkspace, MemberRow, RevokeInviteButton, WorkspaceName } from '@/components/settings/WorkspaceControls';
 import { createScope, switchWorkspace } from '../actions';
+import { UpgradeReport } from '@/components/UpgradeReport';
+import SignUpGate from '@/components/SignUpGate';
 import { getLocale, getT } from '@/lib/i18n/server';
 
 const fmt = (iso: string) => new Date(iso).toLocaleDateString(getLocale(), { day: 'numeric', month: 'short', year: 'numeric' });
@@ -14,13 +16,24 @@ const fmt = (iso: string) => new Date(iso).toLocaleDateString(getLocale(), { day
 /** One workspace: its scopes and its team members (Teams). */
 export default async function WorkspaceDetailPage({ params }: { params: { id: string } }) {
   const user = await getCurrentUser();
-  if (!user) redirect(`/login?next=/workspaces/${params.id}`);
+  if (!user) {
+    const t = await getT();
+    return (
+      <div className="settings">
+        <h1 className="opps-h1">{t('Workspaces')}</h1>
+        <SignUpGate />
+      </div>
+    );
+  }
   const ctx = await getWorkspaceContext(params.id);
   if (!ctx) notFound();
   const t = await getT();
   const db = getSupabaseServerClient();
   const wsId = ctx.workspace.id;
   const ownScopes = await getWorkspaceScopes(wsId);
+  const { data: wsRow } = await db.from('workspaces').select('show_default').eq('id', wsId).maybeSingle();
+  const otherActive = ownScopes.some((s) => s.active && !s.isDefault);
+  const showDefault = wsRow?.show_default !== false || !otherActive;
   const { data: defaultRow } = await db.from('scopes').select('*').eq('is_default', true).maybeSingle();
   const sharedDefault = defaultRow?.active && defaultRow.workspace_id !== wsId ? {
     id: defaultRow.id, ownerId: defaultRow.owner_id, name: defaultRow.name, instructions: defaultRow.instructions,
@@ -93,10 +106,12 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
           <div className="scope-grid">
             {scopes.map((s) => {
               const on = SCOPE_AGENT_KEYS.filter((k) => (agentRows || []).find((r: any) => r.scope_id === s.id && r.agent_key === k)?.enabled ?? true).length;
-              const shared = s.id === sharedDefault?.id;
+              const isDefaultCard = s.isDefault;
               return (
-                <ScopeCard key={s.id} readOnly={shared || !ctx.canCustomize}
-                  scope={{ id: s.id, name: s.name, instructions: s.instructions, active: s.active, isDefault: s.isDefault, topic: s.searchConfig?.topic ?? null }}
+                <ScopeCard key={s.id} readOnly={isDefaultCard ? !ctx.isPlatformAdmin : !ctx.canCustomize}
+                  canToggle={isDefaultCard ? ctx.isAdmin && otherActive : undefined}
+                  showDefaultFor={isDefaultCard ? wsId : null}
+                  scope={{ id: s.id, name: s.name, instructions: s.instructions, active: isDefaultCard ? showDefault : s.active, isDefault: s.isDefault, topic: s.searchConfig?.topic ?? null }}
                   docs={count(docs, s.id)} agentsOn={on} agentsTotal={SCOPE_AGENT_KEYS.length} items={count(items, s.id)} />
               );
             })}
@@ -133,10 +148,7 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
             )}
           </>
         ) : (
-          <div className="profile-empty">
-            <p className="profile-empty-title">{t('Add team members to your workspace')}</p>
-            <Link href="/settings/account?plan=1" className="btn primary profile-empty-cta">{t('Upgrade Plan')}</Link>
-          </div>
+          <UpgradeReport />
         )}
       </section>
 

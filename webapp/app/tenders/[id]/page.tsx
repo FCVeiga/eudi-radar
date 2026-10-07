@@ -11,10 +11,14 @@ import HeartButton from '@/components/HeartButton';
 import { getLikes } from '@/lib/likes';
 import { getCurrentUser } from '@/lib/auth';
 import { getScopeItems, getViewScopes } from '@/lib/scopes';
-import { getContext } from '@/lib/accounts';
+import { getContext, getPersonalAccount } from '@/lib/accounts';
 import TenderScopeEvaluation from '@/components/TenderScopeEvaluation';
 import { getPlatformLanguage } from '@/lib/language';
 import { getLocale, getT } from '@/lib/i18n/server';
+import SignUpGate from '@/components/SignUpGate';
+import { UpgradeReport } from '@/components/UpgradeReport';
+import { allowRequirements } from '@/lib/tenderViews';
+import { PLANS } from '@/lib/plans';
 
 // The Tender Evaluation Agent runs inside this page's server action: give it time.
 export const maxDuration = 300;
@@ -75,6 +79,17 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
     );
   }
 
+  const user = await getCurrentUser();
+  if (!user) {
+    return (
+      <div>
+        <Link className="back-link" href="/tenders">← {t('Tenders')}</Link>
+        <h1 className="opps-h1">{titleOf(o)}</h1>
+        <SignUpGate />
+      </div>
+    );
+  }
+
   const { data: requirements } = await supabase
     .from('requirements')
     .select('*, requirement_matches(match_status, matched_evidence, notes, scope_id)')
@@ -100,7 +115,10 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
 
   const reqs = (requirements || []).filter((r) => firstInLanguage(r.requirement_text));
   // Scopes: the viewer's active scopes (or the default scope): relevance, evaluations, match columns.
-  const [{ scopes: viewScopes, own, canRun }, ctx] = await Promise.all([getViewScopes(), getContext()]);
+  const [{ scopes: viewScopes, own, canRun }, ctx, account] = await Promise.all([getViewScopes(), getContext(), getPersonalAccount(user.id)]);
+  const plan = ctx?.plan ?? account?.plan ?? PLANS[0];
+  const evaluationAllowed = plan.evaluation;
+  const showRequirements = await allowRequirements(user.id, plan.requirementViewsPerMonth);
   const locked = !ctx ? null : !ctx.canCustomize && ctx.isAdmin ? 'plan' : !ctx.isAdmin ? 'member' : null;
   const { data: scopeEvals } = await supabase.from('scope_evaluations').select('*').eq('opportunity_id', params.id)
     .in('scope_id', viewScopes.map((s) => s.id));
@@ -112,8 +130,8 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
   const matchOf = (r: any, scopeId: string) => (r.requirement_matches || []).find((m: any) => m.scope_id === scopeId);
   const summary = (firstInLanguage(o.tender_summary) ?? firstInLanguage(o.summary) ?? '')
     .split(/\n{2,}/).map((p: string) => p.trim()).filter(Boolean);
-  const [likes, user, agentFlags] = await Promise.all([
-    getLikes('tender', [o.opportunity_id]), getCurrentUser(),
+  const [likes, agentFlags] = await Promise.all([
+    getLikes('tender', [o.opportunity_id]),
     Promise.all(viewScopes.map(async (s) => [s.id, await isAgentEnabled('tender_evaluation', s.id), await isAgentEnabled('proposal_manager', s.id)] as const)),
   ]);
   const flags = new Map(agentFlags.map(([id, e, p]) => [id, { evaluator: e, proposer: p }]));
@@ -153,12 +171,23 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
             </div>
           )}
 
-          {viewScopes.map((scope) => (
+          {evaluationAllowed ? viewScopes.map((scope) => (
             <TenderScopeEvaluation key={scope.id} opportunityId={o.opportunity_id} scope={{ id: scope.id, name: scope.name }}
-              row={evalOf(scope.id)} showName={viewScopes.length > 1 || !own} canRun={canRun && (!scope.isDefault || !!ctx?.isPlatformAdmin)} signedIn={!!user} locked={locked}
+              row={evalOf(scope.id)} showName={viewScopes.length > 1 || !own} canRun={canRun && (!scope.isDefault || !!ctx?.isPlatformAdmin)} signedIn locked={locked}
               evaluatorOn={flags.get(scope.id)?.evaluator ?? true} proposerOn={flags.get(scope.id)?.proposer ?? true}
               ready={!!o.tender_summary || reqs.length > 0} analysedAt={o.tender_analysed_at ?? null} />
-          ))}
+          )) : (
+            <section className="detail-block analysis-block" id="evaluation">
+              <div className="agent-head">
+                <AgentAvatar agent="tender_evaluation" />
+                <div className="agent-id">
+                  <h2>{t('Tender Evaluation')}</h2>
+                  <span className="agent-name">{t('Tender Evaluation Agent')}</span>
+                </div>
+              </div>
+              <UpgradeReport note={t('The Tender Evaluation Agent is only available on Pro and Teams plans.')} />
+            </section>
+          )}
           {changes && changes.length > 0 && (
             <div className="detail-block" id="updates">
               <h2>{t('Updates')} <span className="uc-count">{changes.length}</span></h2>
@@ -201,8 +230,8 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
           )}
 
           <div className="detail-block" id="requirements">
-            <h2>{evaluatedScopes.length ? t('Requirements & Match Status') : t('Requirements')} {reqs.length > 0 && <span className="uc-count">{reqs.length}</span>}</h2>
-            {reqs.length === 0 ? (
+            <h2>{evaluatedScopes.length && showRequirements ? t('Requirements & Match Status') : t('Requirements')} {showRequirements && reqs.length > 0 && <span className="uc-count">{reqs.length}</span>}</h2>
+            {!showRequirements ? <UpgradeReport /> : reqs.length === 0 ? (
               <p className="muted">
                 {o.tender_analysed_at
                   ? t('None published yet.')

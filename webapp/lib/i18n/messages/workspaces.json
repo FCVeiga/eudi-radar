@@ -160,6 +160,48 @@
   "de": "Teammitglieder",
   "it": "Membri del team"
  },
+ "Create an account to see this content": {
+  "pt": "Crie uma conta para ver este conteúdo",
+  "es": "Crea una cuenta para ver este contenido",
+  "fr": "Créez un compte pour voir ce contenu",
+  "de": "Erstelle ein Konto, um diesen Inhalt zu sehen",
+  "it": "Crea un account per vedere questo contenuto"
+ },
+ "Create account": {
+  "pt": "Criar conta",
+  "es": "Crear cuenta",
+  "fr": "Créer un compte",
+  "de": "Konto erstellen",
+  "it": "Crea un account"
+ },
+ "Upgrade Plan to See Agent Report": {
+  "pt": "Melhore o plano para ver o relatório do agente",
+  "es": "Mejora el plan para ver el informe del agente",
+  "fr": "Passez à un plan supérieur pour voir le rapport de l’agent",
+  "de": "Upgrade den Plan, um den Agentenbericht zu sehen",
+  "it": "Passa a un piano superiore per vedere il rapporto dell’agente"
+ },
+ "Upgrade plan": {
+  "pt": "Melhorar plano",
+  "es": "Mejorar plan",
+  "fr": "Changer de forfait",
+  "de": "Plan upgraden",
+  "it": "Passa a un piano superiore"
+ },
+ "The Tender Evaluation Agent is only available on Pro and Teams plans.": {
+  "pt": "O Agente de Avaliação de Concursos só está disponível nos planos Pro e Teams.",
+  "es": "El Agente de Evaluación de Licitaciones solo está disponible en los planes Pro y Teams.",
+  "fr": "L’agent d’évaluation des appels d’offres n’est disponible que sur les plans Pro et Teams.",
+  "de": "Der Agent zur Ausschreibungsbewertung ist nur in den Plänen Pro und Teams verfügbar.",
+  "it": "L’agente di valutazione gare è disponibile solo nei piani Pro e Teams."
+ },
+ "Turn on another scope before switching off the default.": {
+  "pt": "Ative outro âmbito antes de desligar o predefinido.",
+  "es": "Activa otro ámbito antes de desactivar el predeterminado.",
+  "fr": "Activez un autre périmètre avant de désactiver celui par défaut.",
+  "de": "Schalte einen anderen Bereich ein, bevor du den Standard ausschaltest.",
+  "it": "Attiva un altro ambito prima di disattivare quello predefinito."
+ },
  "Add team members to your workspace": {
   "pt": "Adicione membros da equipa ao seu espaço de trabalho",
   "es": "Añade miembros del equipo a tu espacio de trabajo",

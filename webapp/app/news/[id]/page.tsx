@@ -12,6 +12,8 @@ import { isAgentEnabled } from '@/lib/settings';
 import { getPlatformLanguage } from '@/lib/language';
 import { getViewScopes } from '@/lib/scopes';
 import { getLocale, getT } from '@/lib/i18n/server';
+import { getCurrentUser } from '@/lib/auth';
+import SignUpGate from '@/components/SignUpGate';
 
 // The News Report Agent runs inside this page's server action: give it time.
 export const maxDuration = 300;
@@ -46,6 +48,16 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
       <div>
         <Link className="back-link" href="/news">← {t('News')}</Link>
         <div className="detail-block"><h2>{t('Not found')}</h2><p>{error?.message || t('No news item with this ID.')}</p></div>
+      </div>
+    );
+  }
+
+  if (!(await getCurrentUser())) {
+    return (
+      <div className="news-detail">
+        <Link className="back-link" href="/news">← {t('News')}</Link>
+        <h1 className="opps-h1">{titleOf(n, firstInLanguage(post?.headline))}</h1>
+        <SignUpGate />
       </div>
     );
   }

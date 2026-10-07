@@ -1602,7 +1602,9 @@ table.data-table th { background: none; }
 .feed-sort-link:hover { background: var(--fill-hover); }
 .auth-card { border: 0; box-shadow: none; }
 .feed-votes { background: none; border-right: 0; }
-.section-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.section-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+.upgrade-reveal { display: contents; }
+.section-head .upgrade-reveal .profile-empty { flex: 1 0 100%; padding: 4px 0 0; text-align: left; }
 .section-head h2 { margin-bottom: 0 !important; }
 .section-head form { margin: 0; }
 /* Scope page → Following */

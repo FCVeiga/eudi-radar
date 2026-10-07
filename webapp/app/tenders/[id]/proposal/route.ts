@@ -1,6 +1,6 @@
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
-import { getMembership } from '@/lib/accounts';
+import { getMembership, getWorkspaceContext } from '@/lib/accounts';
 import { getT } from '@/lib/i18n/server';
 
 export const dynamic = 'force-dynamic';
@@ -15,6 +15,8 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   const { data: scope } = await db.from('scopes').select('workspace_id').eq('id', scopeId).maybeSingle();
   const mine = !!scope?.workspace_id && !!(await getMembership(scope.workspace_id));
   if (!mine) return new Response(t('Not found'), { status: 404 });
+  const ws = await getWorkspaceContext(scope.workspace_id);
+  if (!ws?.plan.evaluation) return new Response(t('The Tender Evaluation Agent is only available on Pro and Teams plans.'), { status: 403 });
   const [{ data: row }, { data: o }] = await Promise.all([
     db.from('scope_evaluations').select('proposal_brief').match({ scope_id: scopeId, opportunity_id: params.id }).maybeSingle(),
     db.from('opportunities').select('title, title_en').eq('opportunity_id', params.id).maybeSingle(),

@@ -433,6 +433,34 @@
     "de": "Bewertungen von Ausschreibungen und Angebotsbriefings",
     "it": "Valutazioni delle gare e brief di offerta"
   },
+  "Requirements on 2 tender pages a month": {
+    "pt": "Requisitos em 2 páginas de concurso por mês",
+    "es": "Requisitos en 2 páginas de licitación al mes",
+    "fr": "Exigences sur 2 pages d’appel d’offres par mois",
+    "de": "Anforderungen auf 2 Ausschreibungsseiten pro Monat",
+    "it": "Requisiti su 2 pagine di gara al mese"
+  },
+  "Requirements on 10 tender pages a month": {
+    "pt": "Requisitos em 10 páginas de concurso por mês",
+    "es": "Requisitos en 10 páginas de licitación al mes",
+    "fr": "Exigences sur 10 pages d’appel d’offres par mois",
+    "de": "Anforderungen auf 10 Ausschreibungsseiten pro Monat",
+    "it": "Requisiti su 10 pagine di gara al mese"
+  },
+  "Requirements on every tender": {
+    "pt": "Requisitos em todos os concursos",
+    "es": "Requisitos en todas las licitaciones",
+    "fr": "Exigences sur chaque appel d’offres",
+    "de": "Anforderungen zu jeder Ausschreibung",
+    "it": "Requisiti su ogni gara"
+  },
+  "Tender Evaluation Agent on Pro and Teams": {
+    "pt": "Agente de Avaliação de Concursos nos planos Pro e Teams",
+    "es": "Agente de Evaluación de Licitaciones en los planes Pro y Teams",
+    "fr": "Agent d’évaluation des appels d’offres sur les plans Pro et Teams",
+    "de": "Agent zur Ausschreibungsbewertung in den Plänen Pro und Teams",
+    "it": "Agente di valutazione gare nei piani Pro e Teams"
+  },
   "Agents update twice a day": {
     "pt": "Os agentes atualizam duas vezes por dia",
     "es": "Los agentes actualizan dos veces al día",

@@ -106,9 +106,18 @@ async function ownsScope(scopeId: string) {
 }
 
 /** The tender page's "Run" button: starts the Tender Evaluation Agent for one of your scopes. */
+async function evaluationAllowed(scopeId: string) {
+  const scope = await getEditableScope(scopeId);
+  if (!scope) return false;
+  const { getWorkspaceContext } = await import('@/lib/accounts');
+  const ctx = await getWorkspaceContext(scope.workspaceId);
+  return !!ctx?.plan.evaluation;
+}
+
 export async function startTenderEvaluation(opportunityId: string, scopeId: string) {
   const t = await getT();
   if (!(await ownsScope(scopeId))) return { status: 'error' as const, message: t('only the workspace’s admins can run this agent') };
+  if (!(await evaluationAllowed(scopeId))) return { status: 'error' as const, message: t('The Tender Evaluation Agent is only available on Pro and Teams plans.') };
   if (!/^[0-9a-f]{12,40}$/.test(opportunityId)) return { status: 'error' as const, message: t('unknown opportunity') };
   const { ensureEvaluation } = await import('@/lib/tenderEvaluation');
   const result = await ensureEvaluation(opportunityId, scopeId);
@@ -120,6 +129,7 @@ export async function startTenderEvaluation(opportunityId: string, scopeId: stri
 export async function startProposalBrief(opportunityId: string, scopeId: string) {
   const t = await getT();
   if (!(await ownsScope(scopeId))) return { status: 'error' as const, message: t('log in, and pick one of your scopes') };
+  if (!(await evaluationAllowed(scopeId))) return { status: 'error' as const, message: t('The Tender Evaluation Agent is only available on Pro and Teams plans.') };
   if (!/^[0-9a-f]{12,40}$/.test(opportunityId)) return { status: 'error' as const, message: t('unknown tender') };
   const { ensureProposal } = await import('@/lib/proposalManager');
   const result = await ensureProposal(opportunityId, scopeId);

@@ -6,6 +6,8 @@ import { getScopeItems } from '@/lib/scopes';
 import SortSelect from '@/components/SortSelect';
 import { getPlatformLanguage } from '@/lib/language';
 import { getLocale, getT } from '@/lib/i18n/server';
+import { getCurrentUser } from '@/lib/auth';
+import SignUpGate from '@/components/SignUpGate';
 
 // Status as of now: a stored OPEN/SIGNAL whose deadline has passed is closed.
 function displayStatus(o: { status: string | null; deadline: string | null }) {
@@ -46,6 +48,14 @@ export default async function DatabasePage({
 }) {
   await getPlatformLanguage();  // the display filter's language
   const t = await getT();
+  if (!(await getCurrentUser())) {
+    return (
+      <div>
+        <div className="page-head"><h1 className="opps-h1">{t('Tender History')}</h1></div>
+        <SignUpGate />
+      </div>
+    );
+  }
   const supabase = getSupabaseServerClient();
 
   let query = supabase.from('opportunities').select('*')

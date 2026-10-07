@@ -57,8 +57,26 @@ export async function createScope(workspaceId: string) {
 
 export async function setScopeActive(scopeId: string, active: boolean): Promise<{ error?: string }> {
   const o = await own(scopeId);
-  if (!o) return { error: (await getT())(NOT_YOURS_MESSAGE) };
+  const t = await getT();
+  if (!o) return { error: t(NOT_YOURS_MESSAGE) };
+  if (o.scope.isDefault && !active) return { error: t('Turn on another scope before switching off the default.') };
   await db().from('scopes').update({ active, updated_at: new Date().toISOString() }).eq('id', scopeId);
+  revalidatePath('/', 'layout');
+  return {};
+}
+
+/** Hide or show the shared default scope for this workspace. Only while another scope of theirs is on. */
+export async function setShowDefault(workspaceId: string, show: boolean): Promise<{ error?: string }> {
+  const ctx = await getWorkspaceContext(workspaceId);
+  const t = await getT();
+  if (!ctx?.isAdmin) return { error: t(NOT_YOURS_MESSAGE) };
+  if (!show) {
+    const { count } = await db().from('scopes').select('id', { count: 'exact', head: true })
+      .eq('workspace_id', workspaceId).eq('active', true).eq('is_default', false);
+    if (!count) return { error: t('Turn on another scope before switching off the default.') };
+  }
+  const { error } = await db().from('workspaces').update({ show_default: show }).eq('id', workspaceId);
+  if (error) return { error: error.message };
   revalidatePath('/', 'layout');
   return {};
 }

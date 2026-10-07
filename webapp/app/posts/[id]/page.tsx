@@ -8,11 +8,21 @@ import PostMarkdown from '@/components/social/PostMarkdown';
 import CardActions from '@/components/social/CardActions';
 import { getEngagement } from '@/lib/engagement';
 import { getLocale, getT } from '@/lib/i18n/server';
+import SignUpGate from '@/components/SignUpGate';
 
 export default async function PostPage({ params }: { params: { id: string } }) {
   const [post, user] = await Promise.all([getPost(params.id), getCurrentUser()]);
   if (!post) notFound();
   const t = await getT();
+  if (!user) {
+    return (
+      <div className="post-page">
+        <Link className="back-link" href="/community">← {t('Community')}</Link>
+        <h1 className="opps-h1">{post.title}</h1>
+        <SignUpGate />
+      </div>
+    );
+  }
   const locale = getLocale();
   const fmt = (iso: string) => new Date(iso).toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' });
   const eng = await getEngagement('post', [post.id]);

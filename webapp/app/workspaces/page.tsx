@@ -8,6 +8,8 @@ import { AddMemberButton, MemberRow, NewWorkspaceButton } from '@/components/set
 import { WorkspaceMark } from '@/components/WorkspaceSwitcher';
 import { switchWorkspace } from './actions';
 import { getT } from '@/lib/i18n/server';
+import SignUpGate from '@/components/SignUpGate';
+import { UpgradeOnClick, UpgradeReport } from '@/components/UpgradeReport';
 
 export async function generateMetadata() {
   const t = await getT();
@@ -17,9 +19,17 @@ export async function generateMetadata() {
 /** Workspace: your workspaces (each opens its scopes and members). Plans are on Settings. */
 export default async function WorkspacesPage({ searchParams }: { searchParams: { new?: string } }) {
   const user = await getCurrentUser();
-  const ctx = await getContext();
-  if (!user || !ctx) redirect('/login?next=/workspaces');
   const t = await getT();
+  if (!user) {
+    return (
+      <div className="settings">
+        <h1 className="opps-h1">{t('Workspaces')}</h1>
+        <SignUpGate />
+      </div>
+    );
+  }
+  const ctx = await getContext();
+  if (!ctx) redirect('/login?next=/workspaces');
   const db = getSupabaseServerClient();
   const [mine, account] = await Promise.all([getMyWorkspaces(), getPersonalAccount(user.id)]);
   const wsIds = mine.map((m) => m.workspace.id);
@@ -33,10 +43,8 @@ export default async function WorkspacesPage({ searchParams }: { searchParams: {
     const rows = (scopeRows || []).filter((r) => r.workspace_id === id);
     return rows.length + (defaultScope && !rows.some((r) => r.is_default) ? 1 : 0);
   };
-  const owned = mine.filter((m) => m.workspace.ownerId === user.id && !m.isDefault);
   const myPlan = account?.plan ?? PLANS[0];
   const teams = myPlan.key === 'teams';
-  const canCreateWs = myPlan.workspaces === null || owned.length < myPlan.workspaces;
   const activeId = ctx.workspace.id;
   const { data: activeMemberRows } = teams
     ? await db.from('workspace_members').select('user_id, role').eq('workspace_id', activeId)
@@ -58,7 +66,7 @@ export default async function WorkspacesPage({ searchParams }: { searchParams: {
       <section className="detail-block" id="workspaces">
         <div className="section-head">
           <h2>{t('Your workspaces')} <span className="uc-count">{mine.length}</span></h2>
-          {canCreateWs ? <NewWorkspaceButton autoOpen={searchParams.new === '1'} /> : <Link href="/settings/account?plan=1" className="btn">{t('Upgrade for more')}</Link>}
+          {teams ? <NewWorkspaceButton autoOpen={searchParams.new === '1'} /> : <UpgradeOnClick label={t('New workspace')} autoOpen={searchParams.new === '1'} />}
         </div>
         <div className="table-wrap">
           <table className="data-table ws-table">
@@ -98,10 +106,7 @@ export default async function WorkspacesPage({ searchParams }: { searchParams: {
             ))}
           </ul>
         ) : (
-          <div className="profile-empty">
-            <p className="profile-empty-title">{t('Add team members to your workspace')}</p>
-            <Link href="/settings/account?plan=1" className="btn primary profile-empty-cta">{t('Upgrade Plan')}</Link>
-          </div>
+          <UpgradeReport />
         )}
       </section>
     </div>

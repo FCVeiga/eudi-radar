@@ -5,7 +5,7 @@ import { getContext, getMyWorkspaces, getWorkspaceContext } from '@/lib/accounts
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { SCOPE_AGENT_KEYS, getWorkspaceScopes } from '@/lib/scopes';
 import ScopeCard from '@/components/settings/ScopeCard';
-import { AddMemberButton, MemberRow, RevokeInviteButton, WorkspaceName } from '@/components/settings/WorkspaceControls';
+import { AddMemberButton, DeleteWorkspace, MemberRow, RevokeInviteButton, WorkspaceName } from '@/components/settings/WorkspaceControls';
 import { createScope, switchWorkspace } from '../actions';
 
 const fmt = (iso: string) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -53,8 +53,7 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
       <Link className="back-link" href="/workspaces">← Workspaces</Link>
       <div className="community-head">
         <div>
-          <WorkspaceName id={wsId} name={ctx.workspace.name} canRename={ctx.isAdmin}
-            canDelete={ctx.isOwner && !ctx.isDefault && owned.length > 1} />
+          <WorkspaceName id={wsId} name={ctx.workspace.name} canRename={ctx.isAdmin} />
         </div>
         <div className="ws-head-actions">
           {onSite ? <span className="ws-active-badge">Active workspace</span>
@@ -125,6 +124,14 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
         </section>
       )}
 
+      {ctx.isOwner && (
+        <section className="detail-block danger-zone" id="delete">
+          <h2>Delete workspace</h2>
+          <DeleteWorkspace id={wsId} name={ctx.workspace.name}
+            blocked={ctx.isDefault ? 'This workspace holds the default scope, so it can’t be deleted.'
+              : owned.length <= 1 ? 'This is your only workspace — create another before deleting it.' : null} />
+        </section>
+      )}
     </div>
   );
 }

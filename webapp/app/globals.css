@@ -1653,3 +1653,16 @@ table.data-table th { background: none; }
 .ws-active-badge { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 12px; border-radius: 999px; background: var(--ok-soft); color: var(--ok); font-size: 12.5px; font-weight: 600; white-space: nowrap; }
 .ws-active-badge::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #10C79A; }
 .ws-pop-foot a { white-space: nowrap; }
+.follow-item { display: flex; align-items: center; gap: 4px; }
+.follow-item .follow-row { flex: 1; min-width: 0; }
+.follow-row.static { cursor: default; }
+.follow-row.static:hover { background: none; }
+.follow-unfollow { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border: 0; border-radius: 8px; background: none; cursor: pointer; opacity: 0; transition: opacity .12s; }
+.follow-item:hover .follow-unfollow, .follow-unfollow:focus-visible { opacity: 1; }
+.follow-unfollow:hover { background: var(--bad-soft); }
+.follow-unfollow svg { width: 13px; height: 13px; fill: none; stroke: var(--bad); stroke-width: 1.8; }
+@media (hover: none) { .follow-unfollow { opacity: 1; } }
+.follow-add-head { display: flex; gap: 8px; margin-bottom: 8px; }
+.follow-add-head .follow-search { flex: 1; width: auto; }
+.follow-browse { max-height: 50vh; overflow-y: auto; }
+.follow-btn { height: 30px; padding: 0 12px; font-size: 12.5px; flex: none; }

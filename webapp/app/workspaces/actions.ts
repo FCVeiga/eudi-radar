@@ -316,6 +316,11 @@ export async function deleteWorkspace(workspaceId: string): Promise<{ error?: st
   if (!user || !m || m.workspace.ownerId !== user.id) return { error: 'Only the workspace’s owner can delete it.' };
   if (m.isDefault) return { error: 'This workspace holds the default scope.' };
   if (mine.filter((x) => x.workspace.ownerId === user.id && !x.isDefault).length <= 1) return { error: 'You keep at least one workspace.' };
+  // Its scopes go with it (cascade); their uploaded files are removed from storage first.
+  const { data: scopes } = await db().from('scopes').select('id').eq('workspace_id', workspaceId);
+  const ids = (scopes || []).map((x: any) => x.id);
+  const { data: docs } = ids.length ? await db().from('company_documents').select('storage_path').in('scope_id', ids) : { data: [] as any[] };
+  if (docs?.length) await db().storage.from(BUCKET).remove(docs.map((d: any) => d.storage_path));
   await db().from('workspaces').delete().eq('id', workspaceId);
   await db().from('profiles').update({ current_workspace_id: null }).eq('current_workspace_id', workspaceId);
   revalidatePath('/', 'layout');

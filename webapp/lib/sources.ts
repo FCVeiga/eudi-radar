@@ -126,6 +126,20 @@ export async function getSources() {
   return (data || []) as Source[];
 }
 
+/** Sources each of these scopes follows (scope_sources). */
+export async function getFollowedSourceIds(scopeIds: string[]): Promise<Set<string>> {
+  if (!scopeIds.length) return new Set();
+  const { data } = await getSupabaseServerClient().from('scope_sources').select('source_id').in('scope_id', scopeIds);
+  return new Set((data || []).map((r: any) => r.source_id));
+}
+
+/** Sources the viewer's scopes follow (the sidebar's Following, Live activity). */
+export async function getViewSourceIds(): Promise<Set<string>> {
+  const { getViewScopes } = await import('@/lib/scopes');
+  const { scopes } = await getViewScopes();
+  return getFollowedSourceIds(scopes.map((s) => s.id));
+}
+
 export async function getCountryOptions() {
   const { data } = await getSupabaseServerClient().from('countries').select('code, name').order('name');
   return (data || []) as { code: string; name: string }[];
@@ -148,11 +162,12 @@ export async function getActivity(limit = 30) {
   const now = new Date();
   const cols = 'id, source_id, title, title_en, kind, url, published_at, relevant, sources!inner(name, source_type, handle, method)';
   const since = new Date(now.getTime() - FEED_MAX_AGE_DAYS * 86400_000).toISOString();
+  const followed = Array.from(await getViewSourceIds());  // only what the viewer's scopes follow
   const [feeds, finds] = await Promise.all([
-    db.from('source_activity').select(cols).neq('sources.method', 'site_search')
+    db.from('source_activity').select(cols).neq('sources.method', 'site_search').in('source_id', followed)
       .gte('published_at', since).or('kind.is.null,kind.neq.FALSE_POSITIVE')
       .order('published_at', { ascending: false }).limit(limit),
-    db.from('source_activity').select(cols).eq('sources.method', 'site_search').eq('relevant', true)
+    db.from('source_activity').select(cols).eq('sources.method', 'site_search').in('source_id', followed).eq('relevant', true)
       .in('kind', OPPORTUNITY_KINDS).order('fetched_at', { ascending: false }).limit(100),
   ]);
 

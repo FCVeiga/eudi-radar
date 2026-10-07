@@ -8,7 +8,7 @@ import AgentCard from '@/components/settings/AgentCard';
 import ScopeCard from '@/components/settings/ScopeCard';
 import { DeleteScopeForm, DocumentGroup, ScopeForm } from '@/components/settings/SettingsForms';
 import FollowingSection from '@/components/settings/FollowingSection';
-import { getCountryOptions, getSources } from '@/lib/sources';
+import { getCountryOptions, getFollowedSourceIds, getSources } from '@/lib/sources';
 
 // The Config Agent runs inside this page's server actions: give it time.
 export const maxDuration = 300;
@@ -22,6 +22,7 @@ export default async function ScopePage({ params }: { params: { id: string } }) 
   const [agents, defaults, docs, sources, countries] = await Promise.all([
     getScopeAgents(scope.id), getAgentDefaults(), getScopeDocs(scope.id), getSources(), getCountryOptions(),
   ]);
+  const followed = Array.from(await getFollowedSourceIds([scope.id]));
   const cfg = scope.searchConfig;
 
   return (
@@ -69,7 +70,7 @@ export default async function ScopePage({ params }: { params: { id: string } }) 
         </div>
       </section>
 
-      <FollowingSection sources={sources} countries={countries} />
+      <FollowingSection scopeId={scope.id} sources={sources} followed={followed} countries={countries} />
 
       {!scope.isDefault && (
         <section className="detail-block danger-zone">

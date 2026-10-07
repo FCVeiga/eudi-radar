@@ -69,6 +69,14 @@ export async function saveSource(_prev: SaveSourceState, form: FormData): Promis
       });
   if (error) return { ok: false, message: error.message };
 
+  // A new source is followed by the scope it was added from — or, from the sidebar, by the viewer's active scopes they may edit.
+  if (!current) {
+    const sourceId = (await supabase.from('sources').select('source_id').or(`url.eq."${resolved!.url}",handle.eq."${resolved!.handle ?? '__none__'}"`).limit(1)).data?.[0]?.source_id;
+    const scopeId = String(form.get('scope_id') || '');
+    const targets = scopeId ? [scopeId] : (await getViewScopes()).scopes.map((sc) => sc.id);
+    const editable = (await Promise.all(targets.map((t) => getEditableScope(t)))).filter(Boolean).map((sc) => sc!.id);
+    if (sourceId && editable.length) await supabase.from('scope_sources').upsert(editable.map((sid) => ({ scope_id: sid, source_id: sourceId })), { onConflict: 'scope_id,source_id', ignoreDuplicates: true });
+  }
   if (method === 'rss' && enabled) await refreshDueFeeds();  // feed items show up straight away
   revalidatePath('/', 'layout');
   const how = method === 'off'
@@ -112,4 +120,16 @@ export async function startProposalBrief(opportunityId: string, scopeId: string)
   const result = await ensureProposal(opportunityId, scopeId);
   if (result.status === 'done') revalidatePath(`/tenders/${opportunityId}`);
   return result;
+}
+
+/** Scope page → Following: follow or unfollow a source of the shared registry. */
+export async function setSourceFollowed(scopeId: string, sourceId: string, on: boolean): Promise<{ error?: string }> {
+  if (!(await getEditableScope(scopeId))) return { error: 'Only this workspace’s admins can change what it follows.' };
+  const db = getSupabaseServerClient();
+  const { error } = on
+    ? await db.from('scope_sources').upsert({ scope_id: scopeId, source_id: sourceId }, { onConflict: 'scope_id,source_id', ignoreDuplicates: true })
+    : await db.from('scope_sources').delete().match({ scope_id: scopeId, source_id: sourceId });
+  if (error) return { error: error.message };
+  revalidatePath('/', 'layout');
+  return {};
 }

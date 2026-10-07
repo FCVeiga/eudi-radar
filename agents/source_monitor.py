@@ -35,8 +35,21 @@ SITE_QUERY = "EUDI wallet digital identity wallet eIDAS electronic identificatio
 _LANG = None
 
 
-def site_query(country) -> str:
-    """Search in the source's own language(s) as well as English (config/languages.yaml)."""
+# Generic scopes (General): what to look for on a source's site, by kind of source.
+GENERIC_QUERIES = {
+    "NEWS": "EU policy public procurement contract funding announcement",
+    "INDUSTRY_SOURCE": "contract awarded public sector announcement",
+    "DEVELOPMENT_BANK": "procurement notice tender project approved",
+    "FUNDING_PORTAL": "call for proposals funding opportunity open",
+    "EU_PROGRAMME": "call for proposals funding opportunity open",
+    "STANDARDS_BODY": "new standard published announcement",
+    "PROCUREMENT_PORTAL": "tender contract notice procurement",
+}
+
+
+def site_query(country, cfg=None) -> str:
+    """Search in the source's own language(s) as well as English (config/languages.yaml).
+    cfg: the following scope's search configuration (default scope's when not given)."""
     global _LANG
     if _LANG is None:
         import yaml
@@ -44,10 +57,12 @@ def site_query(country) -> str:
             _LANG = yaml.safe_load(f)
     langs = [l for l in _LANG["country_languages"].get(country or "", []) if l != "en"]
     local = " ".join(p for l in langs[:2] for p in _LANG["phrases"].get(l, [])[1:3])
-    from services.agent_settings import search_config
-    custom = search_config().get("site_query")
-    if custom:  # the Settings search scope replaces the EUDI default, local-language phrases included
-        own = search_config().get("local_phrases") or {}
+    if cfg is None:
+        from services.agent_settings import search_config
+        cfg = search_config()
+    custom = cfg.get("site_query")
+    if custom:  # the scope's search configuration replaces the EUDI default, local-language phrases included
+        own = cfg.get("local_phrases") or {}
         return f"{' '.join(p for l in langs[:2] for p in own.get(l, [])[:2])} {custom}".strip()
     return f"{local} EUDI eIDAS {SITE_QUERY}".strip()
 NEWS_TYPES = {"NEWS", "INDUSTRY_SOURCE", "SOCIAL_TWITTER", "SOCIAL_LINKEDIN", "SOCIAL_REDDIT"}
@@ -114,26 +129,37 @@ def check_site(s, tavily) -> list:
     domain = urlparse(s.url or "").netloc.removeprefix("www.")
     if not domain:
         raise ValueError("no URL to search")
-    res = tavily.client.search(query=site_query(s.country), include_domains=[domain], max_results=8,
+    res = tavily.client.search(query=s.query, include_domains=[domain], max_results=8,
                                search_depth="basic", time_range="month")
     return [{"external_id": i["url"], "title": (i.get("title") or i["url"])[:500], "url": i["url"],
              "summary": (i.get("content") or "")[:1000] or None, "published_at": _date(i.get("published_date"))}
             for i in res.get("results", [])]
 
 
-def check_sources(session, errors: list, now=None) -> dict:
-    """Check every enabled source that is due. Returns counts for the digest."""
+def check_sources(session, errors: list, now=None, follow=None) -> dict:
+    """Check every enabled source that is due — only those a running scope
+    follows, when `follow` ({source_id: [scope, ...]}) is given. A site search
+    uses the search terms of a following industry scope, or generic terms by
+    kind of source when only generic scopes follow it. Returns counts for the digest."""
     now = now or datetime.utcnow()
     tavily = None
     if os.environ.get("TAVILY_API_KEY"):
         from adapters.tavily import TavilySearchProvider
         tavily = TavilySearchProvider()
     due = [s for s in session.query(Source).filter(Source.enabled.is_(True), Source.method.in_(["rss", "site_search"]))
-           if is_due(s, now) and (s.method == "rss" or tavily)]
+           if is_due(s, now) and (s.method == "rss" or tavily) and (follow is None or s.source_id in follow)]
+
+    def query_for(s):
+        scopes = (follow or {}).get(s.source_id) or []
+        industry = [sc for sc in scopes if (sc.search or {}).get("mode") != "generic"]
+        if industry or not scopes:
+            return site_query(s.country, industry[0].search or {} if industry else None)
+        return GENERIC_QUERIES.get(_type(s), "announcement news")
 
     # Workers get detached copies: ORM objects expire on every commit and
     # must not be lazy-loaded from other threads.
-    jobs = [SimpleNamespace(source_id=s.source_id, method=s.method, feed_url=s.feed_url, url=s.url, country=s.country)
+    jobs = [SimpleNamespace(source_id=s.source_id, method=s.method, feed_url=s.feed_url, url=s.url, country=s.country,
+                            query=query_for(s) if s.method == "site_search" else None)
             for s in due]
 
     def run(job):
@@ -164,8 +190,9 @@ def check_sources(session, errors: list, now=None) -> dict:
                                                fetched_at=now))
                     found += 1
             session.commit()
+    total = [s.source_id for s in session.query(Source).filter(Source.enabled.is_(True), Source.method != "off")]
     return {"checked": len(due), "found": found,
-            "total": session.query(Source).filter(Source.enabled.is_(True), Source.method != "off").count()}
+            "total": len([x for x in total if follow is None or x in follow])}
 
 
 def ingest_activity(session) -> int:

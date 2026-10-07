@@ -1,41 +1,57 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { SOURCE_GROUPS, Source, typeMeta } from '@/lib/sourceMeta';
 import SourceIcon from '@/components/SourceIcon';
 import { Country, SourceForm, health } from '@/components/SourcesPanel';
+import { setSourceFollowed } from '@/app/actions';
 
 const PAGE = 12;
+type Modal = { kind: 'edit'; source: Source } | { kind: 'add' } | null;
 
-/** Scope page → Following: the sources the radar tracks, filterable by group; a row opens its settings. */
-export default function FollowingSection({ sources, countries }: { sources: Source[]; countries: Country[] }) {
+/** Scope page → Following: the sources this scope follows; follow more from the registry, add new ones, unfollow. */
+export default function FollowingSection({ scopeId, sources, followed, countries }: {
+  scopeId: string; sources: Source[]; followed: string[]; countries: Country[];
+}) {
   const dialog = useRef<HTMLDialogElement>(null);
-  const [editing, setEditing] = useState<Source | null | undefined>(undefined); // undefined = closed, null = new
+  const [modal, setModal] = useState<Modal>(null);
   const [group, setGroup] = useState<string>('all');
   const [q, setQ] = useState('');
   const [all, setAll] = useState(false);
-  useEffect(() => { if (editing !== undefined) dialog.current?.showModal(); }, [editing]);
-  const close = () => { dialog.current?.close(); setEditing(undefined); };
+  const [following, setFollowing] = useState(new Set(followed));
+  const [, start] = useTransition();
+  const router = useRouter();
+  useEffect(() => setFollowing(new Set(followed)), [followed]);
+  useEffect(() => { if (modal) dialog.current?.showModal(); }, [modal]);
+  const close = () => { dialog.current?.close(); setModal(null); };
 
-  const monitored = sources.filter((s) => s.enabled && s.method !== 'off').length;
-  const groups = SOURCE_GROUPS.map((g) => ({ ...g, list: sources.filter((s) => (g.types as readonly string[]).includes(s.source_type)) })).filter((g) => g.list.length);
+  const toggle = (id: string, on: boolean) => {
+    const next = new Set(following);
+    if (on) next.add(id); else next.delete(id);
+    setFollowing(next);
+    start(async () => { const r = await setSourceFollowed(scopeId, id, on); if (r.error) { setFollowing(following); alert(r.error); } else router.refresh(); });
+  };
+
+  const mine = sources.filter((s) => following.has(s.source_id));
+  const monitored = mine.filter((s) => s.enabled && s.method !== 'off').length;
+  const groups = SOURCE_GROUPS.map((g) => ({ ...g, list: mine.filter((s) => (g.types as readonly string[]).includes(s.source_type)) })).filter((g) => g.list.length);
   const needle = q.trim().toLowerCase();
-  const shown = (group === 'all' ? sources : groups.find((g) => g.key === group)?.list ?? [])
-    .filter((s) => !needle || `${s.name} ${s.url ?? ''} ${s.handle ?? ''} ${s.country ?? ''}`.toLowerCase().includes(needle))
-    .sort((a, b) => a.name.localeCompare(b.name));
+  const match = (s: Source) => !needle || `${s.name} ${s.url ?? ''} ${s.handle ?? ''} ${s.country ?? ''}`.toLowerCase().includes(needle);
+  const shown = (group === 'all' ? mine : groups.find((g) => g.key === group)?.list ?? []).filter(match).sort((a, b) => a.name.localeCompare(b.name));
   const country = (code: string | null) => (code ? countries.find((c) => c.code === code)?.name ?? code : 'International');
 
   return (
     <section className="detail-block" id="following">
       <div className="section-head">
-        <h2>Following <span className="uc-count" title="Monitored of total">{monitored}/{sources.length}</span></h2>
-        <button type="button" className="btn primary" onClick={() => setEditing(null)}>Add source</button>
+        <h2>Following <span className="uc-count" title="Monitored of followed">{monitored}/{mine.length}</span></h2>
+        <button type="button" className="btn primary" onClick={() => setModal({ kind: 'add' })}>Add source</button>
       </div>
 
       <div className="follow-toolbar">
         <nav className="feed-sort follow-groups" aria-label="Source groups">
           <button type="button" className={`feed-sort-link ${group === 'all' ? 'active' : ''}`} onClick={() => { setGroup('all'); setAll(false); }}>
-            All <span className="pill-count">{sources.length}</span>
+            All <span className="pill-count">{mine.length}</span>
           </button>
           {groups.map((g) => (
             <button key={g.key} type="button" className={`feed-sort-link ${group === g.key ? 'active' : ''}`} onClick={() => { setGroup(g.key); setAll(false); }}>
@@ -46,20 +62,22 @@ export default function FollowingSection({ sources, countries }: { sources: Sour
         <input className="follow-search" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Filter" aria-label="Filter sources" />
       </div>
 
-      {shown.length === 0 ? <p className="field-hint">No sources match.</p> : (
+      {shown.length === 0 ? <p className="field-hint">{mine.length ? 'No sources match.' : 'Not following any sources yet.'}</p> : (
         <ul className="follow-list">
           {(all || needle ? shown : shown.slice(0, PAGE)).map((s) => {
             const h = health(s);
             return (
-              <li key={s.source_id}>
-                <button type="button" className="follow-row" onClick={() => setEditing(s)}>
+              <li key={s.source_id} className="follow-item">
+                <button type="button" className="follow-row" onClick={() => setModal({ kind: 'edit', source: s })}>
                   <SourceIcon type={s.source_type} size={28} />
                   <span className="follow-main">
                     <strong>{s.name.replace(/ — national procurement portal$/, '')}</strong>
                     <em>{typeMeta(s.source_type).label} · {country(s.country)}</em>
                   </span>
                   <span className={`follow-status ${h.cls}`}><span className={`account-state ${h.cls}`} />{h.note}</span>
-                  <svg className="follow-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3.5 4.5 4.5L6 12.5" /></svg>
+                </button>
+                <button type="button" className="follow-unfollow" aria-label={`Unfollow ${s.name}`} title="Unfollow" onClick={() => toggle(s.source_id, false)}>
+                  <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" /></svg>
                 </button>
               </li>
             );
@@ -70,10 +88,48 @@ export default function FollowingSection({ sources, countries }: { sources: Sour
         <button type="button" className="btn follow-more" onClick={() => setAll(true)}>Show all {shown.length}</button>
       )}
 
-      <dialog ref={dialog} className="modal" onClose={() => setEditing(undefined)}
-              onClick={(e) => { if (e.target === dialog.current) close(); }}>
-        {editing !== undefined && <SourceForm key={editing?.source_id ?? 'new'} source={editing} countries={countries} onDone={close} />}
+      <dialog ref={dialog} className="modal" onClose={() => setModal(null)} onClick={(e) => { if (e.target === dialog.current) close(); }}>
+        {modal?.kind === 'edit' && <SourceForm key={modal.source.source_id} source={modal.source} countries={countries} onDone={close} />}
+        {modal?.kind === 'add' && <AddSource sources={sources} following={following} countries={countries} scopeId={scopeId} onFollow={(id) => toggle(id, true)} onDone={close} />}
       </dialog>
     </section>
+  );
+}
+
+/** Add source: follow one from the shared registry, or create a new one. */
+function AddSource({ sources, following, countries, scopeId, onFollow, onDone }: {
+  sources: Source[]; following: Set<string>; countries: Country[]; scopeId: string; onFollow: (id: string) => void; onDone: () => void;
+}) {
+  const [tab, setTab] = useState<'browse' | 'new'>('browse');
+  const [q, setQ] = useState('');
+  if (tab === 'new') return <SourceForm source={null} countries={countries} onDone={onDone} scopeId={scopeId} />;
+  const needle = q.trim().toLowerCase();
+  const available = sources.filter((s) => !following.has(s.source_id))
+    .filter((s) => !needle || `${s.name} ${s.url ?? ''} ${typeMeta(s.source_type).label}`.toLowerCase().includes(needle))
+    .sort((a, b) => a.name.localeCompare(b.name));
+  return (
+    <div className="modal-body">
+      <div className="modal-head">
+        <h2>Add source</h2>
+        <button type="button" className="modal-close" aria-label="Close" onClick={onDone}>×</button>
+      </div>
+      <div className="follow-add-head">
+        <input className="follow-search" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search sources" aria-label="Search sources" autoFocus />
+        <button type="button" className="btn" onClick={() => setTab('new')}>New source</button>
+      </div>
+      {available.length === 0 ? <p className="field-hint">{needle ? 'No sources match.' : 'Following every source already.'}</p> : (
+        <ul className="follow-list follow-browse">
+          {available.map((s) => (
+            <li key={s.source_id} className="follow-item">
+              <span className="follow-row static">
+                <SourceIcon type={s.source_type} size={24} />
+                <span className="follow-main"><strong>{s.name.replace(/ — national procurement portal$/, '')}</strong><em>{typeMeta(s.source_type).label}</em></span>
+              </span>
+              <button type="button" className="btn follow-btn" onClick={() => onFollow(s.source_id)}>Follow</button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }

@@ -28,7 +28,7 @@ function Submit({ editing }: { editing: boolean }) {
   return <button type="submit" className="btn primary" disabled={pending}>{pending ? 'Saving…' : editing ? 'Save changes' : 'Follow source'}</button>;
 }
 
-export function SourceForm({ source, countries, onDone }: { source: Source | null; countries: Country[]; onDone: () => void }) {
+export function SourceForm({ source, countries, onDone, scopeId }: { source: Source | null; countries: Country[]; onDone: () => void; scopeId?: string }) {
   const router = useRouter();
   const [state, action] = useFormState<SaveSourceState, FormData>(saveSource, null);
   const [type, setType] = useState<string>(source?.source_type ?? 'PROCUREMENT_PORTAL');
@@ -51,6 +51,7 @@ export function SourceForm({ source, countries, onDone }: { source: Source | nul
         <button type="button" className="modal-close" aria-label="Close" onClick={onDone}>×</button>
       </div>
       {source && <input type="hidden" name="source_id" value={source.source_id} />}
+      {scopeId && <input type="hidden" name="scope_id" value={scopeId} />}
 
       <div className="field-row">
         <label className="field">

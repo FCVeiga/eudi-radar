@@ -432,20 +432,20 @@ def main():
         errors.append("TAVILY_API_KEY not set — web search skipped")
     per_run = int(os.environ.get("TAVILY_QUERIES_PER_RUN", 20))
     new_opps, new_news, updates = [], [], []
+    generic_scopes = []
+    # Following, per scope: {source_id: [scopes that follow it]}.
+    follow = {}
+    for r in session.execute(sql_text("select scope_id::text s, source_id from scope_sources")):
+        for sc in run_scopes:
+            if sc.id == r.s and S.enabled("search", sc):
+                follow.setdefault(r.source_id, []).append(sc)
     for scope in run_scopes:
         if not S.enabled("search", scope):
             print(f"[{scope.name}] Search Agent switched off")
             continue
         cfg = scope.search or {}
         if cfg.get("mode") == "generic":
-            # General scope: structured search and scoring, no LLM (agents/generic_scope.py).
-            from agents import generic_scope
-            g = generic_scope.run(session, scope, promote, country_names, errors,
-                                  TavilySearchProvider if tavily else None)
-            new_opps += g["tenders"]; new_news += g["news"]; updates += g["updated"]
-            print(f"[{scope.name}] generic: {g['checked']} TED notices scored, "
-                  f"{len(g['tenders'])} new tenders, {len(g['news'])} new stories")
-            S.mark_ran(session, scope)
+            generic_scopes.append(scope)  # runs after the followed sources are checked
             continue
         ted_phrases = cfg.get("ted_phrases") or TED_PHRASES
         news_queries = cfg.get("news_queries") or NEWS_QUERIES
@@ -464,12 +464,25 @@ def main():
     # Followed sources (Following sidebar): RSS feeds and domain searches on
     # their own schedules; whatever they surface joins every scope's queue.
     from agents.source_monitor import check_sources, ingest_activity
-    monitored = check_sources(session, errors) if any(S.enabled("search", s) for s in run_scopes if (s.search or {}).get("mode") != "generic") else {"checked": 0, "total": 0, "found": 0}
+    monitored = check_sources(session, errors, follow=follow) if follow else {"checked": 0, "total": 0, "found": 0}
     from_sources = ingest_activity(session)
-    unlinked = [r.candidate_id for r in session.execute(sql_text(
-        "select candidate_id from candidates c where not c.processed and not exists (select 1 from candidate_scopes cs where cs.candidate_id = c.candidate_id)"))]
     triaged_scopes = [s for s in run_scopes if (s.search or {}).get("mode") != "generic"]
-    link(unlinked, [s.id for s in triaged_scopes])
+    # A followed source's finds go to the industry scopes that follow it (generic scopes read them below).
+    for r in session.execute(sql_text(
+            "select candidate_id, source_id from candidates c where not c.processed and not exists (select 1 from candidate_scopes cs where cs.candidate_id = c.candidate_id)")).fetchall():
+        targets = [sc for sc in follow.get(r.source_id, []) if sc in triaged_scopes] if r.source_id else triaged_scopes
+        link([r.candidate_id], [sc.id for sc in targets])
+
+    # Generic scopes (General): structured search and scoring, no LLM (agents/generic_scope.py).
+    for scope in generic_scopes:
+        from agents import generic_scope
+        followed = [sid for sid, scs in follow.items() if scope in scs]
+        g = generic_scope.run(session, scope, promote, country_names, errors,
+                              TavilySearchProvider if tavily else None, followed=followed)
+        new_opps += g["tenders"]; new_news += g["news"]; updates += g["updated"]
+        print(f"[{scope.name}] generic: {g['checked']} TED notices scored, {len(g['tenders'])} new tenders, "
+              f"{len(g['news'])} new stories ({g['from_sources']} from followed sources)")
+        S.mark_ran(session, scope)
     print(f"Sources: {monitored['checked']} of {monitored['total']} monitored sources due and checked, "
           f"{monitored['found']} new items, {from_sources} new candidates")
 

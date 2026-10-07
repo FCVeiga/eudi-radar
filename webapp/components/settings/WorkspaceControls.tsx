@@ -16,7 +16,7 @@ const Msg = ({ state }: { state: FormState }) => state && <p className={`form-ms
 
 /* ---------------- Workspace ---------------- */
 
-export function WorkspaceName({ id, name, canRename, canDelete }: { id: string; name: string; canRename: boolean; canDelete: boolean }) {
+export function WorkspaceName({ id, name, canRename }: { id: string; name: string; canRename: boolean }) {
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(name);
   const [error, setError] = useState<string | null>(null);
@@ -36,10 +36,7 @@ export function WorkspaceName({ id, name, canRename, canDelete }: { id: string; 
       <h1 className="opps-h1">{name}</h1>
       {canRename && <button type="button" className="section-edit" aria-label="Rename workspace" onClick={() => setEditing(true)}>
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.8 2.7a1.6 1.6 0 0 1 2.3 2.3L5.6 12.5 2.5 13.5l1-3.1z" /></svg></button>}
-      {canDelete && <button type="button" className="btn ws-delete" disabled={pending} onClick={() => {
-        if (!confirm(`Delete the workspace “${name}” with its scopes? Members lose access.`)) return;
-        start(async () => { const r = await deleteWorkspace(id); if (r?.error) setError(r.error); });
-      }}>Delete workspace</button>}
+
       {error && <p className="form-msg err">{error}</p>}
     </div>
   );
@@ -87,6 +84,22 @@ function NewWorkspaceForm({ onCancel }: { onCancel: () => void }) {
       <label className="field"><span>Name</span><input name="name" maxLength={80} required autoFocus autoComplete="off" /></label>
       <Msg state={state} />
       <div className="modal-actions"><button type="button" className="btn" onClick={onCancel}>Cancel</button><Submit label="Create" busy="Creating…" /></div>
+    </form>
+  );
+}
+
+/** Workspace page → Delete workspace: type its name to confirm. */
+export function DeleteWorkspace({ id, name, blocked }: { id: string; name: string; blocked: string | null }) {
+  const [value, setValue] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [pending, start] = useTransition();
+  if (blocked) return <p className="field-hint">{blocked}</p>;
+  return (
+    <form className="settings-form" onSubmit={(e) => { e.preventDefault(); setError(null); start(async () => { const r = await deleteWorkspace(id); if (r?.error) setError(r.error); }); }}>
+      <p className="field-hint">Deletes its scopes, their documents and evaluations. Members lose access.</p>
+      <label className="field"><span>Type <strong>{name}</strong> to confirm</span><input value={value} onChange={(e) => setValue(e.target.value)} autoComplete="off" /></label>
+      {error && <p className="form-msg err">{error}</p>}
+      <div className="settings-actions"><button type="submit" className="btn danger" disabled={pending || value.trim() !== name}>{pending ? 'Deleting…' : 'Delete workspace'}</button></div>
     </form>
   );
 }

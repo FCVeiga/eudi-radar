@@ -46,7 +46,7 @@ DEFAULTS = {
     "max_tenders": 25,            # promoted per run
     "min_tender_score": 55,
     "max_news": 15,
-    "min_news_score": 40,
+    "min_news_score": 45,
     "news_queries": {
         "market": ["largest public contracts awarded Europe", "major government tender launched",
                    "public procurement framework agreement billion"],
@@ -86,9 +86,9 @@ CPV = {
 }
 
 REPUTABLE = {
-    40: ("reuters.com", "ft.com", "bloomberg.com", "politico.eu", "euractiv.com", "apnews.com", "bbc.com", "bbc.co.uk",
+    25: ("reuters.com", "ft.com", "bloomberg.com", "politico.eu", "euractiv.com", "apnews.com", "bbc.com", "bbc.co.uk",
          "economist.com", "wsj.com", "ec.europa.eu", "europa.eu", "consilium.europa.eu", "europarl.europa.eu"),
-    28: ("theguardian.com", "nytimes.com", "lemonde.fr", "spiegel.de", "elpais.com", "corriere.it", "handelsblatt.com",
+    18: ("theguardian.com", "nytimes.com", "lemonde.fr", "spiegel.de", "elpais.com", "corriere.it", "handelsblatt.com",
          "cnbc.com", "techcrunch.com", "theverge.com", "wired.com", "zdnet.com", "computerweekly.com", "devex.com",
          "sifted.eu", "lesechos.fr", "faz.net", "expansion.com", "ilsole24ore.com", "nos.nl", "dw.com",
          "france24.com", "euronews.com", "theregister.com", "publictechnology.net", "govinsider.asia"),
@@ -193,11 +193,33 @@ def _domain(url):
     return urlparse(url or "").netloc.lower().removeprefix("www.")
 
 
-def _source_pts(domain):
+FOLLOWED_PTS = 15  # a source the scope chose to follow counts as fairly reputable
+OTHER_PTS = 8
+MAX_PER_OUTLET = 3
+
+# Substance: concrete money, contracts, funding or law make a story matter; routine items don't.
+MONEY = re.compile(r"[€$£]\s?\d|\b\d[\d.,]*\s?(bn|billion|million|m)\b", re.I)
+SUBSTANCE = re.compile(r"\b(contract|tender|procure\w*|award\w*|fund\w*|grant|invest\w*|budget|deal|acqui\w*|merger|"
+                       r"regulation|directive|law|act|rules|ban|sanction\w*|tariff\w*|agreement|framework)\b", re.I)
+ROUTINE = re.compile(r"^(remarks|speech|keynote|opening remarks|statement|daily news|agenda|weekly|read-?out|video message|"
+                     r"press conference|interview|op-?ed|podcast|live|watch|opinion)\b|megathread", re.I)
+EN_WORDS = {"the", "to", "of", "and", "in", "for", "on", "with", "as", "by", "at", "from", "is", "are", "will", "new",
+            "over", "after", "its", "how", "what", "why", "says", "into", "up", "back"}
+NOT_EN_WORDS = {"und", "der", "die", "das", "mit", "für", "les", "des", "pour", "avec", "une", "el", "los", "las",
+                "del", "para", "il", "della", "per", "che", "zur", "vor", "auf"}
+
+
+def is_english(title: str) -> bool:
+    words = re.findall(r"[a-zà-ÿ]+", (title or "").lower())
+    return sum(w in EN_WORDS for w in words) > sum(w in NOT_EN_WORDS for w in words) * 2 and \
+        sum(w in EN_WORDS for w in words) >= 1
+
+
+def _source_pts(domain, followed_domains=()):
     for pts, domains in REPUTABLE.items():
         if any(domain == d or domain.endswith("." + d) for d in domains):
             return pts
-    return 12
+    return FOLLOWED_PTS if domain in followed_domains else OTHER_PTS
 
 
 def _words(title):
@@ -226,20 +248,22 @@ def clean_title(title: str) -> str:
 
 
 NOT_NEWS = ("ted.europa.eu",)  # tender portals, not news
-NOT_ARTICLE = re.compile(r"^(subscribe|sign in|log in|access denied|page not found|home\b)|supplement to the official journal", re.I)
+NOT_ARTICLE = re.compile(r"^(subscribe|sign in|log in|access denied|page not found|home\b)|supplement to the official journal|\bhome$", re.I)
 
 
 def is_article(r) -> bool:
     """A real story: not a portal page, paywall stub or a title too short to be a headline."""
     title = clean_title(r.title or "")
     return bool(r.url and title) and _domain(r.url) not in NOT_NEWS and not NOT_ARTICLE.search(title) \
-        and len(title.split()) >= 5
+        and len(title.split()) >= 5 and is_english(title)
 
 
-def score_news(results: list, now: datetime) -> list:
-    """[(score, category, result, published, outlets)] — one per story: source
-    reputation + how many distinct outlets carry it + freshness. Stories are
-    grouped by title overlap; the best-scored article represents the group."""
+def score_news(results: list, now: datetime, followed_domains=()) -> list:
+    """[(score, category, result, published, outlets)] — one per story:
+      source reputation (0-25) + coverage, i.e. other outlets carrying the
+      story (0-45) + freshness (0-15) + substance (0-15: money, contracts,
+      funding, law) − routine items (speeches, agendas, live blogs).
+    Stories are grouped by title overlap; the best article represents the group."""
     items = [(cat, r, _words(clean_title(r.title)), _domain(r.url)) for cat, r in results if is_article(r)]
     # Group articles about the same story.
     groups = []
@@ -253,13 +277,16 @@ def score_news(results: list, now: datetime) -> list:
     scored = []
     for g in groups:
         outlets = {d for _, _, _, d in g}
-        coverage = min(30, 10 * (len(outlets) - 1))
+        coverage = min(45, 15 * (len(outlets) - 1))
         best = None
         for cat, r, _, domain in g:
             published = _published(r.published_date)
             age = (now - published).days if published else 7
-            fresh = 20 if age <= 1 else 15 if age <= 3 else 10 if age <= 7 else 4
-            sc = round(min(100, _source_pts(domain) + coverage + fresh))
+            fresh = 15 if age <= 1 else 11 if age <= 3 else 7 if age <= 7 else 2
+            text_ = f"{clean_title(r.title)} {(r.snippet or '')[:300]}"
+            substance = (8 if MONEY.search(text_) else 0) + (7 if SUBSTANCE.search(clean_title(r.title)) else 0)
+            routine = 25 if ROUTINE.search(clean_title(r.title)) else 0
+            sc = round(max(0, min(100, _source_pts(domain, followed_domains) + coverage + fresh + substance - routine)))
             if not best or sc > best[0]:
                 best = (sc, cat, r, published, len(outlets))
         scored.append(best)
@@ -268,13 +295,37 @@ def score_news(results: list, now: datetime) -> list:
 
 # --------------------------------------------------------------------- run
 
-def run(session, scope, promote, country_names: dict, errors: list, tavily_cls=None) -> dict:
+# Kind of followed source → news category on the News page.
+SOURCE_CATEGORY = {"STANDARDS_BODY": "regulation", "GOVERNMENT": "regulation", "DIGITAL_AGENCY": "regulation",
+                   "FUNDING_PORTAL": "industry", "EU_PROGRAMME": "industry", "DEVELOPMENT_BANK": "market"}
+
+
+def followed_items(session, scope_id: str, followed: list, since: datetime) -> list:
+    """[(category, result, candidate)] — recent finds of the scope's followed sources it hasn't seen yet."""
+    from types import SimpleNamespace
+    if not followed:
+        return []
+    rows = session.execute(sql("""select c.candidate_id, c.title, c.source_url, c.description, c.publication_date, src.source_type
+            from candidates c join sources src on src.source_id = c.source_id
+            where c.source_id = any(:ids) and c.discovered_at >= :since and src.source_type <> 'PROCUREMENT_PORTAL'
+              and not exists (select 1 from candidate_scopes cs where cs.candidate_id = c.candidate_id and cs.scope_id = cast(:s as uuid))"""),
+                           {"ids": followed, "since": since, "s": scope_id}).fetchall()
+    out = []
+    for r in rows:
+        kind = getattr(r.source_type, "value", r.source_type)
+        res = SimpleNamespace(title=r.title, url=r.source_url, snippet=r.description,
+                              published_date=r.publication_date.isoformat() if r.publication_date else None, candidate_id=r.candidate_id)
+        out.append((SOURCE_CATEGORY.get(kind, "market"), res))
+    return out
+
+
+def run(session, scope, promote, country_names: dict, errors: list, tavily_cls=None, followed=None) -> dict:
     """Discover, score and promote for one generic scope. `promote` is
     run_daily.promote. Returns counts and the new rows."""
     import requests
     cfg = config(scope)
     now = datetime.utcnow()
-    out = {"tenders": [], "news": [], "updated": [], "checked": 0}
+    out = {"tenders": [], "news": [], "updated": [], "checked": 0, "from_sources": 0}
 
     def record(kind, row, score, ctype, reason):
         is_news = kind in ("news", "unchanged_news")
@@ -349,9 +400,9 @@ def run(session, scope, promote, country_names: dict, errors: list, tavily_cls=N
                         {"r": score, "c": c.candidate_id, "s": scope.id})
         session.commit()
 
-    # News
+    # News: the scope's own news search, plus what its followed sources published.
+    results = []
     if tavily_cls is not None:
-        results = []
         provider = tavily_cls(topic="news", days=7)
         for cat, queries in (cfg["news_queries"] or {}).items():
             for q in queries:
@@ -359,14 +410,30 @@ def run(session, scope, promote, country_names: dict, errors: list, tavily_cls=N
                     results += [(cat, r) for r in provider.search(q)]
                 except Exception as e:
                     errors.append(f"generic news '{q}': {e}")
-        seen = set()
-        for score, cat, r, published, outlets in score_news(results, now):
+    from_sources = followed_items(session, scope.id, followed or [], now - timedelta(days=int(cfg["lookback_days"]) + 3))
+    results += from_sources
+    followed_domains = {_domain(r.url) for _, r in from_sources}
+    if results:
+        from types import SimpleNamespace
+        seen, per_outlet = set(), {}
+        for score, cat, r, published, outlets in score_news(results, now, followed_domains):
             if score < int(cfg["min_news_score"]) or len(out["news"]) >= int(cfg["max_news"]):
                 break
-            if r.url in seen:
-                continue
+            domain = _domain(r.url)
+            if r.url in seen or per_outlet.get(domain, 0) >= MAX_PER_OUTLET:
+                continue  # keep the selection diverse
             seen.add(r.url)
-            c = candidate(_cid(r.url, r.title), r.url, r.title, r.snippet, None, published, "news", f"general: {cat}")
+            per_outlet[domain] = per_outlet.get(domain, 0) + 1
+            if getattr(r, "candidate_id", None):
+                # A followed source's find: promote it as news for this scope (whatever pack it came in).
+                c = session.get(Candidate, r.candidate_id)
+                session.execute(sql("""insert into candidate_scopes (candidate_id, scope_id, processed_at, relevance, candidate_type)
+                        values (:c, cast(:s as uuid), now(), 0, null) on conflict do nothing"""), {"c": c.candidate_id, "s": scope.id})
+                c = SimpleNamespace(candidate_id=c.candidate_id, title=c.title, description=c.description, source_url=c.source_url,
+                                    publication_date=c.publication_date, discovered_at=c.discovered_at, potential_categories=["news"])
+                out["from_sources"] += 1
+            else:
+                c = candidate(_cid(r.url, r.title), r.url, r.title, r.snippet, None, published, "news", f"general: {cat}")
             reason = f"{_domain(r.url)} · {cat}" + (f" · reported by {outlets} outlets" if outlets > 1 else "")
             t = {"type": "NEWS_ONLY", "relevance": score, "importance": score, "news_category": cat,
                  "title_en": clean_title(r.title),

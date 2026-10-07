@@ -1,5 +1,5 @@
 /**
- * EUDI Radar feed: posts written by the feed-writer agent
+ * Tender Town feed: posts written by the feed-writer agent
  * (agents/feed_writer.py) about opportunities, their updates, and news.
  *
  * "Top" (the default) works like Reddit's hot, with the AI score in place of

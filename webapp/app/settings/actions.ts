@@ -100,7 +100,7 @@ export async function connectGoogle(): Promise<Result> {
   const settings = await fetch(`${process.env.SUPABASE_URL}/auth/v1/settings`, {
     headers: { apikey: process.env.SUPABASE_SERVICE_KEY! }, cache: 'no-store',
   }).then((r) => r.json()).catch(() => null);
-  if (!settings?.external?.google) return { error: t('Google sign-in isn’t switched on for EUDI Radar yet.') };
+  if (!settings?.external?.google) return { error: t('Google sign-in isn’t switched on for Tender Town yet.') };
   const { data, error } = await authClient().auth.linkIdentity({
     provider: 'google', options: { redirectTo: `${siteOrigin()}/auth/callback?next=${encodeURIComponent(safeNext('/settings/account'))}` },
   });

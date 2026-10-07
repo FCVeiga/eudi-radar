@@ -50,7 +50,7 @@ export default function TenderEvaluationRunner({ opportunityId, scopeId, evaluat
   if (state === 'working') {
     return (
       <p className="report-progress">
-        <span className="dots" /> {t('The Tender Evaluation Agent is checking every requirement against WalliD\'s profile — about a minute.')}
+        <span className="dots" /> {t('The Tender Evaluation Agent is checking every requirement against your scope — about a minute.')}
       </p>
     );
   }

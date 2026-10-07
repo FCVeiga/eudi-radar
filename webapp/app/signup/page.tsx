@@ -6,7 +6,7 @@ import { getT } from '@/lib/i18n/server';
 
 export async function generateMetadata() {
   const t = await getT();
-  return { title: `${t('Sign up')} — EUDI Radar` };
+  return { title: `${t('Sign up')} — Tender Town` };
 }
 
 export default async function SignupPage({ searchParams }: { searchParams: { next?: string } }) {

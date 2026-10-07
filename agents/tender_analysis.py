@@ -141,7 +141,7 @@ def document_texts(session, opportunity_id: str) -> list:
         if kind in ("Q_AND_A", "CLARIFICATION") and seen_kind.get(kind, 0) >= 4:
             continue  # catalogues are cumulative: the latest few say it all
         try:
-            resp = requests.get(r.url, timeout=60, headers={"User-Agent": "Mozilla/5.0 EUDI-Radar/1.0"})
+            resp = requests.get(r.url, timeout=60, headers={"User-Agent": "Mozilla/5.0 TenderTown/1.0"})
             if resp.status_code != 200 or len(resp.content) > 30_000_000:
                 continue
         except Exception:
@@ -185,7 +185,7 @@ def page_text(url: str) -> str:
         except Exception:
             pass
     try:
-        page = requests.get(url, timeout=40, headers={"User-Agent": "Mozilla/5.0 EUDI-Radar/1.0"}).text
+        page = requests.get(url, timeout=40, headers={"User-Agent": "Mozilla/5.0 TenderTown/1.0"}).text
     except Exception:
         return ""
     page = re.sub(r"<(script|style|noscript)[^>]*>.*?</\1>", " ", page, flags=re.S | re.I)

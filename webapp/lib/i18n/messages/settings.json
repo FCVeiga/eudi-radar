@@ -671,12 +671,12 @@
     "de": "In Suchergebnissen erscheinen",
     "it": "Compari nei risultati di ricerca"
   },
-  "Others can find your profile in EUDI Radar search and search engines": {
-    "pt": "Outras pessoas podem encontrar o seu perfil na pesquisa do EUDI Radar e em motores de busca",
-    "es": "Otras personas pueden encontrar tu perfil en la búsqueda de EUDI Radar y en buscadores",
-    "fr": "Les autres peuvent trouver votre profil via la recherche EUDI Radar et les moteurs de recherche",
-    "de": "Andere finden dein Profil über die EUDI-Radar-Suche und Suchmaschinen",
-    "it": "Gli altri possono trovare il tuo profilo nella ricerca di EUDI Radar e nei motori di ricerca"
+  "Others can find your profile in Tender Town search and search engines": {
+    "pt": "Outras pessoas podem encontrar o seu perfil na pesquisa do Tender Town e em motores de busca",
+    "es": "Otras personas pueden encontrar tu perfil en la búsqueda de Tender Town y en buscadores",
+    "fr": "Les autres peuvent trouver votre profil via la recherche Tender Town et les moteurs de recherche",
+    "de": "Andere finden dein Profil über die Tender-Town-Suche und Suchmaschinen",
+    "it": "Gli altri possono trovare il tuo profilo nella ricerca di Tender Town e nei motori di ricerca"
   },
   "Language": {
     "pt": "Idioma",
@@ -937,12 +937,12 @@
     "de": "Unbekannter Tarif.",
     "it": "Piano sconosciuto."
   },
-  "Google sign-in isn’t switched on for EUDI Radar yet.": {
-    "pt": "O início de sessão com Google ainda não está ativo no EUDI Radar.",
-    "es": "El inicio de sesión con Google aún no está activado en EUDI Radar.",
-    "fr": "La connexion avec Google n’est pas encore activée sur EUDI Radar.",
-    "de": "Die Anmeldung mit Google ist für EUDI Radar noch nicht aktiviert.",
-    "it": "L’accesso con Google non è ancora attivo su EUDI Radar."
+  "Google sign-in isn’t switched on for Tender Town yet.": {
+    "pt": "O início de sessão com Google ainda não está ativo no Tender Town.",
+    "es": "El inicio de sesión con Google aún no está activado en Tender Town.",
+    "fr": "La connexion avec Google n’est pas encore activée sur Tender Town.",
+    "de": "Die Anmeldung mit Google ist für Tender Town noch nicht aktiviert.",
+    "it": "L’accesso con Google non è ancora attivo su Tender Town."
   },
   "Could not reach Google.": {
     "pt": "Não foi possível contactar a Google.",
@@ -1028,13 +1028,6 @@
     "de": "Entwurf zur rechtlichen Prüfung.",
     "it": "Bozza per revisione legale."
   },
-  "Items in [brackets] are to be completed by WalliD before this is relied on.": {
-    "pt": "Os elementos entre [parênteses retos] serão completados pela WalliD antes de este documento ser válido.",
-    "es": "Los elementos entre [corchetes] deben ser completados por WalliD antes de que este documento sea válido.",
-    "fr": "Les éléments entre [crochets] doivent être complétés par WalliD avant que ce document ne fasse foi.",
-    "de": "Angaben in [eckigen Klammern] werden von WalliD ergänzt, bevor dieses Dokument verbindlich ist.",
-    "it": "Gli elementi tra [parentesi quadre] devono essere completati da WalliD prima che il documento sia valido."
-  },
   "Terms & Conditions": {
     "pt": "Termos e Condições",
     "es": "Términos y condiciones",
@@ -1070,12 +1063,12 @@
     "de": "Schreib uns an [support email], wir melden uns bei dir.",
     "it": "Scrivici a [support email] e ti risponderemo."
   },
-  "What is EUDI Radar?": {
-    "pt": "O que é o EUDI Radar?",
-    "es": "¿Qué es EUDI Radar?",
-    "fr": "Qu’est-ce qu’EUDI Radar ?",
-    "de": "Was ist EUDI Radar?",
-    "it": "Che cos’è EUDI Radar?"
+  "What is Tender Town?": {
+    "pt": "O que é o Tender Town?",
+    "es": "¿Qué es Tender Town?",
+    "fr": "Qu’est-ce qu’Tender Town ?",
+    "de": "Was ist Tender Town?",
+    "it": "Che cos’è Tender Town?"
   },
   "A radar for public tenders, grants and market news in your field. Agents search TED, national portals, news and the sources you follow every day, sort what matters, and write it up for you.": {
     "pt": "Um radar de concursos públicos, financiamentos e notícias de mercado da sua área. Todos os dias, agentes pesquisam o TED, portais nacionais, notícias e as fontes que segue, selecionam o que importa e redigem-no para si.",
@@ -1272,5 +1265,12 @@
     "fr": "Impossible de charger les factures.",
     "de": "Rechnungen konnten nicht geladen werden.",
     "it": "Impossibile caricare le fatture."
+  },
+  "Items in [brackets] are to be completed by the operator before this is relied on.": {
+    "pt": "Os elementos entre [parênteses retos] serão completados pelo operador antes de este documento ser válido.",
+    "es": "Los elementos entre [corchetes] deben ser completados por el operador antes de que este documento sea válido.",
+    "fr": "Les éléments entre [crochets] doivent être complétés par l'opérateur avant que ce document ne fasse foi.",
+    "de": "Angaben in [eckigen Klammern] werden vom Betreiber ergänzt, bevor dieses Dokument verbindlich ist.",
+    "it": "Gli elementi tra [parentesi quadre] devono essere completati dall'operatore prima che il documento sia valido."
   }
 }

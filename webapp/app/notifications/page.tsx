@@ -8,7 +8,7 @@ import { getT } from '@/lib/i18n/server';
 
 export async function generateMetadata() {
   const t = await getT();
-  return { title: `${t('Notifications')} — EUDI Radar` };
+  return { title: `${t('Notifications')} — Tender Town` };
 }
 
 export default async function NotificationsPage({ searchParams }: { searchParams: { tab?: string } }) {

@@ -17,7 +17,7 @@ import { getT } from '@/lib/i18n/server';
 export const maxDuration = 300;
 export async function generateMetadata() {
   const t = await getT();
-  return { title: `${t('Workspaces')} — EUDI Radar` };
+  return { title: `${t('Workspaces')} — Tender Town` };
 }
 
 /** Workspace: your workspaces (each opens its scopes and members) and the shared workspace agents. Plans are on Settings. */

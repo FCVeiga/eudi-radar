@@ -1,4 +1,7 @@
-# Setup Checklist — Files to Populate Before Going Live
+# Tender Town — Setup Checklist
+
+> Tender Town (formerly EUDI Radar) covers public tenders across Europe; the
+> sections below that mention Africa/LatAm or EUDI-specific config are optional.
 
 Everything below is either already in the repo (needs real values) or
 needs to be created as an environment/secrets file. Nothing here is

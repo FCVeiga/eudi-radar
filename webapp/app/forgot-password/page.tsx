@@ -4,7 +4,7 @@ import { getT, getTSync } from '@/lib/i18n/server';
 
 export async function generateMetadata() {
   const t = await getT();
-  return { title: `${t('Reset your password')} — EUDI Radar` };
+  return { title: `${t('Reset your password')} — Tender Town` };
 }
 
 export default function ForgotPasswordPage() {

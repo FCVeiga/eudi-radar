@@ -8,7 +8,7 @@ import { acceptInvite } from '@/app/workspaces/actions';
 
 export async function generateMetadata() {
   const t = await getT();
-  return { title: `${t('Join a workspace')} — EUDI Radar` };
+  return { title: `${t('Join a workspace')} — Tender Town` };
 }
 
 /** An invitation link: shows the workspace and role; joining needs an account (log in or sign up first). */

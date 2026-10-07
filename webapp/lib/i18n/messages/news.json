@@ -895,13 +895,6 @@
     "de": "Handeln",
     "it": "Agire"
   },
-  "A clear opening for WalliD": {
-    "pt": "Uma oportunidade clara para a WalliD",
-    "es": "Una oportunidad clara para WalliD",
-    "fr": "Une ouverture claire pour WalliD",
-    "de": "Eine klare Chance für WalliD",
-    "it": "Un'opportunità chiara per WalliD"
-  },
   "Worth considering": {
     "pt": "Vale a pena considerar",
     "es": "Merece la pena considerarlo",
@@ -1006,5 +999,12 @@
     "fr": "Normal",
     "de": "Normal",
     "it": "Normale"
+  },
+  "A clear opening for you": {
+    "pt": "Uma oportunidade clara para si",
+    "es": "Una oportunidad clara para ti",
+    "fr": "Une ouverture claire pour vous",
+    "de": "Eine klare Chance für dich",
+    "it": "Un'opportunità chiara per te"
   }
 }

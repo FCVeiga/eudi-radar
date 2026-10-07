@@ -6,7 +6,7 @@ import { getT } from '@/lib/i18n/server';
 
 export async function generateMetadata() {
   const t = await getT();
-  return { title: `${t('Choose a new password')} — EUDI Radar` };
+  return { title: `${t('Choose a new password')} — Tender Town` };
 }
 
 /** Reached from the reset email's link (/auth/callback signs the user in first). */

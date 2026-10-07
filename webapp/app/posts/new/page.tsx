@@ -6,7 +6,7 @@ import { getT } from '@/lib/i18n/server';
 
 export async function generateMetadata() {
   const t = await getT();
-  return { title: `${t('Create a post')} — EUDI Radar` };
+  return { title: `${t('Create a post')} — Tender Town` };
 }
 
 export default async function NewPostPage() {

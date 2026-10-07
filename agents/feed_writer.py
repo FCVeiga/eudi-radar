@@ -1,5 +1,5 @@
 """
-Feed writer — turns radar events into posts for the EUDI Radar home feed.
+Feed writer — turns radar events into posts for the Tender Town home feed.
 
 Events, each becoming one post:
   - a new active opportunity (tender, RFI, grant, signal)

@@ -2,7 +2,7 @@
  * News Report Agent — per scope, runs the first time a story's page is opened
  * for that scope.
  * Reads the full article and writes, in one go, the page's complete summary
- * (with key facts) and its report on what WalliD should do: publish,
+ * (with key facts) and its report on what the scope's team should do: publish,
  * participate, announce, reach out, bid, product implications, or monitor.
  * The result is saved, so later visits show it instantly.
  * (prompt: agents/news_report.md; company context: agents/company_brief.md.)
@@ -37,7 +37,7 @@ async function articleText(url: string) {
       if (text && text.length > 300) return String(text).slice(0, 20_000);
     } catch { /* fall back to the raw page */ }
   }
-  const res = await fetch(url, { signal: ctrl, cache: 'no-store', headers: { 'User-Agent': 'EUDI-Radar/1.0 (+https://eudi-radar.vercel.app; news report)' } });
+  const res = await fetch(url, { signal: ctrl, cache: 'no-store', headers: { 'User-Agent': 'TenderTown/1.0 (+https://tender-town.vercel.app; news report)' } });
   const html = await res.text();
   return html.replace(/<(script|style|noscript)[^>]*>[\s\S]*?<\/\1>/gi, ' ').replace(/<[^>]+>/g, ' ')
     .replace(/\s+/g, ' ').trim().slice(0, 20_000);

@@ -20,7 +20,7 @@ export default function PrivacyTab({ chat, searchable }: { chat: string; searcha
         </Row>
       </Section>
       <Section title="Discoverability">
-        <ToggleRow label="Show up in search results" hint="Others can find your profile in EUDI Radar search and search engines"
+        <ToggleRow label="Show up in search results" hint="Others can find your profile in Tender Town search and search engines"
           on={searchable} onToggle={setSearchable} />
       </Section>
     </>

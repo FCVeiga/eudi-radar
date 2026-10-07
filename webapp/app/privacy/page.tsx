@@ -3,7 +3,7 @@ import { getT, getTSync } from '@/lib/i18n/server';
 
 export async function generateMetadata() {
   const t = await getT();
-  return { title: `${t('Privacy Policy')} — EUDI Radar` };
+  return { title: `${t('Privacy Policy')} — Tender Town` };
 }
 
 export default function PrivacyPage() {
@@ -11,7 +11,7 @@ export default function PrivacyPage() {
   return (
     <LegalPage title={t('Privacy Policy')} updated="2026-10-02" draft englishOnly>
       <h2>Who is responsible</h2>
-      <p>[WalliD legal entity name], [registered address], is the controller of the personal data described here. Contact: [privacy contact email]{' '}[and Data Protection Officer, if appointed].</p>
+      <p>[Operator legal entity name], [registered address], is the controller of the personal data described here. Contact: [privacy contact email]{' '}[and Data Protection Officer, if appointed].</p>
       <h2>What we collect</h2>
       <ul>
         <li><strong>Account:</strong> your email address and password (stored only as a secure hash by our authentication provider), username and sign-up date.</li>

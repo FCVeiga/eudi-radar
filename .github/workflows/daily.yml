@@ -1,4 +1,4 @@
-name: EUDI Radar pipeline
+name: Tender Town pipeline
 
 on:
   schedule:
@@ -49,7 +49,7 @@ jobs:
       - name: Commit digest to repo
         if: success()
         run: |
-          git config --global user.name "eudi-radar-bot"
+          git config --global user.name "tender-town-bot"
           git config --global user.email "actions@github.com"
           git add reports/daily/*.md
           git diff --staged --quiet || git commit -m "Daily digest: $(date +%Y-%m-%d)"

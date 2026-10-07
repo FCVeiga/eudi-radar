@@ -27,7 +27,7 @@ export async function GET() {
   return new NextResponse(body, {
     headers: {
       'content-type': 'application/json; charset=utf-8',
-      'content-disposition': `attachment; filename="eudi-radar-${user.username}-${new Date().toISOString().slice(0, 10)}.json"`,
+      'content-disposition': `attachment; filename="tender-town-${user.username}-${new Date().toISOString().slice(0, 10)}.json"`,
       'cache-control': 'no-store',
     },
   });

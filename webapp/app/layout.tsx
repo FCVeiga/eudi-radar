@@ -1,6 +1,5 @@
 import './globals.css';
 import { Suspense } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import SearchBox from '@/components/SearchBox';
@@ -11,6 +10,7 @@ import { getPlatformLanguage } from '@/lib/language';
 import { getCurrentUser } from '@/lib/auth';
 import { I18nProvider } from '@/lib/i18n/client';
 import { getLang, getT, getTheme, messagesFor } from '@/lib/i18n/server';
+import BrandLogo from '@/components/BrandLogo';
 import WorkspaceSwitcher from '@/components/WorkspaceSwitcher';
 import UserMenu, { type WorkspaceItem } from '@/components/auth/UserMenu';
 import { getContext, getMyWorkspaces } from '@/lib/accounts';
@@ -33,8 +33,8 @@ export const viewport = { width: 'device-width', initialScale: 1, viewportFit: '
 export async function generateMetadata() {
   const t = await getT();
   return {
-    title: 'EUDI Radar — WalliD',
-    description: t('Digital identity & wallet opportunity intelligence'),
+    title: 'Tender Town',
+    description: t('Public tenders, funding and market news across Europe — and a community of the people who bid on them.'),
   };
 }
 
@@ -52,10 +52,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         <I18nProvider lang={uiLang} messages={messagesFor(uiLang)}>
         <header className="topbar">
-          <Link href="/" className="brand" aria-label={t('EUDI Radar home')}>
-            <Image src="/wallid-logo-mark.png" alt="WalliD" width={98} height={26} priority />
-            <span className="brand-divider" />
-            <span className="brand-product">EUDI Radar</span>
+          <Link href="/" className="brand" aria-label={t('Tender Town home')}>
+            <BrandLogo />
           </Link>
           <Suspense fallback={<div className="search-box" />}><SearchBox /></Suspense>
           {user && <NavActions />}

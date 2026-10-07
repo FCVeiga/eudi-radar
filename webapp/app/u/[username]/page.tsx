@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: { params: { username: string 
   // Settings → Privacy → "Show up in search results" off: ask search engines not to index the profile.
   const { data } = await getSupabaseServerClient().from('profiles').select('searchable')
     .ilike('username', params.username.replace(/[\\%_]/g, (c) => `\\${c}`)).maybeSingle();
-  return { title: `u/${params.username} — EUDI Radar`, ...(data && data.searchable === false ? { robots: { index: false, follow: false } } : {}) };
+  return { title: `u/${params.username} — Tender Town`, ...(data && data.searchable === false ? { robots: { index: false, follow: false } } : {}) };
 }
 
 /** A user's profile, laid out like Reddit's: header, tabs, and a sidebar card. */

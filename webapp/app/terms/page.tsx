@@ -4,7 +4,7 @@ import { getT, getTSync } from '@/lib/i18n/server';
 
 export async function generateMetadata() {
   const t = await getT();
-  return { title: `${t('Terms & Conditions')} — EUDI Radar` };
+  return { title: `${t('Terms & Conditions')} — Tender Town` };
 }
 
 export default function TermsPage() {
@@ -12,15 +12,15 @@ export default function TermsPage() {
   return (
     <LegalPage title={t('Terms & Conditions')} updated="2026-10-02" draft englishOnly>
       <h2>1. Who we are</h2>
-      <p>EUDI Radar is operated by [WalliD legal entity name], [registered address], [company registration number] (“WalliD”, “we”). Contact: [contact email].</p>
+      <p>Tender Town is operated by [Operator legal entity name], [registered address], [company registration number] (“the operator”, “we”). Contact: [contact email].</p>
       <h2>2. Your account</h2>
       <p>You need an account to follow items, keep a profile and use the platform’s agents. Give accurate details, keep your password safe, and tell us if you suspect misuse. You’re responsible for activity on your account. You can delete it at any time from Edit profile.</p>
       <h2>3. What the platform provides</h2>
-      <p>EUDI Radar collects publicly available tender notices, documents and news, and uses automated agents — including AI models — to sort, summarise, translate and analyse them. Summaries, scores, evaluations and proposal briefs are generated automatically and may be incomplete or wrong. Always check the official notice and documents before you act; they prevail over anything shown here. Nothing on the platform is legal, financial or bidding advice.</p>
+      <p>Tender Town collects publicly available tender notices, documents and news, and uses automated agents — including AI models — to sort, summarise, translate and analyse them. Summaries, scores, evaluations and proposal briefs are generated automatically and may be incomplete or wrong. Always check the official notice and documents before you act; they prevail over anything shown here. Nothing on the platform is legal, financial or bidding advice.</p>
       <h2>4. Acceptable use</h2>
       <p>Don’t use the platform to break the law, infringe others’ rights, upload malicious content or personal data you have no right to share, scrape or overload the service, or try to access other users’ accounts or data. We may suspend accounts that do.</p>
       <h2>5. Your content</h2>
-      <p>You keep the rights to what you upload or write (profile, company material, and — later — posts and comments). You give WalliD the permission needed to host and process it to run the platform for you, including sending it to the AI providers that power the agents. Public content such as posts will be visible to other users.</p>
+      <p>You keep the rights to what you upload or write (profile, company material, and — later — posts and comments). You give the operator the permission needed to host and process it to run the platform for you, including sending it to the AI providers that power the agents. Public content such as posts will be visible to other users.</p>
       <h2>6. Third-party content</h2>
       <p>Tender notices, documents and news belong to their publishers. We link to the sources and show short summaries; follow the publishers’ own terms when you use their material.</p>
       <h2>7. Availability and changes</h2>

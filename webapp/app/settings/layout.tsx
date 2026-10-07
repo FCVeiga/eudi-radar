@@ -5,7 +5,7 @@ import { SettingsTabs } from '@/components/settings/SettingsUI';
 
 export async function generateMetadata() {
   const t = await getT();
-  return { title: `${t('Settings')} — EUDI Radar` };
+  return { title: `${t('Settings')} — Tender Town` };
 }
 
 /** Settings: title, tabs (each a sub-page), and the selected page below. */

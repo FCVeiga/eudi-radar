@@ -24,7 +24,7 @@ const ACTION_LABELS: Record<string, string> = {
   bid: 'Bid', product: 'Product', monitor: 'Monitor',
 };
 const VERDICTS: Record<string, { label: string; note: string }> = {
-  act: { label: 'Act on this', note: 'A clear opening for WalliD' },
+  act: { label: 'Act on this', note: 'A clear opening for you' },
   consider: { label: 'Worth considering', note: 'Discuss with the team' },
   monitor: { label: 'Monitor', note: 'Nothing to do yet' },
 };

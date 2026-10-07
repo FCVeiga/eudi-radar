@@ -8,7 +8,7 @@ import { getT } from '@/lib/i18n/server';
 
 export async function generateMetadata() {
   const t = await getT();
-  return { title: `${t('Community')} — EUDI Radar` };
+  return { title: `${t('Community')} — Tender Town` };
 }
 const PAGE = 25;
 

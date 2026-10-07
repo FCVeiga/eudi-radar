@@ -15,7 +15,7 @@ const FEED_REFRESH_MINUTES = 10;
 const FETCH_TIMEOUT_MS = 9000;
 const ITEMS_PER_FETCH = 10;
 // Honest, descriptive agent: some sites' firewalls block 'Mozilla/5.0 (compatible; …)' bots.
-const UA = 'EUDI-Radar/1.0 (+https://eudi-radar.vercel.app; RSS reader)';
+const UA = 'TenderTown/1.0 (+https://tender-town.vercel.app; RSS reader)';
 
 async function get(url: string) {
   const ctrl = new AbortController();

@@ -29,7 +29,7 @@ import requests
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "database"))
 from models import Candidate, Source, SourceActivity  # noqa: E402
 
-UA = {"User-Agent": "EUDI-Radar/1.0 (+https://eudi-radar.vercel.app; RSS reader)"}
+UA = {"User-Agent": "TenderTown/1.0 (+https://tender-town.vercel.app; RSS reader)"}
 ITEMS_PER_FEED = 15
 SITE_QUERY = "EUDI wallet digital identity wallet eIDAS electronic identification tender procurement"
 _LANG = None

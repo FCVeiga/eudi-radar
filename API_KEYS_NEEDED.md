@@ -1,4 +1,4 @@
-# API Keys & Signups — Fill This In
+# Tender Town — API Keys & Signups
 
 Every row below is a real, verified link found via research on 2026-09-04.
 Where I found a genuinely free/keyless option, I've flagged it — you may

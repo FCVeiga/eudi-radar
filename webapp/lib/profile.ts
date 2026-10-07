@@ -95,9 +95,9 @@ export async function getFollowing(userId: string): Promise<FeedItem[]> {
 
 /** The trophy case — earned later (streaks, comments, posts); shown locked until then. */
 export const ACHIEVEMENTS = [
-  { key: 'streak10', name: '10-day streak', how: 'Visit EUDI Radar 10 days in a row', icon: '🔥' },
+  { key: 'streak10', name: '10-day streak', how: 'Visit Tender Town 10 days in a row', icon: '🔥' },
   { key: 'comments20', name: 'Conversationalist', how: 'Write 20 comments', icon: '💬' },
   { key: 'firstpost', name: 'First post', how: 'Publish your first post', icon: '✍️' },
   { key: 'follow10', name: 'Tender scout', how: 'Follow 10 tenders', icon: '🔭' },
-  { key: 'year1', name: 'One year club', how: 'One year on EUDI Radar', icon: '🎂' },
+  { key: 'year1', name: 'One year club', how: 'One year on Tender Town', icon: '🎂' },
 ];

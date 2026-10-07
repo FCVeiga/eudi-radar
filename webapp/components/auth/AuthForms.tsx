@@ -43,7 +43,7 @@ export function LoginForm({ next, error }: { next: string; error?: string }) {
         <Msg state={state} />
         <Submit label={t('Log in')} busy={t('Logging in…')} />
       </form>
-      <p className="auth-switch">{t('New to EUDI Radar?')} <Link href={`/signup${next !== '/' ? `?next=${encodeURIComponent(next)}` : ''}`}>{t('Sign up')}</Link></p>
+      <p className="auth-switch">{t('New to Tender Town?')} <Link href={`/signup${next !== '/' ? `?next=${encodeURIComponent(next)}` : ''}`}>{t('Sign up')}</Link></p>
     </>
   );
 }

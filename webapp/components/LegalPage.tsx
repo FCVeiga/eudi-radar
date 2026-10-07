@@ -13,7 +13,7 @@ export default function LegalPage({ title, updated, draft, englishOnly, children
       {englishOnly && getLang() !== 'en' && <p className="callout">{t('This document is available in English only.')}</p>}
       {draft && (
         <p className="callout legal-draft">
-          <strong>{t('Draft for legal review.')}</strong> {t('Items in [brackets] are to be completed by WalliD before this is relied on.')}
+          <strong>{t('Draft for legal review.')}</strong> {t('Items in [brackets] are to be completed by the operator before this is relied on.')}
         </p>
       )}
       <div className="legal-body">{children}</div>

@@ -608,13 +608,6 @@
     "de": "Der Agent Angebotsmanagement ordnet jede Anforderung deinen Unternehmensunterlagen zu – ein paar Minuten.",
     "it": "L'Agente Gestore delle offerte sta associando ogni requisito al materiale della tua azienda: qualche minuto."
   },
-  "The Tender Evaluation Agent is checking every requirement against WalliD's profile — about a minute.": {
-    "pt": "O Agente de Avaliação de Concursos está a verificar cada requisito face ao perfil da WalliD — cerca de um minuto.",
-    "es": "El Agente de Evaluación de Licitaciones está comprobando cada requisito frente al perfil de WalliD (alrededor de un minuto).",
-    "fr": "L'Agent d'évaluation des appels d'offres vérifie chaque exigence par rapport au profil de WalliD — environ une minute.",
-    "de": "Der Agent Ausschreibungsbewertung prüft jede Anforderung anhand des WalliD-Profils – etwa eine Minute.",
-    "it": "L'Agente di valutazione gare sta verificando ogni requisito rispetto al profilo di WalliD: circa un minuto."
-  },
   "Threshold": {
     "pt": "Limiar",
     "es": "Umbral",
@@ -1146,5 +1139,12 @@
     "fr": "PAS UNE OPPORTUNITÉ",
     "de": "KEINE CHANCE",
     "it": "NON È UN'OPPORTUNITÀ"
+  },
+  "The Tender Evaluation Agent is checking every requirement against your scope — about a minute.": {
+    "pt": "O Agente de Avaliação de Concursos está a verificar cada requisito face ao seu âmbito — cerca de um minuto.",
+    "es": "El Agente de Evaluación de Licitaciones está comprobando cada requisito frente a tu ámbito (alrededor de un minuto).",
+    "fr": "L'Agent d'évaluation des appels d'offres vérifie chaque exigence par rapport à votre périmètre — environ une minute.",
+    "de": "Der Agent Ausschreibungsbewertung prüft jede Anforderung anhand deines Bereichs – etwa eine Minute.",
+    "it": "L'Agente di valutazione gare sta verificando ogni requisito rispetto al tuo ambito: circa un minuto."
   }
 }

@@ -24,7 +24,7 @@ import requests
 from sqlalchemy import text
 
 UA = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) "
-                    "Chrome/126.0 Safari/537.36 EUDI-Radar/1.0"}
+                    "Chrome/126.0 Safari/537.36 TenderTown/1.0"}
 TED_SEARCH = "https://api.ted.europa.eu/v3/notices/search"
 
 # Document type from its name, across the languages notices come in.

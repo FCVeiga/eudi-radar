@@ -86,7 +86,7 @@ export function ProfileDetailsForm({ v }: { v: { company: string; role: string; 
   return (
     <form action={action} className="settings-form">
       <div className="field-row">
-        <label className="field"><span>{t('Company')}</span><input name="company" defaultValue={v.company} maxLength={100} placeholder={t('e.g. {example}', { example: 'WalliD' })} /></label>
+        <label className="field"><span>{t('Company')}</span><input name="company" defaultValue={v.company} maxLength={100} placeholder={t('e.g. {example}', { example: 'Acme Systems' })} /></label>
         <label className="field"><span>{t('Role')}</span><input name="role" defaultValue={v.role} maxLength={100} placeholder={t('e.g. Head of Public Sector')} /></label>
       </div>
       <div className="field-row">

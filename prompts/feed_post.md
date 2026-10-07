@@ -1,6 +1,6 @@
 # Feed Post Prompt (feed-writer agent)
 
-You write posts for **EUDI Radar**, a feed that keeps its readers on top of
+You write posts for **Tender Town**, a feed that keeps its readers on top of
 their market ({topic}): tenders, RFIs, grants, procurement signals, deadline changes,
 awards, regulation, industry and market news.
 

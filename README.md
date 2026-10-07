@@ -1,68 +1,80 @@
-# EUDI Wallet Global Opportunity Radar
+# Tender Town
 
-Implementation of the 8-agent opportunity-intelligence architecture for
-Biometrid, tracking EUDI Wallet / digital identity tenders, RFIs, grants,
-and pilots across Europe, Africa, and Latin America.
+**Public tenders, funding and market news across Europe — and a community of
+the people who bid on them.** Live at https://tender-town.vercel.app.
 
-## Status
+Tender Town started as a radar for EUDI Wallet opportunities and grew into a
+platform for every kind of public procurement: national and EU tenders, grants
+and funding calls, development-bank procurement, and the news around them,
+with a social layer (posts, comments, chat, profiles) on top.
 
-- **Database schema**: 22 tables (spec section 59 + News/social additions),
-  tested, works on both SQLite (local dev) and Postgres/Supabase (prod).
-- **Real, sourced data**: all 32 tracked countries have real wallet
-  authority/status data (from the iGrant.io tracker) and 30/32 have a
-  confirmed real national procurement portal URL.
-- **Real LLM wiring**: `services/llm_client.py` + real calls in
-  `agents/triage.py` and `agents/requirements.py` against Anthropic's API.
-- **Real search adapters**: TED and World Bank (both keyless, confirmed
-  free), plus Tavily (needs your API key).
-- **Real Next.js dashboard**: `webapp/` — built and verified with
-  `npx next build`, zero errors. Four pages, all querying Supabase live.
-- **GitHub Actions**: daily pipeline workflow ready to deploy.
+## What it does
 
-See `SETUP_CHECKLIST.md` for what's still needed from you, and
-`API_KEYS_NEEDED.md` for every signup link required.
+- **Tenders** — open RFPs, RFIs, grants and procurement signals from TED, the
+  national procurement portals, EU funding programmes and development banks;
+  each tender page has its documents, a summary and the full list of
+  requirements, a fit evaluation and a proposal brief for your scope.
+- **News** — regulation, industry and market stories, with an on-demand report
+  on what they mean for you.
+- **History** — every tender analysed, sortable by deadline, value, relevance.
+- **Community** — a Reddit-style feed of posts, threaded comments, likes,
+  follows, chat and notifications; profiles with Aura.
+- **Workspaces & scopes** — a scope is one configuration of the radar (its
+  instructions, context documents, search, followed sources and agents). A
+  workspace holds scopes and team members; the active workspace decides what
+  the whole site shows. New users and visitors see the **General** scope:
+  the most significant tenders and news across all sectors.
+- **Plans** — Free, Starter, Pro, Teams (Stripe-ready).
+- **Settings** — account, profile, privacy, preferences (interface language:
+  English, Português, Español, Français, Deutsch, Italiano; light/dark/auto),
+  notifications.
+
+## How it works
+
+A pipeline (`run_daily.py`, GitHub Actions every 4 hours) runs each due scope:
+
+1. **Search Agent** — TED, the web and news (Tavily), and the scope's followed
+   sources (RSS feeds and site searches).
+2. **Triage Agent** — scores every find against the scope's search rules and
+   instructions (LLM). The **General** scope is generic: no LLM, it ranks by
+   contract value, buyer standing, market breadth and time to bid for tenders,
+   and by outlet reputation, coverage and freshness for news
+   (`agents/generic_scope.py`).
+3. **Tender Documents / Tender Analysis Agents** — collect notices and
+   documents, write summaries and requirements.
+4. **Feed Writer / Translator Agents** — write the feed posts and translate
+   content into the platform language.
+
+On-click agents in the web app: **Tender Evaluation**, **Proposal Manager**,
+**News Report**. Agent prompts live in `prompts/` (pipeline) and
+`webapp/agents/` (web app); each scope can fine-tune its agents in plain
+language from its page.
 
 ## Repository layout
 
 ```
-config/       countries.yaml (real data), sources.yaml, keywords.yaml,
-              programmes.yaml, company_profile.yaml, tracked_accounts.yaml,
-              sources_africa_latam.yaml
-agents/       discovery, triage (real LLM), document_analyser, requirements
-              (real LLM), pipeline_intelligence, consortium, ranking, digest,
-              source_discovery, social_monitor
-adapters/     web_search.py (interface), ted.py, world_bank.py, tavily.py,
-              twitter.py, linkedin.py (all real implementations)
-services/     llm_client.py (real Anthropic wrapper), deduplicator.py,
-              change_detector.py
-database/     models.py (22 tables), seed.py, supabase_migration.sql
-prompts/      7 prompt files for every LLM call in the pipeline
-webapp/       real Next.js dashboard (News, Opportunities, Database, Landscape)
-dashboard/    static HTML mock (earlier prototype, kept for reference)
-.github/workflows/  daily.yml (real), weekly_source_discovery.yml (stub)
-reports/daily/      generated digests land here
+run_daily.py     pipeline orchestrator (discovery → triage → documents → analysis → feed)
+agents/          pipeline agents (discovery, triage, generic_scope, source_monitor,
+                 tender_documents, tender_analysis, feed_writer, translation, …)
+adapters/        TED, Tavily, World Bank, … search adapters
+services/        LLM client, agent settings (scopes, prompts), deduplication
+prompts/         pipeline agent prompts
+database/        SQLAlchemy models + Supabase migrations (database/migrations/NNN_*.sql)
+config/          countries, languages, keywords, sources
+webapp/          Next.js 14 app (App Router, Supabase, Stripe) — the site
+.github/workflows/  daily.yml (the pipeline, every 4 hours)
 ```
 
-## Quick start (local, SQLite)
+## Running it
 
-```bash
-pip install -r requirements.txt
-cd database && python3 seed.py
-```
+- **Database**: Supabase (Postgres). Apply `database/migrations/*.sql` in order.
+- **Pipeline**: `pip install -r requirements.txt`, set the environment below,
+  `python3 run_daily.py`. `FORCE_ALL_SCOPES=1` runs every scope regardless of
+  its plan's cadence.
+- **Web app**: see `webapp/README.md`; deployed on Vercel (root `webapp`).
 
-## Deploying for real
+Environment (pipeline): `DATABASE_URL`, `ANTHROPIC_API_KEY`
+(+ `ANTHROPIC_WORKSPACE_ID` for unscoped keys), `TAVILY_API_KEY`; optional
+`TAVILY_QUERIES_PER_RUN`, `MAX_TRIAGE_PER_RUN`.
 
-See `SETUP_CHECKLIST.md` — the short version: run
-`database/supabase_migration.sql` against a Supabase project, set
-`DATABASE_URL` + the API key secrets in GitHub Actions, deploy `webapp/`
-to Vercel with root directory set to `webapp`.
-
-## Known gaps
-
-- `agents/document_analyser.py` is structurally correct but untested
-  against a real PDF (needs deployed network access).
-- Landscape page's wallet-space company data is empty — needs
-  `agents/consortium.py`'s partner graph populated.
-- No auth on the webapp — fine for internal use only.
-- LinkedIn monitoring deliberately deferred (see `adapters/linkedin.py`
-  for the ToS/risk tradeoffs involved).
+See `SETUP_CHECKLIST.md` and `API_KEYS_NEEDED.md` for accounts and keys.

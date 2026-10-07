@@ -9,6 +9,7 @@ import SourcesSidebar from '@/components/SourcesSidebar';
 import WorkingAgents from '@/components/WorkingAgents';
 import { getPlatformLanguage } from '@/lib/language';
 import { getCurrentUser } from '@/lib/auth';
+import WorkspaceSwitcher from '@/components/WorkspaceSwitcher';
 import UserMenu, { type WorkspaceItem } from '@/components/auth/UserMenu';
 import { getContext, getMyWorkspaces } from '@/lib/accounts';
 import NavActions from '@/components/social/NavActions';
@@ -62,6 +63,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <div className="shell">
           <MenuBackdrop />
           <aside className="sidebar" aria-label="Sources and agents">
+            {ctx && <WorkspaceSwitcher activeId={ctx.workspace.id} workspaces={mine.map((m) => ({
+              id: m.workspace.id, name: m.workspace.name, role: m.role, sharedBy: m.workspace.ownerId === user?.id ? null : m.owner.username,
+            }))} />}
             <SideNav />
             <div className="sidebar-rule" />
             <SourcesSidebar />

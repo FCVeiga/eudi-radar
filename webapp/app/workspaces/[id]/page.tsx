@@ -57,7 +57,8 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
             canDelete={ctx.isOwner && !ctx.isDefault && owned.length > 1} />
         </div>
         <div className="ws-head-actions">
-          {!onSite && <form action={switchWorkspace.bind(null, wsId, '/')}><button type="submit" className="btn">Show its results</button></form>}
+          {onSite ? <span className="ws-active-badge">Active workspace</span>
+            : <form action={switchWorkspace.bind(null, wsId, `/workspaces/${wsId}`)}><button type="submit" className="btn primary">Switch to this workspace</button></form>}
         </div>
       </div>
 

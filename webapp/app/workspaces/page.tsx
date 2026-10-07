@@ -9,6 +9,8 @@ import { PLATFORM_AGENT_KEYS } from '@/lib/scopes';
 import { getAgentDefaults } from '@/lib/settings';
 import AgentCard from '@/components/settings/AgentCard';
 import { NewWorkspaceButton } from '@/components/settings/WorkspaceControls';
+import { WorkspaceMark } from '@/components/WorkspaceSwitcher';
+import { switchWorkspace } from './actions';
 
 // The Config Agent runs inside the workspace agents' server actions: give it time.
 export const maxDuration = 300;
@@ -43,16 +45,21 @@ export default async function WorkspacesPage({ searchParams }: { searchParams: {
         </div>
         <div className="table-wrap">
           <table className="data-table ws-table">
-            <thead><tr><th>Workspace</th><th>Owner</th><th className="num">Scopes</th><th className="num">Members</th></tr></thead>
+            <thead><tr><th>Workspace</th><th>Owner</th><th className="num">Scopes</th><th className="num">Members</th><th className="num" /></tr></thead>
             <tbody>
               {mine.map((m) => {
                 const href = `/workspaces/${m.workspace.id}`;
+                const active = m.workspace.id === ctx.workspace.id;
                 return (
-                  <tr key={m.workspace.id}>
-                    <td><Link href={href} className="ws-table-name">{m.workspace.name}</Link>{m.workspace.id === ctx.workspace.id && <span className="scope-badge">On the site</span>}</td>
+                  <tr key={m.workspace.id} className={active ? 'ws-active-row' : ''}>
+                    <td><Link href={href} className="ws-table-cell"><WorkspaceMark id={m.workspace.id} name={m.workspace.name} size={26} /><span className="ws-table-name">{m.workspace.name}</span></Link></td>
                     <td>{m.workspace.ownerId === user.id ? 'You' : `u/${m.owner.username}`}</td>
                     <td className="num">{tally(scopeRows, m.workspace.id)}</td>
                     <td className="num">{tally(memberRows, m.workspace.id)}</td>
+                    <td className="num ws-switch-cell">
+                      {active ? <span className="ws-active-badge">Active</span>
+                        : <form action={switchWorkspace.bind(null, m.workspace.id, '/workspaces')}><button type="submit" className="btn">Switch</button></form>}
+                    </td>
                   </tr>
                 );
               })}

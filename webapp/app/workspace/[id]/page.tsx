@@ -69,7 +69,7 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
       {ctx.isAdmin && !ctx.canCustomize && (
         <p className="callout">
           On the Free plan you follow the default scope — {defaultScope?.name ?? 'EUDI Wallet & digital identity'} — updated once a day.
-          {ctx.isOwner && <Link href="/workspace#plan"> Upgrade</Link>} to create your own scopes with your instructions, context and agents.
+          {ctx.isOwner && <Link href="/settings#billing"> Upgrade</Link>} to create your own scopes with your instructions, context and agents.
         </p>
       )}
 
@@ -86,7 +86,7 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
             <p className="profile-empty-title">No scopes in this workspace</p>
             <p className="muted">Until there is one, it shows the default scope ({defaultScope?.name ?? 'EUDI Wallet & digital identity'}).</p>
             {canAdd ? <form action={addScope}><button type="submit" className="btn primary profile-empty-cta">Create the first scope</button></form>
-              : ctx.isAdmin && <Link href="/workspace#plan" className="btn primary profile-empty-cta">See plans</Link>}
+              : ctx.isAdmin && <Link href="/settings#billing" className="btn primary profile-empty-cta">See plans</Link>}
           </div>
         ) : (
           <div className="scope-grid">
@@ -101,7 +101,7 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
           </div>
         )}
         {ctx.canCustomize && !canAdd && Number.isFinite(limit) && (
-          <p className="field-hint">You’ve reached the {plan.name} plan’s {limit} {limit === 1 ? 'scope' : 'scopes'}.{ctx.isOwner && <> <Link href="/workspace#plan">Upgrade</Link> for more.</>}</p>
+          <p className="field-hint">You’ve reached the {plan.name} plan’s {limit} {limit === 1 ? 'scope' : 'scopes'}.{ctx.isOwner && <> <Link href="/settings#billing">Upgrade</Link> for more.</>}</p>
         )}
       </section>
 

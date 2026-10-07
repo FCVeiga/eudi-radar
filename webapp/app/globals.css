@@ -1533,3 +1533,18 @@ a.profile-post:hover { border-color: var(--border-strong); }
 .invite-link code { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12.5px; }
 .settings-links { display: flex; flex-wrap: wrap; gap: 8px; }
 @media (max-width: 900px) { .ws-chip { margin: 0 8px 12px; } .inline-form input { font-size: 16px; } }
+
+/* Settings */
+.settings-nav { position: sticky; top: var(--topbar-h); z-index: 5; display: flex; gap: 6px; overflow-x: auto; margin: 4px 0 18px; padding: 8px 0; background: var(--bg); scrollbar-width: none; }
+.settings-nav::-webkit-scrollbar { display: none; }
+.settings-nav a { flex: none; padding: 6px 12px; border: 1px solid var(--border); border-radius: 999px; font-size: 13px; color: var(--text); text-decoration: none; background: var(--surface); }
+.settings-nav a:hover { border-color: var(--border-strong); color: var(--ink); }
+.settings .detail-block[id] { scroll-margin-top: 120px; }
+.radio-list { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; max-width: 560px; }
+.radio-list legend { font-size: 13.5px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+.radio-row { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; cursor: pointer; background: var(--surface); }
+.radio-row.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.radio-row input { margin-top: 3px; accent-color: var(--accent); }
+.radio-row strong { display: block; font-size: 13.5px; color: var(--ink); }
+.radio-row em { font-style: normal; font-size: 12.5px; color: var(--muted); }
+#billing .data-table td a { color: var(--accent); font-weight: 600; }

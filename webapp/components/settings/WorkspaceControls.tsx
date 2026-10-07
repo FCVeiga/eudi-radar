@@ -5,8 +5,7 @@ import { useFormState, useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import UserAvatar from '@/components/UserAvatar';
 import {
-  FormState, adminSetPlan, createWorkspace, deleteWorkspace, inviteMember, openBillingPortal, removeMember, renameWorkspace,
-  revokeInvite, setMemberRole, startCheckout,
+  FormState, createWorkspace, deleteWorkspace, inviteMember, removeMember, renameWorkspace, revokeInvite, setMemberRole,
 } from '@/app/workspace/actions';
 
 function Submit({ label, busy }: { label: string; busy: string }) {
@@ -121,47 +120,4 @@ export function RevokeInviteButton({ id }: { id: string }) {
   const [pending, start] = useTransition();
   const router = useRouter();
   return <button type="button" className="btn" disabled={pending} onClick={() => start(async () => { await revokeInvite(id); router.refresh(); })}>Revoke</button>;
-}
-
-/* ---------------- Plan ---------------- */
-
-export function PlanButton({ plan, label }: { plan: string; label: string }) {
-  const [pending, start] = useTransition();
-  const [error, setError] = useState<string | null>(null);
-  return (
-    <>
-      <button type="button" className="btn primary" disabled={pending} onClick={() => start(async () => { const r = await startCheckout(plan); if (r?.error) setError(r.error); })}>
-        {pending ? 'Opening checkout…' : label}
-      </button>
-      {error && <p className="form-msg err">{error}</p>}
-    </>
-  );
-}
-
-export function PortalButton() {
-  const [pending, start] = useTransition();
-  const [error, setError] = useState<string | null>(null);
-  return (
-    <>
-      <button type="button" className="btn" disabled={pending} onClick={() => start(async () => { const r = await openBillingPortal(); if (r?.error) setError(r.error); })}>
-        {pending ? 'Opening…' : 'Manage billing'}
-      </button>
-      {error && <p className="form-msg err">{error}</p>}
-    </>
-  );
-}
-
-/** Internal tool: set a plan by hand (complimentary). */
-export function SetPlan({ userId, plan, options }: { userId: string; plan: string; options: { key: string; name: string }[] }) {
-  const [value, setValue] = useState(plan);
-  const [, start] = useTransition();
-  const router = useRouter();
-  return (
-    <label className="filter-select admin-plan">
-      <span>Set plan</span>
-      <select value={value} onChange={(e) => { const v = e.target.value; setValue(v); start(async () => { await adminSetPlan(userId, v); router.refresh(); }); }}>
-        {options.map((o) => <option key={o.key} value={o.key}>{o.name}</option>)}
-      </select>
-    </label>
-  );
 }

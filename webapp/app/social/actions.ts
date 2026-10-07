@@ -200,6 +200,22 @@ export async function getThread(conversationId: string) {
 }
 
 /** A chat request: a new conversation the other person accepts or declines (one per pair). */
+/** Why a new chat request to this person isn't allowed (Settings → Chat), or null. */
+async function chatBlocked(fromId: string, toId: string): Promise<string | null> {
+  const { data: p } = await db().from('profiles').select('chat_permission').eq('id', toId).maybeSingle();
+  const rule = p?.chat_permission ?? 'everyone';
+  if (rule === 'nobody') return 'isn’t accepting chat requests';
+  if (rule === 'workspace') {
+    const { data: theirs } = await db().from('workspace_members').select('workspace_id').eq('user_id', toId);
+    const ids = (theirs || []).map((r: any) => r.workspace_id);
+    const { count } = ids.length
+      ? await db().from('workspace_members').select('user_id', { count: 'exact', head: true }).eq('user_id', fromId).in('workspace_id', ids)
+      : { count: 0 };
+    if (!count) return 'only accepts chat requests from people in their workspaces';
+  }
+  return null;
+}
+
 export async function startChat(username: string, body: string): Promise<{ error: string } | { conversationId: string }> {
   const user = await getCurrentUser();
   if (!user) return { error: 'Log in to chat.' };
@@ -209,6 +225,10 @@ export async function startChat(username: string, body: string): Promise<{ error
   if (!target) return { error: 'No such user.' };
   if (target.id === user.id) return { error: 'That’s you.' };
   const existing = await findConversation(user.id, target.id);
+  if (!existing) {
+    const blocked = await chatBlocked(user.id, target.id);
+    if (blocked) return { error: `u/${target.username} ${blocked}.` };
+  }
   if (existing) {
     if (existing.status === 'declined') return { error: `u/${target.username} declined your chat request.` };
     const sent = await sendMessage(existing.conversation_id, text);

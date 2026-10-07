@@ -15,7 +15,6 @@ const nextConfig = {
       { source: '/database', destination: '/history', permanent: true },
       { source: '/landscape', destination: '/workspace', permanent: false },
       { source: '/settings/scopes/:id', destination: '/workspace/scopes/:id', permanent: true },
-      { source: '/settings', destination: '/workspace', permanent: false },
     ];
   },
 };

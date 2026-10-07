@@ -5,19 +5,17 @@ import { getCurrentUser } from '@/lib/auth';
 import { getContext, getMyWorkspaces, getPersonalAccount } from '@/lib/accounts';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { PLANS } from '@/lib/plans';
-import { billingReady } from '@/lib/billing';
 import { PLATFORM_AGENT_KEYS } from '@/lib/scopes';
 import { getAgentDefaults } from '@/lib/settings';
 import AgentCard from '@/components/settings/AgentCard';
-import { NewWorkspaceForm, PlanButton, PortalButton, SetPlan } from '@/components/settings/WorkspaceControls';
+import { NewWorkspaceForm } from '@/components/settings/WorkspaceControls';
 
 // The Config Agent runs inside the workspace agents' server actions: give it time.
 export const maxDuration = 300;
 export const metadata = { title: 'Workspace — EUDI Radar' };
-const fmt = (iso: string) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
-/** Workspace: your workspaces (each opens its scopes and members), your plan, and the shared workspace agents. */
-export default async function WorkspacePage({ searchParams }: { searchParams: { billing?: string } }) {
+/** Workspace: your workspaces (each opens its scopes and members) and the shared workspace agents. Plans are on Settings. */
+export default async function WorkspacePage() {
   const user = await getCurrentUser();
   const ctx = await getContext();
   if (!user || !ctx) redirect('/login?next=/workspace');
@@ -36,7 +34,6 @@ export default async function WorkspacePage({ searchParams }: { searchParams: { 
   return (
     <div className="settings">
       <h1 className="opps-h1">Workspace</h1>
-      {searchParams.billing === 'success' && <p className="form-msg ok">Thanks — your plan is being activated. It can take a few seconds to show here.</p>}
 
       {/* ---------- Your workspaces ---------- */}
       <section className="detail-block" id="workspaces">
@@ -63,36 +60,7 @@ export default async function WorkspacePage({ searchParams }: { searchParams: { 
         </div>
         <div id="new">
           {canCreateWs ? <NewWorkspaceForm />
-            : <p className="field-hint">The {myPlan.name} plan has one workspace. <a href="#plan">Teams</a> has unlimited workspaces, each with its own members.</p>}
-        </div>
-      </section>
-
-      {/* ---------- Your plan ---------- */}
-      <section className="detail-block" id="plan">
-        <h2>Your plan</h2>
-        <p className="settings-intro">
-          You’re on the <strong>{myPlan.name}</strong> plan
-          {account?.planStatus === 'comped' ? ' (complimentary)' : account && account.planStatus !== 'active' ? ` (${account.planStatus.replace('_', ' ')})` : ''}
-          {account?.periodEnd ? ` · renews ${fmt(account.periodEnd)}` : ''}. It applies to the workspaces you own.
-          {!billingReady() && ' Online payments aren’t switched on yet — contact us to change plans.'}
-        </p>
-        <div className="plan-grid">
-          {PLANS.map((p) => {
-            const current = myPlan.key === p.key;
-            return (
-              <div key={p.key} className={`plan-card ${current ? 'current' : ''}`}>
-                <div className="plan-head"><h3>{p.name}</h3>{current && <span className="scope-badge">Current</span>}</div>
-                <p className="plan-price">€{p.priceEur}<span>/month</span></p>
-                <p className="plan-blurb">{p.blurb}</p>
-                <ul>{p.features.map((f) => <li key={f}>{f}</li>)}</ul>
-                {!current && p.key !== 'free' && <PlanButton plan={p.key} label={`Choose ${p.name}`} />}
-              </div>
-            );
-          })}
-        </div>
-        <div className="billing-actions">
-          {account?.stripeCustomerId && <PortalButton />}
-          {ctx.isPlatformAdmin && <SetPlan userId={user.id} plan={myPlan.key} options={PLANS.map((p) => ({ key: p.key, name: p.name }))} />}
+            : <p className="field-hint">The {myPlan.name} plan has one workspace. <Link href="/settings#billing">Teams</Link> has unlimited workspaces, each with its own members.</p>}
         </div>
       </section>
 

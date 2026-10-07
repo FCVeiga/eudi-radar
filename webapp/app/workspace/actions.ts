@@ -12,8 +12,6 @@ import { PLATFORM_AGENT_KEYS, SCOPE_AGENT_KEYS, getEditableScope } from '@/lib/s
 import { getMembership, getWorkspaceContext, getMyWorkspaces, getPersonalAccount, isPlatformAdmin } from '@/lib/accounts';
 import { randomBytes } from 'crypto';
 import { siteOrigin } from '@/lib/auth';
-import { PLANS, planOf } from '@/lib/plans';
-import { PRICE_ENV, billingReady, stripe } from '@/lib/billing';
 import { fileText } from '@/lib/fileText';
 import {
   friendlyError, parseSearchScope, tuneJson, tunePrompt, validateDocumentsConfig, validatePrompt, validateSearchConfig,
@@ -45,9 +43,9 @@ const refresh = (scopeId?: string) => {
 export async function createScope(workspaceId: string) {
   const ctx = await getWorkspaceContext(workspaceId);
   if (!ctx) redirect('/workspace');
-  if (!ctx.canCustomize) redirect('/workspace#plan');
+  if (!ctx.canCustomize) redirect('/settings#billing');
   const { count } = await db().from('scopes').select('id', { count: 'exact', head: true }).eq('workspace_id', ctx.workspace.id);
-  if (!ctx.isDefault && (count ?? 0) >= ctx.plan.scopes) redirect('/workspace#plan');
+  if (!ctx.isDefault && (count ?? 0) >= ctx.plan.scopes) redirect('/settings#billing');
   const { data, error } = await db().from('scopes').insert({ owner_id: (await getCurrentUser())!.id, workspace_id: ctx.workspace.id, name: 'New scope', active: true })
     .select('id').single();
   if (error || !data) throw new Error(error?.message || 'Could not create the scope.');
@@ -391,50 +389,4 @@ export async function acceptInvite(token: string): Promise<{ error?: string }> {
   await db().from('profiles').update({ current_workspace_id: inv.workspace_id }).eq('id', user.id);
   revalidatePath('/', 'layout');
   redirect('/');
-}
-
-/* ---------------- Plan (your personal account) ---------------- */
-
-export async function startCheckout(plan: string): Promise<{ error?: string }> {
-  const user = await getCurrentUser();
-  if (!user) return { error: 'Log in first.' };
-  const account = await getPersonalAccount(user.id);
-  const p = planOf(plan);
-  if (!account || p.key === 'free') return { error: 'That plan isn’t available.' };
-  const s = stripe();
-  if (!s || !billingReady()) return { error: 'Online payments aren’t set up yet — contact us to change your plan.' };
-  let customer = account.stripeCustomerId;
-  if (!customer) {
-    const c = await s.customers.create({ email: user.email, name: user.displayName, metadata: { account_id: account.id } });
-    customer = c.id;
-    await db().from('accounts').update({ stripe_customer_id: customer }).eq('id', account.id);
-  }
-  const session = await s.checkout.sessions.create({
-    mode: 'subscription', customer,
-    line_items: [{ price: process.env[PRICE_ENV[p.key]]!, quantity: 1 }],
-    success_url: `${siteOrigin()}/workspace?billing=success#plan`,
-    cancel_url: `${siteOrigin()}/workspace#plan`,
-    metadata: { account_id: account.id, plan: p.key },
-    subscription_data: { metadata: { account_id: account.id, plan: p.key } },
-    allow_promotion_codes: true,
-  });
-  redirect(session.url!);
-}
-
-export async function openBillingPortal(): Promise<{ error?: string }> {
-  const user = await getCurrentUser();
-  const account = user ? await getPersonalAccount(user.id) : null;
-  const s = stripe();
-  if (!s || !account?.stripeCustomerId) return { error: 'No billing account yet.' };
-  const portal = await s.billingPortal.sessions.create({ customer: account.stripeCustomerId, return_url: `${siteOrigin()}/workspace#plan` });
-  redirect(portal.url);
-}
-
-/** Internal: assign a plan by hand (complimentary), e.g. before Stripe is set up. */
-export async function adminSetPlan(userId: string, plan: string): Promise<{ error?: string }> {
-  if (!(await isPlatformAdmin())) return { error: 'Not allowed.' };
-  if (!PLANS.some((p) => p.key === plan)) return { error: 'Unknown plan.' };
-  await db().from('accounts').update({ plan, plan_status: plan === 'free' ? 'active' : 'comped' }).eq('kind', 'personal').eq('owner_id', userId);
-  revalidatePath('/', 'layout');
-  return {};
 }

@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
-import { NewPasswordForm } from '@/components/auth/AuthForms';
-import { AvatarUpload, DeleteAccountForm, ProfileDetailsForm, ProfileForm } from '@/components/auth/ProfileForms';
+import { AvatarUpload, ProfileDetailsForm, ProfileForm } from '@/components/auth/ProfileForms';
 import { getProfile } from '@/lib/profile';
 
 export const metadata = { title: 'Edit profile — EUDI Radar' };
@@ -31,17 +30,7 @@ export default async function EditProfilePage() {
         }} />
       </section>
 
-      <section className="detail-block">
-        <h2>Account</h2>
-        <p className="settings-intro">Signed in as <strong>{user.email}</strong> · member since {new Date(user.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-        <h3 className="form-subhead">Change password</h3>
-        <NewPasswordForm />
-      </section>
-
-      <section className="detail-block danger-zone">
-        <h2>Delete account</h2>
-        <DeleteAccountForm username={user.username} />
-      </section>
+      <p className="field-hint">Email, password, plan, notifications and account deletion are in <Link href="/settings">Settings</Link>.</p>
     </div>
   );
 }

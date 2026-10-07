@@ -5,14 +5,14 @@ import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import UserAvatar from '@/components/UserAvatar';
 import { logOut } from '@/app/auth/actions';
-import { switchWorkspace } from '@/app/workspace/actions';
+import { switchWorkspace } from '@/app/workspaces/actions';
 
 export type WorkspaceItem = { id: string; name: string; sharedBy: string | null };
 
 const ITEMS = [
   { href: 'profile', label: 'Profile', icon: <><circle cx="8" cy="5.5" r="2.8" /><path d="M2.8 14c.6-2.8 2.7-4.4 5.2-4.4s4.6 1.6 5.2 4.4" /></> },
   { href: '/notifications', label: 'Notifications', icon: <path d="M8 2.3a3.7 3.7 0 0 0-3.7 3.7v2.2L3.2 10.4h9.6l-1.1-2.2V6A3.7 3.7 0 0 0 8 2.3zM6.6 12.5a1.5 1.5 0 0 0 2.8 0" /> },
-  { href: '/workspace', label: 'Workspace', icon: <><rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1" /><rect x="9" y="2.5" width="4.5" height="4.5" rx="1" /><rect x="2.5" y="9" width="4.5" height="4.5" rx="1" /><rect x="9" y="9" width="4.5" height="4.5" rx="1" /></> },
+  { href: '/workspaces', label: 'Workspaces', icon: <><rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1" /><rect x="9" y="2.5" width="4.5" height="4.5" rx="1" /><rect x="2.5" y="9" width="4.5" height="4.5" rx="1" /><rect x="9" y="9" width="4.5" height="4.5" rx="1" /></> },
   { href: '/settings', label: 'Settings', icon: <><circle cx="8" cy="8" r="2.2" /><path d="M8 1.8v1.6M8 12.6v1.6M14.2 8h-1.6M3.4 8H1.8M12.4 3.6l-1.1 1.1M4.7 11.3l-1.1 1.1M12.4 12.4l-1.1-1.1M4.7 4.7 3.6 3.6" /></> },
   { href: '/help', label: 'Help', icon: <><circle cx="8" cy="8" r="6" /><path d="M6.3 6.3a1.8 1.8 0 1 1 2.5 1.6c-.5.3-.8.6-.8 1.2M8 11.3v.01" /></> },
   { href: '/terms', label: 'Terms & Conditions', icon: <><path d="M4 2.5h5.5L12 5v8.5H4z" /><path d="M9.5 2.5V5H12M6 8h4M6 10.5h4" /></> },
@@ -59,7 +59,7 @@ export default function UserMenu({ user, workspaces = [], currentWorkspace }: {
                   </button>
                 </form>
               ))}
-              <Link href="/workspace#new" className="user-menu-item ws-new">+ New workspace</Link>
+              <Link href="/workspaces?new=1" className="user-menu-item ws-new">+ New workspace</Link>
             </div>
           )}
           {ITEMS.map((i) => (

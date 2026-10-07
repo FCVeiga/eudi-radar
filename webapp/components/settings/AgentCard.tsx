@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import AgentAvatar from '@/components/AgentAvatar';
 import {
   FormState, resetAgentConfig, saveAgentConfig, saveAgentTuning, saveSearchScope, setAgentEnabled,
-} from '@/app/workspace/actions';
+} from '@/app/workspaces/actions';
 import type { AgentDef } from '@/lib/agents';
 
 function Submit({ label, busy, primary }: { label: string; busy: string; primary?: boolean }) {

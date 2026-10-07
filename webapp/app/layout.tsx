@@ -74,7 +74,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   <span><strong>{user.displayName}</strong><em>u/{user.username}</em></span>
                 </Link>
                 <nav className="sidebar-user-links">
-                  <Link href="/posts/new">New post</Link><Link href="/notifications">Notifications</Link><Link href="/chat">Chat</Link><Link href="/workspace">Workspace</Link><Link href="/settings">Settings</Link>
+                  <Link href="/posts/new">New post</Link><Link href="/notifications">Notifications</Link><Link href="/chat">Chat</Link><Link href="/workspaces">Workspaces</Link><Link href="/settings">Settings</Link>
                   <Link href="/help">Help</Link><Link href="/terms">Terms &amp; Conditions</Link><Link href="/privacy">Privacy policy</Link>
                 </nav>
                 <form action={logOut}><button type="submit" className="btn">Log out</button></form>

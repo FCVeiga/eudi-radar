@@ -5,7 +5,7 @@ import { getContext, getMyWorkspaces, getWorkspaceContext } from '@/lib/accounts
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { SCOPE_AGENT_KEYS, getWorkspaceScopes } from '@/lib/scopes';
 import ScopeCard from '@/components/settings/ScopeCard';
-import { InviteForm, MemberRow, RevokeInviteButton, WorkspaceName } from '@/components/settings/WorkspaceControls';
+import { AddMemberButton, MemberRow, RevokeInviteButton, WorkspaceName } from '@/components/settings/WorkspaceControls';
 import { createScope, switchWorkspace } from '../actions';
 
 const fmt = (iso: string) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -44,24 +44,20 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
   const plan = ctx.plan;
   const limit = ctx.isDefault ? Infinity : plan.scopes;
   const canAdd = ctx.canCustomize && scopes.length < limit;
-  const runs = ctx.isDefault ? 1 : plan.runsPerDay;
   const owned = mine.filter((m) => m.workspace.ownerId === user.id && !m.isDefault);
-  const ownerNote = ctx.isOwner ? '' : ` · shared by u/${ctx.owner.username}`;
   const addScope = createScope.bind(null, wsId);
   const onSite = current?.workspace.id === wsId;
 
   return (
     <div className="settings">
-      <Link className="back-link" href="/workspace">← Workspaces</Link>
+      <Link className="back-link" href="/workspaces">← Workspaces</Link>
       <div className="community-head">
         <div>
           <WorkspaceName id={wsId} name={ctx.workspace.name} canRename={ctx.isAdmin}
             canDelete={ctx.isOwner && !ctx.isDefault && owned.length > 1} />
-          <p className="ws-sub">{ctx.isDefault ? 'Default scope' : `${plan.name} plan`}{ownerNote} · you’re {ctx.isAdmin ? 'an admin' : 'a member'}{onSite ? ' · shown on the site now' : ''}</p>
         </div>
         <div className="ws-head-actions">
           {!onSite && <form action={switchWorkspace.bind(null, wsId, '/')}><button type="submit" className="btn">Show its results</button></form>}
-          {canAdd && <form action={addScope}><button type="submit" className="btn primary">+ New scope</button></form>}
         </div>
       </div>
 
@@ -74,8 +70,10 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
 
       {/* ---------- Scopes ---------- */}
       <section className="detail-block" id="scopes">
-        <h2>Scopes <span className="uc-count">{scopes.length}{Number.isFinite(limit) && plan.customize ? `/${limit}` : ''}</span></h2>
-        <p className="field-hint">Updated {runs === 1 ? 'once' : runs === 2 ? 'twice' : `${runs} times`} a day.</p>
+        <div className="section-head">
+          <h2>Scopes <span className="uc-count">{scopes.length}{Number.isFinite(limit) && plan.customize ? `/${limit}` : ''}</span></h2>
+          {canAdd && scopes.length > 0 && <form action={addScope}><button type="submit" className="btn primary">New scope</button></form>}
+        </div>
         {scopes.length === 0 ? (
           <div className="profile-empty">
             <p className="profile-empty-title">No scopes in this workspace</p>
@@ -102,28 +100,25 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
       {/* ---------- Team members (Teams) ---------- */}
       {(teams || members.length > 1) && (
         <section className="detail-block" id="members">
-          <h2>Team members <span className="uc-count">{members.length}</span></h2>
+          <div className="section-head">
+            <h2>Team members <span className="uc-count">{members.length}</span></h2>
+            {ctx.canAddMembers && <AddMemberButton workspaceId={wsId} />}
+          </div>
           <ul className="member-list">
             {members.map((m) => (
               <MemberRow key={m.userId} workspaceId={wsId} member={m} canManage={ctx.isAdmin}
                 isSelf={m.userId === user.id} isOwner={m.userId === ctx.workspace.ownerId} />
             ))}
           </ul>
-          {ctx.canAddMembers && (
-            <>
-              <h3 className="form-subhead">Add people</h3>
-              <InviteForm workspaceId={wsId} />
-              {(invites || []).length > 0 && (
-                <ul className="member-list invites">
-                  {(invites || []).map((i: any) => (
-                    <li key={i.id} className="member-row">
-                      <span className="member-who"><strong>{i.email || 'Anyone with the link'}</strong><em>Invited as {i.role === 'admin' ? 'admin' : 'member'} · expires {fmt(i.expires_at)}</em></span>
-                      <RevokeInviteButton id={i.id} />
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </>
+          {(invites || []).length > 0 && (
+            <ul className="member-list invites">
+              {(invites || []).map((i: any) => (
+                <li key={i.id} className="member-row">
+                  <span className="member-who"><strong>{i.email || 'Anyone with the link'}</strong><em>Invited · {i.role === 'admin' ? 'admin' : 'member'} · expires {fmt(i.expires_at)}</em></span>
+                  <RevokeInviteButton id={i.id} />
+                </li>
+              ))}
+            </ul>
           )}
           {!teams && ctx.isOwner && <p className="callout">Adding team members needs the Teams plan.</p>}
         </section>

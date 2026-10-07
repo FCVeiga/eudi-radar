@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import AuthCard from '@/components/auth/AuthCard';
-import { acceptInvite } from '@/app/workspace/actions';
+import { acceptInvite } from '@/app/workspaces/actions';
 
 export const metadata = { title: 'Join a workspace — EUDI Radar' };
 

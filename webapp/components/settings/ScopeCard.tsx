@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { setScopeActive } from '@/app/workspace/actions';
+import { setScopeActive } from '@/app/workspaces/actions';
 
 /** A scope in the Settings list: name, what it holds, active switch, open. */
 export default function ScopeCard({ scope, docs, agentsOn, agentsTotal, items, readOnly = false }: {
@@ -18,7 +18,7 @@ export default function ScopeCard({ scope, docs, agentsOn, agentsTotal, items, r
     <div className={`scope-card ${on ? '' : 'off'}`}>
       <div className="scope-card-head">
         <span className="scope-dot" aria-hidden="true" />
-        {readOnly ? <span className="scope-card-name">{scope.name}</span> : <Link href={`/workspace/scopes/${scope.id}`} className="scope-card-name">{scope.name}</Link>}
+        {readOnly ? <span className="scope-card-name">{scope.name}</span> : <Link href={`/workspaces/scopes/${scope.id}`} className="scope-card-name">{scope.name}</Link>}
         {scope.isDefault && <span className="scope-badge" title="Visitors and people without an active scope see this scope’s results">Default</span>}
         <button type="button" role="switch" aria-checked={on} disabled={readOnly} aria-label={`${scope.name} ${on ? 'active' : 'inactive'}`} className={`switch ${on ? 'on' : ''}`}
           onClick={() => {
@@ -34,7 +34,7 @@ export default function ScopeCard({ scope, docs, agentsOn, agentsTotal, items, r
         <span>{items} results</span>
       </div>
       {error && <p className="form-msg err">{error}</p>}
-      {!readOnly && <Link href={`/workspace/scopes/${scope.id}`} className="btn scope-open">Open scope</Link>}
+      {!readOnly && <Link href={`/workspaces/scopes/${scope.id}`} className="btn scope-open">Open scope</Link>}
     </div>
   );
 }

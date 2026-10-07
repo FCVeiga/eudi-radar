@@ -8,14 +8,14 @@ import { PLANS } from '@/lib/plans';
 import { PLATFORM_AGENT_KEYS } from '@/lib/scopes';
 import { getAgentDefaults } from '@/lib/settings';
 import AgentCard from '@/components/settings/AgentCard';
-import { NewWorkspaceForm } from '@/components/settings/WorkspaceControls';
+import { NewWorkspaceButton } from '@/components/settings/WorkspaceControls';
 
 // The Config Agent runs inside the workspace agents' server actions: give it time.
 export const maxDuration = 300;
-export const metadata = { title: 'Workspace — EUDI Radar' };
+export const metadata = { title: 'Workspaces — EUDI Radar' };
 
 /** Workspace: your workspaces (each opens its scopes and members) and the shared workspace agents. Plans are on Settings. */
-export default async function WorkspacePage() {
+export default async function WorkspacesPage({ searchParams }: { searchParams: { new?: string } }) {
   const user = await getCurrentUser();
   const ctx = await getContext();
   if (!user || !ctx) redirect('/login?next=/workspace');
@@ -33,22 +33,24 @@ export default async function WorkspacePage() {
 
   return (
     <div className="settings">
-      <h1 className="opps-h1">Workspace</h1>
+      <h1 className="opps-h1">Workspaces</h1>
 
       {/* ---------- Your workspaces ---------- */}
       <section className="detail-block" id="workspaces">
-        <h2>Your workspaces <span className="uc-count">{mine.length}</span></h2>
+        <div className="section-head">
+          <h2>Your workspaces <span className="uc-count">{mine.length}</span></h2>
+          {canCreateWs ? <NewWorkspaceButton autoOpen={searchParams.new === '1'} /> : <Link href="/settings#billing" className="btn">Upgrade for more</Link>}
+        </div>
         <div className="table-wrap">
           <table className="data-table ws-table">
-            <thead><tr><th>Workspace</th><th>Owner</th><th>Your role</th><th className="num">Scopes</th><th className="num">Members</th></tr></thead>
+            <thead><tr><th>Workspace</th><th>Owner</th><th className="num">Scopes</th><th className="num">Members</th></tr></thead>
             <tbody>
               {mine.map((m) => {
-                const href = `/workspace/${m.workspace.id}`;
+                const href = `/workspaces/${m.workspace.id}`;
                 return (
                   <tr key={m.workspace.id}>
                     <td><Link href={href} className="ws-table-name">{m.workspace.name}</Link>{m.workspace.id === ctx.workspace.id && <span className="scope-badge">On the site</span>}</td>
                     <td>{m.workspace.ownerId === user.id ? 'You' : `u/${m.owner.username}`}</td>
-                    <td>{m.role === 'admin' ? 'Admin' : 'Member'}</td>
                     <td className="num">{tally(scopeRows, m.workspace.id)}</td>
                     <td className="num">{tally(memberRows, m.workspace.id)}</td>
                   </tr>
@@ -56,10 +58,6 @@ export default async function WorkspacePage() {
               })}
             </tbody>
           </table>
-        </div>
-        <div id="new">
-          {canCreateWs ? <NewWorkspaceForm />
-            : <p className="field-hint">The {myPlan.name} plan has one workspace. <Link href="/settings#billing">Teams</Link> has unlimited workspaces, each with its own members.</p>}
         </div>
       </section>
 

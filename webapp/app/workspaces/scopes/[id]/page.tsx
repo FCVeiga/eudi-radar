@@ -7,6 +7,8 @@ import { DOC_KINDS, getAgentDefaults, getScopeDocs } from '@/lib/settings';
 import AgentCard from '@/components/settings/AgentCard';
 import ScopeCard from '@/components/settings/ScopeCard';
 import { DeleteScopeForm, DocumentGroup, ScopeForm } from '@/components/settings/SettingsForms';
+import FollowingSection from '@/components/settings/FollowingSection';
+import { getCountryOptions, getSources } from '@/lib/sources';
 
 // The Config Agent runs inside this page's server actions: give it time.
 export const maxDuration = 300;
@@ -17,12 +19,14 @@ export default async function ScopePage({ params }: { params: { id: string } }) 
   if (!user) redirect(`/login?next=/workspace/scopes/${params.id}`);
   const scope = await getEditableScope(params.id);
   if (!scope) notFound();
-  const [agents, defaults, docs] = await Promise.all([getScopeAgents(scope.id), getAgentDefaults(), getScopeDocs(scope.id)]);
+  const [agents, defaults, docs, sources, countries] = await Promise.all([
+    getScopeAgents(scope.id), getAgentDefaults(), getScopeDocs(scope.id), getSources(), getCountryOptions(),
+  ]);
   const cfg = scope.searchConfig;
 
   return (
     <div className="settings">
-      <Link className="back-link" href={`/workspace/${scope.workspaceId}`}>← Workspace</Link>
+      <Link className="back-link" href={`/workspaces/${scope.workspaceId}`}>← Workspace</Link>
       <div className="scope-page-head">
         <h1 className="opps-h1">{scope.name}</h1>
         <div className="scope-page-switch">
@@ -64,6 +68,8 @@ export default async function ScopePage({ params }: { params: { id: string } }) 
           })}
         </div>
       </section>
+
+      <FollowingSection sources={sources} countries={countries} />
 
       {!scope.isDefault && (
         <section className="detail-block danger-zone">

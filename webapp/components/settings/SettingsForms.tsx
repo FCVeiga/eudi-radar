@@ -5,7 +5,7 @@ import { useFormState, useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import {
   FormState, createCompanyUpload, deleteCompanyDocument, deleteScope, registerCompanyDocument, saveScope,
-} from '@/app/workspace/actions';
+} from '@/app/workspaces/actions';
 
 function Submit({ label, busy }: { label: string; busy: string }) {
   const { pending } = useFormStatus();
@@ -27,7 +27,6 @@ export function ScopeForm({ scopeId, name, instructions }: { scopeId: string; na
         <textarea name="instructions" defaultValue={instructions} rows={9} maxLength={30000}
           placeholder={'Who the scope is for (a company, a department, a project); what you sell and to whom; products and the standards they implement; certifications; size, turnover and locations; partners; the contracts you go for and the ones you don’t.'} />
       </label>
-      <p className="field-hint">Read by the evaluation, proposal and news agents.</p>
       <Msg state={state} />
       <div className="settings-actions"><Submit label="Save scope" busy="Saving…" /></div>
     </form>

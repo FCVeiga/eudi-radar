@@ -33,8 +33,8 @@ async function own(scopeId: string) {
 }
 
 const refresh = (scopeId?: string) => {
-  revalidatePath('/workspace');
-  if (scopeId) revalidatePath(`/workspace/scopes/${scopeId}`);
+  revalidatePath('/workspaces');
+  if (scopeId) revalidatePath(`/workspaces/scopes/${scopeId}`);
 };
 
 /* ---------------- Scopes ---------------- */
@@ -42,7 +42,7 @@ const refresh = (scopeId?: string) => {
 /** New scope in a workspace — admins, within the owner's plan's number of scopes. */
 export async function createScope(workspaceId: string) {
   const ctx = await getWorkspaceContext(workspaceId);
-  if (!ctx) redirect('/workspace');
+  if (!ctx) redirect('/workspaces');
   if (!ctx.canCustomize) redirect('/settings#billing');
   const { count } = await db().from('scopes').select('id', { count: 'exact', head: true }).eq('workspace_id', ctx.workspace.id);
   if (!ctx.isDefault && (count ?? 0) >= ctx.plan.scopes) redirect('/settings#billing');
@@ -50,7 +50,7 @@ export async function createScope(workspaceId: string) {
     .select('id').single();
   if (error || !data) throw new Error(error?.message || 'Could not create the scope.');
   revalidatePath('/', 'layout');
-  redirect(`/workspace/scopes/${data.id}`);
+  redirect(`/workspaces/scopes/${data.id}`);
 }
 
 export async function setScopeActive(scopeId: string, active: boolean): Promise<{ error?: string }> {
@@ -83,7 +83,7 @@ export async function deleteScope(_prev: FormState, form: FormData): Promise<For
   if (docs?.length) await db().storage.from(BUCKET).remove(docs.map((d: any) => d.storage_path));
   await db().from('scopes').delete().eq('id', scopeId);
   revalidatePath('/', 'layout');
-  redirect(`/workspace/${o.scope.workspaceId}`);
+  redirect(`/workspaces/${o.scope.workspaceId}`);
 }
 
 /* ---------------- Scope context (documents) ---------------- */
@@ -295,7 +295,7 @@ export async function createWorkspace(_prev: FormState, form: FormData): Promise
   await db().from('workspace_members').insert({ workspace_id: ws.id, user_id: user.id, role: 'admin' });
   await db().from('profiles').update({ current_workspace_id: ws.id }).eq('id', user.id);
   revalidatePath('/', 'layout');
-  redirect(`/workspace/${ws.id}`);
+  redirect(`/workspaces/${ws.id}`);
 }
 
 export async function renameWorkspace(workspaceId: string, name: string) {
@@ -316,7 +316,7 @@ export async function deleteWorkspace(workspaceId: string): Promise<{ error?: st
   await db().from('workspaces').delete().eq('id', workspaceId);
   await db().from('profiles').update({ current_workspace_id: null }).eq('current_workspace_id', workspaceId);
   revalidatePath('/', 'layout');
-  redirect('/workspace');
+  redirect('/workspaces');
 }
 
 /* ---------------- Members (Teams) ---------------- */
@@ -334,7 +334,7 @@ export async function inviteMember(_prev: FormState, form: FormData): Promise<Fo
   const token = randomBytes(24).toString('base64url');
   const { error } = await db().from('account_invites').insert({ account_id: account!.id, workspace_id: workspaceId, email, role, token, invited_by: user!.id });
   if (error) return { ok: false, message: error.message };
-  revalidatePath('/workspace');
+  revalidatePath('/workspaces');
   return { ok: true, message: 'Invitation ready — copy the link and send it. It works for 14 days.', link: `${siteOrigin()}/invite/${token}` };
 }
 
@@ -343,7 +343,7 @@ export async function revokeInvite(inviteId: string) {
   const m = inv?.workspace_id ? await getMembership(inv.workspace_id) : null;
   if (!m || m.role !== 'admin') return;
   await db().from('account_invites').delete().eq('id', inviteId);
-  revalidatePath('/workspace');
+  revalidatePath('/workspaces');
 }
 
 async function adminCount(workspaceId: string) {
@@ -356,7 +356,7 @@ export async function setMemberRole(workspaceId: string, userId: string, role: '
   if (!m || m.role !== 'admin') return { error: 'Only admins can change roles.' };
   if (userId === m.workspace.ownerId) return { error: 'The workspace’s owner is always an admin.' };
   await db().from('workspace_members').update({ role }).match({ workspace_id: workspaceId, user_id: userId });
-  revalidatePath('/workspace');
+  revalidatePath('/workspaces');
   return {};
 }
 
@@ -373,7 +373,7 @@ export async function removeMember(workspaceId: string, userId: string): Promise
   await db().from('workspace_members').delete().match({ workspace_id: workspaceId, user_id: userId });
   await db().from('profiles').update({ current_workspace_id: null }).eq('id', userId).eq('current_workspace_id', workspaceId);
   revalidatePath('/', 'layout');
-  if (self) redirect('/workspace');
+  if (self) redirect('/workspaces');
   return {};
 }
 

@@ -36,7 +36,7 @@ export function BottomNav() {
   const path = usePathname() || '/';
   return (
     <nav className="bottom-nav" aria-label="Sections">
-      {LINKS.filter((l) => l.href !== '/workspace').map((l) => {
+      {LINKS.filter((l) => l.href !== '/workspaces').map((l) => {
         const active = isActive(l.href, path);
         return (
           <Link key={l.href} href={l.href} className={`bottom-link ${active ? 'active' : ''}`} aria-current={active ? 'page' : undefined}>

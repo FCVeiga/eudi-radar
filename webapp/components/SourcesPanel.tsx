@@ -9,10 +9,10 @@ import {
 } from '@/lib/sourceMeta';
 import SourceIcon from './SourceIcon';
 
-type Country = { code: string; name: string };
+export type Country = { code: string; name: string };
 
 /** Health of a source as shown by its dot: ok, failing, paused or not monitored. */
-function health(s: Source) {
+export function health(s: Source) {
   if (!s.enabled) return { cls: 'paused', note: 'Paused' };
   if (s.method === 'off') return { cls: 'off', note: NOT_CONNECTABLE.includes(s.source_type) ? 'Not connected — needs API access' : 'Listed, not monitored' };
   if (s.last_error) return { cls: 'err', note: `Last check failed: ${s.last_error}` };
@@ -28,7 +28,7 @@ function Submit({ editing }: { editing: boolean }) {
   return <button type="submit" className="btn primary" disabled={pending}>{pending ? 'Saving…' : editing ? 'Save changes' : 'Follow source'}</button>;
 }
 
-function SourceForm({ source, countries, onDone }: { source: Source | null; countries: Country[]; onDone: () => void }) {
+export function SourceForm({ source, countries, onDone }: { source: Source | null; countries: Country[]; onDone: () => void }) {
   const router = useRouter();
   const [state, action] = useFormState<SaveSourceState, FormData>(saveSource, null);
   const [type, setType] = useState<string>(source?.source_type ?? 'PROCUREMENT_PORTAL');

@@ -13,7 +13,7 @@ const fmt = (iso: string) => new Date(iso).toLocaleDateString('en-GB', { day: 'n
 /** One workspace: its scopes and its team members (Teams). */
 export default async function WorkspaceDetailPage({ params }: { params: { id: string } }) {
   const user = await getCurrentUser();
-  if (!user) redirect(`/login?next=/workspace/${params.id}`);
+  if (!user) redirect(`/login?next=/workspaces/${params.id}`);
   const ctx = await getWorkspaceContext(params.id);
   if (!ctx) notFound();
   const db = getSupabaseServerClient();

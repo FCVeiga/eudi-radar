@@ -16,7 +16,7 @@ export const maxDuration = 300;
 /** One scope: name and instructions, context documents, and its agents. */
 export default async function ScopePage({ params }: { params: { id: string } }) {
   const user = await getCurrentUser();
-  if (!user) redirect(`/login?next=/workspace/scopes/${params.id}`);
+  if (!user) redirect(`/login?next=/workspaces/scopes/${params.id}`);
   const scope = await getEditableScope(params.id);
   if (!scope) notFound();
   const [agents, defaults, docs, sources, countries] = await Promise.all([

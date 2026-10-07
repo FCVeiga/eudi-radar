@@ -18,7 +18,7 @@ export const metadata = { title: 'Workspaces — EUDI Radar' };
 export default async function WorkspacesPage({ searchParams }: { searchParams: { new?: string } }) {
   const user = await getCurrentUser();
   const ctx = await getContext();
-  if (!user || !ctx) redirect('/login?next=/workspace');
+  if (!user || !ctx) redirect('/login?next=/workspaces');
   const db = getSupabaseServerClient();
   const [agentDefaults, mine, account] = await Promise.all([getAgentDefaults(), getMyWorkspaces(), getPersonalAccount(user.id)]);
   const wsIds = mine.map((m) => m.workspace.id);

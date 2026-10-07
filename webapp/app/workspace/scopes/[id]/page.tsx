@@ -22,7 +22,7 @@ export default async function ScopePage({ params }: { params: { id: string } }) 
 
   return (
     <div className="settings">
-      <Link className="back-link" href="/workspace">← Workspace</Link>
+      <Link className="back-link" href={`/workspace/${scope.workspaceId}`}>← Workspace</Link>
       <div className="scope-page-head">
         <h1 className="opps-h1">{scope.name}</h1>
         <div className="scope-page-switch">

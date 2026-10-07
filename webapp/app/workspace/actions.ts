@@ -9,7 +9,7 @@ import { getCurrentUser } from '@/lib/auth';
 import { AGENTS, agentByKey } from '@/lib/agents';
 import { DOC_KINDS } from '@/lib/settings';
 import { PLATFORM_AGENT_KEYS, SCOPE_AGENT_KEYS, getEditableScope } from '@/lib/scopes';
-import { getContext, getMembership, getMyWorkspaces, getPersonalAccount, isPlatformAdmin } from '@/lib/accounts';
+import { getMembership, getWorkspaceContext, getMyWorkspaces, getPersonalAccount, isPlatformAdmin } from '@/lib/accounts';
 import { randomBytes } from 'crypto';
 import { siteOrigin } from '@/lib/auth';
 import { PLANS, planOf } from '@/lib/plans';
@@ -41,10 +41,10 @@ const refresh = (scopeId?: string) => {
 
 /* ---------------- Scopes ---------------- */
 
-/** New scope in the current workspace — admins, within the plan's number of scopes. */
-export async function createScope() {
-  const ctx = await getContext();
-  if (!ctx) redirect('/login?next=/workspace');
+/** New scope in a workspace — admins, within the owner's plan's number of scopes. */
+export async function createScope(workspaceId: string) {
+  const ctx = await getWorkspaceContext(workspaceId);
+  if (!ctx) redirect('/workspace');
   if (!ctx.canCustomize) redirect('/workspace#plan');
   const { count } = await db().from('scopes').select('id', { count: 'exact', head: true }).eq('workspace_id', ctx.workspace.id);
   if (!ctx.isDefault && (count ?? 0) >= ctx.plan.scopes) redirect('/workspace#plan');
@@ -85,7 +85,7 @@ export async function deleteScope(_prev: FormState, form: FormData): Promise<For
   if (docs?.length) await db().storage.from(BUCKET).remove(docs.map((d: any) => d.storage_path));
   await db().from('scopes').delete().eq('id', scopeId);
   revalidatePath('/', 'layout');
-  redirect('/workspace');
+  redirect(`/workspace/${o.scope.workspaceId}`);
 }
 
 /* ---------------- Scope context (documents) ---------------- */
@@ -297,7 +297,7 @@ export async function createWorkspace(_prev: FormState, form: FormData): Promise
   await db().from('workspace_members').insert({ workspace_id: ws.id, user_id: user.id, role: 'admin' });
   await db().from('profiles').update({ current_workspace_id: ws.id }).eq('id', user.id);
   revalidatePath('/', 'layout');
-  redirect('/workspace');
+  redirect(`/workspace/${ws.id}`);
 }
 
 export async function renameWorkspace(workspaceId: string, name: string) {

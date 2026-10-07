@@ -71,6 +71,15 @@ export const getMyWorkspaces = cache(async (): Promise<MyWorkspace[]> => {
   }).sort((a, b) => Number(b.workspace.ownerId === user.id) - Number(a.workspace.ownerId === user.id) || a.workspace.createdAt.localeCompare(b.workspace.createdAt));
 });
 
+/** What the user may do in one of their workspaces. */
+async function contextFor(m: MyWorkspace, userId: string): Promise<Context> {
+  const platform = await isPlatformAdmin();
+  const isAdmin = m.role === 'admin';
+  // The default scope's workspace is edited by the platform's admins, whatever their plan.
+  const canCustomize = isAdmin && (m.plan.customize || (m.isDefault && platform));
+  return { ...m, isOwner: m.workspace.ownerId === userId, isAdmin, canCustomize, canAddMembers: isAdmin && m.plan.key === 'teams', isPlatformAdmin: platform };
+}
+
 /** The workspace the user is in (their saved choice, else their own first one), with what they may do there. */
 export const getContext = cache(async (): Promise<Context | null> => {
   const user = await getCurrentUser();
@@ -79,13 +88,15 @@ export const getContext = cache(async (): Promise<Context | null> => {
   if (!mine.length) return null;
   const { data: profile } = await db().from('profiles').select('current_workspace_id').eq('id', user.id).maybeSingle();
   const current = mine.find((m) => m.workspace.id === profile?.current_workspace_id) ?? mine.find((m) => m.workspace.ownerId === user.id) ?? mine[0];
-  const platform = await isPlatformAdmin();
-  const isOwner = current.workspace.ownerId === user.id;
-  const isAdmin = current.role === 'admin';
-  // The default scope's workspace is edited by the platform's admins, whatever their plan.
-  const canCustomize = isAdmin && (current.plan.customize || (current.isDefault && platform));
-  return { ...current, isOwner, isAdmin, canCustomize, canAddMembers: isAdmin && current.plan.key === 'teams', isPlatformAdmin: platform };
+  return contextFor(current, user.id);
 });
+
+/** A given workspace of the user's (null if they aren't in it), with what they may do there. */
+export async function getWorkspaceContext(workspaceId: string): Promise<Context | null> {
+  const user = await getCurrentUser();
+  const m = user ? (await getMyWorkspaces()).find((x) => x.workspace.id === workspaceId) : null;
+  return user && m ? contextFor(m, user.id) : null;
+}
 
 /** The user's membership of a workspace (null if they aren't in it). */
 export async function getMembership(workspaceId: string) {

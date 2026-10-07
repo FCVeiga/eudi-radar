@@ -62,12 +62,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <div className="shell">
           <MenuBackdrop />
           <aside className="sidebar" aria-label="Sources and agents">
-            {ctx && (
-              <Link href="/workspace" className="ws-chip" title="Your current workspace — switch from your account menu">
-                <span className="ws-chip-dot" aria-hidden="true" />
-                <span><strong>{ctx.workspace.name}</strong><em>{ctx.isOwner ? 'Yours' : `Shared by u/${ctx.owner.username}`} · {ctx.isAdmin ? 'Admin' : 'Member'}</em></span>
-              </Link>
-            )}
             <SideNav />
             <div className="sidebar-rule" />
             <SourcesSidebar />

@@ -49,25 +49,25 @@ export async function getScope(id: string): Promise<Scope | null> {
 }
 
 /**
- * The scopes whose results this viewer sees: the current workspace's active
- * scopes (up to what its plan allows), or the default scope when signed out,
- * on Free, or none is active. `own` = they're the workspace's scopes;
- * `canRun` = the viewer may run on-click agents for them (an admin on a plan
- * that allows customizing; members only see the results).
+ * The scopes whose results this viewer sees. The default scope is in every
+ * account (and what visitors see). A workspace then adds its own active scopes,
+ * up to what its plan allows. `own` = at least one of them belongs to the
+ * workspace; `canRun` = an admin on a plan that allows customizing may run
+ * on-click agents (members only see the results).
  */
 export const getViewScopes = cache(async (): Promise<{ scopes: Scope[]; own: boolean; canRun: boolean }> => {
   const ctx = await getContext();
   const db = getSupabaseServerClient();
-  if (ctx) {
-    const limit = ctx.isDefault ? 1000 : ctx.plan.scopes;
-    const { data } = limit > 0
-      ? await db.from('scopes').select('*').eq('workspace_id', ctx.workspace.id).order('created_at').limit(limit)
-      : { data: [] as any[] };
-    const active = (data || []).filter((s: any) => s.active);
-    if (active.length) return { scopes: active.map(toScope), own: true, canRun: ctx.canCustomize };
-  }
-  const { data } = await db.from('scopes').select('*').eq('is_default', true).limit(1);
-  return { scopes: (data || []).map(toScope), own: false, canRun: false };
+  const { data: defRows } = await db.from('scopes').select('*').eq('is_default', true).limit(1);
+  const defaults = (defRows || []).filter((s: any) => s.active).map(toScope);
+  if (!ctx) return { scopes: defaults, own: false, canRun: false };
+  const limit = ctx.isDefault ? 1000 : ctx.plan.scopes;
+  const { data } = limit > 0
+    ? await db.from('scopes').select('*').eq('workspace_id', ctx.workspace.id).order('created_at').limit(limit)
+    : { data: [] as any[] };
+  const own = (data || []).filter((s: any) => s.active && !s.is_default).map(toScope);
+  const seen = new Set(own.map((s) => s.id));
+  return { scopes: [...defaults.filter((d) => !seen.has(d.id)), ...own], own: own.length > 0, canRun: ctx.canCustomize };
 });
 
 export type ScopeItems = { ids: string[]; relevance: Map<string, number>; scopesOf: Map<string, string[]> };

@@ -33,22 +33,17 @@ export async function getScopeDocs(scopeId: string): Promise<ScopeDoc[]> {
   return (data || []) as ScopeDoc[];
 }
 
-/** Agents shown under "Working Agents": on in any of the viewer's scopes, plus platform agents that are on. */
+/** Agents shown under "Working Agents": the scope agents that are on for the viewer. */
 export async function workingAgentKeys(): Promise<Set<string>> {
   const db = getSupabaseServerClient();
   const { scopes } = await getViewScopes();
-  const [{ data: platform }, { data: scoped }] = await Promise.all([
-    db.from('agent_settings').select('agent_key, enabled'),
-    scopes.length ? db.from('scope_agent_settings').select('scope_id, agent_key, enabled').in('scope_id', scopes.map((s) => s.id)) : Promise.resolve({ data: [] as any[] }),
-  ]);
+  const { data: scoped } = scopes.length
+    ? await db.from('scope_agent_settings').select('scope_id, agent_key, enabled').in('scope_id', scopes.map((s) => s.id))
+    : { data: [] as any[] };
   const keys = new Set<string>();
   for (const key of SCOPE_AGENT_KEYS) {
     const on = scopes.some((s) => (scoped || []).find((r: any) => r.scope_id === s.id && r.agent_key === key)?.enabled ?? true);
     if (on) keys.add(key);
-  }
-  for (const r of platform || []) if (!SCOPE_AGENT_KEYS.includes(r.agent_key) && r.enabled) keys.add(r.agent_key);
-  for (const key of ['tender_documents', 'tender_analysis', 'feed_writer', 'translator']) {
-    if (!(platform || []).some((r: any) => r.agent_key === key)) keys.add(key);
   }
   return keys;
 }

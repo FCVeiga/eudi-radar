@@ -155,7 +155,7 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
 
           {viewScopes.map((scope) => (
             <TenderScopeEvaluation key={scope.id} opportunityId={o.opportunity_id} scope={{ id: scope.id, name: scope.name }}
-              row={evalOf(scope.id)} showName={viewScopes.length > 1 || !own} canRun={canRun} signedIn={!!user} locked={locked}
+              row={evalOf(scope.id)} showName={viewScopes.length > 1 || !own} canRun={canRun && (!scope.isDefault || !!ctx?.isPlatformAdmin)} signedIn={!!user} locked={locked}
               evaluatorOn={flags.get(scope.id)?.evaluator ?? true} proposerOn={flags.get(scope.id)?.proposer ?? true}
               ready={!!o.tender_summary || reqs.length > 0} analysedAt={o.tender_analysed_at ?? null} />
           ))}

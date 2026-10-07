@@ -160,6 +160,20 @@
   "de": "Teammitglieder",
   "it": "Membri del team"
  },
+ "Add team members to your workspace": {
+  "pt": "Adicione membros da equipa ao seu espaço de trabalho",
+  "es": "Añade miembros del equipo a tu espacio de trabajo",
+  "fr": "Ajoutez des membres à votre espace de travail",
+  "de": "Füge Teammitglieder zu deinem Arbeitsbereich hinzu",
+  "it": "Aggiungi membri del team alla tua area di lavoro"
+ },
+ "Upgrade Plan": {
+  "pt": "Melhorar plano",
+  "es": "Mejorar plan",
+  "fr": "Changer de forfait",
+  "de": "Plan upgraden",
+  "it": "Passa a un piano superiore"
+ },
  "Anyone with the link": {
   "pt": "Qualquer pessoa com a ligação",
   "es": "Cualquiera con el enlace",

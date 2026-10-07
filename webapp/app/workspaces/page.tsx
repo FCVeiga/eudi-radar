@@ -1,42 +1,54 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { AGENTS } from '@/lib/agents';
 import { getCurrentUser } from '@/lib/auth';
 import { getContext, getMyWorkspaces, getPersonalAccount } from '@/lib/accounts';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { PLANS } from '@/lib/plans';
-import { PLATFORM_AGENT_KEYS } from '@/lib/scopes';
-import { getAgentDefaults } from '@/lib/settings';
-import AgentCard from '@/components/settings/AgentCard';
-import { NewWorkspaceButton } from '@/components/settings/WorkspaceControls';
+import { AddMemberButton, MemberRow, NewWorkspaceButton } from '@/components/settings/WorkspaceControls';
 import { WorkspaceMark } from '@/components/WorkspaceSwitcher';
 import { switchWorkspace } from './actions';
 import { getT } from '@/lib/i18n/server';
 
-// The Config Agent runs inside the workspace agents' server actions: give it time.
-export const maxDuration = 300;
 export async function generateMetadata() {
   const t = await getT();
   return { title: `${t('Workspaces')} — Tender Town` };
 }
 
-/** Workspace: your workspaces (each opens its scopes and members) and the shared workspace agents. Plans are on Settings. */
+/** Workspace: your workspaces (each opens its scopes and members). Plans are on Settings. */
 export default async function WorkspacesPage({ searchParams }: { searchParams: { new?: string } }) {
   const user = await getCurrentUser();
   const ctx = await getContext();
   if (!user || !ctx) redirect('/login?next=/workspaces');
   const t = await getT();
   const db = getSupabaseServerClient();
-  const [agentDefaults, mine, account] = await Promise.all([getAgentDefaults(), getMyWorkspaces(), getPersonalAccount(user.id)]);
+  const [mine, account] = await Promise.all([getMyWorkspaces(), getPersonalAccount(user.id)]);
   const wsIds = mine.map((m) => m.workspace.id);
-  const [{ data: scopeRows }, { data: memberRows }] = await Promise.all([
-    db.from('scopes').select('workspace_id').in('workspace_id', wsIds),
+  const [{ data: scopeRows }, { data: memberRows }, { data: defaultScope }] = await Promise.all([
+    db.from('scopes').select('workspace_id, is_default').in('workspace_id', wsIds),
     db.from('workspace_members').select('workspace_id').in('workspace_id', wsIds),
+    db.from('scopes').select('id').eq('is_default', true).maybeSingle(),
   ]);
   const tally = (rows: any[] | null, id: string) => (rows || []).filter((r) => r.workspace_id === id).length;
+  const scopeCount = (id: string) => {
+    const rows = (scopeRows || []).filter((r) => r.workspace_id === id);
+    return rows.length + (defaultScope && !rows.some((r) => r.is_default) ? 1 : 0);
+  };
   const owned = mine.filter((m) => m.workspace.ownerId === user.id && !m.isDefault);
   const myPlan = account?.plan ?? PLANS[0];
+  const teams = myPlan.key === 'teams';
   const canCreateWs = myPlan.workspaces === null || owned.length < myPlan.workspaces;
+  const activeId = ctx.workspace.id;
+  const { data: activeMemberRows } = teams
+    ? await db.from('workspace_members').select('user_id, role').eq('workspace_id', activeId)
+    : { data: [] as any[] };
+  const { data: profiles } = (activeMemberRows || []).length
+    ? await db.from('profiles').select('id, username, display_name, avatar_url').in('id', (activeMemberRows || []).map((m: any) => m.user_id))
+    : { data: [] as any[] };
+  const members = (activeMemberRows || []).map((m: any) => {
+    const p = (profiles || []).find((x: any) => x.id === m.user_id);
+    return { userId: m.user_id, role: m.role, username: p?.username ?? 'user', displayName: p?.display_name || p?.username || 'user', avatarUrl: p?.avatar_url ?? null };
+  }).sort((a, b) => Number(b.userId === ctx.workspace.ownerId) - Number(a.userId === ctx.workspace.ownerId)
+    || (a.role === b.role ? a.username.localeCompare(b.username) : a.role === 'admin' ? -1 : 1));
 
   return (
     <div className="settings">
@@ -59,7 +71,7 @@ export default async function WorkspacesPage({ searchParams }: { searchParams: {
                   <tr key={m.workspace.id} className={active ? 'ws-active-row' : ''}>
                     <td><Link href={href} className="ws-table-cell"><WorkspaceMark id={m.workspace.id} name={m.workspace.name} size={26} /><span className="ws-table-name">{m.workspace.name}</span></Link></td>
                     <td>{m.workspace.ownerId === user.id ? t('You') : `u/${m.owner.username}`}</td>
-                    <td className="num">{tally(scopeRows, m.workspace.id)}</td>
+                    <td className="num">{scopeCount(m.workspace.id)}</td>
                     <td className="num">{tally(memberRows, m.workspace.id)}</td>
                     <td className="num ws-switch-cell">
                       {active ? <span className="ws-active-badge">{t('Active')}</span>
@@ -73,19 +85,24 @@ export default async function WorkspacesPage({ searchParams }: { searchParams: {
         </div>
       </section>
 
-      {/* ---------- Workspace agents ---------- */}
-      <section className="detail-block" id="workspace-agents">
-        <h2>{t('Workspace agents')}</h2>
-        <div className="agent-grid">
-          {AGENTS.filter((a) => PLATFORM_AGENT_KEYS.includes(a.key)).map((a) => {
-            const s = agentDefaults.get(a.key);
-            return (
-              <AgentCard key={a.key} agent={a} enabled={s?.enabled ?? true} instructions={s?.instructions ?? null} readOnly={!ctx.isPlatformAdmin}
-                config={a.fineTune ? s?.prompt_override || s?.default_prompt || null : null} custom={!!s?.prompt_override}
-                status={s?.status ?? null} error={s?.error ?? null} />
-            );
-          })}
+      <section className="detail-block" id="members">
+        <div className="section-head">
+          <h2>{t('Team members')} {teams && <span className="uc-count">{members.length}</span>}</h2>
+          {ctx.canAddMembers && <AddMemberButton workspaceId={activeId} />}
         </div>
+        {teams ? (
+          <ul className="member-list">
+            {members.map((m) => (
+              <MemberRow key={m.userId} workspaceId={activeId} member={m} canManage={ctx.isAdmin}
+                isSelf={m.userId === user.id} isOwner={m.userId === ctx.workspace.ownerId} />
+            ))}
+          </ul>
+        ) : (
+          <div className="profile-empty">
+            <p className="profile-empty-title">{t('Add team members to your workspace')}</p>
+            <Link href="/settings/account?plan=1" className="btn primary profile-empty-cta">{t('Upgrade Plan')}</Link>
+          </div>
+        )}
       </section>
     </div>
   );

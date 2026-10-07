@@ -20,16 +20,22 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
   const t = await getT();
   const db = getSupabaseServerClient();
   const wsId = ctx.workspace.id;
-  const scopes = await getWorkspaceScopes(wsId);
+  const ownScopes = await getWorkspaceScopes(wsId);
+  const { data: defaultRow } = await db.from('scopes').select('*').eq('is_default', true).maybeSingle();
+  const sharedDefault = defaultRow?.active && defaultRow.workspace_id !== wsId ? {
+    id: defaultRow.id, ownerId: defaultRow.owner_id, name: defaultRow.name, instructions: defaultRow.instructions,
+    active: defaultRow.active, isDefault: true, searchScope: defaultRow.search_scope, searchConfig: defaultRow.search_config,
+    searchStatus: defaultRow.search_status, searchError: defaultRow.search_error, parsedAt: defaultRow.search_parsed_at, createdAt: defaultRow.created_at,
+  } : null;
+  const scopes = sharedDefault ? [sharedDefault, ...ownScopes] : ownScopes;
   const ids = scopes.map((s) => s.id);
   const teams = ctx.plan.key === 'teams';
-  const [mine, current, { data: docs }, { data: agentRows }, { data: items }, { data: defaultScope }, { data: memberRows }, { data: invites }] = await Promise.all([
+  const [mine, current, { data: docs }, { data: agentRows }, { data: items }, { data: memberRows }, { data: invites }] = await Promise.all([
     getMyWorkspaces(),
     getContext(),
     ids.length ? db.from('company_documents').select('scope_id').in('scope_id', ids) : Promise.resolve({ data: [] as any[] }),
     ids.length ? db.from('scope_agent_settings').select('scope_id, agent_key, enabled').in('scope_id', ids) : Promise.resolve({ data: [] as any[] }),
     ids.length ? db.from('scope_items').select('scope_id').in('scope_id', ids).limit(50000) : Promise.resolve({ data: [] as any[] }),
-    db.from('scopes').select('name').eq('is_default', true).maybeSingle(),
     db.from('workspace_members').select('user_id, role').eq('workspace_id', wsId),
     ctx.canAddMembers
       ? db.from('account_invites').select('id, email, role, expires_at').eq('workspace_id', wsId).is('accepted_at', null).gt('expires_at', new Date().toISOString())
@@ -45,7 +51,8 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
   const count = (rows: any[] | null, id: string) => (rows || []).filter((r) => r.scope_id === id).length;
   const plan = ctx.plan;
   const limit = ctx.isDefault ? Infinity : plan.scopes;
-  const canAdd = ctx.canCustomize && scopes.length < limit;
+  const customCount = ownScopes.filter((s) => !s.isDefault).length;
+  const canAdd = ctx.canCustomize && customCount < limit;
   const owned = mine.filter((m) => m.workspace.ownerId === user.id && !m.isDefault);
   const addScope = createScope.bind(null, wsId);
   const onSite = current?.workspace.id === wsId;
@@ -86,8 +93,9 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
           <div className="scope-grid">
             {scopes.map((s) => {
               const on = SCOPE_AGENT_KEYS.filter((k) => (agentRows || []).find((r: any) => r.scope_id === s.id && r.agent_key === k)?.enabled ?? true).length;
+              const shared = s.id === sharedDefault?.id;
               return (
-                <ScopeCard key={s.id} readOnly={!ctx.canCustomize}
+                <ScopeCard key={s.id} readOnly={shared || !ctx.canCustomize}
                   scope={{ id: s.id, name: s.name, instructions: s.instructions, active: s.active, isDefault: s.isDefault, topic: s.searchConfig?.topic ?? null }}
                   docs={count(docs, s.id)} agentsOn={on} agentsTotal={SCOPE_AGENT_KEYS.length} items={count(items, s.id)} />
               );
@@ -99,32 +107,38 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
         )}
       </section>
 
-      {/* ---------- Team members (Teams) ---------- */}
-      {(teams || members.length > 1) && (
-        <section className="detail-block" id="members">
-          <div className="section-head">
-            <h2>{t('Team members')} <span className="uc-count">{members.length}</span></h2>
-            {ctx.canAddMembers && <AddMemberButton workspaceId={wsId} />}
-          </div>
-          <ul className="member-list">
-            {members.map((m) => (
-              <MemberRow key={m.userId} workspaceId={wsId} member={m} canManage={ctx.isAdmin}
-                isSelf={m.userId === user.id} isOwner={m.userId === ctx.workspace.ownerId} />
-            ))}
-          </ul>
-          {(invites || []).length > 0 && (
-            <ul className="member-list invites">
-              {(invites || []).map((i: any) => (
-                <li key={i.id} className="member-row">
-                  <span className="member-who"><strong>{i.email || t('Anyone with the link')}</strong><em>{t('Invited')} · {i.role === 'admin' ? t('admin') : t('member')} · {t('expires {date}', { date: fmt(i.expires_at) })}</em></span>
-                  <RevokeInviteButton id={i.id} />
-                </li>
+      {/* ---------- Team members ---------- */}
+      <section className="detail-block" id="members">
+        <div className="section-head">
+          <h2>{t('Team members')} {teams && <span className="uc-count">{members.length}</span>}</h2>
+          {ctx.canAddMembers && <AddMemberButton workspaceId={wsId} />}
+        </div>
+        {teams ? (
+          <>
+            <ul className="member-list">
+              {members.map((m) => (
+                <MemberRow key={m.userId} workspaceId={wsId} member={m} canManage={ctx.isAdmin}
+                  isSelf={m.userId === user.id} isOwner={m.userId === ctx.workspace.ownerId} />
               ))}
             </ul>
-          )}
-          {!teams && ctx.isOwner && <p className="callout">{t('Adding team members needs the Teams plan.')}</p>}
-        </section>
-      )}
+            {(invites || []).length > 0 && (
+              <ul className="member-list invites">
+                {(invites || []).map((i: any) => (
+                  <li key={i.id} className="member-row">
+                    <span className="member-who"><strong>{i.email || t('Anyone with the link')}</strong><em>{t('Invited')} · {i.role === 'admin' ? t('admin') : t('member')} · {t('expires {date}', { date: fmt(i.expires_at) })}</em></span>
+                    <RevokeInviteButton id={i.id} />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </>
+        ) : (
+          <div className="profile-empty">
+            <p className="profile-empty-title">{t('Add team members to your workspace')}</p>
+            <Link href="/settings/account?plan=1" className="btn primary profile-empty-cta">{t('Upgrade Plan')}</Link>
+          </div>
+        )}
+      </section>
 
       {ctx.isOwner && (
         <section className="detail-block danger-zone" id="delete">

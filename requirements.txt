@@ -1,7 +1,7 @@
 sqlalchemy>=2.0
 pyyaml>=6.0
 requests>=2.31
-anthropic>=0.40        # LLM calls — services/llm_client.py
+openai>=1.68           # LLM calls — services/llm_client.py
 tavily-python>=0.5     # search adapter — adapters/tavily.py
 psycopg2-binary>=2.9   # PostgreSQL driver for Supabase connection
 pypdf>=4.0             # tender document text — agents/tender_analysis.py

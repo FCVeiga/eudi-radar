@@ -1,35 +1,28 @@
 """
-Shared Anthropic API client for every agent that needs an LLM call
+Shared OpenAI client for every agent that needs an LLM call
 (triage, requirements extraction, pipeline intelligence, digest).
 """
 import json
 import os
 import re
-from typing import Optional
 
 try:
-    import anthropic
+    from openai import OpenAI
 except ImportError:
-    anthropic = None
+    OpenAI = None
 
-CHEAP_MODEL = "claude-haiku-4-5-20251001"
-STRONG_MODEL = "claude-sonnet-4-6"
-WRITER_MODEL = "claude-opus-5-5"   # feed copy: quality matters, volume is small
+CHEAP_MODEL = "gpt-6-luna"      # high-volume triage and translation
+STRONG_MODEL = "gpt-6.1-sol"    # requirements and longer analysis
+WRITER_MODEL = "gpt-6-astra"    # feed copy: quality matters, volume is small
 
 
-def _get_client() -> "anthropic.Anthropic":
-    if anthropic is None:
-        raise ImportError(
-            "The 'anthropic' package is not installed. Run: "
-            "pip install anthropic --break-system-packages"
-        )
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
+def _get_client() -> "OpenAI":
+    if OpenAI is None:
+        raise ImportError("The 'openai' package is not installed. Run: pip install openai")
+    api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
-        raise ValueError("ANTHROPIC_API_KEY environment variable is not set.")
-    # Keys not scoped to a workspace must name one on every request.
-    workspace_id = os.environ.get("ANTHROPIC_WORKSPACE_ID")
-    headers = {"anthropic-workspace-id": workspace_id} if workspace_id else None
-    return anthropic.Anthropic(api_key=api_key, default_headers=headers)
+        raise ValueError("OPENAI_API_KEY environment variable is not set.")
+    return OpenAI(api_key=api_key)
 
 
 def _extract_json(text: str) -> dict:
@@ -47,48 +40,44 @@ def _extract_json(text: str) -> dict:
         )
 
 
+def _text(response) -> str:
+    for item in getattr(response, "output", None) or []:
+        if getattr(item, "type", None) != "message":
+            continue
+        for part in getattr(item, "content", None) or []:
+            if getattr(part, "type", None) == "refusal":
+                raise ValueError(f"Model declined the request ({getattr(part, 'refusal', '')})")
+    return getattr(response, "output_text", None) or ""
+
+
+def _complete(system_prompt: str, user_content: str, model: str, max_tokens: int, effort: str) -> str:
+    client = _get_client()
+    response = client.responses.create(
+        model=model,
+        instructions=system_prompt,
+        input=user_content,
+        max_output_tokens=max_tokens,
+        reasoning={"effort": effort},
+    )
+    return _text(response)
+
+
 def call_llm_json(system_prompt: str, user_content: str,
                    model: str = CHEAP_MODEL, max_tokens: int = 1024) -> dict:
-    client = _get_client()
-    response = client.messages.create(
-        model=model, max_tokens=max_tokens,
-        system=system_prompt,
-        messages=[{"role": "user", "content": user_content}],
-    )
-    text = "".join(block.text for block in response.content if block.type == "text")
-    return _extract_json(text)
+    return _extract_json(_complete(system_prompt, user_content, model, max_tokens, "low"))
 
 
 def call_llm_json_premium(system_prompt: str, user_content: str,
                           model: str = WRITER_MODEL, max_tokens: int = 4000,
                           effort: str = "low") -> dict:
-    """For Claude Opus 5.5-class models: thinking is always on (effort is the
-    only dial), and the server-side refusal fallback re-runs a declined
-    request on a fallback model. Both are sent as raw body/header fields so
-    this works on the 0.x SDK (local) and 1.x SDK (GitHub Actions) alike."""
-    client = _get_client()
-    response = client.messages.create(
-        model=model, max_tokens=max_tokens,
-        system=system_prompt,
-        messages=[{"role": "user", "content": user_content}],
-        extra_headers={"anthropic-beta": "server-side-fallback-2026-07-01"},
-        extra_body={"output_config": {"effort": effort}, "fallbacks": "default"},
-    )
-    if response.stop_reason == "refusal":
-        raise ValueError(f"Model declined the request ({getattr(response, 'stop_details', None)})")
-    text = "".join(block.text for block in response.content if block.type == "text")
-    return _extract_json(text)
+    """Stronger model for feed copy and tender analysis. `effort` is the
+    reasoning dial (low, medium, high)."""
+    return _extract_json(_complete(system_prompt, user_content, model, max_tokens, effort))
 
 
 def call_llm_text(system_prompt: str, user_content: str,
                    model: str = STRONG_MODEL, max_tokens: int = 4096) -> str:
-    client = _get_client()
-    response = client.messages.create(
-        model=model, max_tokens=max_tokens,
-        system=system_prompt,
-        messages=[{"role": "user", "content": user_content}],
-    )
-    return "".join(block.text for block in response.content if block.type == "text")
+    return _complete(system_prompt, user_content, model, max_tokens, "low")
 
 
 def load_prompt(prompt_filename: str) -> str:

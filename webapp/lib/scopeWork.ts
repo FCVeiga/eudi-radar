@@ -17,5 +17,5 @@ export async function unlockRow(table: string, match: Record<string, string>, st
 
 export const friendly = (e: any) => {
   const raw = String(e?.message || e);
-  return /credit balance/i.test(raw) ? 'the Anthropic API account is out of credit' : raw.slice(0, 200);
+  return /credit balance|insufficient_quota|exceeded your current quota/i.test(raw) ? 'the OpenAI API account is out of credit' : raw.slice(0, 200);
 };

@@ -9,34 +9,22 @@
  */
 import { readFile } from 'fs/promises';
 import path from 'path';
-import Anthropic from '@anthropic-ai/sdk';
+import { complete } from '@/lib/llm';
 import { TARGET_LINE } from '@/lib/language';
-
-const MODEL = 'claude-opus-5-5';
 
 async function prompt(file: string) {
   return readFile(path.join(process.cwd(), 'agents', file), 'utf8');
 }
 
 async function ask(system: string, user: string, maxTokens: number) {
-  if (!process.env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY is not configured on the server.');
-  const client = new Anthropic({
-    defaultHeaders: process.env.ANTHROPIC_WORKSPACE_ID ? { 'anthropic-workspace-id': process.env.ANTHROPIC_WORKSPACE_ID } : undefined,
-  });
-  const response: any = await client.beta.messages.create({
-    model: MODEL, max_tokens: maxTokens, system,
-    messages: [{ role: 'user', content: user }],
-    betas: ['server-side-fallback-2026-07-01'],
-    output_config: { effort: 'medium' },
-    fallbacks: 'default',
-  } as any);
-  if (response.stop_reason === 'refusal') throw new Error('The Config Agent declined this request.');
-  return (response.content as any[]).filter((b) => b.type === 'text').map((b) => b.text).join('');
+  const { text } = await complete({ system, user, maxTokens, effort: 'medium' });
+  if (!text.trim()) throw new Error('The Config Agent declined this request.');
+  return text;
 }
 
 export function friendlyError(e: any) {
   const raw = String(e?.message || e);
-  return /credit balance/i.test(raw) ? 'the Anthropic API account is out of credit' : raw.slice(0, 200);
+  return /credit balance|insufficient_quota|exceeded your current quota/i.test(raw) ? 'the OpenAI API account is out of credit' : raw.slice(0, 200);
 }
 
 const list = (x: any, max: number) => (Array.isArray(x) ? x.map(String).map((s) => s.trim()).filter(Boolean) : []).slice(0, max);

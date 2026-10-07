@@ -26,7 +26,7 @@ export default function PrivacyPage() {
       <ul>
         <li><strong>Supabase</strong> — database, file storage and authentication (EU region: Ireland).</li>
         <li><strong>Vercel</strong> — website hosting.</li>
-        <li><strong>Anthropic</strong> — AI models behind the agents; tender and company material is sent to them when an agent runs.</li>
+        <li><strong>OpenAI</strong> — AI models behind the agents; tender and company material is sent to them when an agent runs.</li>
         <li><strong>Tavily</strong> — web search and page reading for the search agents (no account data).</li>
       </ul>
       <p>[To be completed: transfers outside the EEA and the safeguards used, e.g. Standard Contractual Clauses.]</p>

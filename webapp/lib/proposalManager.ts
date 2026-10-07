@@ -6,12 +6,11 @@
  * documents to submit, the gaps and the next steps.
  * (prompt: agents/proposal_manager.md; company material: Settings.)
  */
-import Anthropic from '@anthropic-ai/sdk';
+import { complete } from '@/lib/llm';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { agentPrompt, companyBrief, isAgentEnabled } from '@/lib/settings';
 import { friendly, lockRow, unlockRow } from '@/lib/scopeWork';
 
-const MODEL = 'claude-opus-5-5';
 const LOCK_MINUTES = 6;
 const GROUPS: Record<string, string> = {
   ELIGIBILITY: 'Eligibility', REFERENCES: 'Project references', HUMAN_RESOURCES: 'Human resources', TECHNICAL: 'Technical & project',
@@ -35,7 +34,6 @@ export async function ensureProposal(opportunityId: string, scopeId: string): Pr
 }
 
 async function runProposal(opportunityId: string, scopeId: string) {
-  if (!process.env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY is not configured on the server.');
   const db = getSupabaseServerClient();
   const [{ data: o }, { data: reqs }, { data: award }, { data: docs }, { data: se }] = await Promise.all([
     db.from('opportunities').select('*').eq('opportunity_id', opportunityId).single(),
@@ -72,25 +70,19 @@ async function runProposal(opportunityId: string, scopeId: string) {
   ].filter(Boolean).join('\n');
 
   const [prompt, brief] = await Promise.all([agentPrompt('proposal_manager', 'proposal_manager.md', scopeId), companyBrief({ withDocuments: true, scopeId })]);
-  const client = new Anthropic({
-    defaultHeaders: process.env.ANTHROPIC_WORKSPACE_ID ? { 'anthropic-workspace-id': process.env.ANTHROPIC_WORKSPACE_ID } : undefined,
-  });
   // A long document: stream it, so the request isn't held to the non-streaming time limit.
-  const stream = client.beta.messages.stream({
-    model: MODEL,
-    max_tokens: 24000,
+  const response = await complete({
     system: prompt.replace('{company_brief}', brief).replaceAll('{tender title}', title),
-    messages: [{ role: 'user', content: tender }],
-    betas: ['server-side-fallback-2026-07-01'],
-    output_config: { effort: 'medium' },
-    fallbacks: 'default',
-  } as any);
-  const response: any = await stream.finalMessage();
-  if (response.stop_reason === 'refusal') throw new Error('The agent declined to write this brief.');
-  let markdown = (response.content as any[]).filter((b) => b.type === 'text').map((b) => b.text).join('').trim();
+    user: tender,
+    maxTokens: 24000,
+    effort: 'medium',
+    stream: true,
+  });
+  if (!response.text.trim()) throw new Error('The agent declined to write this brief.');
+  let markdown = response.text.trim();
   markdown = markdown.replace(/^```(?:markdown|md)?\s*\n/, '').replace(/\n```\s*$/, '');
   if (!markdown.startsWith('#')) throw new Error('The agent did not return a brief.');
-  if (response.stop_reason === 'max_tokens') markdown += '\n\n> _The brief was cut short at the length limit — re-run to regenerate it._\n';
+  if (response.truncated) markdown += '\n\n> _The brief was cut short at the length limit — re-run to regenerate it._\n';
 
   const { error } = await db.from('scope_evaluations').update({
     proposal_brief: markdown, proposal_at: new Date().toISOString(), proposal_error: null,

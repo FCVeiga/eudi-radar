@@ -7,13 +7,12 @@
  * The result is saved, so later visits show it instantly.
  * (prompt: agents/news_report.md; company context: agents/company_brief.md.)
  */
-import Anthropic from '@anthropic-ai/sdk';
+import { complete } from '@/lib/llm';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { agentPrompt, companyBrief, isAgentEnabled } from '@/lib/settings';
 import { friendly, lockRow, unlockRow } from '@/lib/scopeWork';
 
 export const AGENT_NAME = 'News Report Agent';
-const MODEL = 'claude-opus-5-5';
 const ACTION_TYPES = ['content', 'participate', 'announce', 'outreach', 'bid', 'product', 'monitor'];
 
 // Its fine-tuned prompt from Settings (or agents/news_report.md), with the company's
@@ -81,7 +80,6 @@ export async function ensureNewsReport(newsId: string, scopeId: string): Promise
 }
 
 async function runNewsReport(newsId: string, scopeId: string) {
-  if (!process.env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY is not configured on the server.');
   const db = getSupabaseServerClient();
   const { data: n, error } = await db.from('news_items')
     .select('news_id, title, title_en, category, region, published_date, source_name, source_url, summary')
@@ -96,23 +94,14 @@ async function runNewsReport(newsId: string, scopeId: string) {
     n.summary && `Short summary from triage: ${n.summary}`,
   ].filter(Boolean).join('\n');
 
-  const client = new Anthropic({
-    defaultHeaders: process.env.ANTHROPIC_WORKSPACE_ID ? { 'anthropic-workspace-id': process.env.ANTHROPIC_WORKSPACE_ID } : undefined,
-  });
-  // Opus 5.5: thinking is always on and effort is the dial; the server-side
-  // fallback re-runs a declined request on a fallback model.
-  const response: any = await client.beta.messages.create({
-    model: MODEL,
-    max_tokens: 12000,
+  const response = await complete({
     system: await systemPrompt(scopeId),
-    messages: [{ role: 'user', content: `${story}\n\nArticle text:\n${article || '(not available — work from the facts above)'}` }],
-    betas: ['server-side-fallback-2026-07-01'],
-    output_config: { effort: 'medium' },
-    fallbacks: 'default',
-  } as any);
-  if (response.stop_reason === 'refusal') throw new Error('The agent declined to report on this story.');
-  const text = (response.content as any[]).filter((b) => b.type === 'text').map((b) => b.text).join('');
-  const out = parseJson(text);
+    user: `${story}\n\nArticle text:\n${article || '(not available — work from the facts above)'}`,
+    maxTokens: 12000,
+    effort: 'medium',
+  });
+  if (!response.text.trim()) throw new Error('The agent declined to report on this story.');
+  const out = parseJson(response.text);
 
   const report = {
     agent: AGENT_NAME,
@@ -120,7 +109,7 @@ async function runNewsReport(newsId: string, scopeId: string) {
     take: String(out.take || '').trim(),
     actions: (Array.isArray(out.actions) ? out.actions : [])
       .filter((a: any) => a && ACTION_TYPES.includes(a.type) && a.title).slice(0, 6),
-    model: response.model ?? MODEL,
+    model: response.model,
   };
   // The summary describes the story (shared by every scope); the report is this scope's.
   const summary = String(out.summary || '').trim();

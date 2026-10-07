@@ -4,7 +4,7 @@ Wires agents together: discovery -> triage -> promotion -> digest.
 
     python run_daily.py
 
-Needs DATABASE_URL and ANTHROPIC_API_KEY. TAVILY_API_KEY is optional (web
+Needs DATABASE_URL and OPENAI_API_KEY. TAVILY_API_KEY is optional (web
 search is skipped without it; TED is keyless). Tunables via env:
 TAVILY_QUERIES_PER_RUN (default 20), MAX_TRIAGE_PER_RUN (default 400).
 """

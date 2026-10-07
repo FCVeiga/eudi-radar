@@ -431,11 +431,22 @@ def main():
     else:
         errors.append("TAVILY_API_KEY not set — web search skipped")
     per_run = int(os.environ.get("TAVILY_QUERIES_PER_RUN", 20))
+    new_opps, new_news, updates = [], [], []
     for scope in run_scopes:
         if not S.enabled("search", scope):
             print(f"[{scope.name}] Search Agent switched off")
             continue
         cfg = scope.search or {}
+        if cfg.get("mode") == "generic":
+            # General scope: structured search and scoring, no LLM (agents/generic_scope.py).
+            from agents import generic_scope
+            g = generic_scope.run(session, scope, promote, country_names, errors,
+                                  TavilySearchProvider if tavily else None)
+            new_opps += g["tenders"]; new_news += g["news"]; updates += g["updated"]
+            print(f"[{scope.name}] generic: {g['checked']} TED notices scored, "
+                  f"{len(g['tenders'])} new tenders, {len(g['news'])} new stories")
+            S.mark_ran(session, scope)
+            continue
         ted_phrases = cfg.get("ted_phrases") or TED_PHRASES
         news_queries = cfg.get("news_queries") or NEWS_QUERIES
         found = set()
@@ -453,19 +464,19 @@ def main():
     # Followed sources (Following sidebar): RSS feeds and domain searches on
     # their own schedules; whatever they surface joins every scope's queue.
     from agents.source_monitor import check_sources, ingest_activity
-    monitored = check_sources(session, errors) if any(S.enabled("search", s) for s in run_scopes) else {"checked": 0, "total": 0, "found": 0}
+    monitored = check_sources(session, errors) if any(S.enabled("search", s) for s in run_scopes if (s.search or {}).get("mode") != "generic") else {"checked": 0, "total": 0, "found": 0}
     from_sources = ingest_activity(session)
     unlinked = [r.candidate_id for r in session.execute(sql_text(
         "select candidate_id from candidates c where not c.processed and not exists (select 1 from candidate_scopes cs where cs.candidate_id = c.candidate_id)"))]
-    link(unlinked, [s.id for s in run_scopes])
+    triaged_scopes = [s for s in run_scopes if (s.search or {}).get("mode") != "generic"]
+    link(unlinked, [s.id for s in triaged_scopes])
     print(f"Sources: {monitored['checked']} of {monitored['total']} monitored sources due and checked, "
           f"{monitored['found']} new items, {from_sources} new candidates")
 
     # --- 2. Triage (per scope, with that scope's rules) ----------------------
     max_triage = int(os.environ.get("MAX_TRIAGE_PER_RUN", 400))
-    new_opps, new_news, updates = [], [], []
     llm_calls = 0
-    for scope in run_scopes:
+    for scope in triaged_scopes:
         if not S.enabled("triage", scope):
             print(f"[{scope.name}] Triage Agent switched off")
             S.mark_ran(session, scope)
@@ -474,7 +485,7 @@ def main():
         pending_ids = [r.candidate_id for r in session.execute(sql_text(
             """select cs.candidate_id from candidate_scopes cs join candidates c using (candidate_id)
                where cs.scope_id = cast(:s as uuid) and cs.processed_at is null order by c.discovered_at limit :n"""),
-            {"s": scope.id, "n": max(20, max_triage // max(1, len(run_scopes)))})]
+            {"s": scope.id, "n": max(20, max_triage // max(1, len(triaged_scopes)))})]
         pending = session.query(Candidate).filter(Candidate.candidate_id.in_(pending_ids)).all() if pending_ids else []
 
         def done(c, result):

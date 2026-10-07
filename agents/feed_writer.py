@@ -73,6 +73,7 @@ def opportunity_facts(o: Opportunity, country_names: dict) -> dict:
     return {
         "Category": CATEGORY_NAMES.get(o.opportunity_type, o.opportunity_type),
         "Original title": o.title,
+        "Title": o.title_en if o.title_en and o.title_en != o.title else None,
         "Country": country_names.get(o.country, o.country),
         "Buyer": o.authority,
         "Deadline": _fmt(o.deadline),
@@ -123,10 +124,25 @@ def write(event: str, facts: dict) -> dict:
     return {"headline": headline[:140], "body": body[:400]}
 
 
+def plain_copy(event: str, facts: dict) -> dict:
+    """A post from the facts alone, for when the writer (LLM) is unavailable."""
+    title = (facts.get("Title") or facts.get("Original title") or "").strip()
+    if not title:
+        return {}
+    if event == "New opportunity":
+        bits = [facts.get("Buyer"), facts.get("Estimated value"), f"deadline {facts['Deadline']}" if facts.get("Deadline") else None]
+        body = facts.get("Analyst summary") or " · ".join(b for b in bits if b)
+        return {"headline": title[:140], "body": (body or "")[:400]}
+    if event.startswith("News"):
+        return {"headline": title[:140], "body": (facts.get("Analyst summary") or facts.get("Excerpt") or "")[:400]}
+    return {"headline": f"{event}: {title}"[:140], "body": (facts.get("What changed") or "")[:400]}
+
+
 def plan_posts(session, now: datetime, rewrite: bool = False) -> list:
     """Events that should be posts but aren't yet — or, with rewrite=True,
     every current event, to regenerate copy. (post fields, event, facts, source url)."""
-    have = set() if rewrite else {pid for (pid,) in session.query(FeedPost.post_id)}
+    # Plain posts (written without the LLM) count as missing, so they get proper copy once it's back.
+    have = set() if rewrite else {pid for (pid,) in session.query(FeedPost.post_id).filter(FeedPost.plain.isnot(True))}
     country_names = {c.code: c.name for c in session.query(Country)}
     opps = {o.opportunity_id: o for o in session.query(Opportunity)}
     plans = []
@@ -176,7 +192,7 @@ def plan_posts(session, now: datetime, rewrite: bool = False) -> list:
                            country=n.country, score=n.relevance_score,
                            posted_at=_naive(n.published_date) or _naive(n.created_at) or now),
                       f"News ({n.category})",
-                      {"Original title": n.title, "Region": n.region, "Source": n.source_name,
+                      {"Original title": n.title, "Title": n.title_en, "Region": n.region, "Source": n.source_name,
                        "Published": _fmt(n.published_date), "Analyst summary": n.summary,
                        "Excerpt": (n.excerpt or "")[:400]}, n.source_url))
     return plans
@@ -187,17 +203,20 @@ def publish_new_posts(session, errors: list, now=None, rewrite: bool = False) ->
     rewrite=True regenerates the copy of existing posts, keeping their ranks."""
     now = now or datetime.utcnow()
     plans = plan_posts(session, now, rewrite)
+    # Plain posts are retried from their facts only: no page fetch (and search credit) every run.
+    plain_ids = {pid for (pid,) in session.query(FeedPost.post_id).filter(FeedPost.plain.is_(True))}
 
     def run(plan):
         fields, event, facts, url = plan
         try:
             try:
-                extra, backfill = gather_material(url)
+                extra, backfill = ({}, {}) if fields["post_id"] in plain_ids else gather_material(url)
             except Exception:  # unreadable source: write from the facts we have
                 extra, backfill = {}, {}
             return fields, write(event, facts | {k: v for k, v in extra.items() if v}), backfill, None
         except Exception as e:
-            return fields, None, {}, e
+            copy = plain_copy(event, facts)
+            return (fields, copy | {"plain": True}, {}, None) if copy else (fields, None, {}, e)
 
     published = 0
     with ThreadPoolExecutor(max_workers=6) as pool:
@@ -211,8 +230,9 @@ def publish_new_posts(session, errors: list, now=None, rewrite: bool = False) ->
                     if getattr(o, k) is None:
                         setattr(o, k, v)
             existing = session.get(FeedPost, fields["post_id"])
+            copy.setdefault("plain", False)
             if existing:
-                existing.headline, existing.body = copy["headline"], copy["body"]
+                existing.headline, existing.body, existing.plain = copy["headline"], copy["body"], copy["plain"]
             else:
                 session.add(FeedPost(**fields, **copy, created_at=now))
             session.commit()

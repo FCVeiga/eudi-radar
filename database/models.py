@@ -592,6 +592,7 @@ class FeedPost(Base):
     rank = Column(Integer)             # position at the last pipeline run
     prev_rank = Column(Integer)        # position at the run before: drives the ▲/▼
     ranked_at = Column(DateTime)
+    plain = Column(Boolean, default=False)  # written from the facts (LLM unavailable); rewritten when it's back
 
 
 class TrackedAccount(Base):

@@ -136,6 +136,7 @@ export async function saveSearchScope(_prev: FormState, form: FormData): Promise
   if (!o) return NOT_YOURS;
   const text = String(form.get('scope') || '').trim().slice(0, 8000);
   const now = new Date().toISOString();
+  if (!text && o.scope.searchConfig?.mode === 'generic') return { ok: true, message: 'Nothing to change — this scope uses the generic ranking.' };
   if (!text) {
     await db().from('scopes').update({ search_scope: null, search_config: null, search_status: null, search_error: null, updated_at: now }).eq('id', scopeId);
     refresh(scopeId);
@@ -146,7 +147,9 @@ export async function saveSearchScope(_prev: FormState, form: FormData): Promise
     const config = await parseSearchScope(text, triage?.default_prompt || '');
     await db().from('scopes').update({ search_scope: text, search_config: config, search_status: 'applied', search_error: null, search_parsed_at: now, updated_at: now }).eq('id', scopeId);
     refresh(scopeId);
-    return { ok: true, message: `Applied — ${config.ted_phrases.length} TED phrases, ${config.web_queries.length} web and ${config.news_queries.length} news queries, from the next run.` };
+    return { ok: true, message: 'ted_phrases' in config
+      ? `Applied — ${config.ted_phrases.length} TED phrases, ${config.web_queries.length} web and ${config.news_queries.length} news queries, from the next run.`
+      : 'Applied from the next run.' };
   } catch (e) {
     const message = friendlyError(e);
     await db().from('scopes').update({ search_scope: text, search_status: 'error', search_error: message, updated_at: now }).eq('id', scopeId);

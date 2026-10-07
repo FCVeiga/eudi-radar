@@ -78,6 +78,8 @@ def load(session, search_defaults: dict = None) -> None:
             from scopes s left join workspaces w on w.id = s.workspace_id
             left join accounts a on a.owner_id = w.owner_id and a.kind = 'personal'
             order by s.is_default desc, s.created_at""")).fetchall()
+        # The default scope is the default whether or not it runs now (prompt and config fallbacks).
+        default_row = next((s for s in scopes if s.is_default), None)
         scopes = [s for s in scopes if _due(s)]
         agents = session.execute(text("select scope_id, agent_key, enabled, prompt_override from scope_agent_settings")).fetchall()
         _state["scopes"] = []
@@ -89,7 +91,16 @@ def load(session, search_defaults: dict = None) -> None:
                 enabled={a.agent_key: bool(a.enabled) for a in mine},
                 overrides={a.agent_key: a.prompt_override for a in mine if a.prompt_override},
             ))
-        _state["default"] = next((s for s in _state["scopes"] if s.is_default), _state["scopes"][0] if _state["scopes"] else None)
+        _state["default"] = next((s for s in _state["scopes"] if s.is_default), None)
+        if _state["default"] is None and default_row is not None:
+            mine = [a for a in agents if a.scope_id == default_row.id]
+            _state["default"] = SimpleNamespace(
+                id=str(default_row.id), name=default_row.name, instructions=default_row.instructions, is_default=True,
+                search=default_row.search_config or {},
+                enabled={a.agent_key: bool(a.enabled) for a in mine},
+                overrides={a.agent_key: a.prompt_override for a in mine if a.prompt_override})
+        if _state["default"] is None and _state["scopes"]:
+            _state["default"] = _state["scopes"][0]
     except Exception as e:  # missing tables (migrations 015 / 025 not applied): run on defaults
         session.rollback()
         print(f"Settings: using defaults ({str(e)[:120]})")
@@ -177,11 +188,20 @@ def prompt_for(prompt_filename: str, default: str, scope=None) -> str:
     else:
         prompt = _state["overrides"].get(key) or default
     cfg = search_config(s)
+    if cfg.get("mode") == "generic":
+        # No industry: platform agents (feed posts, …) write for a general audience.
+        cfg = {"topic": "public tenders and public-sector news across all sectors"}
     for marker, field in (("scope", "relevance_rubric"), ("importance", "importance_rubric")):
         if cfg.get(field):
             prompt = re.sub(rf"<!-- {marker} -->.*?<!-- /{marker} -->",
                             lambda _m: f"<!-- {marker} -->\n{cfg[field].strip()}\n<!-- /{marker} -->", prompt, flags=re.S)
     if cfg.get("topic"):
         prompt = prompt.replace("{topic}", cfg["topic"])
+    if key == "triage" and s and (s.instructions or "").strip():
+        # The scope's instructions (who it is for, what they sell, what they go
+        # for and what they don't) sharpen relevance beyond the search rubric.
+        prompt = prompt.replace("<!-- /scope -->", "<!-- /scope -->\n\n## Scope instructions (from the scope's admins)\n"
+                                "Use these to judge relevance and importance for this scope. Where they say what is "
+                                "out of scope, score it below 50.\n\n" + s.instructions.strip()[:6000] + "\n", 1)
     return (prompt.replace("{topic}", "EUDI Wallet").replace("{company_name}", company_name(s))
             .replace("{language}", target_language()[0]))

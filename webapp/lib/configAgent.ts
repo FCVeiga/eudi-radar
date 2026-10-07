@@ -55,6 +55,7 @@ export async function parseSearchScope(scope: string, triageDefault: string) {
 /** A search configuration (from the Config Agent or edited by hand), cleaned and checked. */
 export function validateSearchConfig(out: any) {
   if (!out || typeof out !== 'object' || Array.isArray(out)) throw new Error('the configuration must be a JSON object');
+  if (out.mode === 'generic') return validateGenericConfig(out);
   const config = {
     topic: String(out.topic || '').slice(0, 80),
     ted_phrases: list(out.ted_phrases, 100),
@@ -69,6 +70,27 @@ export function validateSearchConfig(out: any) {
   if (config.ted_phrases.length < 5) throw new Error('it needs at least 5 ted_phrases');
   if (!config.web_queries.length) throw new Error('it needs web_queries');
   if (config.relevance_rubric && !config.relevance_rubric.includes('## Task')) throw new Error('relevance_rubric must keep its "## Task" section');
+  return config;
+}
+
+/** A generic scope (no industry): thresholds and news queries per category (agents/generic_scope.py). */
+function validateGenericConfig(out: any) {
+  const num = (v: any, min: number, max: number, name: string) => {
+    const n = Number(v);
+    if (!Number.isFinite(n) || n < min || n > max) throw new Error(`${name} must be between ${min} and ${max}`);
+    return n;
+  };
+  const news = out.news_queries && typeof out.news_queries === 'object' && !Array.isArray(out.news_queries) ? out.news_queries : {};
+  const config = {
+    mode: 'generic', topic: String(out.topic || 'General').slice(0, 80),
+    min_value_eur: num(out.min_value_eur ?? 5_000_000, 0, 1e10, 'min_value_eur'),
+    lookback_days: num(out.lookback_days ?? 4, 1, 30, 'lookback_days'),
+    max_tenders: num(out.max_tenders ?? 25, 1, 100, 'max_tenders'),
+    min_tender_score: num(out.min_tender_score ?? 55, 0, 100, 'min_tender_score'),
+    max_news: num(out.max_news ?? 15, 0, 50, 'max_news'),
+    min_news_score: num(out.min_news_score ?? 40, 0, 100, 'min_news_score'),
+    news_queries: Object.fromEntries(['market', 'regulation', 'industry'].map((k) => [k, list(news[k], 10)])),
+  };
   return config;
 }
 

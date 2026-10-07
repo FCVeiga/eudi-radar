@@ -51,7 +51,8 @@ async function interests(userId: string | null): Promise<Set<string>> {
   ]);
   let builtin: any = {};
   try { builtin = JSON.parse(agent?.default_prompt || '{}'); } catch { /* none */ }
-  for (const cfg of (scopes.length ? scopes.map((s) => s.searchConfig || builtin) : [builtin])) {
+  // A generic scope (General) has no topic words: ranking then rests on likes, following and recency.
+  for (const cfg of (scopes.length ? scopes.map((s) => s.searchConfig?.mode === 'generic' ? {} : s.searchConfig || builtin) : [builtin])) {
     for (const p of [cfg.topic || '', ...(cfg.ted_phrases || []).slice(0, 40), ...(cfg.news_queries || [])]) words(String(p)).forEach((w) => terms.add(w));
   }
   if (userId) {

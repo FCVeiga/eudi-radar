@@ -225,16 +225,27 @@ def clean_title(title: str) -> str:
     return t.strip() or (title or "").strip()
 
 
+NOT_NEWS = ("ted.europa.eu",)  # tender portals, not news
+NOT_ARTICLE = re.compile(r"^(subscribe|sign in|log in|access denied|page not found|home\b)|supplement to the official journal", re.I)
+
+
+def is_article(r) -> bool:
+    """A real story: not a portal page, paywall stub or a title too short to be a headline."""
+    title = clean_title(r.title or "")
+    return bool(r.url and title) and _domain(r.url) not in NOT_NEWS and not NOT_ARTICLE.search(title) \
+        and len(title.split()) >= 5
+
+
 def score_news(results: list, now: datetime) -> list:
     """[(score, category, result, published, outlets)] — one per story: source
     reputation + how many distinct outlets carry it + freshness. Stories are
     grouped by title overlap; the best-scored article represents the group."""
-    items = [(cat, r, _words(clean_title(r.title)), _domain(r.url)) for cat, r in results if r.title and r.url]
+    items = [(cat, r, _words(clean_title(r.title)), _domain(r.url)) for cat, r in results if is_article(r)]
     # Group articles about the same story.
     groups = []
     for it in items:
         for g in groups:
-            if any(it[2] and o[2] and len(it[2] & o[2]) / len(it[2] | o[2]) >= 0.3 for o in g):
+            if any(it[2] and o[2] and len(it[2] & o[2]) / len(it[2] | o[2]) >= (0.2 if it[3] == o[3] else 0.3) for o in g):
                 g.append(it)
                 break
         else:

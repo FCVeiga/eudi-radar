@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { startTenderEvaluation } from '@/app/actions';
+import { useT } from '@/lib/i18n/client';
 
 const POLL_MS = 5000;
 const GIVE_UP_MS = 4 * 60_000;
@@ -15,6 +16,7 @@ export default function TenderEvaluationRunner({ opportunityId, scopeId, evaluat
   opportunityId: string; scopeId: string; evaluatedAt: string | null; running: boolean; ready: boolean; lastError: string | null;
 }) {
   const router = useRouter();
+  const t = useT();
   const [state, setState] = useState<'idle' | 'working' | 'error'>(running ? 'working' : 'idle');
   const [message, setMessage] = useState<string | null>(lastError);
   const poll = useRef<ReturnType<typeof setInterval>>();
@@ -29,7 +31,7 @@ export default function TenderEvaluationRunner({ opportunityId, scopeId, evaluat
   function waitForReport() {
     const since = Date.now();
     poll.current = setInterval(() => {
-      if (Date.now() - since > GIVE_UP_MS) { clearInterval(poll.current); setState('error'); setMessage('the run is taking too long'); return; }
+      if (Date.now() - since > GIVE_UP_MS) { clearInterval(poll.current); setState('error'); setMessage(t('the run is taking too long')); return; }
       router.refresh();
     }, POLL_MS);
   }
@@ -41,24 +43,24 @@ export default function TenderEvaluationRunner({ opportunityId, scopeId, evaluat
       const r = await startTenderEvaluation(opportunityId, scopeId);
       if (r.status === 'done') { setState('idle'); router.refresh(); }
       else if (r.status === 'running') waitForReport();
-      else { setState('error'); setMessage(r.message ?? 'unknown error'); }
-    } catch { setState('error'); setMessage('the request failed'); }
+      else { setState('error'); setMessage(r.message ?? t('unknown error')); }
+    } catch { setState('error'); setMessage(t('the request failed')); }
   }
 
   if (state === 'working') {
     return (
       <p className="report-progress">
-        <span className="dots" /> The Tender Evaluation Agent is checking every requirement against WalliD&apos;s profile — about a minute.
+        <span className="dots" /> {t('The Tender Evaluation Agent is checking every requirement against WalliD\'s profile — about a minute.')}
       </p>
     );
   }
   return (
     <div className="eval-run">
       <button className="btn-agent" onClick={run} disabled={!ready}>
-        {evaluatedAt ? 'Re-run evaluation' : 'Run Tender Evaluation Agent'}
+        {evaluatedAt ? t('Re-run evaluation') : t('Run Tender Evaluation Agent')}
       </button>
-      {!ready && <span className="eval-note">Waits for the Tender Analysis Agent to read this tender.</span>}
-      {message && <span className="form-msg err">Couldn&apos;t run: {message}.</span>}
+      {!ready && <span className="eval-note">{t('Waits for the Tender Analysis Agent to read this tender.')}</span>}
+      {message && <span className="form-msg err">{t('Couldn\'t run: {message}.', { message })}</span>}
     </div>
   );
 }

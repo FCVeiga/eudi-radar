@@ -4,8 +4,12 @@ import { getPlatformLanguage } from '@/lib/language';
 import { COMMUNITY_VIEWS, CommunityView, getCommunityFeed } from '@/lib/community';
 import { getEngagement } from '@/lib/engagement';
 import CommunityCard from '@/components/social/CommunityCard';
+import { getT } from '@/lib/i18n/server';
 
-export const metadata = { title: 'Community — EUDI Radar' };
+export async function generateMetadata() {
+  const t = await getT();
+  return { title: `${t('Community')} — EUDI Radar` };
+}
 const PAGE = 25;
 
 const ICONS: Record<CommunityView, JSX.Element> = {
@@ -17,6 +21,7 @@ const ICONS: Record<CommunityView, JSX.Element> = {
 /** Community Feed: members' posts, ranked for you (see lib/community.ts). */
 export default async function CommunityPage({ searchParams }: { searchParams: { view?: string; n?: string } }) {
   await getPlatformLanguage();
+  const t = await getT();
   const now = new Date();
   const view = (COMMUNITY_VIEWS.find((v) => v.slug === searchParams.view)?.slug ?? 'best') as CommunityView;
   const user = await getCurrentUser();
@@ -34,29 +39,29 @@ export default async function CommunityPage({ searchParams }: { searchParams: { 
   return (
     <div className="community">
       <div className="community-head">
-        <h1 className="opps-h1">Community</h1>
-        {user ? <Link href="/posts/new" className="btn primary">Create a post</Link> : <Link href="/login?next=/posts/new" className="btn">Log in to post</Link>}
+        <h1 className="opps-h1">{t('Community')}</h1>
+        {user ? <Link href="/posts/new" className="btn primary">{t('Create a post')}</Link> : <Link href="/login?next=/posts/new" className="btn">{t('Log in to post')}</Link>}
       </div>
-      <nav className="feed-sort" aria-label="Sort posts">
+      <nav className="feed-sort" aria-label={t('Sort posts')}>
         {COMMUNITY_VIEWS.map((v) => (
           <Link key={v.slug} href={href(v.slug)} className={`feed-sort-link ${view === v.slug ? 'active' : ''}`} aria-current={view === v.slug ? 'page' : undefined}>
-            <svg className="feed-sort-icon" viewBox="0 0 16 16" aria-hidden="true">{ICONS[v.slug]}</svg>{v.label}
+            <svg className="feed-sort-icon" viewBox="0 0 16 16" aria-hidden="true">{ICONS[v.slug]}</svg>{t(v.label)}
           </Link>
         ))}
       </nav>
 
       {posts.length === 0 ? (
         <div className="profile-empty">
-          <p className="profile-empty-title">No posts yet — start the conversation</p>
+          <p className="profile-empty-title">{t('No posts yet — start the conversation')}</p>
           
-          <Link href={user ? '/posts/new' : '/login?next=/posts/new'} className="btn primary profile-empty-cta">Create the first post</Link>
+          <Link href={user ? '/posts/new' : '/login?next=/posts/new'} className="btn primary profile-empty-cta">{t('Create the first post')}</Link>
         </div>
       ) : (
         <div className="feed">
           {posts.slice(0, shown).map((p) => <CommunityCard key={p.id} post={p} now={now} engagement={engagement.get(p.id)} signedIn={engagement.signedIn} />)}
         </div>
       )}
-      {posts.length > shown && <Link href={href(view, shown + PAGE)} scroll={false} className="feed-more">Show more <span className="mono">({posts.length - shown} left)</span></Link>}
+      {posts.length > shown && <Link href={href(view, shown + PAGE)} scroll={false} className="feed-more">{t('Show more')} <span className="mono">({t('{n} left', { n: posts.length - shown })})</span></Link>}
     </div>
   );
 }

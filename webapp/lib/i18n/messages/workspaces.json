@@ -1,0 +1,2123 @@
+{
+ "Workspaces": {
+  "pt": "Espaços de trabalho",
+  "es": "Espacios de trabajo",
+  "fr": "Espaces de travail",
+  "de": "Arbeitsbereiche",
+  "it": "Aree di lavoro"
+ },
+ "Your workspaces": {
+  "pt": "Os seus espaços de trabalho",
+  "es": "Tus espacios de trabajo",
+  "fr": "Vos espaces de travail",
+  "de": "Deine Arbeitsbereiche",
+  "it": "Le tue aree di lavoro"
+ },
+ "Upgrade for more": {
+  "pt": "Fazer upgrade para ter mais",
+  "es": "Mejora tu plan para tener más",
+  "fr": "Passer à un plan supérieur",
+  "de": "Upgrade für mehr",
+  "it": "Passa a un piano superiore"
+ },
+ "Workspace": {
+  "pt": "Espaço de trabalho",
+  "es": "Espacio de trabajo",
+  "fr": "Espace de travail",
+  "de": "Arbeitsbereich",
+  "it": "Area di lavoro"
+ },
+ "Owner": {
+  "pt": "Proprietário",
+  "es": "Propietario",
+  "fr": "Propriétaire",
+  "de": "Inhaber",
+  "it": "Proprietario"
+ },
+ "Scopes": {
+  "pt": "Âmbitos",
+  "es": "Ámbitos",
+  "fr": "Périmètres",
+  "de": "Bereiche",
+  "it": "Ambiti"
+ },
+ "Members": {
+  "pt": "Membros",
+  "es": "Miembros",
+  "fr": "Membres",
+  "de": "Mitglieder",
+  "it": "Membri"
+ },
+ "You": {
+  "pt": "Você",
+  "es": "Tú",
+  "fr": "Vous",
+  "de": "Du",
+  "it": "Tu"
+ },
+ "Active": {
+  "pt": "Ativo",
+  "es": "Activo",
+  "fr": "Actif",
+  "de": "Aktiv",
+  "it": "Attivo"
+ },
+ "Switch": {
+  "pt": "Mudar",
+  "es": "Cambiar",
+  "fr": "Basculer",
+  "de": "Wechseln",
+  "it": "Passa"
+ },
+ "Workspace agents": {
+  "pt": "Agentes do espaço de trabalho",
+  "es": "Agentes del espacio de trabajo",
+  "fr": "Agents de l'espace de travail",
+  "de": "Agenten des Arbeitsbereichs",
+  "it": "Agenti dell'area di lavoro"
+ },
+ "Active workspace": {
+  "pt": "Espaço de trabalho ativo",
+  "es": "Espacio de trabajo activo",
+  "fr": "Espace de travail actif",
+  "de": "Aktiver Arbeitsbereich",
+  "it": "Area di lavoro attiva"
+ },
+ "Switch to this workspace": {
+  "pt": "Mudar para este espaço de trabalho",
+  "es": "Cambiar a este espacio de trabajo",
+  "fr": "Basculer vers cet espace de travail",
+  "de": "Zu diesem Arbeitsbereich wechseln",
+  "it": "Passa a quest'area di lavoro"
+ },
+ "View only — admins configure this workspace.": {
+  "pt": "Só visualização — os administradores configuram este espaço de trabalho.",
+  "es": "Solo lectura — los administradores configuran este espacio de trabajo.",
+  "fr": "Lecture seule — les administrateurs configurent cet espace de travail.",
+  "de": "Nur Ansicht — Admins konfigurieren diesen Arbeitsbereich.",
+  "it": "Sola visualizzazione — gli amministratori configurano quest'area di lavoro."
+ },
+ "Free plan: default scope only.": {
+  "pt": "Plano Free: apenas o âmbito predefinido.",
+  "es": "Plan Free: solo el ámbito predeterminado.",
+  "fr": "Plan Free : périmètre par défaut uniquement.",
+  "de": "Free-Plan: nur der Standardbereich.",
+  "it": "Piano Free: solo l'ambito predefinito."
+ },
+ "Upgrade": {
+  "pt": "Fazer upgrade",
+  "es": "Mejorar plan",
+  "fr": "Passer à un plan supérieur",
+  "de": "Upgraden",
+  "it": "Esegui l'upgrade"
+ },
+ "to create your own.": {
+  "pt": "para criar os seus.",
+  "es": "para crear los tuyos.",
+  "fr": "pour créer les vôtres.",
+  "de": "um eigene zu erstellen.",
+  "it": "per crearne di tuoi."
+ },
+ "New scope": {
+  "pt": "Novo âmbito",
+  "es": "Nuevo ámbito",
+  "fr": "Nouveau périmètre",
+  "de": "Neuer Bereich",
+  "it": "Nuovo ambito"
+ },
+ "No scopes in this workspace": {
+  "pt": "Nenhum âmbito neste espaço de trabalho",
+  "es": "No hay ámbitos en este espacio de trabajo",
+  "fr": "Aucun périmètre dans cet espace de travail",
+  "de": "Keine Bereiche in diesem Arbeitsbereich",
+  "it": "Nessun ambito in quest'area di lavoro"
+ },
+ "Create the first scope": {
+  "pt": "Criar o primeiro âmbito",
+  "es": "Crear el primer ámbito",
+  "fr": "Créer le premier périmètre",
+  "de": "Ersten Bereich erstellen",
+  "it": "Crea il primo ambito"
+ },
+ "See plans": {
+  "pt": "Ver planos",
+  "es": "Ver planes",
+  "fr": "Voir les plans",
+  "de": "Pläne ansehen",
+  "it": "Vedi i piani"
+ },
+ "Scope limit reached.": {
+  "pt": "Limite de âmbitos atingido.",
+  "es": "Límite de ámbitos alcanzado.",
+  "fr": "Limite de périmètres atteinte.",
+  "de": "Bereichslimit erreicht.",
+  "it": "Limite di ambiti raggiunto."
+ },
+ "Team members": {
+  "pt": "Membros da equipa",
+  "es": "Miembros del equipo",
+  "fr": "Membres de l'équipe",
+  "de": "Teammitglieder",
+  "it": "Membri del team"
+ },
+ "Anyone with the link": {
+  "pt": "Qualquer pessoa com a ligação",
+  "es": "Cualquiera con el enlace",
+  "fr": "Toute personne disposant du lien",
+  "de": "Alle mit dem Link",
+  "it": "Chiunque abbia il link"
+ },
+ "Invited": {
+  "pt": "Convidado",
+  "es": "Invitado",
+  "fr": "Invité",
+  "de": "Eingeladen",
+  "it": "Invitato"
+ },
+ "admin": {
+  "pt": "administrador",
+  "es": "administrador",
+  "fr": "administrateur",
+  "de": "Admin",
+  "it": "amministratore"
+ },
+ "member": {
+  "pt": "membro",
+  "es": "miembro",
+  "fr": "membre",
+  "de": "Mitglied",
+  "it": "membro"
+ },
+ "expires {date}": {
+  "pt": "expira a {date}",
+  "es": "caduca el {date}",
+  "fr": "expire le {date}",
+  "de": "läuft am {date} ab",
+  "it": "scade il {date}"
+ },
+ "Adding team members needs the Teams plan.": {
+  "pt": "Adicionar membros da equipa requer o plano Teams.",
+  "es": "Añadir miembros al equipo requiere el plan Teams.",
+  "fr": "L'ajout de membres nécessite le plan Teams.",
+  "de": "Zum Hinzufügen von Teammitgliedern ist der Teams-Plan nötig.",
+  "it": "Per aggiungere membri al team serve il piano Teams."
+ },
+ "Delete workspace": {
+  "pt": "Eliminar espaço de trabalho",
+  "es": "Eliminar espacio de trabajo",
+  "fr": "Supprimer l'espace de travail",
+  "de": "Arbeitsbereich löschen",
+  "it": "Elimina area di lavoro"
+ },
+ "This workspace holds the default scope, so it can’t be deleted.": {
+  "pt": "Este espaço de trabalho contém o âmbito predefinido, por isso não pode ser eliminado.",
+  "es": "Este espacio de trabajo contiene el ámbito predeterminado, así que no se puede eliminar.",
+  "fr": "Cet espace de travail contient le périmètre par défaut ; il ne peut donc pas être supprimé.",
+  "de": "Dieser Arbeitsbereich enthält den Standardbereich und kann daher nicht gelöscht werden.",
+  "it": "Quest'area di lavoro contiene l'ambito predefinito, quindi non può essere eliminata."
+ },
+ "This is your only workspace — create another before deleting it.": {
+  "pt": "Este é o seu único espaço de trabalho — crie outro antes de o eliminar.",
+  "es": "Es tu único espacio de trabajo — crea otro antes de eliminarlo.",
+  "fr": "C'est votre seul espace de travail — créez-en un autre avant de le supprimer.",
+  "de": "Das ist dein einziger Arbeitsbereich — erstelle einen weiteren, bevor du ihn löschst.",
+  "it": "È la tua unica area di lavoro — creane un'altra prima di eliminarla."
+ },
+ "Scope": {
+  "pt": "Âmbito",
+  "es": "Ámbito",
+  "fr": "Périmètre",
+  "de": "Bereich",
+  "it": "Ambito"
+ },
+ "Scope context": {
+  "pt": "Contexto do âmbito",
+  "es": "Contexto del ámbito",
+  "fr": "Contexte du périmètre",
+  "de": "Kontext des Bereichs",
+  "it": "Contesto dell'ambito"
+ },
+ "PDF, Word, PowerPoint, Excel or text · up to 50 MB · private": {
+  "pt": "PDF, Word, PowerPoint, Excel ou texto · até 50 MB · privado",
+  "es": "PDF, Word, PowerPoint, Excel o texto · hasta 50 MB · privado",
+  "fr": "PDF, Word, PowerPoint, Excel ou texte · jusqu'à 50 Mo · privé",
+  "de": "PDF, Word, PowerPoint, Excel oder Text · bis 50 MB · privat",
+  "it": "PDF, Word, PowerPoint, Excel o testo · fino a 50 MB · privato"
+ },
+ "Agents": {
+  "pt": "Agentes",
+  "es": "Agentes",
+  "fr": "Agents",
+  "de": "Agenten",
+  "it": "Agenti"
+ },
+ "Delete scope": {
+  "pt": "Eliminar âmbito",
+  "es": "Eliminar ámbito",
+  "fr": "Supprimer le périmètre",
+  "de": "Bereich löschen",
+  "it": "Elimina ambito"
+ },
+ "Only this workspace’s admins can change it (on a plan that allows customizing).": {
+  "pt": "Só os administradores deste espaço de trabalho o podem alterar (num plano que permita personalização).",
+  "es": "Solo los administradores de este espacio de trabajo pueden cambiarlo (con un plan que permita personalizar).",
+  "fr": "Seuls les administrateurs de cet espace de travail peuvent le modifier (avec un plan qui permet la personnalisation).",
+  "de": "Nur die Admins dieses Arbeitsbereichs können das ändern (mit einem Plan, der Anpassungen erlaubt).",
+  "it": "Solo gli amministratori di quest'area di lavoro possono modificarlo (con un piano che consente la personalizzazione)."
+ },
+ "Give the scope a name.": {
+  "pt": "Dê um nome ao âmbito.",
+  "es": "Ponle un nombre al ámbito.",
+  "fr": "Donnez un nom au périmètre.",
+  "de": "Gib dem Bereich einen Namen.",
+  "it": "Dai un nome all'ambito."
+ },
+ "Saved — the scope’s agents use it from their next run.": {
+  "pt": "Guardado — os agentes do âmbito usam-no a partir da próxima execução.",
+  "es": "Guardado — los agentes del ámbito lo usarán desde su próxima ejecución.",
+  "fr": "Enregistré — les agents du périmètre l'utiliseront dès leur prochaine exécution.",
+  "de": "Gespeichert — die Agenten des Bereichs verwenden es ab ihrem nächsten Lauf.",
+  "it": "Salvato — gli agenti dell'ambito lo useranno dalla prossima esecuzione."
+ },
+ "This is the platform’s default scope (what visitors see) — it can’t be deleted.": {
+  "pt": "Este é o âmbito predefinido da plataforma (o que os visitantes veem) — não pode ser eliminado.",
+  "es": "Este es el ámbito predeterminado de la plataforma (lo que ven los visitantes) — no se puede eliminar.",
+  "fr": "C'est le périmètre par défaut de la plateforme (ce que voient les visiteurs) — il ne peut pas être supprimé.",
+  "de": "Das ist der Standardbereich der Plattform (was Besucher sehen) — er kann nicht gelöscht werden.",
+  "it": "Questo è l'ambito predefinito della piattaforma (quello che vedono i visitatori) — non può essere eliminato."
+ },
+ "Type {name} to confirm.": {
+  "pt": "Escreva {name} para confirmar.",
+  "es": "Escribe {name} para confirmar.",
+  "fr": "Saisissez {name} pour confirmer.",
+  "de": "Gib {name} zur Bestätigung ein.",
+  "it": "Digita {name} per confermare."
+ },
+ "Type {name} to confirm": {
+  "pt": "Escreva {name} para confirmar",
+  "es": "Escribe {name} para confirmar",
+  "fr": "Saisissez {name} pour confirmer",
+  "de": "Gib {name} zur Bestätigung ein",
+  "it": "Digita {name} per confermare"
+ },
+ "not your scope": {
+  "pt": "não é um âmbito seu",
+  "es": "no es un ámbito tuyo",
+  "fr": "ce n'est pas votre périmètre",
+  "de": "nicht dein Bereich",
+  "it": "non è un tuo ambito"
+ },
+ "unknown document type": {
+  "pt": "tipo de documento desconhecido",
+  "es": "tipo de documento desconocido",
+  "fr": "type de document inconnu",
+  "de": "unbekannter Dokumenttyp",
+  "it": "tipo di documento sconosciuto"
+ },
+ "use PDF, Word, PowerPoint, Excel or text files": {
+  "pt": "use ficheiros PDF, Word, PowerPoint, Excel ou de texto",
+  "es": "usa archivos PDF, Word, PowerPoint, Excel o de texto",
+  "fr": "utilisez des fichiers PDF, Word, PowerPoint, Excel ou texte",
+  "de": "verwende PDF-, Word-, PowerPoint-, Excel- oder Textdateien",
+  "it": "usa file PDF, Word, PowerPoint, Excel o di testo"
+ },
+ "files up to 50 MB": {
+  "pt": "ficheiros até 50 MB",
+  "es": "archivos de hasta 50 MB",
+  "fr": "fichiers jusqu'à 50 Mo",
+  "de": "Dateien bis 50 MB",
+  "it": "file fino a 50 MB"
+ },
+ "could not start the upload": {
+  "pt": "não foi possível iniciar o carregamento",
+  "es": "no se pudo iniciar la subida",
+  "fr": "impossible de lancer l'envoi",
+  "de": "Upload konnte nicht gestartet werden",
+  "it": "impossibile avviare il caricamento"
+ },
+ "unknown upload": {
+  "pt": "carregamento desconhecido",
+  "es": "subida desconocida",
+  "fr": "envoi inconnu",
+  "de": "unbekannter Upload",
+  "it": "caricamento sconosciuto"
+ },
+ "upload not found": {
+  "pt": "carregamento não encontrado",
+  "es": "subida no encontrada",
+  "fr": "envoi introuvable",
+  "de": "Upload nicht gefunden",
+  "it": "caricamento non trovato"
+ },
+ "Nothing to change — this scope uses the generic ranking.": {
+  "pt": "Nada a alterar — este âmbito usa a classificação genérica.",
+  "es": "Nada que cambiar — este ámbito usa la clasificación genérica.",
+  "fr": "Rien à changer — ce périmètre utilise le classement générique.",
+  "de": "Nichts zu ändern — dieser Bereich nutzt das generische Ranking.",
+  "it": "Niente da cambiare — questo ambito usa la classificazione generica."
+ },
+ "Cleared — this scope searches with the built-in EUDI Wallet configuration.": {
+  "pt": "Limpo — este âmbito pesquisa com a configuração EUDI Wallet incorporada.",
+  "es": "Borrado — este ámbito busca con la configuración EUDI Wallet integrada.",
+  "fr": "Effacé — ce périmètre recherche avec la configuration EUDI Wallet intégrée.",
+  "de": "Geleert — dieser Bereich sucht mit der integrierten EUDI-Wallet-Konfiguration.",
+  "it": "Cancellato — questo ambito cerca con la configurazione EUDI Wallet integrata."
+ },
+ "Applied — {ted} TED phrases, {web} web and {news} news queries, from the next run.": {
+  "pt": "Aplicado — {ted} frases TED, {web} pesquisas web e {news} de notícias, a partir da próxima execução.",
+  "es": "Aplicado — {ted} frases de TED, {web} búsquedas web y {news} de noticias, desde la próxima ejecución.",
+  "fr": "Appliqué — {ted} expressions TED, {web} requêtes web et {news} requêtes d'actualités, dès la prochaine exécution.",
+  "de": "Angewendet — {ted} TED-Phrasen, {web} Web- und {news} Nachrichtenabfragen, ab dem nächsten Lauf.",
+  "it": "Applicato — {ted} frasi TED, {web} query web e {news} query di notizie, dalla prossima esecuzione."
+ },
+ "Applied from the next run.": {
+  "pt": "Aplicado a partir da próxima execução.",
+  "es": "Aplicado desde la próxima ejecución.",
+  "fr": "Appliqué dès la prochaine exécution.",
+  "de": "Ab dem nächsten Lauf angewendet.",
+  "it": "Applicato dalla prossima esecuzione."
+ },
+ "Saved your text, but the Config Agent couldn’t apply it: {message}. The previous configuration stays in use.": {
+  "pt": "O seu texto foi guardado, mas o Config Agent não o conseguiu aplicar: {message}. A configuração anterior mantém-se em uso.",
+  "es": "Tu texto se guardó, pero el Config Agent no pudo aplicarlo: {message}. Se mantiene la configuración anterior.",
+  "fr": "Votre texte est enregistré, mais le Config Agent n'a pas pu l'appliquer : {message}. La configuration précédente reste en vigueur.",
+  "de": "Dein Text wurde gespeichert, aber der Config Agent konnte ihn nicht anwenden: {message}. Die bisherige Konfiguration bleibt aktiv.",
+  "it": "Il testo è stato salvato, ma il Config Agent non è riuscito ad applicarlo: {message}. Resta in uso la configurazione precedente."
+ },
+ "Back to the default configuration.": {
+  "pt": "De volta à configuração predefinida.",
+  "es": "De vuelta a la configuración predeterminada.",
+  "fr": "Retour à la configuration par défaut.",
+  "de": "Zurück zur Standardkonfiguration.",
+  "it": "Ripristinata la configurazione predefinita."
+ },
+ "This agent’s default configuration hasn’t been synced yet — it is after the next pipeline run.": {
+  "pt": "A configuração predefinida deste agente ainda não foi sincronizada — sê-lo-á após a próxima execução do pipeline.",
+  "es": "La configuración predeterminada de este agente aún no se ha sincronizado — lo hará tras la próxima ejecución del pipeline.",
+  "fr": "La configuration par défaut de cet agent n'est pas encore synchronisée — elle le sera après la prochaine exécution du pipeline.",
+  "de": "Die Standardkonfiguration dieses Agenten ist noch nicht synchronisiert — das geschieht nach dem nächsten Pipeline-Lauf.",
+  "it": "La configurazione predefinita di questo agente non è ancora sincronizzata — lo sarà dopo la prossima esecuzione della pipeline."
+ },
+ "Applied. {note}": {
+  "pt": "Aplicado. {note}",
+  "es": "Aplicado. {note}",
+  "fr": "Appliqué. {note}",
+  "de": "Angewendet. {note}",
+  "it": "Applicato. {note}"
+ },
+ "Applied — the agent uses its new configuration from its next run.": {
+  "pt": "Aplicado — o agente usa a nova configuração a partir da próxima execução.",
+  "es": "Aplicado — el agente usará su nueva configuración desde su próxima ejecución.",
+  "fr": "Appliqué — l'agent utilisera sa nouvelle configuration dès sa prochaine exécution.",
+  "de": "Angewendet — der Agent nutzt seine neue Konfiguration ab dem nächsten Lauf.",
+  "it": "Applicato — l'agente userà la nuova configurazione dalla prossima esecuzione."
+ },
+ "Saved your text, but the Config Agent couldn’t apply it: {message}. The agent keeps its current configuration.": {
+  "pt": "O seu texto foi guardado, mas o Config Agent não o conseguiu aplicar: {message}. O agente mantém a configuração atual.",
+  "es": "Tu texto se guardó, pero el Config Agent no pudo aplicarlo: {message}. El agente mantiene su configuración actual.",
+  "fr": "Votre texte est enregistré, mais le Config Agent n'a pas pu l'appliquer : {message}. L'agent conserve sa configuration actuelle.",
+  "de": "Dein Text wurde gespeichert, aber der Config Agent konnte ihn nicht anwenden: {message}. Der Agent behält seine aktuelle Konfiguration.",
+  "it": "Il testo è stato salvato, ma il Config Agent non è riuscito ad applicarlo: {message}. L'agente mantiene la configurazione attuale."
+ },
+ "This agent has no editable configuration.": {
+  "pt": "Este agente não tem configuração editável.",
+  "es": "Este agente no tiene configuración editable.",
+  "fr": "Cet agent n'a pas de configuration modifiable.",
+  "de": "Dieser Agent hat keine bearbeitbare Konfiguration.",
+  "it": "Questo agente non ha una configurazione modificabile."
+ },
+ "Not saved: {reason}.": {
+  "pt": "Não guardado: {reason}.",
+  "es": "No guardado: {reason}.",
+  "fr": "Non enregistré : {reason}.",
+  "de": "Nicht gespeichert: {reason}.",
+  "it": "Non salvato: {reason}."
+ },
+ "that isn’t valid JSON": {
+  "pt": "isso não é JSON válido",
+  "es": "eso no es un JSON válido",
+  "fr": "ce n'est pas du JSON valide",
+  "de": "das ist kein gültiges JSON",
+  "it": "non è un JSON valido"
+ },
+ "Saved — this scope’s Search and Triage Agents use it from the next run.": {
+  "pt": "Guardado — os agentes Search e Triage deste âmbito usam-no a partir da próxima execução.",
+  "es": "Guardado — los agentes Search y Triage de este ámbito lo usarán desde la próxima ejecución.",
+  "fr": "Enregistré — les agents Search et Triage de ce périmètre l'utiliseront dès la prochaine exécution.",
+  "de": "Gespeichert — Search- und Triage-Agent dieses Bereichs verwenden es ab dem nächsten Lauf.",
+  "it": "Salvato — gli agenti Search e Triage di questo ambito lo useranno dalla prossima esecuzione."
+ },
+ "This agent’s default configuration hasn’t been synced yet.": {
+  "pt": "A configuração predefinida deste agente ainda não foi sincronizada.",
+  "es": "La configuración predeterminada de este agente aún no se ha sincronizado.",
+  "fr": "La configuration par défaut de cet agent n'est pas encore synchronisée.",
+  "de": "Die Standardkonfiguration dieses Agenten ist noch nicht synchronisiert.",
+  "it": "La configurazione predefinita di questo agente non è ancora sincronizzata."
+ },
+ "Matches the default — the agent runs on its default configuration.": {
+  "pt": "Igual à predefinida — o agente funciona com a configuração predefinida.",
+  "es": "Coincide con la predeterminada — el agente funciona con su configuración predeterminada.",
+  "fr": "Identique à la configuration par défaut — l'agent fonctionne avec celle-ci.",
+  "de": "Entspricht dem Standard — der Agent läuft mit seiner Standardkonfiguration.",
+  "it": "Coincide con quella predefinita — l'agente usa la configurazione predefinita."
+ },
+ "Saved — the agent uses this configuration from its next run.": {
+  "pt": "Guardado — o agente usa esta configuração a partir da próxima execução.",
+  "es": "Guardado — el agente usará esta configuración desde su próxima ejecución.",
+  "fr": "Enregistré — l'agent utilisera cette configuration dès sa prochaine exécution.",
+  "de": "Gespeichert — der Agent nutzt diese Konfiguration ab dem nächsten Lauf.",
+  "it": "Salvato — l'agente userà questa configurazione dalla prossima esecuzione."
+ },
+ "Log in first.": {
+  "pt": "Inicie sessão primeiro.",
+  "es": "Inicia sesión primero.",
+  "fr": "Connectez-vous d'abord.",
+  "de": "Melde dich zuerst an.",
+  "it": "Accedi prima."
+ },
+ "Give the workspace a name.": {
+  "pt": "Dê um nome ao espaço de trabalho.",
+  "es": "Ponle un nombre al espacio de trabajo.",
+  "fr": "Donnez un nom à l'espace de travail.",
+  "de": "Gib dem Arbeitsbereich einen Namen.",
+  "it": "Dai un nome all'area di lavoro."
+ },
+ "Your account isn’t set up yet.": {
+  "pt": "A sua conta ainda não está configurada.",
+  "es": "Tu cuenta aún no está configurada.",
+  "fr": "Votre compte n'est pas encore configuré.",
+  "de": "Dein Konto ist noch nicht eingerichtet.",
+  "it": "Il tuo account non è ancora configurato."
+ },
+ "The {plan} plan has {n} workspace — Teams has unlimited workspaces.": {
+  "pt": "O plano {plan} inclui {n} espaço de trabalho — o Teams tem espaços de trabalho ilimitados.",
+  "es": "El plan {plan} incluye {n} espacio de trabajo — Teams tiene espacios de trabajo ilimitados.",
+  "fr": "Le plan {plan} inclut {n} espace de travail — Teams offre des espaces de travail illimités.",
+  "de": "Der {plan}-Plan umfasst {n} Arbeitsbereich — Teams bietet unbegrenzt viele.",
+  "it": "Il piano {plan} include {n} area di lavoro — Teams ha aree di lavoro illimitate."
+ },
+ "The {plan} plan has {n} workspaces — Teams has unlimited workspaces.": {
+  "pt": "O plano {plan} inclui {n} espaços de trabalho — o Teams tem espaços de trabalho ilimitados.",
+  "es": "El plan {plan} incluye {n} espacios de trabajo — Teams tiene espacios de trabajo ilimitados.",
+  "fr": "Le plan {plan} inclut {n} espaces de travail — Teams offre des espaces de travail illimités.",
+  "de": "Der {plan}-Plan umfasst {n} Arbeitsbereiche — Teams bietet unbegrenzt viele.",
+  "it": "Il piano {plan} include {n} aree di lavoro — Teams ha aree di lavoro illimitate."
+ },
+ "Could not create the workspace.": {
+  "pt": "Não foi possível criar o espaço de trabalho.",
+  "es": "No se pudo crear el espacio de trabajo.",
+  "fr": "Impossible de créer l'espace de travail.",
+  "de": "Der Arbeitsbereich konnte nicht erstellt werden.",
+  "it": "Impossibile creare l'area di lavoro."
+ },
+ "Only the workspace’s owner can delete it.": {
+  "pt": "Só o proprietário do espaço de trabalho o pode eliminar.",
+  "es": "Solo el propietario del espacio de trabajo puede eliminarlo.",
+  "fr": "Seul le propriétaire de l'espace de travail peut le supprimer.",
+  "de": "Nur der Inhaber des Arbeitsbereichs kann ihn löschen.",
+  "it": "Solo il proprietario dell'area di lavoro può eliminarla."
+ },
+ "This workspace holds the default scope.": {
+  "pt": "Este espaço de trabalho contém o âmbito predefinido.",
+  "es": "Este espacio de trabajo contiene el ámbito predeterminado.",
+  "fr": "Cet espace de travail contient le périmètre par défaut.",
+  "de": "Dieser Arbeitsbereich enthält den Standardbereich.",
+  "it": "Quest'area di lavoro contiene l'ambito predefinito."
+ },
+ "You keep at least one workspace.": {
+  "pt": "Tem de manter pelo menos um espaço de trabalho.",
+  "es": "Debes conservar al menos un espacio de trabajo.",
+  "fr": "Vous devez garder au moins un espace de travail.",
+  "de": "Du behältst mindestens einen Arbeitsbereich.",
+  "it": "Devi mantenere almeno un'area di lavoro."
+ },
+ "Only this workspace’s admins can add people.": {
+  "pt": "Só os administradores deste espaço de trabalho podem adicionar pessoas.",
+  "es": "Solo los administradores de este espacio de trabajo pueden añadir personas.",
+  "fr": "Seuls les administrateurs de cet espace de travail peuvent ajouter des personnes.",
+  "de": "Nur die Admins dieses Arbeitsbereichs können Personen hinzufügen.",
+  "it": "Solo gli amministratori di quest'area di lavoro possono aggiungere persone."
+ },
+ "Invitation ready — copy the link and send it. It works for 14 days.": {
+  "pt": "Convite pronto — copie a ligação e envie-a. É válida durante 14 dias.",
+  "es": "Invitación lista — copia el enlace y envíalo. Es válido durante 14 días.",
+  "fr": "Invitation prête — copiez le lien et envoyez-le. Il est valable 14 jours.",
+  "de": "Einladung bereit — kopiere den Link und sende ihn. Er gilt 14 Tage.",
+  "it": "Invito pronto — copia il link e invialo. È valido per 14 giorni."
+ },
+ "Only admins can change roles.": {
+  "pt": "Só os administradores podem alterar funções.",
+  "es": "Solo los administradores pueden cambiar roles.",
+  "fr": "Seuls les administrateurs peuvent modifier les rôles.",
+  "de": "Nur Admins können Rollen ändern.",
+  "it": "Solo gli amministratori possono cambiare i ruoli."
+ },
+ "The workspace’s owner is always an admin.": {
+  "pt": "O proprietário do espaço de trabalho é sempre administrador.",
+  "es": "El propietario del espacio de trabajo siempre es administrador.",
+  "fr": "Le propriétaire de l'espace de travail est toujours administrateur.",
+  "de": "Der Inhaber des Arbeitsbereichs ist immer Admin.",
+  "it": "Il proprietario dell'area di lavoro è sempre amministratore."
+ },
+ "Not allowed.": {
+  "pt": "Não permitido.",
+  "es": "No permitido.",
+  "fr": "Non autorisé.",
+  "de": "Nicht erlaubt.",
+  "it": "Non consentito."
+ },
+ "The owner can’t leave their own workspace — delete it instead.": {
+  "pt": "O proprietário não pode sair do seu próprio espaço de trabalho — elimine-o em vez disso.",
+  "es": "El propietario no puede salir de su propio espacio de trabajo — elimínalo en su lugar.",
+  "fr": "Le propriétaire ne peut pas quitter son propre espace de travail — supprimez-le plutôt.",
+  "de": "Der Inhaber kann seinen eigenen Arbeitsbereich nicht verlassen — lösche ihn stattdessen.",
+  "it": "Il proprietario non può lasciare la propria area di lavoro — eliminala invece."
+ },
+ "Only admins can remove people.": {
+  "pt": "Só os administradores podem remover pessoas.",
+  "es": "Solo los administradores pueden quitar personas.",
+  "fr": "Seuls les administrateurs peuvent retirer des personnes.",
+  "de": "Nur Admins können Personen entfernen.",
+  "it": "Solo gli amministratori possono rimuovere persone."
+ },
+ "The workspace needs at least one admin.": {
+  "pt": "O espaço de trabalho precisa de pelo menos um administrador.",
+  "es": "El espacio de trabajo necesita al menos un administrador.",
+  "fr": "L'espace de travail doit avoir au moins un administrateur.",
+  "de": "Der Arbeitsbereich braucht mindestens einen Admin.",
+  "it": "L'area di lavoro deve avere almeno un amministratore."
+ },
+ "This invitation has expired or was already used.": {
+  "pt": "Este convite expirou ou já foi usado.",
+  "es": "Esta invitación ha caducado o ya se ha usado.",
+  "fr": "Cette invitation a expiré ou a déjà été utilisée.",
+  "de": "Diese Einladung ist abgelaufen oder wurde bereits verwendet.",
+  "it": "Questo invito è scaduto o è già stato usato."
+ },
+ "This invitation is for {email}. Log in with that account.": {
+  "pt": "Este convite é para {email}. Inicie sessão com essa conta.",
+  "es": "Esta invitación es para {email}. Inicia sesión con esa cuenta.",
+  "fr": "Cette invitation est destinée à {email}. Connectez-vous avec ce compte.",
+  "de": "Diese Einladung ist für {email}. Melde dich mit diesem Konto an.",
+  "it": "Questo invito è per {email}. Accedi con quell'account."
+ },
+ "Log in to add or change sources.": {
+  "pt": "Inicie sessão para adicionar ou alterar fontes.",
+  "es": "Inicia sesión para añadir o cambiar fuentes.",
+  "fr": "Connectez-vous pour ajouter ou modifier des sources.",
+  "de": "Melde dich an, um Quellen hinzuzufügen oder zu ändern.",
+  "it": "Accedi per aggiungere o modificare fonti."
+ },
+ "Pick a type.": {
+  "pt": "Escolha um tipo.",
+  "es": "Elige un tipo.",
+  "fr": "Choisissez un type.",
+  "de": "Wähle einen Typ.",
+  "it": "Scegli un tipo."
+ },
+ "Enter a URL or handle.": {
+  "pt": "Introduza um URL ou identificador.",
+  "es": "Introduce una URL o un usuario.",
+  "fr": "Saisissez une URL ou un identifiant.",
+  "de": "Gib eine URL oder ein Handle ein.",
+  "it": "Inserisci un URL o un handle."
+ },
+ "Pick how often to check.": {
+  "pt": "Escolha com que frequência verificar.",
+  "es": "Elige con qué frecuencia comprobar.",
+  "fr": "Choisissez la fréquence de vérification.",
+  "de": "Wähle, wie oft geprüft wird.",
+  "it": "Scegli ogni quanto controllare."
+ },
+ "Pick a monitoring method.": {
+  "pt": "Escolha um método de monitorização.",
+  "es": "Elige un método de seguimiento.",
+  "fr": "Choisissez une méthode de suivi.",
+  "de": "Wähle eine Überwachungsmethode.",
+  "it": "Scegli un metodo di monitoraggio."
+ },
+ "That source no longer exists.": {
+  "pt": "Essa fonte já não existe.",
+  "es": "Esa fuente ya no existe.",
+  "fr": "Cette source n'existe plus.",
+  "de": "Diese Quelle existiert nicht mehr.",
+  "it": "Questa fonte non esiste più."
+ },
+ "No RSS/Atom feed found at that address — use site search instead.": {
+  "pt": "Nenhum feed RSS/Atom encontrado nesse endereço — use a pesquisa no site.",
+  "es": "No se encontró ningún feed RSS/Atom en esa dirección — usa la búsqueda en el sitio.",
+  "fr": "Aucun flux RSS/Atom trouvé à cette adresse — utilisez plutôt la recherche sur le site.",
+  "de": "Kein RSS/Atom-Feed unter dieser Adresse gefunden — nutze stattdessen die Website-Suche.",
+  "it": "Nessun feed RSS/Atom trovato a quell'indirizzo — usa la ricerca nel sito."
+ },
+ "Site search needs a website URL.": {
+  "pt": "A pesquisa no site precisa de um URL de website.",
+  "es": "La búsqueda en el sitio necesita la URL de un sitio web.",
+  "fr": "La recherche sur le site nécessite l'URL d'un site web.",
+  "de": "Die Website-Suche braucht eine Website-URL.",
+  "it": "La ricerca nel sito richiede l'URL di un sito web."
+ },
+ "Already following this as “{name}”.": {
+  "pt": "Já segue esta fonte como “{name}”.",
+  "es": "Ya sigues esta fuente como “{name}”.",
+  "fr": "Déjà suivie sous le nom « {name} ».",
+  "de": "Wird bereits als „{name}“ gefolgt.",
+  "it": "Già seguita come “{name}”."
+ },
+ "listed — this platform needs API access before it can be monitored": {
+  "pt": "listada — esta plataforma precisa de acesso à API para poder ser monitorizada",
+  "es": "listada — esta plataforma necesita acceso a la API para poder seguirse",
+  "fr": "listée — cette plateforme nécessite un accès API pour être suivie",
+  "de": "gelistet — diese Plattform braucht API-Zugang, bevor sie überwacht werden kann",
+  "it": "elencata — questa piattaforma richiede l'accesso API per essere monitorata"
+ },
+ "listed, not monitored": {
+  "pt": "listada, não monitorizada",
+  "es": "listada, sin seguimiento",
+  "fr": "listée, non suivie",
+  "de": "gelistet, nicht überwacht",
+  "it": "elencata, non monitorata"
+ },
+ "monitored through its feed": {
+  "pt": "monitorizada através do seu feed",
+  "es": "seguida a través de su feed",
+  "fr": "suivie via son flux",
+  "de": "über ihren Feed überwacht",
+  "it": "monitorata tramite il suo feed"
+ },
+ "monitored through the TED API": {
+  "pt": "monitorizada através da API do TED",
+  "es": "seguida a través de la API de TED",
+  "fr": "suivie via l'API TED",
+  "de": "über die TED-API überwacht",
+  "it": "monitorata tramite l'API TED"
+ },
+ "searched every day": {
+  "pt": "pesquisada todos os dias",
+  "es": "buscada cada día",
+  "fr": "recherchée tous les jours",
+  "de": "täglich durchsucht",
+  "it": "cercata ogni giorno"
+ },
+ "searched every {n} days": {
+  "pt": "pesquisada a cada {n} dias",
+  "es": "buscada cada {n} días",
+  "fr": "recherchée tous les {n} jours",
+  "de": "alle {n} Tage durchsucht",
+  "it": "cercata ogni {n} giorni"
+ },
+ "paused": {
+  "pt": "em pausa",
+  "es": "en pausa",
+  "fr": "en pause",
+  "de": "pausiert",
+  "it": "in pausa"
+ },
+ "unknown news item": {
+  "pt": "notícia desconhecida",
+  "es": "noticia desconocida",
+  "fr": "actualité inconnue",
+  "de": "unbekannte Nachricht",
+  "it": "notizia sconosciuta"
+ },
+ "that scope isn’t one you’re viewing": {
+  "pt": "esse âmbito não é um dos que está a ver",
+  "es": "ese ámbito no es uno de los que estás viendo",
+  "fr": "ce périmètre ne fait pas partie de ceux que vous consultez",
+  "de": "diesen Bereich siehst du gerade nicht",
+  "it": "quell'ambito non è tra quelli che stai visualizzando"
+ },
+ "only the workspace’s admins can run this agent": {
+  "pt": "só os administradores do espaço de trabalho podem executar este agente",
+  "es": "solo los administradores del espacio de trabajo pueden ejecutar este agente",
+  "fr": "seuls les administrateurs de l'espace de travail peuvent lancer cet agent",
+  "de": "nur die Admins des Arbeitsbereichs können diesen Agenten ausführen",
+  "it": "solo gli amministratori dell'area di lavoro possono eseguire questo agente"
+ },
+ "unknown opportunity": {
+  "pt": "oportunidade desconhecida",
+  "es": "oportunidad desconocida",
+  "fr": "opportunité inconnue",
+  "de": "unbekannte Gelegenheit",
+  "it": "opportunità sconosciuta"
+ },
+ "log in, and pick one of your scopes": {
+  "pt": "inicie sessão e escolha um dos seus âmbitos",
+  "es": "inicia sesión y elige uno de tus ámbitos",
+  "fr": "connectez-vous et choisissez l'un de vos périmètres",
+  "de": "melde dich an und wähle einen deiner Bereiche",
+  "it": "accedi e scegli uno dei tuoi ambiti"
+ },
+ "unknown tender": {
+  "pt": "concurso desconhecido",
+  "es": "licitación desconocida",
+  "fr": "appel d'offres inconnu",
+  "de": "unbekannte Ausschreibung",
+  "it": "gara sconosciuta"
+ },
+ "Only this workspace’s admins can change what it follows.": {
+  "pt": "Só os administradores deste espaço de trabalho podem alterar o que segue.",
+  "es": "Solo los administradores de este espacio de trabajo pueden cambiar lo que sigue.",
+  "fr": "Seuls les administrateurs de cet espace de travail peuvent modifier ses sources suivies.",
+  "de": "Nur die Admins dieses Arbeitsbereichs können ändern, was er verfolgt.",
+  "it": "Solo gli amministratori di quest'area di lavoro possono modificare ciò che segue."
+ },
+ "Workspace name": {
+  "pt": "Nome do espaço de trabalho",
+  "es": "Nombre del espacio de trabajo",
+  "fr": "Nom de l'espace de travail",
+  "de": "Name des Arbeitsbereichs",
+  "it": "Nome dell'area di lavoro"
+ },
+ "Save": {
+  "pt": "Guardar",
+  "es": "Guardar",
+  "fr": "Enregistrer",
+  "de": "Speichern",
+  "it": "Salva"
+ },
+ "Cancel": {
+  "pt": "Cancelar",
+  "es": "Cancelar",
+  "fr": "Annuler",
+  "de": "Abbrechen",
+  "it": "Annulla"
+ },
+ "Rename workspace": {
+  "pt": "Mudar o nome do espaço de trabalho",
+  "es": "Cambiar nombre del espacio de trabajo",
+  "fr": "Renommer l'espace de travail",
+  "de": "Arbeitsbereich umbenennen",
+  "it": "Rinomina area di lavoro"
+ },
+ "Close": {
+  "pt": "Fechar",
+  "es": "Cerrar",
+  "fr": "Fermer",
+  "de": "Schließen",
+  "it": "Chiudi"
+ },
+ "New workspace": {
+  "pt": "Novo espaço de trabalho",
+  "es": "Nuevo espacio de trabajo",
+  "fr": "Nouvel espace de travail",
+  "de": "Neuer Arbeitsbereich",
+  "it": "Nuova area di lavoro"
+ },
+ "Name": {
+  "pt": "Nome",
+  "es": "Nombre",
+  "fr": "Nom",
+  "de": "Name",
+  "it": "Nome"
+ },
+ "Create": {
+  "pt": "Criar",
+  "es": "Crear",
+  "fr": "Créer",
+  "de": "Erstellen",
+  "it": "Crea"
+ },
+ "Creating…": {
+  "pt": "A criar…",
+  "es": "Creando…",
+  "fr": "Création…",
+  "de": "Wird erstellt…",
+  "it": "Creazione…"
+ },
+ "Deletes its scopes, their documents and evaluations. Members lose access.": {
+  "pt": "Elimina os seus âmbitos, os respetivos documentos e avaliações. Os membros perdem o acesso.",
+  "es": "Elimina sus ámbitos, sus documentos y evaluaciones. Los miembros pierden el acceso.",
+  "fr": "Supprime ses périmètres, leurs documents et évaluations. Les membres perdent l'accès.",
+  "de": "Löscht seine Bereiche samt Dokumenten und Bewertungen. Mitglieder verlieren den Zugang.",
+  "it": "Elimina i suoi ambiti, i relativi documenti e valutazioni. I membri perdono l'accesso."
+ },
+ "Deleting…": {
+  "pt": "A eliminar…",
+  "es": "Eliminando…",
+  "fr": "Suppression…",
+  "de": "Wird gelöscht…",
+  "it": "Eliminazione…"
+ },
+ "Add member": {
+  "pt": "Adicionar membro",
+  "es": "Añadir miembro",
+  "fr": "Ajouter un membre",
+  "de": "Mitglied hinzufügen",
+  "it": "Aggiungi membro"
+ },
+ "Send this link — it works for 14 days.": {
+  "pt": "Envie esta ligação — é válida durante 14 dias.",
+  "es": "Envía este enlace — es válido durante 14 días.",
+  "fr": "Envoyez ce lien — il est valable 14 jours.",
+  "de": "Sende diesen Link — er gilt 14 Tage.",
+  "it": "Invia questo link — è valido per 14 giorni."
+ },
+ "Copied": {
+  "pt": "Copiado",
+  "es": "Copiado",
+  "fr": "Copié",
+  "de": "Kopiert",
+  "it": "Copiato"
+ },
+ "Copy": {
+  "pt": "Copiar",
+  "es": "Copiar",
+  "fr": "Copier",
+  "de": "Kopieren",
+  "it": "Copia"
+ },
+ "Done": {
+  "pt": "Concluído",
+  "es": "Hecho",
+  "fr": "Terminé",
+  "de": "Fertig",
+  "it": "Fatto"
+ },
+ "Email": {
+  "pt": "Email",
+  "es": "Correo electrónico",
+  "fr": "E-mail",
+  "de": "E-Mail",
+  "it": "Email"
+ },
+ "Role": {
+  "pt": "Função",
+  "es": "Rol",
+  "fr": "Rôle",
+  "de": "Rolle",
+  "it": "Ruolo"
+ },
+ "Member — sees results": {
+  "pt": "Membro — vê os resultados",
+  "es": "Miembro — ve los resultados",
+  "fr": "Membre — voit les résultats",
+  "de": "Mitglied — sieht Ergebnisse",
+  "it": "Membro — vede i risultati"
+ },
+ "Admin — configures": {
+  "pt": "Administrador — configura",
+  "es": "Administrador — configura",
+  "fr": "Administrateur — configure",
+  "de": "Admin — konfiguriert",
+  "it": "Amministratore — configura"
+ },
+ "Create invite": {
+  "pt": "Criar convite",
+  "es": "Crear invitación",
+  "fr": "Créer une invitation",
+  "de": "Einladung erstellen",
+  "it": "Crea invito"
+ },
+ "(you)": {
+  "pt": "(você)",
+  "es": "(tú)",
+  "fr": "(vous)",
+  "de": "(du)",
+  "it": "(tu)"
+ },
+ "owner": {
+  "pt": "proprietário",
+  "es": "propietario",
+  "fr": "propriétaire",
+  "de": "Inhaber",
+  "it": "proprietario"
+ },
+ "Role of {username}": {
+  "pt": "Função de {username}",
+  "es": "Rol de {username}",
+  "fr": "Rôle de {username}",
+  "de": "Rolle von {username}",
+  "it": "Ruolo di {username}"
+ },
+ "Admin": {
+  "pt": "Administrador",
+  "es": "Administrador",
+  "fr": "Administrateur",
+  "de": "Admin",
+  "it": "Amministratore"
+ },
+ "Member": {
+  "pt": "Membro",
+  "es": "Miembro",
+  "fr": "Membre",
+  "de": "Mitglied",
+  "it": "Membro"
+ },
+ "Leave this workspace?": {
+  "pt": "Sair deste espaço de trabalho?",
+  "es": "¿Salir de este espacio de trabajo?",
+  "fr": "Quitter cet espace de travail ?",
+  "de": "Diesen Arbeitsbereich verlassen?",
+  "it": "Lasciare quest'area di lavoro?"
+ },
+ "Remove u/{username} from this workspace?": {
+  "pt": "Remover u/{username} deste espaço de trabalho?",
+  "es": "¿Quitar a u/{username} de este espacio de trabajo?",
+  "fr": "Retirer u/{username} de cet espace de travail ?",
+  "de": "u/{username} aus diesem Arbeitsbereich entfernen?",
+  "it": "Rimuovere u/{username} da quest'area di lavoro?"
+ },
+ "Leave": {
+  "pt": "Sair",
+  "es": "Salir",
+  "fr": "Quitter",
+  "de": "Verlassen",
+  "it": "Esci"
+ },
+ "Remove": {
+  "pt": "Remover",
+  "es": "Quitar",
+  "fr": "Retirer",
+  "de": "Entfernen",
+  "it": "Rimuovi"
+ },
+ "Revoke": {
+  "pt": "Revogar",
+  "es": "Revocar",
+  "fr": "Révoquer",
+  "de": "Widerrufen",
+  "it": "Revoca"
+ },
+ "Visitors and people without an active scope see this scope’s results": {
+  "pt": "Os visitantes e quem não tem um âmbito ativo veem os resultados deste âmbito",
+  "es": "Los visitantes y quienes no tienen un ámbito activo ven los resultados de este ámbito",
+  "fr": "Les visiteurs et les personnes sans périmètre actif voient les résultats de ce périmètre",
+  "de": "Besucher und Personen ohne aktiven Bereich sehen die Ergebnisse dieses Bereichs",
+  "it": "I visitatori e chi non ha un ambito attivo vedono i risultati di questo ambito"
+ },
+ "Default": {
+  "pt": "Predefinido",
+  "es": "Predeterminado",
+  "fr": "Par défaut",
+  "de": "Standard",
+  "it": "Predefinito"
+ },
+ "active": {
+  "pt": "ativo",
+  "es": "activo",
+  "fr": "actif",
+  "de": "aktiv",
+  "it": "attivo"
+ },
+ "inactive": {
+  "pt": "inativo",
+  "es": "inactivo",
+  "fr": "inactif",
+  "de": "inaktiv",
+  "it": "inattivo"
+ },
+ "No instructions yet.": {
+  "pt": "Ainda sem instruções.",
+  "es": "Aún no hay instrucciones.",
+  "fr": "Pas encore d'instructions.",
+  "de": "Noch keine Anweisungen.",
+  "it": "Ancora nessuna istruzione."
+ },
+ "Search: {topic}": {
+  "pt": "Pesquisa: {topic}",
+  "es": "Búsqueda: {topic}",
+  "fr": "Recherche : {topic}",
+  "de": "Suche: {topic}",
+  "it": "Ricerca: {topic}"
+ },
+ "Search: built-in EUDI Wallet": {
+  "pt": "Pesquisa: EUDI Wallet incorporada",
+  "es": "Búsqueda: EUDI Wallet integrada",
+  "fr": "Recherche : EUDI Wallet intégrée",
+  "de": "Suche: integrierte EUDI Wallet",
+  "it": "Ricerca: EUDI Wallet integrata"
+ },
+ "{n} context document": {
+  "pt": "{n} documento de contexto",
+  "es": "{n} documento de contexto",
+  "fr": "{n} document de contexte",
+  "de": "{n} Kontextdokument",
+  "it": "{n} documento di contesto"
+ },
+ "{n} context documents": {
+  "pt": "{n} documentos de contexto",
+  "es": "{n} documentos de contexto",
+  "fr": "{n} documents de contexte",
+  "de": "{n} Kontextdokumente",
+  "it": "{n} documenti di contesto"
+ },
+ "{on}/{total} agents on": {
+  "pt": "{on}/{total} agentes ativos",
+  "es": "{on}/{total} agentes activos",
+  "fr": "{on}/{total} agents actifs",
+  "de": "{on}/{total} Agenten aktiv",
+  "it": "{on}/{total} agenti attivi"
+ },
+ "{n} result": {
+  "pt": "{n} resultado",
+  "es": "{n} resultado",
+  "fr": "{n} résultat",
+  "de": "{n} Ergebnis",
+  "it": "{n} risultato"
+ },
+ "{n} results": {
+  "pt": "{n} resultados",
+  "es": "{n} resultados",
+  "fr": "{n} résultats",
+  "de": "{n} Ergebnisse",
+  "it": "{n} risultati"
+ },
+ "Open scope": {
+  "pt": "Abrir âmbito",
+  "es": "Abrir ámbito",
+  "fr": "Ouvrir le périmètre",
+  "de": "Bereich öffnen",
+  "it": "Apri ambito"
+ },
+ "Scope name": {
+  "pt": "Nome do âmbito",
+  "es": "Nombre del ámbito",
+  "fr": "Nom du périmètre",
+  "de": "Name des Bereichs",
+  "it": "Nome dell'ambito"
+ },
+ "e.g. {example}": {
+  "pt": "ex.: {example}",
+  "es": "p. ej., {example}",
+  "fr": "ex. : {example}",
+  "de": "z. B. {example}",
+  "it": "es. {example}"
+ },
+ "EUDI Wallet — public sector": {
+  "pt": "EUDI Wallet — setor público",
+  "es": "EUDI Wallet — sector público",
+  "fr": "EUDI Wallet — secteur public",
+  "de": "EUDI Wallet — öffentlicher Sektor",
+  "it": "EUDI Wallet — settore pubblico"
+ },
+ "Scope instructions": {
+  "pt": "Instruções do âmbito",
+  "es": "Instrucciones del ámbito",
+  "fr": "Instructions du périmètre",
+  "de": "Anweisungen des Bereichs",
+  "it": "Istruzioni dell'ambito"
+ },
+ "Who the scope is for (a company, a department, a project); what you sell and to whom; products and the standards they implement; certifications; size, turnover and locations; partners; the contracts you go for and the ones you don’t.": {
+  "pt": "Para quem é o âmbito (uma empresa, um departamento, um projeto); o que vende e a quem; produtos e as normas que implementam; certificações; dimensão, volume de negócios e localizações; parceiros; os contratos a que concorre e os que não.",
+  "es": "Para quién es el ámbito (una empresa, un departamento, un proyecto); qué vendes y a quién; productos y los estándares que implementan; certificaciones; tamaño, facturación y ubicaciones; socios; los contratos a los que te presentas y a los que no.",
+  "fr": "À qui s'adresse le périmètre (une entreprise, un service, un projet) ; ce que vous vendez et à qui ; vos produits et les normes qu'ils mettent en œuvre ; certifications ; taille, chiffre d'affaires et implantations ; partenaires ; les marchés que vous visez et ceux que vous écartez.",
+  "de": "Für wen der Bereich ist (ein Unternehmen, eine Abteilung, ein Projekt); was du an wen verkaufst; Produkte und die Standards, die sie umsetzen; Zertifizierungen; Größe, Umsatz und Standorte; Partner; die Aufträge, die du anstrebst, und die, die du nicht anstrebst.",
+  "it": "Per chi è l'ambito (un'azienda, un reparto, un progetto); cosa vendi e a chi; prodotti e gli standard che implementano; certificazioni; dimensioni, fatturato e sedi; partner; i contratti a cui punti e quelli a cui no."
+ },
+ "Save scope": {
+  "pt": "Guardar âmbito",
+  "es": "Guardar ámbito",
+  "fr": "Enregistrer le périmètre",
+  "de": "Bereich speichern",
+  "it": "Salva ambito"
+ },
+ "Saving…": {
+  "pt": "A guardar…",
+  "es": "Guardando…",
+  "fr": "Enregistrement…",
+  "de": "Wird gespeichert…",
+  "it": "Salvataggio…"
+ },
+ "Deletes the scope, its documents and evaluations.": {
+  "pt": "Elimina o âmbito, os seus documentos e avaliações.",
+  "es": "Elimina el ámbito, sus documentos y evaluaciones.",
+  "fr": "Supprime le périmètre, ses documents et évaluations.",
+  "de": "Löscht den Bereich, seine Dokumente und Bewertungen.",
+  "it": "Elimina l'ambito, i suoi documenti e le valutazioni."
+ },
+ "Uploading {name}…": {
+  "pt": "A carregar {name}…",
+  "es": "Subiendo {name}…",
+  "fr": "Envoi de {name}…",
+  "de": "{name} wird hochgeladen…",
+  "it": "Caricamento di {name}…"
+ },
+ "upload failed ({status})": {
+  "pt": "o carregamento falhou ({status})",
+  "es": "la subida falló ({status})",
+  "fr": "échec de l'envoi ({status})",
+  "de": "Upload fehlgeschlagen ({status})",
+  "it": "caricamento non riuscito ({status})"
+ },
+ "Reading {name}…": {
+  "pt": "A ler {name}…",
+  "es": "Leyendo {name}…",
+  "fr": "Lecture de {name}…",
+  "de": "{name} wird gelesen…",
+  "it": "Lettura di {name}…"
+ },
+ "Upload": {
+  "pt": "Carregar",
+  "es": "Subir",
+  "fr": "Importer",
+  "de": "Hochladen",
+  "it": "Carica"
+ },
+ "{n} characters read": {
+  "pt": "{n} caracteres lidos",
+  "es": "{n} caracteres leídos",
+  "fr": "{n} caractères lus",
+  "de": "{n} Zeichen gelesen",
+  "it": "{n} caratteri letti"
+ },
+ "no text found (scanned?)": {
+  "pt": "nenhum texto encontrado (digitalizado?)",
+  "es": "no se encontró texto (¿escaneado?)",
+  "fr": "aucun texte trouvé (numérisé ?)",
+  "de": "kein Text gefunden (gescannt?)",
+  "it": "nessun testo trovato (scansionato?)"
+ },
+ "Remove {name}": {
+  "pt": "Remover {name}",
+  "es": "Quitar {name}",
+  "fr": "Retirer {name}",
+  "de": "{name} entfernen",
+  "it": "Rimuovi {name}"
+ },
+ "Remove {name}?": {
+  "pt": "Remover {name}?",
+  "es": "¿Quitar {name}?",
+  "fr": "Retirer {name} ?",
+  "de": "{name} entfernen?",
+  "it": "Rimuovere {name}?"
+ },
+ "Daily pipeline": {
+  "pt": "Pipeline diário",
+  "es": "Pipeline diario",
+  "fr": "Pipeline quotidien",
+  "de": "Täglicher Pipeline-Lauf",
+  "it": "Pipeline giornaliera"
+ },
+ "On click": {
+  "pt": "Ao clicar",
+  "es": "Al hacer clic",
+  "fr": "Au clic",
+  "de": "Per Klick",
+  "it": "Al clic"
+ },
+ "When a story is opened": {
+  "pt": "Quando uma notícia é aberta",
+  "es": "Al abrir una noticia",
+  "fr": "À l'ouverture d'une actualité",
+  "de": "Beim Öffnen einer Meldung",
+  "it": "All'apertura di una notizia"
+ },
+ "customised": {
+  "pt": "personalizado",
+  "es": "personalizado",
+  "fr": "personnalisé",
+  "de": "angepasst",
+  "it": "personalizzato"
+ },
+ "on": {
+  "pt": "ligado",
+  "es": "activado",
+  "fr": "activé",
+  "de": "an",
+  "it": "attivo"
+ },
+ "off": {
+  "pt": "desligado",
+  "es": "desactivado",
+  "fr": "désactivé",
+  "de": "aus",
+  "it": "disattivato"
+ },
+ "Open config": {
+  "pt": "Abrir configuração",
+  "es": "Abrir configuración",
+  "fr": "Ouvrir la configuration",
+  "de": "Konfiguration öffnen",
+  "it": "Apri configurazione"
+ },
+ "Fine-tuning": {
+  "pt": "Afinação",
+  "es": "Ajuste fino",
+  "fr": "Réglage fin",
+  "de": "Feinabstimmung",
+  "it": "Messa a punto"
+ },
+ "— in plain language": {
+  "pt": "— em linguagem simples",
+  "es": "— en lenguaje sencillo",
+  "fr": "— en langage courant",
+  "de": "— in einfacher Sprache",
+  "it": "— in linguaggio semplice"
+ },
+ "Last attempt not applied: {error}.": {
+  "pt": "Última tentativa não aplicada: {error}.",
+  "es": "Último intento no aplicado: {error}.",
+  "fr": "Dernière tentative non appliquée : {error}.",
+  "de": "Letzter Versuch nicht angewendet: {error}.",
+  "it": "Ultimo tentativo non applicato: {error}."
+ },
+ "Apply": {
+  "pt": "Aplicar",
+  "es": "Aplicar",
+  "fr": "Appliquer",
+  "de": "Anwenden",
+  "it": "Applica"
+ },
+ "The Config Agent is working…": {
+  "pt": "O Config Agent está a trabalhar…",
+  "es": "El Config Agent está trabajando…",
+  "fr": "Le Config Agent travaille…",
+  "de": "Der Config Agent arbeitet…",
+  "it": "Il Config Agent sta lavorando…"
+ },
+ "customised configuration": {
+  "pt": "configuração personalizada",
+  "es": "configuración personalizada",
+  "fr": "configuration personnalisée",
+  "de": "angepasste Konfiguration",
+  "it": "configurazione personalizzata"
+ },
+ "default configuration": {
+  "pt": "configuração predefinida",
+  "es": "configuración predeterminada",
+  "fr": "configuration par défaut",
+  "de": "Standardkonfiguration",
+  "it": "configurazione predefinita"
+ },
+ "Read-only.": {
+  "pt": "Só de leitura.",
+  "es": "Solo lectura.",
+  "fr": "Lecture seule.",
+  "de": "Schreibgeschützt.",
+  "it": "Sola lettura."
+ },
+ "Search queries and relevance rules (JSON).": {
+  "pt": "Pesquisas e regras de relevância (JSON).",
+  "es": "Búsquedas y reglas de relevancia (JSON).",
+  "fr": "Requêtes de recherche et règles de pertinence (JSON).",
+  "de": "Suchanfragen und Relevanzregeln (JSON).",
+  "it": "Query di ricerca e regole di rilevanza (JSON)."
+ },
+ "File sorting and alert rules (JSON).": {
+  "pt": "Organização de ficheiros e regras de alerta (JSON).",
+  "es": "Clasificación de archivos y reglas de alerta (JSON).",
+  "fr": "Tri des fichiers et règles d'alerte (JSON).",
+  "de": "Dateisortierung und Benachrichtigungsregeln (JSON).",
+  "it": "Ordinamento dei file e regole di avviso (JSON)."
+ },
+ "Keep the {output} section and the {placeholders}.": {
+  "pt": "Mantenha a secção {output} e os {placeholders}.",
+  "es": "Mantén la sección {output} y los {placeholders}.",
+  "fr": "Conservez la section {output} et les {placeholders}.",
+  "de": "Behalte den Abschnitt {output} und die {placeholders} bei.",
+  "it": "Mantieni la sezione {output} e i {placeholders}."
+ },
+ "Nothing to configure.": {
+  "pt": "Nada a configurar.",
+  "es": "Nada que configurar.",
+  "fr": "Rien à configurer.",
+  "de": "Nichts zu konfigurieren.",
+  "it": "Niente da configurare."
+ },
+ "Reset {agent} to its default configuration?": {
+  "pt": "Repor a configuração predefinida do {agent}?",
+  "es": "¿Restablecer {agent} a su configuración predeterminada?",
+  "fr": "Rétablir la configuration par défaut de {agent} ?",
+  "de": "{agent} auf die Standardkonfiguration zurücksetzen?",
+  "it": "Ripristinare la configurazione predefinita di {agent}?"
+ },
+ "Reset {agent} to its default configuration and clear its fine-tuning?": {
+  "pt": "Repor a configuração predefinida do {agent} e limpar a sua afinação?",
+  "es": "¿Restablecer {agent} a su configuración predeterminada y borrar su ajuste fino?",
+  "fr": "Rétablir la configuration par défaut de {agent} et effacer son réglage fin ?",
+  "de": "{agent} auf die Standardkonfiguration zurücksetzen und die Feinabstimmung löschen?",
+  "it": "Ripristinare la configurazione predefinita di {agent} e cancellarne la messa a punto?"
+ },
+ "Reset to default": {
+  "pt": "Repor predefinição",
+  "es": "Restablecer predeterminado",
+  "fr": "Rétablir par défaut",
+  "de": "Auf Standard zurücksetzen",
+  "it": "Ripristina predefinito"
+ },
+ "Discard changes": {
+  "pt": "Descartar alterações",
+  "es": "Descartar cambios",
+  "fr": "Annuler les modifications",
+  "de": "Änderungen verwerfen",
+  "it": "Annulla modifiche"
+ },
+ "Be more concise.": {
+  "pt": "Seja mais conciso.",
+  "es": "Sé más conciso.",
+  "fr": "Soyez plus concis.",
+  "de": "Sei knapper.",
+  "it": "Sii più conciso."
+ },
+ "Tenders and grants for digital identity wallets in the EU and UK: wallet development, PID/(Q)EAA issuers, mDL. Not crypto or payment wallets.": {
+  "pt": "Concursos e subvenções para carteiras de identidade digital na UE e no Reino Unido: desenvolvimento de carteiras, emissores de PID/(Q)EAA, mDL. Não carteiras cripto nem de pagamento.",
+  "es": "Licitaciones y subvenciones para carteras de identidad digital en la UE y el Reino Unido: desarrollo de carteras, emisores de PID/(Q)EAA, mDL. No carteras cripto ni de pago.",
+  "fr": "Appels d'offres et subventions pour les portefeuilles d'identité numérique dans l'UE et au Royaume-Uni : développement de portefeuilles, émetteurs PID/(Q)EAA, mDL. Pas de portefeuilles crypto ni de paiement.",
+  "de": "Ausschreibungen und Förderungen für digitale Identitäts-Wallets in der EU und im Vereinigten Königreich: Wallet-Entwicklung, PID/(Q)EAA-Aussteller, mDL. Keine Krypto- oder Zahlungs-Wallets.",
+  "it": "Gare e sovvenzioni per wallet di identità digitale nell'UE e nel Regno Unito: sviluppo di wallet, emittenti PID/(Q)EAA, mDL. Non wallet crypto o di pagamento."
+ },
+ "Treat files named “Leistungsverzeichnis” as technical specifications. Post an update when a new contract draft appears.": {
+  "pt": "Trate os ficheiros com o nome “Leistungsverzeichnis” como especificações técnicas. Publique uma atualização quando surgir uma nova minuta de contrato.",
+  "es": "Trata los archivos llamados “Leistungsverzeichnis” como especificaciones técnicas. Publica una actualización cuando aparezca un nuevo borrador de contrato.",
+  "fr": "Traitez les fichiers nommés « Leistungsverzeichnis » comme des spécifications techniques. Publiez une mise à jour lorsqu'un nouveau projet de contrat apparaît.",
+  "de": "Behandle Dateien namens „Leistungsverzeichnis“ als technische Spezifikationen. Poste ein Update, wenn ein neuer Vertragsentwurf erscheint.",
+  "it": "Tratta i file chiamati “Leistungsverzeichnis” come specifiche tecniche. Pubblica un aggiornamento quando compare una nuova bozza di contratto."
+ },
+ "Score anything about mobile driving licences at least 80. Treat banking KYC tenders as relevant.": {
+  "pt": "Dê pelo menos 80 a tudo sobre cartas de condução móveis. Considere relevantes os concursos de KYC bancário.",
+  "es": "Puntúa con al menos 80 todo lo relacionado con permisos de conducir móviles. Considera relevantes las licitaciones de KYC bancario.",
+  "fr": "Attribuez au moins 80 à tout ce qui concerne les permis de conduire mobiles. Considérez les appels d'offres KYC bancaires comme pertinents.",
+  "de": "Bewerte alles zu mobilen Führerscheinen mit mindestens 80. Behandle Banken-KYC-Ausschreibungen als relevant.",
+  "it": "Assegna almeno 80 a tutto ciò che riguarda le patenti di guida mobili. Considera rilevanti le gare di KYC bancario."
+ },
+ "Treat a call as open only if the page shows a deadline.": {
+  "pt": "Considere um concurso aberto só se a página mostrar um prazo.",
+  "es": "Considera abierta una convocatoria solo si la página muestra un plazo.",
+  "fr": "Ne considérez un appel comme ouvert que si la page indique une date limite.",
+  "de": "Behandle eine Ausschreibung nur dann als offen, wenn die Seite eine Frist zeigt.",
+  "it": "Considera aperto un bando solo se la pagina mostra una scadenza."
+ },
+ "Also list the languages the bid must be written in, and every insurance requirement with its amount.": {
+  "pt": "Indique também as línguas em que a proposta deve ser redigida e cada requisito de seguro com o respetivo montante.",
+  "es": "Indica también los idiomas en que debe redactarse la oferta y cada requisito de seguro con su importe.",
+  "fr": "Indiquez aussi les langues dans lesquelles l'offre doit être rédigée, et chaque exigence d'assurance avec son montant.",
+  "de": "Nenne auch die Sprachen, in denen das Angebot verfasst werden muss, und jede Versicherungsanforderung mit Betrag.",
+  "it": "Elenca anche le lingue in cui va redatta l'offerta e ogni requisito assicurativo con il relativo importo."
+ },
+ "Be strict: no MATCH without a named reference in our material. Always suggest a partner for hardware.": {
+  "pt": "Seja rigoroso: nenhum MATCH sem uma referência nomeada no nosso material. Sugira sempre um parceiro para hardware.",
+  "es": "Sé estricto: ningún MATCH sin una referencia concreta en nuestro material. Sugiere siempre un socio para el hardware.",
+  "fr": "Soyez strict : pas de MATCH sans référence nommée dans nos documents. Suggérez toujours un partenaire pour le matériel.",
+  "de": "Sei streng: kein MATCH ohne benannte Referenz in unserem Material. Schlage für Hardware immer einen Partner vor.",
+  "it": "Sii rigoroso: nessun MATCH senza un riferimento specifico nel nostro materiale. Suggerisci sempre un partner per l'hardware."
+ },
+ "Keep summaries under 300 words. Always suggest a LinkedIn post angle.": {
+  "pt": "Mantenha os resumos abaixo de 300 palavras. Sugira sempre um ângulo para uma publicação no LinkedIn.",
+  "es": "Mantén los resúmenes por debajo de 300 palabras. Sugiere siempre un enfoque para una publicación en LinkedIn.",
+  "fr": "Limitez les résumés à 300 mots. Suggérez toujours un angle de publication LinkedIn.",
+  "de": "Halte Zusammenfassungen unter 300 Wörtern. Schlage immer einen Aufhänger für einen LinkedIn-Beitrag vor.",
+  "it": "Mantieni i riassunti sotto le 300 parole. Suggerisci sempre un taglio per un post su LinkedIn."
+ },
+ "Lead every tender post with the value and the deadline.": {
+  "pt": "Comece cada publicação de concurso com o valor e o prazo.",
+  "es": "Empieza cada publicación de licitación con el importe y el plazo.",
+  "fr": "Commencez chaque publication d'appel d'offres par le montant et la date limite.",
+  "de": "Beginne jeden Ausschreibungsbeitrag mit Wert und Frist.",
+  "it": "Apri ogni post di gara con il valore e la scadenza."
+ },
+ "Keep German agency names untranslated, without the English in parentheses.": {
+  "pt": "Mantenha os nomes de organismos alemães sem tradução, sem o inglês entre parênteses.",
+  "es": "Deja sin traducir los nombres de organismos alemanes, sin el inglés entre paréntesis.",
+  "fr": "Ne traduisez pas les noms d'organismes allemands, sans l'anglais entre parenthèses.",
+  "de": "Lass deutsche Behördennamen unübersetzt, ohne Englisch in Klammern.",
+  "it": "Lascia non tradotti i nomi degli enti tedeschi, senza l'inglese tra parentesi."
+ },
+ "International": {
+  "pt": "Internacional",
+  "es": "Internacional",
+  "fr": "International",
+  "de": "International",
+  "it": "Internazionale"
+ },
+ "Following": {
+  "pt": "A seguir",
+  "es": "Siguiendo",
+  "fr": "Suivis",
+  "de": "Gefolgt",
+  "it": "Seguiti"
+ },
+ "Monitored of followed": {
+  "pt": "Monitorizadas de seguidas",
+  "es": "Seguimiento activo de seguidas",
+  "fr": "Surveillées sur suivies",
+  "de": "Überwacht von gefolgt",
+  "it": "Monitorate su seguite"
+ },
+ "Add source": {
+  "pt": "Adicionar fonte",
+  "es": "Añadir fuente",
+  "fr": "Ajouter une source",
+  "de": "Quelle hinzufügen",
+  "it": "Aggiungi fonte"
+ },
+ "Source groups": {
+  "pt": "Grupos de fontes",
+  "es": "Grupos de fuentes",
+  "fr": "Groupes de sources",
+  "de": "Quellengruppen",
+  "it": "Gruppi di fonti"
+ },
+ "All": {
+  "pt": "Todas",
+  "es": "Todas",
+  "fr": "Toutes",
+  "de": "Alle",
+  "it": "Tutte"
+ },
+ "Filter": {
+  "pt": "Filtrar",
+  "es": "Filtrar",
+  "fr": "Filtrer",
+  "de": "Filtern",
+  "it": "Filtra"
+ },
+ "Filter sources": {
+  "pt": "Filtrar fontes",
+  "es": "Filtrar fuentes",
+  "fr": "Filtrer les sources",
+  "de": "Quellen filtern",
+  "it": "Filtra fonti"
+ },
+ "No sources match.": {
+  "pt": "Nenhuma fonte corresponde.",
+  "es": "Ninguna fuente coincide.",
+  "fr": "Aucune source ne correspond.",
+  "de": "Keine passenden Quellen.",
+  "it": "Nessuna fonte corrisponde."
+ },
+ "Not following any sources yet.": {
+  "pt": "Ainda não segue nenhuma fonte.",
+  "es": "Aún no sigues ninguna fuente.",
+  "fr": "Aucune source suivie pour l'instant.",
+  "de": "Noch keine Quellen gefolgt.",
+  "it": "Non segui ancora nessuna fonte."
+ },
+ "Unfollow {name}": {
+  "pt": "Deixar de seguir {name}",
+  "es": "Dejar de seguir {name}",
+  "fr": "Ne plus suivre {name}",
+  "de": "{name} nicht mehr folgen",
+  "it": "Smetti di seguire {name}"
+ },
+ "Unfollow": {
+  "pt": "Deixar de seguir",
+  "es": "Dejar de seguir",
+  "fr": "Ne plus suivre",
+  "de": "Nicht mehr folgen",
+  "it": "Smetti di seguire"
+ },
+ "Show all {n}": {
+  "pt": "Mostrar todas ({n})",
+  "es": "Mostrar todas ({n})",
+  "fr": "Tout afficher ({n})",
+  "de": "Alle {n} anzeigen",
+  "it": "Mostra tutte ({n})"
+ },
+ "Search sources": {
+  "pt": "Pesquisar fontes",
+  "es": "Buscar fuentes",
+  "fr": "Rechercher des sources",
+  "de": "Quellen suchen",
+  "it": "Cerca fonti"
+ },
+ "New source": {
+  "pt": "Nova fonte",
+  "es": "Nueva fuente",
+  "fr": "Nouvelle source",
+  "de": "Neue Quelle",
+  "it": "Nuova fonte"
+ },
+ "Following every source already.": {
+  "pt": "Já segue todas as fontes.",
+  "es": "Ya sigues todas las fuentes.",
+  "fr": "Toutes les sources sont déjà suivies.",
+  "de": "Du folgst bereits allen Quellen.",
+  "it": "Segui già tutte le fonti."
+ },
+ "Follow": {
+  "pt": "Seguir",
+  "es": "Seguir",
+  "fr": "Suivre",
+  "de": "Folgen",
+  "it": "Segui"
+ },
+ "Paused": {
+  "pt": "Em pausa",
+  "es": "En pausa",
+  "fr": "En pause",
+  "de": "Pausiert",
+  "it": "In pausa"
+ },
+ "Not connected — needs API access": {
+  "pt": "Não ligada — requer acesso à API",
+  "es": "No conectada — necesita acceso a la API",
+  "fr": "Non connectée — nécessite un accès API",
+  "de": "Nicht verbunden — braucht API-Zugang",
+  "it": "Non collegata — richiede accesso API"
+ },
+ "Listed, not monitored": {
+  "pt": "Listada, não monitorizada",
+  "es": "Listada, sin seguimiento",
+  "fr": "Listée, non suivie",
+  "de": "Gelistet, nicht überwacht",
+  "it": "Elencata, non monitorata"
+ },
+ "Last check failed: {error}": {
+  "pt": "A última verificação falhou: {error}",
+  "es": "La última comprobación falló: {error}",
+  "fr": "Échec de la dernière vérification : {error}",
+  "de": "Letzte Prüfung fehlgeschlagen: {error}",
+  "it": "Ultimo controllo non riuscito: {error}"
+ },
+ "first check on the next run": {
+  "pt": "primeira verificação na próxima execução",
+  "es": "primera comprobación en la próxima ejecución",
+  "fr": "première vérification à la prochaine exécution",
+  "de": "erste Prüfung beim nächsten Lauf",
+  "it": "primo controllo alla prossima esecuzione"
+ },
+ "checked {date}": {
+  "pt": "verificada a {date}",
+  "es": "comprobada el {date}",
+  "fr": "vérifiée le {date}",
+  "de": "geprüft am {date}",
+  "it": "controllata il {date}"
+ },
+ "never": {
+  "pt": "nunca",
+  "es": "nunca",
+  "fr": "jamais",
+  "de": "nie",
+  "it": "mai"
+ },
+ "Save changes": {
+  "pt": "Guardar alterações",
+  "es": "Guardar cambios",
+  "fr": "Enregistrer les modifications",
+  "de": "Änderungen speichern",
+  "it": "Salva modifiche"
+ },
+ "Follow source": {
+  "pt": "Seguir fonte",
+  "es": "Seguir fuente",
+  "fr": "Suivre la source",
+  "de": "Quelle folgen",
+  "it": "Segui fonte"
+ },
+ "Source settings": {
+  "pt": "Definições da fonte",
+  "es": "Configuración de la fuente",
+  "fr": "Paramètres de la source",
+  "de": "Quelleneinstellungen",
+  "it": "Impostazioni della fonte"
+ },
+ "Follow a source": {
+  "pt": "Seguir uma fonte",
+  "es": "Seguir una fuente",
+  "fr": "Suivre une source",
+  "de": "Einer Quelle folgen",
+  "it": "Segui una fonte"
+ },
+ "Type": {
+  "pt": "Tipo",
+  "es": "Tipo",
+  "fr": "Type",
+  "de": "Typ",
+  "it": "Tipo"
+ },
+ "Country": {
+  "pt": "País",
+  "es": "País",
+  "fr": "Pays",
+  "de": "Land",
+  "it": "Paese"
+ },
+ "(optional)": {
+  "pt": "(opcional)",
+  "es": "(opcional)",
+  "fr": "(facultatif)",
+  "de": "(optional)",
+  "it": "(facoltativo)"
+ },
+ "International / EU": {
+  "pt": "Internacional / UE",
+  "es": "Internacional / UE",
+  "fr": "International / UE",
+  "de": "International / EU",
+  "it": "Internazionale / UE"
+ },
+ "Subreddit or user": {
+  "pt": "Subreddit ou utilizador",
+  "es": "Subreddit o usuario",
+  "fr": "Subreddit ou utilisateur",
+  "de": "Subreddit oder Nutzer",
+  "it": "Subreddit o utente"
+ },
+ "Handle or profile URL": {
+  "pt": "Identificador ou URL do perfil",
+  "es": "Usuario o URL del perfil",
+  "fr": "Identifiant ou URL du profil",
+  "de": "Handle oder Profil-URL",
+  "it": "Handle o URL del profilo"
+ },
+ "Website or feed URL": {
+  "pt": "URL do website ou do feed",
+  "es": "URL del sitio web o del feed",
+  "fr": "URL du site ou du flux",
+  "de": "Website- oder Feed-URL",
+  "it": "URL del sito o del feed"
+ },
+ "Monitoring": {
+  "pt": "Monitorização",
+  "es": "Seguimiento",
+  "fr": "Suivi",
+  "de": "Überwachung",
+  "it": "Monitoraggio"
+ },
+ "Automatic — feed if found, else site search": {
+  "pt": "Automático — feed se existir, senão pesquisa no site",
+  "es": "Automático — feed si existe, si no búsqueda en el sitio",
+  "fr": "Automatique — flux s'il existe, sinon recherche sur le site",
+  "de": "Automatisch — Feed, falls vorhanden, sonst Website-Suche",
+  "it": "Automatico — feed se presente, altrimenti ricerca nel sito"
+ },
+ "Check every": {
+  "pt": "Verificar a cada",
+  "es": "Comprobar cada",
+  "fr": "Intervalle de vérification",
+  "de": "Prüfintervall",
+  "it": "Controlla ogni"
+ },
+ "day": {
+  "pt": "dia",
+  "es": "día",
+  "fr": "jour",
+  "de": "Tag",
+  "it": "giorno"
+ },
+ "{n} days": {
+  "pt": "{n} dias",
+  "es": "{n} días",
+  "fr": "{n} jours",
+  "de": "{n} Tage",
+  "it": "{n} giorni"
+ },
+ "Monitored once API access is set up.": {
+  "pt": "Monitorizada assim que o acesso à API estiver configurado.",
+  "es": "Se seguirá cuando se configure el acceso a la API.",
+  "fr": "Suivie dès que l'accès API est configuré.",
+  "de": "Wird überwacht, sobald der API-Zugang eingerichtet ist.",
+  "it": "Monitorata non appena l'accesso API è configurato."
+ },
+ "Uses the site’s feed if it has one.": {
+  "pt": "Usa o feed do site, se existir.",
+  "es": "Usa el feed del sitio si lo tiene.",
+  "fr": "Utilise le flux du site s'il en a un.",
+  "de": "Nutzt den Feed der Website, falls vorhanden.",
+  "it": "Usa il feed del sito, se presente."
+ },
+ "Monitoring on": {
+  "pt": "Monitorização ligada",
+  "es": "Seguimiento activado",
+  "fr": "Suivi activé",
+  "de": "Überwachung an",
+  "it": "Monitoraggio attivo"
+ },
+ "Last check": {
+  "pt": "Última verificação",
+  "es": "Última comprobación",
+  "fr": "Dernière vérification",
+  "de": "Letzte Prüfung",
+  "it": "Ultimo controllo"
+ },
+ "Last result": {
+  "pt": "Último resultado",
+  "es": "Último resultado",
+  "fr": "Dernier résultat",
+  "de": "Letztes Ergebnis",
+  "it": "Ultimo risultato"
+ },
+ "{n} item": {
+  "pt": "{n} item",
+  "es": "{n} elemento",
+  "fr": "{n} élément",
+  "de": "{n} Eintrag",
+  "it": "{n} elemento"
+ },
+ "{n} items": {
+  "pt": "{n} itens",
+  "es": "{n} elementos",
+  "fr": "{n} éléments",
+  "de": "{n} Einträge",
+  "it": "{n} elementi"
+ },
+ "Feed": {
+  "pt": "Feed",
+  "es": "Feed",
+  "fr": "Feed",
+  "de": "Feed",
+  "it": "Feed"
+ },
+ "{monitored} monitored of {total}": {
+  "pt": "{monitored} monitorizadas de {total}",
+  "es": "{monitored} con seguimiento de {total}",
+  "fr": "{monitored} suivies sur {total}",
+  "de": "{monitored} von {total} überwacht",
+  "it": "{monitored} monitorate su {total}"
+ },
+ "{n} failing": {
+  "pt": "{n} com falhas",
+  "es": "{n} con fallos",
+  "fr": "{n} en échec",
+  "de": "{n} fehlerhaft",
+  "it": "{n} con errori"
+ },
+ "Search Agent": {
+  "pt": "Agente de Pesquisa",
+  "es": "Agente de Búsqueda",
+  "fr": "Agent de recherche",
+  "de": "Such-Agent",
+  "it": "Agente di ricerca"
+ },
+ "Finds tenders and news on TED, the web and your followed sources.": {
+  "pt": "Encontra concursos e notícias no TED, na web e nas fontes que segue.",
+  "es": "Encuentra licitaciones y noticias en TED, la web y las fuentes que sigues.",
+  "fr": "Trouve des appels d'offres et des actualités sur TED, le web et vos sources suivies.",
+  "de": "Findet Ausschreibungen und Nachrichten auf TED, im Web und in deinen gefolgten Quellen.",
+  "it": "Trova gare e notizie su TED, sul web e nelle fonti che segui."
+ },
+ "Triage Agent": {
+  "pt": "Agente de Triagem",
+  "es": "Agente de Triaje",
+  "fr": "Agent de tri",
+  "de": "Triage-Agent",
+  "it": "Agente di smistamento"
+ },
+ "Scores each find for relevance and sorts tenders, grants and news.": {
+  "pt": "Pontua a relevância de cada resultado e separa concursos, subvenções e notícias.",
+  "es": "Puntúa la relevancia de cada hallazgo y clasifica licitaciones, subvenciones y noticias.",
+  "fr": "Note la pertinence de chaque trouvaille et trie appels d'offres, subventions et actualités.",
+  "de": "Bewertet jeden Fund nach Relevanz und sortiert Ausschreibungen, Förderungen und Nachrichten.",
+  "it": "Valuta la rilevanza di ogni risultato e smista gare, sovvenzioni e notizie."
+ },
+ "Tender Documents Agent": {
+  "pt": "Agente de Documentos do Concurso",
+  "es": "Agente de Documentos de Licitación",
+  "fr": "Agent des documents d'appel d'offres",
+  "de": "Agent für Ausschreibungsunterlagen",
+  "it": "Agente documenti di gara"
+ },
+ "Collects each tender’s notices and documents and spots changes.": {
+  "pt": "Recolhe os anúncios e documentos de cada concurso e deteta alterações.",
+  "es": "Recopila los anuncios y documentos de cada licitación y detecta cambios.",
+  "fr": "Rassemble les avis et documents de chaque appel d'offres et repère les changements.",
+  "de": "Sammelt Bekanntmachungen und Unterlagen jeder Ausschreibung und erkennt Änderungen.",
+  "it": "Raccoglie bandi e documenti di ogni gara e rileva le modifiche."
+ },
+ "Tender Analysis Agent": {
+  "pt": "Agente de Análise do Concurso",
+  "es": "Agente de Análisis de Licitación",
+  "fr": "Agent d'analyse d'appel d'offres",
+  "de": "Agent für Ausschreibungsanalyse",
+  "it": "Agente analisi di gara"
+ },
+ "Writes each tender’s summary and its full list of requirements.": {
+  "pt": "Escreve o resumo de cada concurso e a lista completa de requisitos.",
+  "es": "Redacta el resumen de cada licitación y su lista completa de requisitos.",
+  "fr": "Rédige le résumé de chaque appel d'offres et la liste complète de ses exigences.",
+  "de": "Schreibt die Zusammenfassung jeder Ausschreibung und die vollständige Anforderungsliste.",
+  "it": "Scrive il riassunto di ogni gara e l'elenco completo dei requisiti."
+ },
+ "Tender Evaluation Agent": {
+  "pt": "Agente de Avaliação do Concurso",
+  "es": "Agente de Evaluación de Licitación",
+  "fr": "Agent d'évaluation d'appel d'offres",
+  "de": "Agent für Ausschreibungsbewertung",
+  "it": "Agente valutazione di gara"
+ },
+ "Checks a tender against your scope, scores the fit and advises.": {
+  "pt": "Compara um concurso com o seu âmbito, pontua a adequação e aconselha.",
+  "es": "Compara una licitación con tu ámbito, puntúa el encaje y aconseja.",
+  "fr": "Confronte un appel d'offres à votre périmètre, note l'adéquation et conseille.",
+  "de": "Prüft eine Ausschreibung gegen deinen Bereich, bewertet die Passung und berät.",
+  "it": "Confronta una gara con il tuo ambito, valuta l'aderenza e consiglia."
+ },
+ "Proposal Manager Agent": {
+  "pt": "Agente Gestor de Propostas",
+  "es": "Agente Gestor de Propuestas",
+  "fr": "Agent de gestion des offres",
+  "de": "Angebotsmanager-Agent",
+  "it": "Agente gestione offerte"
+ },
+ "Writes the proposal brief: requirements, references, gaps and steps.": {
+  "pt": "Escreve o resumo da proposta: requisitos, referências, lacunas e passos.",
+  "es": "Redacta el resumen de la propuesta: requisitos, referencias, carencias y pasos.",
+  "fr": "Rédige la note de proposition : exigences, références, lacunes et étapes.",
+  "de": "Schreibt das Angebotsbriefing: Anforderungen, Referenzen, Lücken und Schritte.",
+  "it": "Scrive il brief dell'offerta: requisiti, referenze, lacune e passaggi."
+ },
+ "News Report Agent": {
+  "pt": "Agente de Relatório de Notícias",
+  "es": "Agente de Informe de Noticias",
+  "fr": "Agent de rapport d'actualités",
+  "de": "Nachrichtenbericht-Agent",
+  "it": "Agente report notizie"
+ },
+ "Summarises a story when opened and suggests what to do about it.": {
+  "pt": "Resume uma notícia quando é aberta e sugere o que fazer.",
+  "es": "Resume una noticia al abrirla y sugiere qué hacer al respecto.",
+  "fr": "Résume une actualité à l'ouverture et suggère quoi en faire.",
+  "de": "Fasst eine Meldung beim Öffnen zusammen und schlägt vor, was zu tun ist.",
+  "it": "Riassume una notizia quando viene aperta e suggerisce cosa fare."
+ },
+ "Feed Writer Agent": {
+  "pt": "Agente Redator do Feed",
+  "es": "Agente Redactor del Feed",
+  "fr": "Agent rédacteur du Feed",
+  "de": "Feed-Redakteur-Agent",
+  "it": "Agente redattore del Feed"
+ },
+ "Writes the headline and post for every item in the feed.": {
+  "pt": "Escreve o título e a publicação de cada item do feed.",
+  "es": "Redacta el titular y la publicación de cada elemento del feed.",
+  "fr": "Rédige le titre et la publication de chaque élément du Feed.",
+  "de": "Schreibt Überschrift und Beitrag für jeden Eintrag im Feed.",
+  "it": "Scrive il titolo e il post per ogni elemento del feed."
+ },
+ "Translator Agent": {
+  "pt": "Agente Tradutor",
+  "es": "Agente Traductor",
+  "fr": "Agent traducteur",
+  "de": "Übersetzer-Agent",
+  "it": "Agente traduttore"
+ },
+ "Translates titles, documents and summaries into the site language.": {
+  "pt": "Traduz títulos, documentos e resumos para a língua do site.",
+  "es": "Traduce títulos, documentos y resúmenes al idioma del sitio.",
+  "fr": "Traduit titres, documents et résumés dans la langue du site.",
+  "de": "Übersetzt Titel, Dokumente und Zusammenfassungen in die Sprache der Website.",
+  "it": "Traduce titoli, documenti e riassunti nella lingua del sito."
+ },
+ "Tender portal": {
+  "pt": "Portal de concursos",
+  "es": "Portal de licitaciones",
+  "fr": "Portail d'appels d'offres",
+  "de": "Ausschreibungsportal",
+  "it": "Portale gare"
+ },
+ "Funding portal": {
+  "pt": "Portal de financiamento",
+  "es": "Portal de financiación",
+  "fr": "Portail de financement",
+  "de": "Förderportal",
+  "it": "Portale di finanziamenti"
+ },
+ "EU programme": {
+  "pt": "Programa da UE",
+  "es": "Programa de la UE",
+  "fr": "Programme de l'UE",
+  "de": "EU-Programm",
+  "it": "Programma UE"
+ },
+ "Large-scale pilot": {
+  "pt": "Piloto de grande escala",
+  "es": "Piloto a gran escala",
+  "fr": "Pilote à grande échelle",
+  "de": "Großpilot",
+  "it": "Pilota su larga scala"
+ },
+ "Consortium": {
+  "pt": "Consórcio",
+  "es": "Consorcio",
+  "fr": "Consortium",
+  "de": "Konsortium",
+  "it": "Consorzio"
+ },
+ "Government site": {
+  "pt": "Site governamental",
+  "es": "Sitio gubernamental",
+  "fr": "Site gouvernemental",
+  "de": "Regierungsseite",
+  "it": "Sito governativo"
+ },
+ "Digital agency": {
+  "pt": "Agência digital",
+  "es": "Agencia digital",
+  "fr": "Agence du numérique",
+  "de": "Digitalagentur",
+  "it": "Agenzia digitale"
+ },
+ "Identity authority": {
+  "pt": "Autoridade de identidade",
+  "es": "Autoridad de identidad",
+  "fr": "Autorité d'identité",
+  "de": "Identitätsbehörde",
+  "it": "Autorità per l'identità"
+ },
+ "Standards body": {
+  "pt": "Organismo de normalização",
+  "es": "Organismo de normalización",
+  "fr": "Organisme de normalisation",
+  "de": "Normungsgremium",
+  "it": "Ente di normazione"
+ },
+ "Development bank": {
+  "pt": "Banco de desenvolvimento",
+  "es": "Banco de desarrollo",
+  "fr": "Banque de développement",
+  "de": "Entwicklungsbank",
+  "it": "Banca di sviluppo"
+ },
+ "News site / blog": {
+  "pt": "Site de notícias / blogue",
+  "es": "Sitio de noticias / blog",
+  "fr": "Site d'actualités / blog",
+  "de": "Nachrichtenseite / Blog",
+  "it": "Sito di notizie / blog"
+ },
+ "Industry source": {
+  "pt": "Fonte do setor",
+  "es": "Fuente del sector",
+  "fr": "Source sectorielle",
+  "de": "Branchenquelle",
+  "it": "Fonte di settore"
+ },
+ "Tender portals": {
+  "pt": "Portais de concursos",
+  "es": "Portales de licitaciones",
+  "fr": "Portails d'appels d'offres",
+  "de": "Ausschreibungsportale",
+  "it": "Portali gare"
+ },
+ "Funding & EU programmes": {
+  "pt": "Financiamento e programas da UE",
+  "es": "Financiación y programas de la UE",
+  "fr": "Financements et programmes de l'UE",
+  "de": "Förderung & EU-Programme",
+  "it": "Finanziamenti e programmi UE"
+ },
+ "Government & agencies": {
+  "pt": "Governo e agências",
+  "es": "Gobierno y agencias",
+  "fr": "Gouvernement et agences",
+  "de": "Regierung & Behörden",
+  "it": "Governo e agenzie"
+ },
+ "Standards & trust": {
+  "pt": "Normas e confiança",
+  "es": "Normas y confianza",
+  "fr": "Normes et confiance",
+  "de": "Standards & Vertrauensdienste",
+  "it": "Standard e fiducia"
+ },
+ "Development banks": {
+  "pt": "Bancos de desenvolvimento",
+  "es": "Bancos de desarrollo",
+  "fr": "Banques de développement",
+  "de": "Entwicklungsbanken",
+  "it": "Banche di sviluppo"
+ },
+ "News & media": {
+  "pt": "Notícias e media",
+  "es": "Noticias y medios",
+  "fr": "Actualités et médias",
+  "de": "Nachrichten & Medien",
+  "it": "Notizie e media"
+ },
+ "Social": {
+  "pt": "Redes sociais",
+  "es": "Redes sociales",
+  "fr": "Réseaux sociaux",
+  "de": "Soziale Medien",
+  "it": "Social"
+ },
+ "TED API": {
+  "pt": "API do TED",
+  "es": "API de TED",
+  "fr": "API TED",
+  "de": "TED-API",
+  "it": "API TED"
+ },
+ "Searched daily through the TED API.": {
+  "pt": "Pesquisada diariamente através da API do TED.",
+  "es": "Se busca a diario a través de la API de TED.",
+  "fr": "Recherchée chaque jour via l'API TED.",
+  "de": "Täglich über die TED-API durchsucht.",
+  "it": "Cercata ogni giorno tramite l'API TED."
+ },
+ "RSS / Atom feed": {
+  "pt": "Feed RSS / Atom",
+  "es": "Feed RSS / Atom",
+  "fr": "Flux RSS / Atom",
+  "de": "RSS-/Atom-Feed",
+  "it": "Feed RSS / Atom"
+ },
+ "Every new item in the feed is picked up.": {
+  "pt": "Cada novo item do feed é recolhido.",
+  "es": "Se recoge cada nuevo elemento del feed.",
+  "fr": "Chaque nouvel élément du flux est récupéré.",
+  "de": "Jeder neue Eintrag im Feed wird erfasst.",
+  "it": "Ogni nuovo elemento del feed viene acquisito."
+ },
+ "Site search": {
+  "pt": "Pesquisa no site",
+  "es": "Búsqueda en el sitio",
+  "fr": "Recherche sur le site",
+  "de": "Website-Suche",
+  "it": "Ricerca nel sito"
+ },
+ "A web search limited to this site, on the schedule below. For portals and sites without a feed.": {
+  "pt": "Uma pesquisa web limitada a este site, segundo o calendário abaixo. Para portais e sites sem feed.",
+  "es": "Una búsqueda web limitada a este sitio, según la frecuencia indicada abajo. Para portales y sitios sin feed.",
+  "fr": "Une recherche web limitée à ce site, selon la fréquence ci-dessous. Pour les portails et sites sans flux.",
+  "de": "Eine auf diese Website begrenzte Websuche nach dem Zeitplan unten. Für Portale und Websites ohne Feed.",
+  "it": "Una ricerca web limitata a questo sito, secondo la frequenza qui sotto. Per portali e siti senza feed."
+ },
+ "Off — list only": {
+  "pt": "Desligado — só listar",
+  "es": "Desactivado — solo listar",
+  "fr": "Désactivé — liste uniquement",
+  "de": "Aus — nur gelistet",
+  "it": "Disattivato — solo elenco"
+ },
+ "Listed here but not monitored.": {
+  "pt": "Listada aqui, mas não monitorizada.",
+  "es": "Listada aquí, pero sin seguimiento.",
+  "fr": "Listée ici mais non suivie.",
+  "de": "Hier gelistet, aber nicht überwacht.",
+  "it": "Elencata qui ma non monitorata."
+ },
+ "Commercial presentations": {
+  "pt": "Apresentações comerciais",
+  "es": "Presentaciones comerciales",
+  "fr": "Présentations commerciales",
+  "de": "Vertriebspräsentationen",
+  "it": "Presentazioni commerciali"
+ },
+ "Decks, one-pagers, brochures": {
+  "pt": "Apresentações, one-pagers, brochuras",
+  "es": "Presentaciones, one-pagers, folletos",
+  "fr": "Présentations, one-pagers, brochures",
+  "de": "Präsentationen, One-Pager, Broschüren",
+  "it": "Presentazioni, one-pager, brochure"
+ },
+ "Contracts & project references": {
+  "pt": "Contratos e referências de projetos",
+  "es": "Contratos y referencias de proyectos",
+  "fr": "Contrats et références de projets",
+  "de": "Verträge & Projektreferenzen",
+  "it": "Contratti e referenze di progetto"
+ },
+ "Contracts, reference letters, case studies": {
+  "pt": "Contratos, cartas de referência, casos de estudo",
+  "es": "Contratos, cartas de referencia, casos de éxito",
+  "fr": "Contrats, lettres de référence, études de cas",
+  "de": "Verträge, Referenzschreiben, Fallstudien",
+  "it": "Contratti, lettere di referenza, casi di studio"
+ },
+ "Team CVs": {
+  "pt": "CVs da equipa",
+  "es": "CV del equipo",
+  "fr": "CV de l'équipe",
+  "de": "Lebensläufe des Teams",
+  "it": "CV del team"
+ },
+ "Your bid team": {
+  "pt": "A sua equipa de proposta",
+  "es": "Tu equipo de licitación",
+  "fr": "Votre équipe de réponse",
+  "de": "Dein Angebotsteam",
+  "it": "Il tuo team di gara"
+ }
+}

@@ -1,4 +1,6 @@
 /** Social profile links with brand icons (profile card and About tab). */
+import { getTSync } from '@/lib/i18n/server';
+
 type Links = { website: string | null; linkedin: string | null; x: string | null; github: string | null };
 
 const ICONS = {
@@ -13,15 +15,17 @@ export const hasLinks = (l: Links) => !!(l.linkedin || l.x || l.github || l.webs
 export default function SocialLinks({ links, variant = 'icons' }: { links: Links; variant?: 'icons' | 'list' }) {
   const items = (['linkedin', 'x', 'github', 'website'] as const).filter((k) => links[k]);
   if (!items.length) return null;
+  const t = getTSync();
   return (
     <div className={`social-links ${variant}`}>
       {items.map((k) => {
         const url = links[k]!;
         const shown = url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+        const label = t(ICONS[k].label);
         return (
-          <a key={k} href={url} target="_blank" rel="noopener noreferrer me" className={`social-link ${k}`} aria-label={`${ICONS[k].label}: ${shown}`} title={ICONS[k].label}>
+          <a key={k} href={url} target="_blank" rel="noopener noreferrer me" className={`social-link ${k}`} aria-label={`${label}: ${shown}`} title={label}>
             <svg viewBox="0 0 24 24" aria-hidden="true">{ICONS[k].path}</svg>
-            {variant === 'list' && <span><strong>{ICONS[k].label}</strong><em>{shown}</em></span>}
+            {variant === 'list' && <span><strong>{label}</strong><em>{shown}</em></span>}
           </a>
         );
       })}

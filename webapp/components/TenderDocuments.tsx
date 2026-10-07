@@ -1,4 +1,5 @@
 import { firstInLanguage } from '@/lib/english';
+import { getTSync } from '@/lib/i18n/server';
 
 export type Doc = {
   document_id: string; name: string; name_en: string | null; document_type: string | null;
@@ -28,27 +29,28 @@ function linkKind(url: string | null) {
 
 /** Tender documents grouped by type, with direct downloads where the portal allows. */
 export default function TenderDocuments({ docs }: { docs: Doc[] }) {
+  const t = getTSync();
   const groups = ORDER.map((g) => ({ g, items: docs.filter((d) => groupOf(d.document_type) === g) })).filter((x) => x.items.length);
   return (
     <div className="opp-sidebar">
-      <h3>Tender Documents</h3>
-      <div className="sidebar-sub">{docs.length ? `${docs.length} document${docs.length === 1 ? '' : 's'}` : 'No documents found yet'}</div>
+      <h3>{t('Tender Documents')}</h3>
+      <div className="sidebar-sub">{docs.length ? (docs.length === 1 ? t('{n} document', { n: docs.length }) : t('{n} documents', { n: docs.length })) : t('No documents found yet')}</div>
       {groups.map(({ g, items }) => (
         <div key={g} className="doc-group">
-          <div className="doc-group-label">{g} <span>{items.length}</span></div>
+          <div className="doc-group-label">{t(g)} <span>{items.length}</span></div>
           {items.map((d) => {
             const k = linkKind(d.url);
             return (
-              <a key={d.document_id} className="doc-item" href={d.url ?? '#'} target="_blank" rel="noopener noreferrer" title={k?.title}>
+              <a key={d.document_id} className="doc-item" href={d.url ?? '#'} target="_blank" rel="noopener noreferrer" title={k ? t(k.title) : undefined}>
                 <span className="doc-name">{firstInLanguage(d.name_en) ?? d.name}</span>
-                {k && <span className={`doc-download ${k.label === 'Open on portal' ? 'portal' : ''}`}>{k.label === 'Download' ? 'Download ↓' : k.label === 'PDF' ? 'PDF ↓' : 'Portal ↗'}</span>}
+                {k && <span className={`doc-download ${k.label === 'Open on portal' ? 'portal' : ''}`}>{k.label === 'Download' ? t('Download ↓') : k.label === 'PDF' ? 'PDF ↓' : t('Portal ↗')}</span>}
               </a>
             );
           })}
         </div>
       ))}
       {docs.some((d) => !DIRECT.test(d.url ?? '') && !/ted\.europa/.test(d.url ?? '')) && (
-        <p className="sidebar-note">“Portal ↗” documents download from the buyer&apos;s portal, which may ask you to register.</p>
+        <p className="sidebar-note">{t('“Portal ↗” documents download from the buyer\'s portal, which may ask you to register.')}</p>
       )}
     </div>
   );

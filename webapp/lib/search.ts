@@ -106,3 +106,16 @@ export async function search(q: string, now = new Date()) {
   newsItems.sort((a, b) => b.combined - a.combined || b.score - a.score);
   return { opportunities: oppItems, news: newsItems };
 }
+
+export type PersonHit = { username: string; displayName: string; avatarUrl: string | null; company: string | null };
+
+/** People whose profile is searchable (Settings → Privacy) matching every word of the query. */
+export async function searchPeople(q: string): Promise<PersonHit[]> {
+  const words = searchWords(q);
+  if (!words.length) return [];
+  let query = getSupabaseServerClient().from('profiles').select('username, display_name, avatar_url, company')
+    .eq('searchable', true).limit(10);
+  for (const w of words) query = query.or(ilikeAny(['username', 'display_name', 'company'], w));
+  const { data } = await query;
+  return (data || []).map((p: any) => ({ username: p.username, displayName: p.display_name || p.username, avatarUrl: p.avatar_url, company: p.company }));
+}

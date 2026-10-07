@@ -1,32 +1,52 @@
 import Link from 'next/link';
+import { Fragment } from 'react';
 import LegalPage from '@/components/LegalPage';
+import { getT, getTSync } from '@/lib/i18n/server';
 
-export const metadata = { title: 'Help — EUDI Radar' };
+export async function generateMetadata() {
+  const t = await getT();
+  return { title: `${t('Help')} — EUDI Radar` };
+}
 
-const FAQ: { q: string; a: React.ReactNode }[] = [
-  { q: 'What is EUDI Radar?', a: 'A radar for public tenders, grants and market news in your field. Agents search TED, national portals, news and the sources you follow every day, sort what matters, and write it up for you.' },
-  { q: 'How is the home feed ordered?', a: <><strong>Top</strong> blends each item’s relevance with how recent it is, so important news stays up longer. <strong>Relevance</strong> is the AI score alone; <strong>New</strong> is newest first.</> },
-  { q: 'What does the heart do?', a: <>It follows a tender or news story. Everything you follow is under <strong>Following</strong> on your profile, visible only to you.</> },
-  { q: 'What are the agents?', a: <>Each step of the radar is an agent — search, triage, documents, analysis, evaluation, proposal brief, news reports, feed writing and translation. Each scope in your <Link href="/workspaces">Workspaces</Link> has its own; on a paid plan you can switch them on or off and tune them in plain language.</> },
-  { q: 'How do I get a fit score for a tender?', a: <>Open the tender and run the <strong>Tender Evaluation Agent</strong>. It checks the requirements against your scope’s instructions and context in Workspace. Then the <strong>Proposal Manager Agent</strong> can write the proposal brief.</> },
-  { q: 'What are workspaces and plans?', a: <>A workspace holds your scopes — the configurations of the radar you work with. Free follows the default scope; Starter and Pro let you build your own scopes; Teams adds unlimited workspaces, each with its own team members (admins configure, members see the results). Create workspaces and add members on <Link href="/workspaces">Workspaces</Link>, change your plan in <Link href="/settings#billing">Settings</Link>, and switch workspaces from your account menu.</> },
-  { q: 'I forgot my password.', a: <>Use <Link href="/forgot-password">Reset your password</Link> on the log-in page. (Reset emails need the platform’s email service to be set up; until then, contact us.)</> },
-  { q: 'How do I change my profile or delete my account?', a: <>Profile → <strong>Edit profile</strong>. You can change your picture, name, username and description, change your password, or delete your account and all its data.</> },
-];
+/** Turns <b>…</b> and <a1>…</a1>-style tags in a translated string into elements. */
+function rich(text: string, tags: Record<string, (s: string) => React.ReactNode>) {
+  return text.split(/(<(\w+)>.*?<\/\2>)/).map((part, i, arr) => {
+    if (i % 3 === 2) return null; // the captured tag name
+    const m = part.match(/^<(\w+)>(.*?)<\/\1>$/);
+    return <Fragment key={i}>{m && tags[m[1]] ? tags[m[1]](m[2]) : part}</Fragment>;
+  });
+}
+
+const b = (s: string) => <strong>{s}</strong>;
+const link = (href: string) => (s: string) => <Link href={href}>{s}</Link>;
+
+function faq(t: (key: string) => string): { q: string; a: React.ReactNode }[] {
+  return [
+    { q: t('What is EUDI Radar?'), a: t('A radar for public tenders, grants and market news in your field. Agents search TED, national portals, news and the sources you follow every day, sort what matters, and write it up for you.') },
+    { q: t('How is the home feed ordered?'), a: rich(t('<b>Top</b> blends each item’s relevance with how recent it is, so important news stays up longer. <b>Relevance</b> is the AI score alone; <b>New</b> is newest first.'), { b }) },
+    { q: t('What does the heart do?'), a: rich(t('It follows a tender or news story. Everything you follow is under <b>Following</b> on your profile, visible only to you.'), { b }) },
+    { q: t('What are the agents?'), a: rich(t('Each step of the radar is an agent — search, triage, documents, analysis, evaluation, proposal brief, news reports, feed writing and translation. Each scope in your <workspaces>Workspaces</workspaces> has its own; on a paid plan you can switch them on or off and tune them in plain language.'), { workspaces: link('/workspaces') }) },
+    { q: t('How do I get a fit score for a tender?'), a: rich(t('Open the tender and run the <b>Tender Evaluation Agent</b>. It checks the requirements against your scope’s instructions and context in Workspace. Then the <b>Proposal Manager Agent</b> can write the proposal brief.'), { b }) },
+    { q: t('What are workspaces and plans?'), a: rich(t('A workspace holds your scopes — the configurations of the radar you work with. Free follows the default scope; Starter and Pro let you build your own scopes; Teams adds unlimited workspaces, each with its own team members (admins configure, members see the results). Create workspaces and add members on <workspaces>Workspaces</workspaces>, change your plan in <settings>Settings</settings>, and switch workspaces from your account menu.'), { workspaces: link('/workspaces'), settings: link('/settings/account?plan=1') }) },
+    { q: t('I forgot my password.'), a: rich(t('Use <reset>Reset your password</reset> on the log-in page. (Reset emails need the platform’s email service to be set up; until then, contact us.)'), { reset: link('/forgot-password') }) },
+    { q: t('How do I change my profile or delete my account?'), a: rich(t('Profile → <b>Edit profile</b>. You can change your picture, name, username and description, change your password, or delete your account and all its data.'), { b }) },
+  ];
+}
 
 export default function HelpPage() {
+  const t = getTSync();
   return (
-    <LegalPage title="Help">
+    <LegalPage title={t('Help')}>
       <div className="faq">
-        {FAQ.map((f) => (
+        {faq(t).map((f) => (
           <details key={f.q} className="faq-item">
             <summary>{f.q}</summary>
             <div>{f.a}</div>
           </details>
         ))}
       </div>
-      <h2>Still stuck?</h2>
-      <p>Write to us at [support email] and we’ll get back to you.</p>
+      <h2>{t('Still stuck?')}</h2>
+      <p>{t('Write to us at [support email] and we’ll get back to you.')}</p>
     </LegalPage>
   );
 }

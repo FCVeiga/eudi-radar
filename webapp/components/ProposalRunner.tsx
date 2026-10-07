@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { startProposalBrief } from '@/app/actions';
+import { useT } from '@/lib/i18n/client';
 
 const POLL_MS = 5000;
 const GIVE_UP_MS = 6 * 60_000;
@@ -12,6 +13,7 @@ export default function ProposalRunner({ opportunityId, scopeId, proposalAt, run
   opportunityId: string; scopeId: string; proposalAt: string | null; running: boolean; lastError: string | null;
 }) {
   const router = useRouter();
+  const t = useT();
   const [state, setState] = useState<'idle' | 'working' | 'error'>(running ? 'working' : 'idle');
   const [message, setMessage] = useState<string | null>(lastError);
   const poll = useRef<ReturnType<typeof setInterval>>();
@@ -25,7 +27,7 @@ export default function ProposalRunner({ opportunityId, scopeId, proposalAt, run
   function waitForBrief() {
     const since = Date.now();
     poll.current = setInterval(() => {
-      if (Date.now() - since > GIVE_UP_MS) { clearInterval(poll.current); setState('error'); setMessage('the run is taking too long'); return; }
+      if (Date.now() - since > GIVE_UP_MS) { clearInterval(poll.current); setState('error'); setMessage(t('the run is taking too long')); return; }
       router.refresh();
     }, POLL_MS);
   }
@@ -37,24 +39,24 @@ export default function ProposalRunner({ opportunityId, scopeId, proposalAt, run
       const r = await startProposalBrief(opportunityId, scopeId);
       if (r.status === 'done') { setState('idle'); router.refresh(); }
       else if (r.status === 'running') waitForBrief();
-      else { setState('error'); setMessage(r.message ?? 'unknown error'); }
-    } catch { setState('error'); setMessage('the request failed'); }
+      else { setState('error'); setMessage(r.message ?? t('unknown error')); }
+    } catch { setState('error'); setMessage(t('the request failed')); }
   }
 
   if (state === 'working') {
     return (
       <p className="report-progress">
-        <span className="dots" /> The Proposal Manager Agent is mapping every requirement to your company material — a few minutes.
+        <span className="dots" /> {t('The Proposal Manager Agent is mapping every requirement to your company material — a few minutes.')}
       </p>
     );
   }
   return (
     <div className="eval-run">
-      {proposalAt && <a className="btn-agent" href={`/tenders/${opportunityId}/proposal?scope=${scopeId}`} download>Download proposal brief (.md)</a>}
+      {proposalAt && <a className="btn-agent" href={`/tenders/${opportunityId}/proposal?scope=${scopeId}`} download>{t('Download proposal brief (.md)')}</a>}
       <button type="button" className={proposalAt ? 'btn' : 'btn-agent'} onClick={run}>
-        {proposalAt ? 'Regenerate' : 'Prepare proposal brief'}
+        {proposalAt ? t('Regenerate') : t('Prepare proposal brief')}
       </button>
-      {message && <span className="form-msg err">Couldn&apos;t run: {message}.</span>}
+      {message && <span className="form-msg err">{t('Couldn\'t run: {message}.', { message })}</span>}
     </div>
   );
 }

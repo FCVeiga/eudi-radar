@@ -1,0 +1,1556 @@
+{
+  "3–24 letters, numbers or underscores": {
+    "pt": "3–24 letras, números ou underscores",
+    "es": "3–24 letras, números o guiones bajos",
+    "fr": "3 à 24 lettres, chiffres ou tirets bas",
+    "de": "3–24 Buchstaben, Zahlen oder Unterstriche",
+    "it": "3–24 lettere, numeri o trattini bassi"
+  },
+  "@handle or x.com/handle": {
+    "pt": "@utilizador ou x.com/utilizador",
+    "es": "@usuario o x.com/usuario",
+    "fr": "@pseudo ou x.com/pseudo",
+    "de": "@handle oder x.com/handle",
+    "it": "@handle o x.com/handle"
+  },
+  "About": {
+    "pt": "Sobre",
+    "es": "Acerca de",
+    "fr": "À propos",
+    "de": "Über",
+    "it": "Info"
+  },
+  "Accept": {
+    "pt": "Aceitar",
+    "es": "Aceptar",
+    "fr": "Accepter",
+    "de": "Annehmen",
+    "it": "Accetta"
+  },
+  "Accept the chat request first.": {
+    "pt": "Aceita primeiro o pedido de conversa.",
+    "es": "Acepta primero la solicitud de chat.",
+    "fr": "Acceptez d'abord la demande de discussion.",
+    "de": "Nimm zuerst die Chat-Anfrage an.",
+    "it": "Accetta prima la richiesta di chat."
+  },
+  "Account created — please log in.": {
+    "pt": "Conta criada — inicia sessão.",
+    "es": "Cuenta creada — inicia sesión.",
+    "fr": "Compte créé — veuillez vous connecter.",
+    "de": "Konto erstellt — bitte melde dich an.",
+    "it": "Account creato — accedi."
+  },
+  "Achievements": {
+    "pt": "Conquistas",
+    "es": "Logros",
+    "fr": "Succès",
+    "de": "Erfolge",
+    "it": "Traguardi"
+  },
+  "Add a description": {
+    "pt": "Adicionar uma descrição",
+    "es": "Añadir una descripción",
+    "fr": "Ajouter une description",
+    "de": "Beschreibung hinzufügen",
+    "it": "Aggiungi una descrizione"
+  },
+  "Add social links": {
+    "pt": "Adicionar redes sociais",
+    "es": "Añadir redes sociales",
+    "fr": "Ajouter des liens sociaux",
+    "de": "Social-Links hinzufügen",
+    "it": "Aggiungi link social"
+  },
+  "All caught up": {
+    "pt": "Está tudo em dia",
+    "es": "Estás al día",
+    "fr": "Vous êtes à jour",
+    "de": "Alles erledigt",
+    "it": "Sei in pari"
+  },
+  "Already have an account?": {
+    "pt": "Já tens conta?",
+    "es": "¿Ya tienes una cuenta?",
+    "fr": "Vous avez déjà un compte ?",
+    "de": "Du hast schon ein Konto?",
+    "it": "Hai già un account?"
+  },
+  "An account with this email already exists — log in instead.": {
+    "pt": "Já existe uma conta com este email — inicia sessão.",
+    "es": "Ya existe una cuenta con este correo — inicia sesión.",
+    "fr": "Un compte existe déjà avec cet e-mail — connectez-vous plutôt.",
+    "de": "Mit dieser E-Mail gibt es bereits ein Konto — melde dich stattdessen an.",
+    "it": "Esiste già un account con questa email — accedi."
+  },
+  "Back to chats": {
+    "pt": "Voltar às conversas",
+    "es": "Volver a los chats",
+    "fr": "Retour aux discussions",
+    "de": "Zurück zu den Chats",
+    "it": "Torna alle chat"
+  },
+  "Back to log in": {
+    "pt": "Voltar a iniciar sessão",
+    "es": "Volver a iniciar sesión",
+    "fr": "Retour à la connexion",
+    "de": "Zurück zur Anmeldung",
+    "it": "Torna all'accesso"
+  },
+  "By signing up you agree to our": {
+    "pt": "Ao registares-te, aceitas os nossos",
+    "es": "Al registrarte aceptas nuestros",
+    "fr": "En vous inscrivant, vous acceptez nos",
+    "de": "Mit der Registrierung akzeptierst du unsere",
+    "it": "Registrandoti accetti i nostri"
+  },
+  "Change banner image": {
+    "pt": "Alterar imagem de capa",
+    "es": "Cambiar imagen de portada",
+    "fr": "Changer la bannière",
+    "de": "Bannerbild ändern",
+    "it": "Cambia immagine di copertina"
+  },
+  "Change picture": {
+    "pt": "Alterar imagem",
+    "es": "Cambiar imagen",
+    "fr": "Changer la photo",
+    "de": "Bild ändern",
+    "it": "Cambia immagine"
+  },
+  "Change profile picture": {
+    "pt": "Alterar foto de perfil",
+    "es": "Cambiar foto de perfil",
+    "fr": "Changer la photo de profil",
+    "de": "Profilbild ändern",
+    "it": "Cambia immagine del profilo"
+  },
+  "Chat": {
+    "pt": "Chat",
+    "es": "Chat",
+    "fr": "Discussion",
+    "de": "Chat",
+    "it": "Chat"
+  },
+  "Chats": {
+    "pt": "Conversas",
+    "es": "Chats",
+    "fr": "Discussions",
+    "de": "Chats",
+    "it": "Chat"
+  },
+  "Choose a new password": {
+    "pt": "Escolhe uma nova palavra-passe",
+    "es": "Elige una nueva contraseña",
+    "fr": "Choisissez un nouveau mot de passe",
+    "de": "Neues Passwort wählen",
+    "it": "Scegli una nuova password"
+  },
+  "Close chat": {
+    "pt": "Fechar conversa",
+    "es": "Cerrar chat",
+    "fr": "Fermer la discussion",
+    "de": "Chat schließen",
+    "it": "Chiudi chat"
+  },
+  "Comment posted.": {
+    "pt": "Comentário publicado.",
+    "es": "Comentario publicado.",
+    "fr": "Commentaire publié.",
+    "de": "Kommentar veröffentlicht.",
+    "it": "Commento pubblicato."
+  },
+  "Comment {cred}": {
+    "pt": "{cred} de comentários",
+    "es": "{cred} de comentarios",
+    "fr": "{cred} des commentaires",
+    "de": "Kommentar-{cred}",
+    "it": "{cred} dei commenti"
+  },
+  "Comments on other people’s posts will show here.": {
+    "pt": "Os comentários em publicações de outras pessoas aparecem aqui.",
+    "es": "Aquí aparecerán los comentarios en publicaciones de otras personas.",
+    "fr": "Les commentaires sur les publications d'autres personnes s'afficheront ici.",
+    "de": "Kommentare zu Beiträgen anderer erscheinen hier.",
+    "it": "Qui compariranno i commenti ai post di altre persone."
+  },
+  "Company": {
+    "pt": "Empresa",
+    "es": "Empresa",
+    "fr": "Entreprise",
+    "de": "Unternehmen",
+    "it": "Azienda"
+  },
+  "Confirm new password": {
+    "pt": "Confirmar nova palavra-passe",
+    "es": "Confirmar nueva contraseña",
+    "fr": "Confirmer le nouveau mot de passe",
+    "de": "Neues Passwort bestätigen",
+    "it": "Conferma nuova password"
+  },
+  "Confirm password": {
+    "pt": "Confirmar palavra-passe",
+    "es": "Confirmar contraseña",
+    "fr": "Confirmer le mot de passe",
+    "de": "Passwort bestätigen",
+    "it": "Conferma password"
+  },
+  "Connections": {
+    "pt": "Ligações",
+    "es": "Conexiones",
+    "fr": "Liens",
+    "de": "Verbindungen",
+    "it": "Collegamenti"
+  },
+  "Continue with Google": {
+    "pt": "Continuar com Google",
+    "es": "Continuar con Google",
+    "fr": "Continuer avec Google",
+    "de": "Weiter mit Google",
+    "it": "Continua con Google"
+  },
+  "Could not create the account.": {
+    "pt": "Não foi possível criar a conta.",
+    "es": "No se pudo crear la cuenta.",
+    "fr": "Impossible de créer le compte.",
+    "de": "Konto konnte nicht erstellt werden.",
+    "it": "Impossibile creare l'account."
+  },
+  "Could not publish the post.": {
+    "pt": "Não foi possível publicar.",
+    "es": "No se pudo publicar.",
+    "fr": "Impossible de publier.",
+    "de": "Beitrag konnte nicht veröffentlicht werden.",
+    "it": "Impossibile pubblicare il post."
+  },
+  "Could not reach Google.": {
+    "pt": "Não foi possível contactar a Google.",
+    "es": "No se pudo conectar con Google.",
+    "fr": "Impossible de joindre Google.",
+    "de": "Google ist nicht erreichbar.",
+    "it": "Impossibile raggiungere Google."
+  },
+  "Could not save": {
+    "pt": "Não foi possível guardar",
+    "es": "No se pudo guardar",
+    "fr": "Impossible d'enregistrer",
+    "de": "Speichern fehlgeschlagen",
+    "it": "Impossibile salvare"
+  },
+  "Could not send.": {
+    "pt": "Não foi possível enviar.",
+    "es": "No se pudo enviar.",
+    "fr": "Envoi impossible.",
+    "de": "Senden fehlgeschlagen.",
+    "it": "Impossibile inviare."
+  },
+  "Could not start the chat.": {
+    "pt": "Não foi possível iniciar a conversa.",
+    "es": "No se pudo iniciar el chat.",
+    "fr": "Impossible de lancer la discussion.",
+    "de": "Chat konnte nicht gestartet werden.",
+    "it": "Impossibile avviare la chat."
+  },
+  "Could not start the upload.": {
+    "pt": "Não foi possível iniciar o carregamento.",
+    "es": "No se pudo iniciar la subida.",
+    "fr": "Impossible de lancer l'envoi.",
+    "de": "Upload konnte nicht gestartet werden.",
+    "it": "Impossibile avviare il caricamento."
+  },
+  "Create a post": {
+    "pt": "Criar publicação",
+    "es": "Crear publicación",
+    "fr": "Créer une publication",
+    "de": "Beitrag erstellen",
+    "it": "Crea un post"
+  },
+  "Create your account to follow tenders and news and build your profile.": {
+    "pt": "Cria a tua conta para seguir concursos e notícias e construir o teu perfil.",
+    "es": "Crea tu cuenta para seguir licitaciones y noticias y crear tu perfil.",
+    "fr": "Créez votre compte pour suivre appels d'offres et actualités et construire votre profil.",
+    "de": "Erstelle dein Konto, um Ausschreibungen und Nachrichten zu folgen und dein Profil aufzubauen.",
+    "it": "Crea il tuo account per seguire gare e notizie e costruire il tuo profilo."
+  },
+  "Creating your account…": {
+    "pt": "A criar a tua conta…",
+    "es": "Creando tu cuenta…",
+    "fr": "Création de votre compte…",
+    "de": "Konto wird erstellt…",
+    "it": "Creazione account…"
+  },
+  "Decline": {
+    "pt": "Recusar",
+    "es": "Rechazar",
+    "fr": "Refuser",
+    "de": "Ablehnen",
+    "it": "Rifiuta"
+  },
+  "Delete my account": {
+    "pt": "Eliminar a minha conta",
+    "es": "Eliminar mi cuenta",
+    "fr": "Supprimer mon compte",
+    "de": "Mein Konto löschen",
+    "it": "Elimina il mio account"
+  },
+  "Deleted user": {
+    "pt": "Utilizador eliminado",
+    "es": "Usuario eliminado",
+    "fr": "Utilisateur supprimé",
+    "de": "Gelöschter Nutzer",
+    "it": "Utente eliminato"
+  },
+  "Deletes your account, posts, comments and the workspaces you own. This can’t be undone.": {
+    "pt": "Elimina a tua conta, publicações, comentários e os espaços de trabalho de que és proprietário. Não pode ser anulado.",
+    "es": "Elimina tu cuenta, publicaciones, comentarios y los espacios de trabajo que te pertenecen. No se puede deshacer.",
+    "fr": "Supprime votre compte, vos publications, commentaires et les espaces de travail dont vous êtes propriétaire. Action irréversible.",
+    "de": "Löscht dein Konto, deine Beiträge, Kommentare und deine eigenen Arbeitsbereiche. Das kann nicht rückgängig gemacht werden.",
+    "it": "Elimina il tuo account, i post, i commenti e le aree di lavoro di tua proprietà. L'operazione è irreversibile."
+  },
+  "Deleting…": {
+    "pt": "A eliminar…",
+    "es": "Eliminando…",
+    "fr": "Suppression…",
+    "de": "Wird gelöscht…",
+    "it": "Eliminazione…"
+  },
+  "Details": {
+    "pt": "Detalhes",
+    "es": "Detalles",
+    "fr": "Détails",
+    "de": "Details",
+    "it": "Dettagli"
+  },
+  "Display name": {
+    "pt": "Nome a apresentar",
+    "es": "Nombre visible",
+    "fr": "Nom affiché",
+    "de": "Anzeigename",
+    "it": "Nome visualizzato"
+  },
+  "Edit description": {
+    "pt": "Editar descrição",
+    "es": "Editar descripción",
+    "fr": "Modifier la description",
+    "de": "Beschreibung bearbeiten",
+    "it": "Modifica descrizione"
+  },
+  "Edit details": {
+    "pt": "Editar detalhes",
+    "es": "Editar detalles",
+    "fr": "Modifier les détails",
+    "de": "Details bearbeiten",
+    "it": "Modifica dettagli"
+  },
+  "Edit profile": {
+    "pt": "Editar perfil",
+    "es": "Editar perfil",
+    "fr": "Modifier le profil",
+    "de": "Profil bearbeiten",
+    "it": "Modifica profilo"
+  },
+  "Edit social links": {
+    "pt": "Editar redes sociais",
+    "es": "Editar redes sociales",
+    "fr": "Modifier les liens sociaux",
+    "de": "Social-Links bearbeiten",
+    "it": "Modifica link social"
+  },
+  "Email": {
+    "pt": "Email",
+    "es": "Correo electrónico",
+    "fr": "E-mail",
+    "de": "E-Mail",
+    "it": "Email"
+  },
+  "Empty message.": {
+    "pt": "Mensagem vazia.",
+    "es": "Mensaje vacío.",
+    "fr": "Message vide.",
+    "de": "Leere Nachricht.",
+    "it": "Messaggio vuoto."
+  },
+  "Enter a valid email address.": {
+    "pt": "Introduz um endereço de email válido.",
+    "es": "Introduce un correo electrónico válido.",
+    "fr": "Saisissez une adresse e-mail valide.",
+    "de": "Gib eine gültige E-Mail-Adresse ein.",
+    "it": "Inserisci un indirizzo email valido."
+  },
+  "Enter your account’s email and we’ll send you a link to choose a new password.": {
+    "pt": "Introduz o email da tua conta e enviamos-te um link para escolheres uma nova palavra-passe.",
+    "es": "Introduce el correo de tu cuenta y te enviaremos un enlace para elegir una nueva contraseña.",
+    "fr": "Saisissez l'e-mail de votre compte et nous vous enverrons un lien pour choisir un nouveau mot de passe.",
+    "de": "Gib die E-Mail deines Kontos ein und wir senden dir einen Link, um ein neues Passwort zu wählen.",
+    "it": "Inserisci l'email del tuo account e ti invieremo un link per scegliere una nuova password."
+  },
+  "Enter your email and password.": {
+    "pt": "Introduz o teu email e palavra-passe.",
+    "es": "Introduce tu correo y contraseña.",
+    "fr": "Saisissez votre e-mail et votre mot de passe.",
+    "de": "Gib deine E-Mail und dein Passwort ein.",
+    "it": "Inserisci email e password."
+  },
+  "Expertise": {
+    "pt": "Especialidades",
+    "es": "Especialidades",
+    "fr": "Expertise",
+    "de": "Fachgebiete",
+    "it": "Competenze"
+  },
+  "Expired or already used. Ask for a new link.": {
+    "pt": "Expirado ou já utilizado. Pede um novo link.",
+    "es": "Caducado o ya utilizado. Pide un enlace nuevo.",
+    "fr": "Expiré ou déjà utilisé. Demandez un nouveau lien.",
+    "de": "Abgelaufen oder bereits verwendet. Fordere einen neuen Link an.",
+    "it": "Scaduto o già usato. Chiedi un nuovo link."
+  },
+  "Files up to 50 MB.": {
+    "pt": "Ficheiros até 50 MB.",
+    "es": "Archivos de hasta 50 MB.",
+    "fr": "Fichiers jusqu'à 50 Mo.",
+    "de": "Dateien bis 50 MB.",
+    "it": "File fino a 50 MB."
+  },
+  "Follow tenders and news, and get your agents working for you.": {
+    "pt": "Segue concursos e notícias e põe os teus agentes a trabalhar para ti.",
+    "es": "Sigue licitaciones y noticias y pon a tus agentes a trabajar para ti.",
+    "fr": "Suivez appels d'offres et actualités, et laissez vos agents travailler pour vous.",
+    "de": "Folge Ausschreibungen und Nachrichten und lass deine Agenten für dich arbeiten.",
+    "it": "Segui gare e notizie e fai lavorare i tuoi agenti per te."
+  },
+  "Followers": {
+    "pt": "Seguidores",
+    "es": "Seguidores",
+    "fr": "Abonnés",
+    "de": "Follower",
+    "it": "Follower"
+  },
+  "Following": {
+    "pt": "A seguir",
+    "es": "Siguiendo",
+    "fr": "Suivis",
+    "de": "Gefolgt",
+    "it": "Seguiti"
+  },
+  "Forgot password?": {
+    "pt": "Esqueceste a palavra-passe?",
+    "es": "¿Olvidaste tu contraseña?",
+    "fr": "Mot de passe oublié ?",
+    "de": "Passwort vergessen?",
+    "it": "Password dimenticata?"
+  },
+  "Give your post a title.": {
+    "pt": "Dá um título à tua publicação.",
+    "es": "Pon un título a tu publicación.",
+    "fr": "Donnez un titre à votre publication.",
+    "de": "Gib deinem Beitrag einen Titel.",
+    "it": "Dai un titolo al tuo post."
+  },
+  "Google sign-in is coming soon — use email and password for now.": {
+    "pt": "O início de sessão com Google chega em breve — por agora usa email e palavra-passe.",
+    "es": "El inicio de sesión con Google llegará pronto — por ahora usa correo y contraseña.",
+    "fr": "La connexion avec Google arrive bientôt — utilisez e-mail et mot de passe pour l'instant.",
+    "de": "Die Anmeldung mit Google kommt bald — nutze vorerst E-Mail und Passwort.",
+    "it": "L'accesso con Google arriverà presto — per ora usa email e password."
+  },
+  "If an account exists for that email, a reset link is on its way.": {
+    "pt": "Se existir uma conta com esse email, o link de reposição está a caminho.",
+    "es": "Si existe una cuenta con ese correo, el enlace de restablecimiento está en camino.",
+    "fr": "Si un compte existe pour cet e-mail, un lien de réinitialisation est en route.",
+    "de": "Falls ein Konto mit dieser E-Mail existiert, ist ein Link zum Zurücksetzen unterwegs.",
+    "it": "Se esiste un account con questa email, il link per reimpostare la password è in arrivo."
+  },
+  "Invitation not valid": {
+    "pt": "Convite inválido",
+    "es": "Invitación no válida",
+    "fr": "Invitation non valide",
+    "de": "Einladung ungültig",
+    "it": "Invito non valido"
+  },
+  "Join a workspace": {
+    "pt": "Juntar-se a um espaço de trabalho",
+    "es": "Unirse a un espacio de trabajo",
+    "fr": "Rejoindre un espace de travail",
+    "de": "Einem Arbeitsbereich beitreten",
+    "it": "Unisciti a un'area di lavoro"
+  },
+  "Join {team}": {
+    "pt": "Juntar-se a {team}",
+    "es": "Unirse a {team}",
+    "fr": "Rejoindre {team}",
+    "de": "{team} beitreten",
+    "it": "Unisciti a {team}"
+  },
+  "Liked items": {
+    "pt": "Itens gostados",
+    "es": "Elementos que te gustan",
+    "fr": "Éléments aimés",
+    "de": "Gelikte Elemente",
+    "it": "Elementi piaciuti"
+  },
+  "Loading…": {
+    "pt": "A carregar…",
+    "es": "Cargando…",
+    "fr": "Chargement…",
+    "de": "Wird geladen…",
+    "it": "Caricamento…"
+  },
+  "Location": {
+    "pt": "Localização",
+    "es": "Ubicación",
+    "fr": "Localisation",
+    "de": "Standort",
+    "it": "Località"
+  },
+  "Log in": {
+    "pt": "Iniciar sessão",
+    "es": "Iniciar sesión",
+    "fr": "Se connecter",
+    "de": "Anmelden",
+    "it": "Accedi"
+  },
+  "Log in to chat": {
+    "pt": "Inicia sessão para conversar",
+    "es": "Inicia sesión para chatear",
+    "fr": "Connectez-vous pour discuter",
+    "de": "Zum Chatten anmelden",
+    "it": "Accedi per chattare"
+  },
+  "Log in to chat.": {
+    "pt": "Inicia sessão para conversar.",
+    "es": "Inicia sesión para chatear.",
+    "fr": "Connectez-vous pour discuter.",
+    "de": "Melde dich zum Chatten an.",
+    "it": "Accedi per chattare."
+  },
+  "Log in to comment.": {
+    "pt": "Inicia sessão para comentar.",
+    "es": "Inicia sesión para comentar.",
+    "fr": "Connectez-vous pour commenter.",
+    "de": "Melde dich zum Kommentieren an.",
+    "it": "Accedi per commentare."
+  },
+  "Log in to post.": {
+    "pt": "Inicia sessão para publicar.",
+    "es": "Inicia sesión para publicar.",
+    "fr": "Connectez-vous pour publier.",
+    "de": "Melde dich zum Posten an.",
+    "it": "Accedi per pubblicare."
+  },
+  "Logging in…": {
+    "pt": "A iniciar sessão…",
+    "es": "Iniciando sesión…",
+    "fr": "Connexion…",
+    "de": "Anmeldung läuft…",
+    "it": "Accesso in corso…"
+  },
+  "Mark all as read": {
+    "pt": "Marcar tudo como lido",
+    "es": "Marcar todo como leído",
+    "fr": "Tout marquer comme lu",
+    "de": "Alle als gelesen markieren",
+    "it": "Segna tutto come letto"
+  },
+  "Membership day": {
+    "pt": "Membro desde",
+    "es": "Miembro desde",
+    "fr": "Membre depuis",
+    "de": "Mitglied seit",
+    "it": "Membro dal"
+  },
+  "Message": {
+    "pt": "Mensagem",
+    "es": "Mensaje",
+    "fr": "Message",
+    "de": "Nachricht",
+    "it": "Messaggio"
+  },
+  "New chat with u/{username}": {
+    "pt": "Nova conversa com u/{username}",
+    "es": "Nuevo chat con u/{username}",
+    "fr": "Nouvelle discussion avec u/{username}",
+    "de": "Neuer Chat mit u/{username}",
+    "it": "Nuova chat con u/{username}"
+  },
+  "New password": {
+    "pt": "Nova palavra-passe",
+    "es": "Nueva contraseña",
+    "fr": "Nouveau mot de passe",
+    "de": "Neues Passwort",
+    "it": "Nuova password"
+  },
+  "New to EUDI Radar?": {
+    "pt": "Novo no EUDI Radar?",
+    "es": "¿Nuevo en EUDI Radar?",
+    "fr": "Nouveau sur EUDI Radar ?",
+    "de": "Neu bei EUDI Radar?",
+    "it": "Nuovo su EUDI Radar?"
+  },
+  "No bio yet.": {
+    "pt": "Ainda sem biografia.",
+    "es": "Aún no hay biografía.",
+    "fr": "Pas encore de bio.",
+    "de": "Noch keine Bio.",
+    "it": "Nessuna bio per ora."
+  },
+  "No chat requests.": {
+    "pt": "Sem pedidos de conversa.",
+    "es": "No hay solicitudes de chat.",
+    "fr": "Aucune demande de discussion.",
+    "de": "Keine Chat-Anfragen.",
+    "it": "Nessuna richiesta di chat."
+  },
+  "No chats yet. Start one from someone’s profile.": {
+    "pt": "Ainda sem conversas. Inicia uma a partir do perfil de alguém.",
+    "es": "Aún no hay chats. Inicia uno desde el perfil de alguien.",
+    "fr": "Aucune discussion pour l'instant. Lancez-en une depuis un profil.",
+    "de": "Noch keine Chats. Starte einen über das Profil einer Person.",
+    "it": "Ancora nessuna chat. Avviane una dal profilo di qualcuno."
+  },
+  "No details yet.": {
+    "pt": "Ainda sem detalhes.",
+    "es": "Aún no hay detalles.",
+    "fr": "Pas encore de détails.",
+    "de": "Noch keine Details.",
+    "it": "Nessun dettaglio per ora."
+  },
+  "No notifications yet": {
+    "pt": "Ainda sem notificações",
+    "es": "Aún no hay notificaciones",
+    "fr": "Aucune notification pour l'instant",
+    "de": "Noch keine Benachrichtigungen",
+    "it": "Ancora nessuna notifica"
+  },
+  "No such user.": {
+    "pt": "Utilizador não encontrado.",
+    "es": "El usuario no existe.",
+    "fr": "Utilisateur introuvable.",
+    "de": "Nutzer nicht gefunden.",
+    "it": "Utente inesistente."
+  },
+  "Notification types": {
+    "pt": "Tipos de notificação",
+    "es": "Tipos de notificación",
+    "fr": "Types de notifications",
+    "de": "Benachrichtigungsarten",
+    "it": "Tipi di notifica"
+  },
+  "Notifications": {
+    "pt": "Notificações",
+    "es": "Notificaciones",
+    "fr": "Notifications",
+    "de": "Benachrichtigungen",
+    "it": "Notifiche"
+  },
+  "Notify me about": {
+    "pt": "Notificar-me sobre",
+    "es": "Notificarme sobre",
+    "fr": "M'avertir pour",
+    "de": "Benachrichtige mich über",
+    "it": "Avvisami per"
+  },
+  "Only u/{username} can see what they follow.": {
+    "pt": "Só u/{username} pode ver o que segue.",
+    "es": "Solo u/{username} puede ver lo que sigue.",
+    "fr": "Seul u/{username} peut voir ce qu'il suit.",
+    "de": "Nur u/{username} kann sehen, was gefolgt wird.",
+    "it": "Solo u/{username} può vedere cosa segue."
+  },
+  "Open the chat page": {
+    "pt": "Abrir a página de conversas",
+    "es": "Abrir la página de chat",
+    "fr": "Ouvrir la page des discussions",
+    "de": "Chat-Seite öffnen",
+    "it": "Apri la pagina chat"
+  },
+  "PNG, JPG, WebP or GIF, up to 5 MB.": {
+    "pt": "PNG, JPG, WebP ou GIF, até 5 MB.",
+    "es": "PNG, JPG, WebP o GIF, hasta 5 MB.",
+    "fr": "PNG, JPG, WebP ou GIF, jusqu'à 5 Mo.",
+    "de": "PNG, JPG, WebP oder GIF, bis 5 MB.",
+    "it": "PNG, JPG, WebP o GIF, fino a 5 MB."
+  },
+  "Password": {
+    "pt": "Palavra-passe",
+    "es": "Contraseña",
+    "fr": "Mot de passe",
+    "de": "Passwort",
+    "it": "Password"
+  },
+  "Password changed.": {
+    "pt": "Palavra-passe alterada.",
+    "es": "Contraseña cambiada.",
+    "fr": "Mot de passe modifié.",
+    "de": "Passwort geändert.",
+    "it": "Password modificata."
+  },
+  "Post {cred}": {
+    "pt": "{cred} de publicações",
+    "es": "{cred} de publicaciones",
+    "fr": "{cred} des publications",
+    "de": "Beitrags-{cred}",
+    "it": "{cred} dei post"
+  },
+  "Privacy Policy": {
+    "pt": "Política de Privacidade",
+    "es": "Política de Privacidad",
+    "fr": "Politique de confidentialité",
+    "de": "Datenschutzerklärung",
+    "it": "Informativa sulla privacy"
+  },
+  "Profile saved.": {
+    "pt": "Perfil guardado.",
+    "es": "Perfil guardado.",
+    "fr": "Profil enregistré.",
+    "de": "Profil gespeichert.",
+    "it": "Profilo salvato."
+  },
+  "Profile sections": {
+    "pt": "Secções do perfil",
+    "es": "Secciones del perfil",
+    "fr": "Sections du profil",
+    "de": "Profilbereiche",
+    "it": "Sezioni del profilo"
+  },
+  "Request sent": {
+    "pt": "Pedido enviado",
+    "es": "Solicitud enviada",
+    "fr": "Demande envoyée",
+    "de": "Anfrage gesendet",
+    "it": "Richiesta inviata"
+  },
+  "Requests": {
+    "pt": "Pedidos",
+    "es": "Solicitudes",
+    "fr": "Demandes",
+    "de": "Anfragen",
+    "it": "Richieste"
+  },
+  "Reset your password": {
+    "pt": "Repor a palavra-passe",
+    "es": "Restablecer tu contraseña",
+    "fr": "Réinitialiser votre mot de passe",
+    "de": "Passwort zurücksetzen",
+    "it": "Reimposta la password"
+  },
+  "Role": {
+    "pt": "Função",
+    "es": "Cargo",
+    "fr": "Poste",
+    "de": "Rolle",
+    "it": "Ruolo"
+  },
+  "Save details": {
+    "pt": "Guardar detalhes",
+    "es": "Guardar detalles",
+    "fr": "Enregistrer les détails",
+    "de": "Details speichern",
+    "it": "Salva dettagli"
+  },
+  "Save password": {
+    "pt": "Guardar palavra-passe",
+    "es": "Guardar contraseña",
+    "fr": "Enregistrer le mot de passe",
+    "de": "Passwort speichern",
+    "it": "Salva password"
+  },
+  "Save profile": {
+    "pt": "Guardar perfil",
+    "es": "Guardar perfil",
+    "fr": "Enregistrer le profil",
+    "de": "Profil speichern",
+    "it": "Salva profilo"
+  },
+  "Saved.": {
+    "pt": "Guardado.",
+    "es": "Guardado.",
+    "fr": "Enregistré.",
+    "de": "Gespeichert.",
+    "it": "Salvato."
+  },
+  "Saving…": {
+    "pt": "A guardar…",
+    "es": "Guardando…",
+    "fr": "Enregistrement…",
+    "de": "Wird gespeichert…",
+    "it": "Salvataggio…"
+  },
+  "Select a chat, or start one from someone’s profile.": {
+    "pt": "Seleciona uma conversa ou inicia uma a partir do perfil de alguém.",
+    "es": "Selecciona un chat o inicia uno desde el perfil de alguien.",
+    "fr": "Sélectionnez une discussion ou lancez-en une depuis un profil.",
+    "de": "Wähle einen Chat oder starte einen über das Profil einer Person.",
+    "it": "Seleziona una chat o avviane una dal profilo di qualcuno."
+  },
+  "Send": {
+    "pt": "Enviar",
+    "es": "Enviar",
+    "fr": "Envoyer",
+    "de": "Senden",
+    "it": "Invia"
+  },
+  "Send reset link": {
+    "pt": "Enviar link de reposição",
+    "es": "Enviar enlace de restablecimiento",
+    "fr": "Envoyer le lien de réinitialisation",
+    "de": "Link zum Zurücksetzen senden",
+    "it": "Invia link di reimpostazione"
+  },
+  "Sending…": {
+    "pt": "A enviar…",
+    "es": "Enviando…",
+    "fr": "Envoi…",
+    "de": "Wird gesendet…",
+    "it": "Invio…"
+  },
+  "Share a take on a tender, a question for the market, or lessons from a bid.": {
+    "pt": "Partilha uma opinião sobre um concurso, uma pergunta ao mercado ou lições de uma proposta.",
+    "es": "Comparte una opinión sobre una licitación, una pregunta al mercado o lecciones de una oferta.",
+    "fr": "Partagez un avis sur un appel d'offres, une question au marché ou les leçons d'une candidature.",
+    "de": "Teile eine Einschätzung zu einer Ausschreibung, eine Frage an den Markt oder Erkenntnisse aus einem Angebot.",
+    "it": "Condividi un'opinione su una gara, una domanda al mercato o le lezioni di un'offerta."
+  },
+  "Sign up": {
+    "pt": "Registar",
+    "es": "Registrarse",
+    "fr": "S'inscrire",
+    "de": "Registrieren",
+    "it": "Registrati"
+  },
+  "Sign up to join": {
+    "pt": "Regista-te para entrar",
+    "es": "Regístrate para unirte",
+    "fr": "Inscrivez-vous pour rejoindre",
+    "de": "Zum Beitreten registrieren",
+    "it": "Registrati per unirti"
+  },
+  "Social links": {
+    "pt": "Redes sociais",
+    "es": "Redes sociales",
+    "fr": "Liens sociaux",
+    "de": "Social-Links",
+    "it": "Link social"
+  },
+  "Something went wrong with the tags or media — try again.": {
+    "pt": "Algo correu mal com as etiquetas ou os ficheiros — tenta novamente.",
+    "es": "Algo falló con las etiquetas o los archivos — inténtalo de nuevo.",
+    "fr": "Un problème est survenu avec les tags ou les médias — réessayez.",
+    "de": "Bei den Tags oder Medien ist etwas schiefgelaufen — versuch es erneut.",
+    "it": "Qualcosa è andato storto con i tag o i media — riprova."
+  },
+  "Tap the heart on any tender, news story or post to follow it — it lands here.": {
+    "pt": "Toca no coração de um concurso, notícia ou publicação para o seguir — aparece aqui.",
+    "es": "Toca el corazón de cualquier licitación, noticia o publicación para seguirla — aparecerá aquí.",
+    "fr": "Touchez le cœur d'un appel d'offres, d'une actualité ou d'une publication pour le suivre — il apparaîtra ici.",
+    "de": "Tippe auf das Herz bei einer Ausschreibung, Nachricht oder einem Beitrag, um zu folgen — es landet hier.",
+    "it": "Tocca il cuore su una gara, una notizia o un post per seguirlo — comparirà qui."
+  },
+  "Terms & Conditions": {
+    "pt": "Termos e Condições",
+    "es": "Términos y Condiciones",
+    "fr": "Conditions générales",
+    "de": "AGB",
+    "it": "Termini e condizioni"
+  },
+  "That comment no longer exists.": {
+    "pt": "Esse comentário já não existe.",
+    "es": "Ese comentario ya no existe.",
+    "fr": "Ce commentaire n'existe plus.",
+    "de": "Dieser Kommentar existiert nicht mehr.",
+    "it": "Questo commento non esiste più."
+  },
+  "That link has expired or was already used — try again.": {
+    "pt": "Esse link expirou ou já foi utilizado — tenta novamente.",
+    "es": "Ese enlace ha caducado o ya se usó — inténtalo de nuevo.",
+    "fr": "Ce lien a expiré ou a déjà été utilisé — réessayez.",
+    "de": "Dieser Link ist abgelaufen oder wurde bereits verwendet — versuch es erneut.",
+    "it": "Questo link è scaduto o è già stato usato — riprova."
+  },
+  "That post no longer exists.": {
+    "pt": "Essa publicação já não existe.",
+    "es": "Esa publicación ya no existe.",
+    "fr": "Cette publication n'existe plus.",
+    "de": "Dieser Beitrag existiert nicht mehr.",
+    "it": "Questo post non esiste più."
+  },
+  "That’s you.": {
+    "pt": "És tu.",
+    "es": "Eres tú.",
+    "fr": "C'est vous.",
+    "de": "Das bist du.",
+    "it": "Sei tu."
+  },
+  "The passwords don’t match.": {
+    "pt": "As palavras-passe não coincidem.",
+    "es": "Las contraseñas no coinciden.",
+    "fr": "Les mots de passe ne correspondent pas.",
+    "de": "Die Passwörter stimmen nicht überein.",
+    "it": "Le password non coincidono."
+  },
+  "Their posts will show here.": {
+    "pt": "As publicações aparecem aqui.",
+    "es": "Sus publicaciones aparecerán aquí.",
+    "fr": "Ses publications s'afficheront ici.",
+    "de": "Die Beiträge erscheinen hier.",
+    "it": "I suoi post compariranno qui."
+  },
+  "This chat request was declined.": {
+    "pt": "Este pedido de conversa foi recusado.",
+    "es": "Esta solicitud de chat fue rechazada.",
+    "fr": "Cette demande de discussion a été refusée.",
+    "de": "Diese Chat-Anfrage wurde abgelehnt.",
+    "it": "Questa richiesta di chat è stata rifiutata."
+  },
+  "Titles are up to 300 characters.": {
+    "pt": "Os títulos têm até 300 caracteres.",
+    "es": "Los títulos tienen hasta 300 caracteres.",
+    "fr": "Les titres font 300 caractères maximum.",
+    "de": "Titel haben höchstens 300 Zeichen.",
+    "it": "I titoli hanno al massimo 300 caratteri."
+  },
+  "Trophy case": {
+    "pt": "Vitrine de troféus",
+    "es": "Vitrina de trofeos",
+    "fr": "Vitrine des trophées",
+    "de": "Trophäenschrank",
+    "it": "Bacheca trofei"
+  },
+  "Type {username} to confirm": {
+    "pt": "Escreve {username} para confirmar",
+    "es": "Escribe {username} para confirmar",
+    "fr": "Saisissez {username} pour confirmer",
+    "de": "Gib zur Bestätigung {username} ein",
+    "it": "Digita {username} per confermare"
+  },
+  "Type {username} to confirm.": {
+    "pt": "Escreve {username} para confirmar.",
+    "es": "Escribe {username} para confirmar.",
+    "fr": "Saisissez {username} pour confirmer.",
+    "de": "Gib zur Bestätigung {username} ein.",
+    "it": "Digita {username} per confermare."
+  },
+  "Upload a picture": {
+    "pt": "Carregar uma imagem",
+    "es": "Subir una imagen",
+    "fr": "Importer une photo",
+    "de": "Bild hochladen",
+    "it": "Carica un'immagine"
+  },
+  "Upload failed": {
+    "pt": "Falha no carregamento",
+    "es": "Error al subir",
+    "fr": "Échec de l'envoi",
+    "de": "Upload fehlgeschlagen",
+    "it": "Caricamento non riuscito"
+  },
+  "Upload failed ({status})": {
+    "pt": "Falha no carregamento ({status})",
+    "es": "Error al subir ({status})",
+    "fr": "Échec de l'envoi ({status})",
+    "de": "Upload fehlgeschlagen ({status})",
+    "it": "Caricamento non riuscito ({status})"
+  },
+  "Uploading…": {
+    "pt": "A carregar…",
+    "es": "Subiendo…",
+    "fr": "Envoi…",
+    "de": "Wird hochgeladen…",
+    "it": "Caricamento…"
+  },
+  "Use PNG, JPG, WebP, GIF, MP4, WebM or MOV files.": {
+    "pt": "Usa ficheiros PNG, JPG, WebP, GIF, MP4, WebM ou MOV.",
+    "es": "Usa archivos PNG, JPG, WebP, GIF, MP4, WebM o MOV.",
+    "fr": "Utilisez des fichiers PNG, JPG, WebP, GIF, MP4, WebM ou MOV.",
+    "de": "Verwende PNG-, JPG-, WebP-, GIF-, MP4-, WebM- oder MOV-Dateien.",
+    "it": "Usa file PNG, JPG, WebP, GIF, MP4, WebM o MOV."
+  },
+  "Use a password of at least 8 characters.": {
+    "pt": "Usa uma palavra-passe com pelo menos 8 caracteres.",
+    "es": "Usa una contraseña de al menos 8 caracteres.",
+    "fr": "Utilisez un mot de passe d'au moins 8 caractères.",
+    "de": "Verwende ein Passwort mit mindestens 8 Zeichen.",
+    "it": "Usa una password di almeno 8 caratteri."
+  },
+  "Username": {
+    "pt": "Nome de utilizador",
+    "es": "Nombre de usuario",
+    "fr": "Nom d'utilisateur",
+    "de": "Benutzername",
+    "it": "Nome utente"
+  },
+  "Usernames are 3–24 letters, numbers or underscores.": {
+    "pt": "Os nomes de utilizador têm 3–24 letras, números ou underscores.",
+    "es": "Los nombres de usuario tienen 3–24 letras, números o guiones bajos.",
+    "fr": "Les noms d'utilisateur comportent 3 à 24 lettres, chiffres ou tirets bas.",
+    "de": "Benutzernamen bestehen aus 3–24 Buchstaben, Zahlen oder Unterstrichen.",
+    "it": "I nomi utente hanno 3–24 lettere, numeri o trattini bassi."
+  },
+  "Waiting for u/{username} to accept your request.": {
+    "pt": "À espera que u/{username} aceite o teu pedido.",
+    "es": "Esperando a que u/{username} acepte tu solicitud.",
+    "fr": "En attente de l'acceptation de u/{username}.",
+    "de": "Warte darauf, dass u/{username} deine Anfrage annimmt.",
+    "it": "In attesa che u/{username} accetti la tua richiesta."
+  },
+  "Website": {
+    "pt": "Website",
+    "es": "Sitio web",
+    "fr": "Site web",
+    "de": "Website",
+    "it": "Sito web"
+  },
+  "What you do, the markets you follow, what you bid on.": {
+    "pt": "O que fazes, os mercados que segues, a que concursos concorres.",
+    "es": "A qué te dedicas, qué mercados sigues, a qué licitas.",
+    "fr": "Ce que vous faites, les marchés que vous suivez, ce sur quoi vous soumissionnez.",
+    "de": "Was du machst, welche Märkte du verfolgst, worauf du bietest.",
+    "it": "Di cosa ti occupi, i mercati che segui, le gare a cui partecipi."
+  },
+  "Write a comment first.": {
+    "pt": "Escreve primeiro um comentário.",
+    "es": "Escribe primero un comentario.",
+    "fr": "Écrivez d'abord un commentaire.",
+    "de": "Schreib zuerst einen Kommentar.",
+    "it": "Scrivi prima un commento."
+  },
+  "Write a first message.": {
+    "pt": "Escreve uma primeira mensagem.",
+    "es": "Escribe un primer mensaje.",
+    "fr": "Écrivez un premier message.",
+    "de": "Schreib eine erste Nachricht.",
+    "it": "Scrivi un primo messaggio."
+  },
+  "Wrong email or password.": {
+    "pt": "Email ou palavra-passe incorretos.",
+    "es": "Correo o contraseña incorrectos.",
+    "fr": "E-mail ou mot de passe incorrect.",
+    "de": "E-Mail oder Passwort falsch.",
+    "it": "Email o password errati."
+  },
+  "You": {
+    "pt": "Tu",
+    "es": "Tú",
+    "fr": "Vous",
+    "de": "Du",
+    "it": "Tu"
+  },
+  "Your first message is sent as a chat request — u/{username} can accept or decline it.": {
+    "pt": "A tua primeira mensagem é enviada como pedido de conversa — u/{username} pode aceitá-lo ou recusá-lo.",
+    "es": "Tu primer mensaje se envía como solicitud de chat — u/{username} puede aceptarla o rechazarla.",
+    "fr": "Votre premier message est envoyé comme demande de discussion — u/{username} peut l'accepter ou la refuser.",
+    "de": "Deine erste Nachricht wird als Chat-Anfrage gesendet — u/{username} kann sie annehmen oder ablehnen.",
+    "it": "Il tuo primo messaggio viene inviato come richiesta di chat — u/{username} può accettarla o rifiutarla."
+  },
+  "Your session expired — log in again.": {
+    "pt": "A tua sessão expirou — inicia sessão novamente.",
+    "es": "Tu sesión ha caducado — vuelve a iniciar sesión.",
+    "fr": "Votre session a expiré — reconnectez-vous.",
+    "de": "Deine Sitzung ist abgelaufen — melde dich erneut an.",
+    "it": "La sessione è scaduta — accedi di nuovo."
+  },
+  "You’re invited as a member.": {
+    "pt": "Foste convidado como membro.",
+    "es": "Te han invitado como miembro.",
+    "fr": "Vous êtes invité en tant que membre.",
+    "de": "Du bist als Mitglied eingeladen.",
+    "it": "Sei invitato come membro."
+  },
+  "You’re invited as an admin.": {
+    "pt": "Foste convidado como administrador.",
+    "es": "Te han invitado como administrador.",
+    "fr": "Vous êtes invité en tant qu'administrateur.",
+    "de": "Du bist als Admin eingeladen.",
+    "it": "Sei invitato come amministratore."
+  },
+  "a workspace": {
+    "pt": "um espaço de trabalho",
+    "es": "un espacio de trabajo",
+    "fr": "un espace de travail",
+    "de": "einen Arbeitsbereich",
+    "it": "un'area di lavoro"
+  },
+  "and": {
+    "pt": "e",
+    "es": "y",
+    "fr": "et",
+    "de": "und",
+    "it": "e"
+  },
+  "could not start the upload": {
+    "pt": "não foi possível iniciar o carregamento",
+    "es": "no se pudo iniciar la subida",
+    "fr": "impossible de lancer l'envoi",
+    "de": "Upload konnte nicht gestartet werden",
+    "it": "impossibile avviare il caricamento"
+  },
+  "e.g. EUDI Wallet, eIDAS, public procurement": {
+    "pt": "ex.: EUDI Wallet, eIDAS, contratação pública",
+    "es": "p. ej. EUDI Wallet, eIDAS, contratación pública",
+    "fr": "ex. : EUDI Wallet, eIDAS, marchés publics",
+    "de": "z. B. EUDI Wallet, eIDAS, öffentliche Beschaffung",
+    "it": "es. EUDI Wallet, eIDAS, appalti pubblici"
+  },
+  "e.g. Head of Public Sector": {
+    "pt": "ex.: Diretor de Setor Público",
+    "es": "p. ej. Responsable de Sector Público",
+    "fr": "ex. : Responsable secteur public",
+    "de": "z. B. Leiter Öffentlicher Sektor",
+    "it": "es. Responsabile Settore Pubblico"
+  },
+  "e.g. Lisbon, Portugal": {
+    "pt": "ex.: Lisboa, Portugal",
+    "es": "p. ej. Lisboa, Portugal",
+    "fr": "ex. : Lisbonne, Portugal",
+    "de": "z. B. Lissabon, Portugal",
+    "it": "es. Lisbona, Portogallo"
+  },
+  "e.g. {example}": {
+    "pt": "ex.: {example}",
+    "es": "p. ej. {example}",
+    "fr": "ex. : {example}",
+    "de": "z. B. {example}",
+    "it": "es. {example}"
+  },
+  "images up to 5 MB": {
+    "pt": "imagens até 5 MB",
+    "es": "imágenes de hasta 5 MB",
+    "fr": "images jusqu'à 5 Mo",
+    "de": "Bilder bis 5 MB",
+    "it": "immagini fino a 5 MB"
+  },
+  "linkedin.com/in/yourname": {
+    "pt": "linkedin.com/in/oteunome",
+    "es": "linkedin.com/in/tunombre",
+    "fr": "linkedin.com/in/votrenom",
+    "de": "linkedin.com/in/deinname",
+    "it": "linkedin.com/in/tuonome"
+  },
+  "locked": {
+    "pt": "bloqueado",
+    "es": "bloqueado",
+    "fr": "verrouillé",
+    "de": "gesperrt",
+    "it": "bloccato"
+  },
+  "log in first": {
+    "pt": "inicia sessão primeiro",
+    "es": "inicia sesión primero",
+    "fr": "connectez-vous d'abord",
+    "de": "melde dich zuerst an",
+    "it": "accedi prima"
+  },
+  "not allowed": {
+    "pt": "não permitido",
+    "es": "no permitido",
+    "fr": "non autorisé",
+    "de": "nicht erlaubt",
+    "it": "non consentito"
+  },
+  "now": {
+    "pt": "agora",
+    "es": "ahora",
+    "fr": "maintenant",
+    "de": "jetzt",
+    "it": "ora"
+  },
+  "on a news story": {
+    "pt": "numa notícia",
+    "es": "en una noticia",
+    "fr": "sur une actualité",
+    "de": "zu einer Nachricht",
+    "it": "su una notizia"
+  },
+  "on a tender": {
+    "pt": "num concurso",
+    "es": "en una licitación",
+    "fr": "sur un appel d'offres",
+    "de": "zu einer Ausschreibung",
+    "it": "su una gara"
+  },
+  "on “{title}”": {
+    "pt": "em “{title}”",
+    "es": "en “{title}”",
+    "fr": "sur « {title} »",
+    "de": "zu „{title}“",
+    "it": "su “{title}”"
+  },
+  "or": {
+    "pt": "ou",
+    "es": "o",
+    "fr": "ou",
+    "de": "oder",
+    "it": "oppure"
+  },
+  "u/{username} declined your chat request.": {
+    "pt": "u/{username} recusou o teu pedido de conversa.",
+    "es": "u/{username} rechazó tu solicitud de chat.",
+    "fr": "u/{username} a refusé votre demande de discussion.",
+    "de": "u/{username} hat deine Chat-Anfrage abgelehnt.",
+    "it": "u/{username} ha rifiutato la tua richiesta di chat."
+  },
+  "u/{username} hasn’t added any details yet.": {
+    "pt": "u/{username} ainda não adicionou detalhes.",
+    "es": "u/{username} aún no ha añadido detalles.",
+    "fr": "u/{username} n'a pas encore ajouté de détails.",
+    "de": "u/{username} hat noch keine Details hinzugefügt.",
+    "it": "u/{username} non ha ancora aggiunto dettagli."
+  },
+  "u/{username} hasn’t written anything yet.": {
+    "pt": "u/{username} ainda não escreveu nada.",
+    "es": "u/{username} aún no ha escrito nada.",
+    "fr": "u/{username} n'a encore rien écrit.",
+    "de": "u/{username} hat noch nichts geschrieben.",
+    "it": "u/{username} non ha ancora scritto nulla."
+  },
+  "u/{username} is taken — try another.": {
+    "pt": "u/{username} já existe — tenta outro.",
+    "es": "u/{username} ya está en uso — prueba otro.",
+    "fr": "u/{username} est déjà pris — essayez-en un autre.",
+    "de": "u/{username} ist vergeben — versuch einen anderen.",
+    "it": "u/{username} è già in uso — provane un altro."
+  },
+  "u/{username} is taken.": {
+    "pt": "u/{username} já existe.",
+    "es": "u/{username} ya está en uso.",
+    "fr": "u/{username} est déjà pris.",
+    "de": "u/{username} ist vergeben.",
+    "it": "u/{username} è già in uso."
+  },
+  "u/{username} wants to chat with you.": {
+    "pt": "u/{username} quer conversar contigo.",
+    "es": "u/{username} quiere chatear contigo.",
+    "fr": "u/{username} souhaite discuter avec vous.",
+    "de": "u/{username} möchte mit dir chatten.",
+    "it": "u/{username} vuole chattare con te."
+  },
+  "unread": {
+    "pt": "não lida",
+    "es": "no leída",
+    "fr": "non lue",
+    "de": "ungelesen",
+    "it": "non letta"
+  },
+  "use a PNG, JPG, WebP or GIF image": {
+    "pt": "usa uma imagem PNG, JPG, WebP ou GIF",
+    "es": "usa una imagen PNG, JPG, WebP o GIF",
+    "fr": "utilisez une image PNG, JPG, WebP ou GIF",
+    "de": "verwende ein PNG-, JPG-, WebP- oder GIF-Bild",
+    "it": "usa un'immagine PNG, JPG, WebP o GIF"
+  },
+  "username or github.com/username": {
+    "pt": "utilizador ou github.com/utilizador",
+    "es": "usuario o github.com/usuario",
+    "fr": "pseudo ou github.com/pseudo",
+    "de": "Benutzername oder github.com/benutzername",
+    "it": "nomeutente o github.com/nomeutente"
+  },
+  "yourcompany.com": {
+    "pt": "asuaempresa.com",
+    "es": "tuempresa.com",
+    "fr": "votreentreprise.com",
+    "de": "deinefirma.de",
+    "it": "tuaazienda.it"
+  },
+  "{label}: that isn’t a valid link.": {
+    "pt": "{label}: esse link não é válido.",
+    "es": "{label}: ese enlace no es válido.",
+    "fr": "{label} : ce lien n'est pas valide.",
+    "de": "{label}: Das ist kein gültiger Link.",
+    "it": "{label}: il link non è valido."
+  },
+  "{label}: use a link on {host}.": {
+    "pt": "{label}: usa um link em {host}.",
+    "es": "{label}: usa un enlace de {host}.",
+    "fr": "{label} : utilisez un lien sur {host}.",
+    "de": "{label}: Verwende einen Link auf {host}.",
+    "it": "{label}: usa un link su {host}."
+  },
+  "{n} unread": {
+    "pt": "{n} por ler",
+    "es": "{n} sin leer",
+    "fr": "{n} non lues",
+    "de": "{n} ungelesen",
+    "it": "{n} da leggere"
+  },
+  "{n}d": {
+    "pt": "{n} d",
+    "es": "{n} d",
+    "fr": "{n} j",
+    "de": "{n} T.",
+    "it": "{n} g"
+  },
+  "{n}h": {
+    "pt": "{n} h",
+    "es": "{n} h",
+    "fr": "{n} h",
+    "de": "{n} Std.",
+    "it": "{n} h"
+  },
+  "{n}m": {
+    "pt": "{n} min",
+    "es": "{n} min",
+    "fr": "{n} min",
+    "de": "{n} Min.",
+    "it": "{n} min"
+  },
+  "— at least 8 characters": {
+    "pt": "— pelo menos 8 caracteres",
+    "es": "— al menos 8 caracteres",
+    "fr": "— au moins 8 caractères",
+    "de": "— mindestens 8 Zeichen",
+    "it": "— almeno 8 caratteri"
+  },
+  "— comma separated": {
+    "pt": "— separadas por vírgulas",
+    "es": "— separadas por comas",
+    "fr": "— séparées par des virgules",
+    "de": "— durch Kommas getrennt",
+    "it": "— separate da virgole"
+  },
+  "— shown as u/name": {
+    "pt": "— apresentado como u/nome",
+    "es": "— se muestra como u/nombre",
+    "fr": "— affiché comme u/nom",
+    "de": "— angezeigt als u/name",
+    "it": "— mostrato come u/nome"
+  },
+  "— shown on your profile": {
+    "pt": "— apresentado no teu perfil",
+    "es": "— se muestra en tu perfil",
+    "fr": "— affiché sur votre profil",
+    "de": "— wird in deinem Profil angezeigt",
+    "it": "— mostrato sul tuo profilo"
+  },
+  "— u/name": {
+    "pt": "— u/nome",
+    "es": "— u/nombre",
+    "fr": "— u/nom",
+    "de": "— u/name",
+    "it": "— u/nome"
+  },
+  "Posts": {
+    "pt": "Publicações",
+    "es": "Publicaciones",
+    "fr": "Publications",
+    "de": "Beiträge",
+    "it": "Post"
+  },
+  "Comments": {
+    "pt": "Comentários",
+    "es": "Comentarios",
+    "fr": "Commentaires",
+    "de": "Kommentare",
+    "it": "Commenti"
+  },
+  "You don’t have any posts yet": {
+    "pt": "Ainda não tens publicações",
+    "es": "Aún no tienes publicaciones",
+    "fr": "Vous n'avez pas encore de publications",
+    "de": "Du hast noch keine Beiträge",
+    "it": "Non hai ancora post"
+  },
+  "You don’t have any comments yet": {
+    "pt": "Ainda não tens comentários",
+    "es": "Aún no tienes comentarios",
+    "fr": "Vous n'avez pas encore de commentaires",
+    "de": "Du hast noch keine Kommentare",
+    "it": "Non hai ancora commenti"
+  },
+  "You don’t have any follows yet": {
+    "pt": "Ainda não segues nada",
+    "es": "Aún no sigues nada",
+    "fr": "Vous ne suivez encore rien",
+    "de": "Du folgst noch nichts",
+    "it": "Non segui ancora nulla"
+  },
+  "u/{username} hasn’t got any posts yet": {
+    "pt": "u/{username} ainda não tem publicações",
+    "es": "u/{username} aún no tiene publicaciones",
+    "fr": "u/{username} n'a pas encore de publications",
+    "de": "u/{username} hat noch keine Beiträge",
+    "it": "u/{username} non ha ancora post"
+  },
+  "u/{username} hasn’t got any comments yet": {
+    "pt": "u/{username} ainda não tem comentários",
+    "es": "u/{username} aún no tiene comentarios",
+    "fr": "u/{username} n'a pas encore de commentaires",
+    "de": "u/{username} hat noch keine Kommentare",
+    "it": "u/{username} non ha ancora commenti"
+  },
+  "10-day streak": {
+    "pt": "10 dias seguidos",
+    "es": "Racha de 10 días",
+    "fr": "10 jours d'affilée",
+    "de": "10-Tage-Serie",
+    "it": "10 giorni di fila"
+  },
+  "Visit EUDI Radar 10 days in a row": {
+    "pt": "Visita o EUDI Radar 10 dias seguidos",
+    "es": "Visita EUDI Radar 10 días seguidos",
+    "fr": "Visitez EUDI Radar 10 jours d'affilée",
+    "de": "Besuche EUDI Radar 10 Tage in Folge",
+    "it": "Visita EUDI Radar 10 giorni di fila"
+  },
+  "Conversationalist": {
+    "pt": "Conversador",
+    "es": "Conversador",
+    "fr": "Bavard",
+    "de": "Gesprächig",
+    "it": "Conversatore"
+  },
+  "Write 20 comments": {
+    "pt": "Escreve 20 comentários",
+    "es": "Escribe 20 comentarios",
+    "fr": "Écrivez 20 commentaires",
+    "de": "Schreib 20 Kommentare",
+    "it": "Scrivi 20 commenti"
+  },
+  "First post": {
+    "pt": "Primeira publicação",
+    "es": "Primera publicación",
+    "fr": "Première publication",
+    "de": "Erster Beitrag",
+    "it": "Primo post"
+  },
+  "Publish your first post": {
+    "pt": "Publica a tua primeira publicação",
+    "es": "Publica tu primera publicación",
+    "fr": "Publiez votre première publication",
+    "de": "Veröffentliche deinen ersten Beitrag",
+    "it": "Pubblica il tuo primo post"
+  },
+  "Tender scout": {
+    "pt": "Batedor de concursos",
+    "es": "Explorador de licitaciones",
+    "fr": "Éclaireur d'appels d'offres",
+    "de": "Ausschreibungs-Scout",
+    "it": "Esploratore di gare"
+  },
+  "Follow 10 tenders": {
+    "pt": "Segue 10 concursos",
+    "es": "Sigue 10 licitaciones",
+    "fr": "Suivez 10 appels d'offres",
+    "de": "Folge 10 Ausschreibungen",
+    "it": "Segui 10 gare"
+  },
+  "One year club": {
+    "pt": "Clube de um ano",
+    "es": "Club del primer año",
+    "fr": "Club des un an",
+    "de": "Ein-Jahres-Club",
+    "it": "Club di un anno"
+  },
+  "One year on EUDI Radar": {
+    "pt": "Um ano no EUDI Radar",
+    "es": "Un año en EUDI Radar",
+    "fr": "Un an sur EUDI Radar",
+    "de": "Ein Jahr bei EUDI Radar",
+    "it": "Un anno su EUDI Radar"
+  },
+  "All": {
+    "pt": "Todas",
+    "es": "Todas",
+    "fr": "Toutes",
+    "de": "Alle",
+    "it": "Tutte"
+  },
+  "Likes": {
+    "pt": "Gostos",
+    "es": "Me gusta",
+    "fr": "J'aime",
+    "de": "Likes",
+    "it": "Mi piace"
+  },
+  "Tenders": {
+    "pt": "Concursos",
+    "es": "Licitaciones",
+    "fr": "Appels d'offres",
+    "de": "Ausschreibungen",
+    "it": "Gare"
+  },
+  "Social": {
+    "pt": "Social",
+    "es": "Social",
+    "fr": "Social",
+    "de": "Sozial",
+    "it": "Social"
+  },
+  "On your posts and comments": {
+    "pt": "Nas tuas publicações e comentários",
+    "es": "En tus publicaciones y comentarios",
+    "fr": "Sur vos publications et commentaires",
+    "de": "Auf deine Beiträge und Kommentare",
+    "it": "Sui tuoi post e commenti"
+  },
+  "On your posts": {
+    "pt": "Nas tuas publicações",
+    "es": "En tus publicaciones",
+    "fr": "Sur vos publications",
+    "de": "Auf deine Beiträge",
+    "it": "Sui tuoi post"
+  },
+  "Replies": {
+    "pt": "Respostas",
+    "es": "Respuestas",
+    "fr": "Réponses",
+    "de": "Antworten",
+    "it": "Risposte"
+  },
+  "To your comments": {
+    "pt": "Aos teus comentários",
+    "es": "A tus comentarios",
+    "fr": "À vos commentaires",
+    "de": "Auf deine Kommentare",
+    "it": "Ai tuoi commenti"
+  },
+  "New tenders": {
+    "pt": "Novos concursos",
+    "es": "Nuevas licitaciones",
+    "fr": "Nouveaux appels d'offres",
+    "de": "Neue Ausschreibungen",
+    "it": "Nuove gare"
+  },
+  "Matching your scopes": {
+    "pt": "Que correspondem aos teus âmbitos",
+    "es": "Que coinciden con tus ámbitos",
+    "fr": "Correspondant à vos périmètres",
+    "de": "Passend zu deinen Bereichen",
+    "it": "Corrispondenti ai tuoi ambiti"
+  },
+  "Tender updates": {
+    "pt": "Atualizações de concursos",
+    "es": "Actualizaciones de licitaciones",
+    "fr": "Mises à jour d'appels d'offres",
+    "de": "Ausschreibungs-Updates",
+    "it": "Aggiornamenti delle gare"
+  },
+  "On tenders you follow": {
+    "pt": "Em concursos que segues",
+    "es": "En licitaciones que sigues",
+    "fr": "Sur les appels d'offres que vous suivez",
+    "de": "Zu Ausschreibungen, denen du folgst",
+    "it": "Sulle gare che segui"
+  },
+  "New followers": {
+    "pt": "Novos seguidores",
+    "es": "Nuevos seguidores",
+    "fr": "Nouveaux abonnés",
+    "de": "Neue Follower",
+    "it": "Nuovi follower"
+  },
+  "u/{username} isn’t accepting chat requests.": {
+    "pt": "u/{username} não está a aceitar pedidos de conversa.",
+    "es": "u/{username} no acepta solicitudes de chat.",
+    "fr": "u/{username} n'accepte pas les demandes de discussion.",
+    "de": "u/{username} nimmt keine Chat-Anfragen an.",
+    "it": "u/{username} non accetta richieste di chat."
+  },
+  "u/{username} only accepts chat requests from people in their workspaces.": {
+    "pt": "u/{username} só aceita pedidos de conversa de pessoas dos seus espaços de trabalho.",
+    "es": "u/{username} solo acepta solicitudes de chat de personas de sus espacios de trabajo.",
+    "fr": "u/{username} n'accepte que les demandes de discussion des membres de ses espaces de travail.",
+    "de": "u/{username} nimmt nur Chat-Anfragen von Personen aus den eigenen Arbeitsbereichen an.",
+    "it": "u/{username} accetta richieste di chat solo da persone delle sue aree di lavoro."
+  }
+}

@@ -4,6 +4,7 @@ import { getLikes } from '@/lib/likes';
 import OpportunityRow, { RingGradients } from './OpportunityRow';
 import type { UpdateEvent } from './UpdateComment';
 import SectionTabs from './SectionTabs';
+import { getT } from '@/lib/i18n/server';
 
 type View = 'all' | 'new' | (typeof OPP_CATEGORIES)[number]['slug'];
 
@@ -13,6 +14,7 @@ const TITLES: Record<string, string> = {
 };
 
 export default async function OpportunitiesView({ view }: { view: View }) {
+  const t = await getT();
   // One query for the whole active set: the tab counts and the list come from it.
   const { opportunities: all, error } = await getActiveOpportunities();
   const active = all.filter((o) => o.opportunity_type !== 'signal');  // signals: home feed and News
@@ -22,11 +24,11 @@ export default async function OpportunitiesView({ view }: { view: View }) {
     view === 'all' ? active : view === 'new' ? newOnes : active.filter((o) => o.opportunity_type === view);
 
   const tabs = [
-    { href: '/tenders', label: 'All active', count: active.length },
-    { href: '/tenders/new', label: 'New', count: newOnes.length },
+    { href: '/tenders', label: t('All active'), count: active.length },
+    { href: '/tenders/new', label: t('New'), count: newOnes.length },
     ...TENDER_CATEGORIES.map((c) => ({
       href: `/tenders/${c.path}`,
-      label: c.label,
+      label: t(c.label),
       count: active.filter((o) => o.opportunity_type === c.slug).length,
     })),
   ];
@@ -49,18 +51,18 @@ export default async function OpportunitiesView({ view }: { view: View }) {
 
   return (
     <div>
-      <h1 className="opps-h1">{TITLES[view]}</h1>
+      <h1 className="opps-h1">{t(TITLES[view])}</h1>
       <SectionTabs tabs={tabs} active={activeHref} />
 
       {error && (
-        <div className="callout error"><strong>Error loading tenders.</strong> {error.message}</div>
+        <div className="callout error"><strong>{t('Error loading tenders.')}</strong> {error.message}</div>
       )}
       {!error && shown.length === 0 && (
         <div className="callout">
-          <strong>Nothing here right now.</strong>{' '}
+          <strong>{t('Nothing here right now.')}</strong>{' '}
           {view === 'new'
-            ? `None in the last ${NEW_WINDOW_DAYS} days.`
-            : 'Closed ones are in History.'}
+            ? t('None in the last {n} days.', { n: NEW_WINDOW_DAYS })
+            : t('Closed ones are in History.')}
         </div>
       )}
       <RingGradients />

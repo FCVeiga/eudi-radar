@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import { getSupabaseServerClient } from '@/lib/supabase';
+import { getT } from '@/lib/i18n/server';
 
 export const dynamic = 'force-dynamic';
 
 /** Settings → "Download your data": everything you've put on the platform, as JSON. */
 export async function GET() {
   const user = await getCurrentUser();
-  if (!user) return NextResponse.json({ error: 'Log in first.' }, { status: 401 });
+  if (!user) return NextResponse.json({ error: (await getT())('Log in first.') }, { status: 401 });
   const db = getSupabaseServerClient();
   const mine = (table: string, cols = '*') => db.from(table).select(cols).eq('user_id', user.id).then((r) => r.data ?? []);
   const [profile, account, posts, comments, likes, workspaces, messages, notifications, following] = await Promise.all([

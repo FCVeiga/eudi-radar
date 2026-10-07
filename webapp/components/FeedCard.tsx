@@ -5,15 +5,30 @@ import CardMenu from './social/CardMenu';
 import type { Engagement } from '@/lib/engagement';
 import { likeTarget } from '@/lib/likes';
 import { daysUntil } from '@/lib/data';
-import { FeedItem, timeAgo } from '@/lib/feed';
+import type { FeedItem } from '@/lib/feed';
+import { getLocale, getTSync } from '@/lib/i18n/server';
 import NewsImage from './NewsImage';
 
+type T = ReturnType<typeof getTSync>;
+
+/** "3h ago", "2d ago", "14 Sep" — compact, like a feed (lib/feed's timeAgo, in the viewer's language). */
+function timeAgo(t: T, at: Date, now: Date) {
+  const mins = Math.round((now.getTime() - at.getTime()) / 60000);
+  if (mins < 60) return t('{n}m ago', { n: Math.max(1, mins) });
+  const hours = Math.round(mins / 60);
+  if (hours < 24) return t('{n}h ago', { n: hours });
+  const days = Math.round(hours / 24);
+  if (days < 14) return t('{n}d ago', { n: days });
+  return at.toLocaleDateString(getLocale(), { day: 'numeric', month: 'short' });
+}
+
 function Votes({ item, value }: { item: FeedItem; value: number }) {
+  const t = getTSync();
   const title =
-    item.movement === 'up' ? 'Moved up since the last update'
-      : item.movement === 'down' ? 'Moved down since the last update' : 'No change in position';
+    item.movement === 'up' ? t('Moved up since the last update')
+      : item.movement === 'down' ? t('Moved down since the last update') : t('No change in position');
   return (
-    <div className={`feed-votes ${item.movement}`} title={`${title} · AI relevance ${item.score}, top score ${item.combined}`}>
+    <div className={`feed-votes ${item.movement}`} title={`${title} · ${t('AI relevance {score}, top score {top}', { score: item.score, top: item.combined })}`}>
       <svg className="arrow up" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3.5 13 9.5H3z" /></svg>
       <span className="feed-votes-num">{value}</span>
       <svg className="arrow down" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 12.5 3 6.5h10z" /></svg>
@@ -22,12 +37,13 @@ function Votes({ item, value }: { item: FeedItem; value: number }) {
 }
 
 function Deadline({ deadline, now }: { deadline: string; now: Date }) {
+  const t = getTSync();
   const d = daysUntil(deadline, now)!;
-  const date = new Date(deadline).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-  if (d < 0) return <div className="feed-foot">Closed {date}</div>;
+  const date = new Date(deadline).toLocaleDateString(getLocale(), { day: 'numeric', month: 'short', year: 'numeric' });
+  if (d < 0) return <div className="feed-foot">{t('Closed {date}', { date })}</div>;
   return (
     <div className={`feed-foot ${d <= 14 ? 'due-soon' : ''}`}>
-      Deadline {date} · {d === 0 ? 'closes today' : `${d} day${d === 1 ? '' : 's'} left`}
+      {t('Deadline {date}', { date })} · {d === 0 ? t('closes today') : d === 1 ? t('{n} day left', { n: d }) : t('{n} days left', { n: d })}
     </div>
   );
 }
@@ -38,18 +54,19 @@ export default function FeedCard({ item, now, value, like, social }: {
   social?: { engagement: Engagement; signedIn: boolean };  // News page: … menu and action bar
 }) {
   if (social) return <SocialFeedCard item={item} now={now} value={value} social={social} />;
+  const t = getTSync();
   const target = like ? likeTarget(item.href) : null;
   const card = (
     <Link href={item.href} className={`feed-item ${item.kind}`}>
       <Votes item={item} value={value ?? item.combined} />
       <div className="feed-body">
         <div className="feed-meta">
-          <span className={`feed-kind ${item.kind}`}>{item.kindLabel}</span>
-          <span className={`tag ${item.category}`}>{item.categoryLabel}</span>
-          {item.isNew && <span className="tag new">New</span>}
-          {item.statusLabel && <span className="tag closed">{item.statusLabel}</span>}
+          <span className={`feed-kind ${item.kind}`}>{t(item.kindLabel)}</span>
+          <span className={`tag ${item.category}`}>{t(item.categoryLabel)}</span>
+          {item.isNew && <span className="tag new">{t('New')}</span>}
+          {item.statusLabel && <span className="tag closed">{t(item.statusLabel)}</span>}
           {item.country && <span className="feed-meta-text">{item.country}</span>}
-          <span className="feed-time" title={item.at.toLocaleString('en-GB')}>{timeAgo(item.at, now)}</span>
+          <span className="feed-time" title={item.at.toLocaleString(getLocale())}>{timeAgo(t, item.at, now)}</span>
         </div>
         <div className="feed-title">{item.headline}</div>
         {item.image && <NewsImage src={item.image} />}
@@ -73,18 +90,19 @@ function SocialFeedCard({ item, now, value, social }: { item: FeedItem; now: Dat
   const target = likeTarget(item.href);
   if (!target || target[0] === 'post') return null;
   const [type, id] = target as ['news' | 'tender', string];
+  const t = getTSync();
   const e = social.engagement;
   return (
     <article className={`feed-item ${item.kind} social-card`} data-card>
       <Votes item={item} value={value ?? item.combined} />
       <div className="feed-body">
         <div className="feed-meta cc-meta">
-          <span className={`feed-kind ${item.kind}`}>{item.kindLabel}</span>
-          <span className={`tag ${item.category}`}>{item.categoryLabel}</span>
-          {item.isNew && <span className="tag new">New</span>}
+          <span className={`feed-kind ${item.kind}`}>{t(item.kindLabel)}</span>
+          <span className={`tag ${item.category}`}>{t(item.categoryLabel)}</span>
+          {item.isNew && <span className="tag new">{t('New')}</span>}
           {item.country && <span className="feed-meta-text">{item.country}</span>}
           <span className="cc-dot">·</span>
-          <span className="cc-time" title={item.at.toLocaleString('en-GB')}>{timeAgo(item.at, now)}</span>
+          <span className="cc-time" title={item.at.toLocaleString(getLocale())}>{timeAgo(t, item.at, now)}</span>
         </div>
         <Link href={item.href} className="cc-link">
           <div className="feed-title">{item.headline}</div>

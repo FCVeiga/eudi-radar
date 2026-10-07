@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { toggleLike } from '@/app/auth/actions';
+import { useT } from '@/lib/i18n/client';
 
 /**
  * Empty heart → red heart: the user likes a tender or story, which then shows
@@ -12,13 +13,16 @@ export default function HeartButton({ type, id, liked: initial, signedIn, classN
   type: 'tender' | 'news' | 'post' | 'comment'; id: string; liked: boolean; signedIn: boolean; className?: string;
   count?: number;
 }) {
+  const tr = useT();
   const [liked, setLiked] = useState(initial);
   const [pending, start] = useTransition();
   const router = useRouter();
   const path = usePathname();
-  const noun = type === 'tender' ? 'tender' : type === 'post' ? 'post' : type === 'comment' ? 'comment' : 'story';
   const shown = count === undefined ? undefined : count + (liked ? 1 : 0) - (initial ? 1 : 0);
-  const label = liked ? `Unlike this ${noun}` : `Like this ${noun}`;
+  const label = type === 'tender' ? (liked ? tr('Unlike this tender') : tr('Like this tender'))
+    : type === 'post' ? (liked ? tr('Unlike this post') : tr('Like this post'))
+      : type === 'comment' ? (liked ? tr('Unlike this comment') : tr('Like this comment'))
+        : (liked ? tr('Unlike this story') : tr('Like this story'));
 
   return (
     <button type="button" className={`heart ${liked ? 'on' : ''} ${shown !== undefined ? 'with-count' : ''} ${className}`} aria-pressed={liked} aria-label={label} title={label}

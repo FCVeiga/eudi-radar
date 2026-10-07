@@ -11,6 +11,7 @@ import { getLikes } from '@/lib/likes';
 import { isAgentEnabled } from '@/lib/settings';
 import { getPlatformLanguage } from '@/lib/language';
 import { getViewScopes } from '@/lib/scopes';
+import { getLocale, getT } from '@/lib/i18n/server';
 
 // The News Report Agent runs inside this page's server action: give it time.
 export const maxDuration = 300;
@@ -28,10 +29,12 @@ const VERDICTS: Record<string, { label: string; note: string }> = {
   monitor: { label: 'Monitor', note: 'Nothing to do yet' },
 };
 
-const fmtDate = (iso: string) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
 export default async function NewsDetailPage({ params }: { params: { id: string } }) {
   await getPlatformLanguage();  // the display filter's language
+  const t = await getT();
+  const locale = getLocale();
+  const fmtDate = (iso: string) => new Date(iso).toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' });
   const supabase = getSupabaseServerClient();
   const [{ data: n, error }, { data: post }] = await Promise.all([
     supabase.from('news_items').select('*').eq('news_id', params.id).single(),
@@ -41,8 +44,8 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
   if (error || !n) {
     return (
       <div>
-        <Link className="back-link" href="/news">← News</Link>
-        <div className="detail-block"><h2>Not found</h2><p>{error?.message || 'No news item with this ID.'}</p></div>
+        <Link className="back-link" href="/news">← {t('News')}</Link>
+        <div className="detail-block"><h2>{t('Not found')}</h2><p>{error?.message || t('No news item with this ID.')}</p></div>
       </div>
     );
   }
@@ -63,12 +66,12 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
 
   return (
     <div className="news-detail">
-      <Link className="back-link" href="/news">← News</Link>
+      <Link className="back-link" href="/news">← {t('News')}</Link>
       <div className="detail-head">
         <div className="detail-tags-row">
           <div className="opp-tags">
-          <span className={`tag ${n.category}`}>{newsCategoryLabel(n.category)}</span>
-          {n.unverified && <span className="tag unverified">Unverified</span>}
+          <span className={`tag ${n.category}`}>{t(newsCategoryLabel(n.category))}</span>
+          {n.unverified && <span className="tag unverified">{t('Unverified')}</span>}
         </div>
           <HeartButton type="news" id={n.news_id} liked={likes.liked.has(n.news_id)} signedIn={likes.signedIn} className="page-heart" />
         </div>
@@ -80,21 +83,21 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
 
       <section className="detail-block summary-block">
         <div className="summary-head">
-          <h2>Summary</h2>
+          <h2>{t('Summary')}</h2>
           {n.source_url && (
             <a className="source-link" href={n.source_url} target="_blank" rel="noopener noreferrer">
-              Source: {domain} ↗
+              {t('Source: {domain}', { domain })} ↗
             </a>
           )}
         </div>
         {n.image_url && <NewsImage src={n.image_url} />}
-        {!n.summary_long && <p className="summary-pending">Preview — the News Report Agent replaces this with the full summary.</p>}
+        {!n.summary_long && <p className="summary-pending">{t('Preview — the News Report Agent replaces this with the full summary.')}</p>}
         {paragraphs.length ? paragraphs.map((p: string, i: number) => <p key={i}>{p}</p>)
-          : <p className="muted">No English summary yet.</p>}
+          : <p className="muted">{t('No English summary yet.')}</p>}
         {facts.length > 0 && (
           <ul className="key-facts">{facts.map((f, i) => <li key={i}>{f}</li>)}</ul>
         )}
-        {n.unverified && <p className="muted">Social post — unconfirmed.</p>}
+        {n.unverified && <p className="muted">{t('Social post — unconfirmed.')}</p>}
       </section>
 
       {viewScopes.map((scope) => {
@@ -106,14 +109,14 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
             <div className="agent-head">
               <AgentAvatar agent="news_report" working={!analysis && agentOn} off={!agentOn && !analysis} />
               <div className="agent-id">
-                <h2>News Report Agent Analysis{viewScopes.length > 1 && <span className="scope-name-chip">{scope.name}</span>}</h2>
-                {r?.analysed_at && <span className="agent-name">Report from {fmtDate(r.analysed_at)}</span>}
+                <h2>{t('News Report Agent Analysis')}{viewScopes.length > 1 && <span className="scope-name-chip">{scope.name}</span>}</h2>
+                {r?.analysed_at && <span className="agent-name">{t('Report from {date}', { date: fmtDate(r.analysed_at) })}</span>}
               </div>
-              {analysis && <span className={`verdict ${analysis.verdict}`} title={VERDICTS[analysis.verdict]?.note}>{VERDICTS[analysis.verdict]?.label}</span>}
+              {analysis && <span className={`verdict ${analysis.verdict}`} title={VERDICTS[analysis.verdict] ? t(VERDICTS[analysis.verdict].note) : undefined}>{VERDICTS[analysis.verdict] ? t(VERDICTS[analysis.verdict].label) : null}</span>}
             </div>
             {!analysis && (agentOn
               ? <NewsReportRunner newsId={n.news_id} scopeId={scope.id} lastError={r?.error ?? null} />
-              : <p className="muted">Agent off for this scope.</p>)}
+              : <p className="muted">{t('Agent off for this scope.')}</p>)}
             {analysis && (
               <>
                 {firstInLanguage(analysis.take) && <p className="analysis-take">{analysis.take}</p>}
@@ -121,13 +124,13 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
                   {analysis.actions.map((a, i) => (
                     <div key={i} className="action">
                       <div className="action-top">
-                        <span className={`action-type at-${a.type}`}>{ACTION_LABELS[a.type] ?? a.type}</span>
-                        {a.priority && <span className={`action-priority ${a.priority}`}>{a.priority} priority</span>}
-                        {a.deadline && <span className="action-deadline">by {fmtDate(a.deadline)}</span>}
+                        <span className={`action-type at-${a.type}`}>{ACTION_LABELS[a.type] ? t(ACTION_LABELS[a.type]) : a.type}</span>
+                        {a.priority && <span className={`action-priority ${a.priority}`}>{t(`${a.priority} priority`)}</span>}
+                        {a.deadline && <span className="action-deadline">{t('by {date}', { date: fmtDate(a.deadline) })}</span>}
                       </div>
                       <h3>{a.title}</h3>
                       {a.why && <p className="action-why">{a.why}</p>}
-                      {a.next_step && <p className="action-next"><span>Next step</span>{a.next_step}</p>}
+                      {a.next_step && <p className="action-next"><span>{t('Next step')}</span>{a.next_step}</p>}
                     </div>
                   ))}
                 </div>

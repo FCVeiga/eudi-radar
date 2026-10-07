@@ -7,8 +7,9 @@ import { SCOPE_AGENT_KEYS, getWorkspaceScopes } from '@/lib/scopes';
 import ScopeCard from '@/components/settings/ScopeCard';
 import { AddMemberButton, DeleteWorkspace, MemberRow, RevokeInviteButton, WorkspaceName } from '@/components/settings/WorkspaceControls';
 import { createScope, switchWorkspace } from '../actions';
+import { getLocale, getT } from '@/lib/i18n/server';
 
-const fmt = (iso: string) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+const fmt = (iso: string) => new Date(iso).toLocaleDateString(getLocale(), { day: 'numeric', month: 'short', year: 'numeric' });
 
 /** One workspace: its scopes and its team members (Teams). */
 export default async function WorkspaceDetailPage({ params }: { params: { id: string } }) {
@@ -16,6 +17,7 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
   if (!user) redirect(`/login?next=/workspaces/${params.id}`);
   const ctx = await getWorkspaceContext(params.id);
   if (!ctx) notFound();
+  const t = await getT();
   const db = getSupabaseServerClient();
   const wsId = ctx.workspace.id;
   const scopes = await getWorkspaceScopes(wsId);
@@ -50,35 +52,35 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
 
   return (
     <div className="settings">
-      <Link className="back-link" href="/workspaces">← Workspaces</Link>
+      <Link className="back-link" href="/workspaces">← {t('Workspaces')}</Link>
       <div className="community-head">
         <div>
           <WorkspaceName id={wsId} name={ctx.workspace.name} canRename={ctx.isAdmin} />
         </div>
         <div className="ws-head-actions">
-          {onSite ? <span className="ws-active-badge">Active workspace</span>
-            : <form action={switchWorkspace.bind(null, wsId, `/workspaces/${wsId}`)}><button type="submit" className="btn primary">Switch to this workspace</button></form>}
+          {onSite ? <span className="ws-active-badge">{t('Active workspace')}</span>
+            : <form action={switchWorkspace.bind(null, wsId, `/workspaces/${wsId}`)}><button type="submit" className="btn primary">{t('Switch to this workspace')}</button></form>}
         </div>
       </div>
 
-      {!ctx.isAdmin && <p className="callout">View only — admins configure this workspace.</p>}
+      {!ctx.isAdmin && <p className="callout">{t('View only — admins configure this workspace.')}</p>}
       {ctx.isAdmin && !ctx.canCustomize && (
         <p className="callout">
-          Free plan: default scope only.{ctx.isOwner && <> <Link href="/settings#billing">Upgrade</Link> to create your own.</>}
+          {t('Free plan: default scope only.')}{ctx.isOwner && <> <Link href="/settings/account?plan=1">{t('Upgrade')}</Link> {t('to create your own.')}</>}
         </p>
       )}
 
       {/* ---------- Scopes ---------- */}
       <section className="detail-block" id="scopes">
         <div className="section-head">
-          <h2>Scopes <span className="uc-count">{scopes.length}{Number.isFinite(limit) && plan.customize ? `/${limit}` : ''}</span></h2>
-          {canAdd && scopes.length > 0 && <form action={addScope}><button type="submit" className="btn primary">New scope</button></form>}
+          <h2>{t('Scopes')} <span className="uc-count">{scopes.length}{Number.isFinite(limit) && plan.customize ? `/${limit}` : ''}</span></h2>
+          {canAdd && scopes.length > 0 && <form action={addScope}><button type="submit" className="btn primary">{t('New scope')}</button></form>}
         </div>
         {scopes.length === 0 ? (
           <div className="profile-empty">
-            <p className="profile-empty-title">No scopes in this workspace</p>
-            {canAdd ? <form action={addScope}><button type="submit" className="btn primary profile-empty-cta">Create the first scope</button></form>
-              : ctx.isAdmin && <Link href="/settings#billing" className="btn primary profile-empty-cta">See plans</Link>}
+            <p className="profile-empty-title">{t('No scopes in this workspace')}</p>
+            {canAdd ? <form action={addScope}><button type="submit" className="btn primary profile-empty-cta">{t('Create the first scope')}</button></form>
+              : ctx.isAdmin && <Link href="/settings/account?plan=1" className="btn primary profile-empty-cta">{t('See plans')}</Link>}
           </div>
         ) : (
           <div className="scope-grid">
@@ -93,7 +95,7 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
           </div>
         )}
         {ctx.canCustomize && !canAdd && Number.isFinite(limit) && (
-          <p className="field-hint">Scope limit reached.{ctx.isOwner && <> <Link href="/settings#billing">Upgrade</Link></>}</p>
+          <p className="field-hint">{t('Scope limit reached.')}{ctx.isOwner && <> <Link href="/settings/account?plan=1">{t('Upgrade')}</Link></>}</p>
         )}
       </section>
 
@@ -101,7 +103,7 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
       {(teams || members.length > 1) && (
         <section className="detail-block" id="members">
           <div className="section-head">
-            <h2>Team members <span className="uc-count">{members.length}</span></h2>
+            <h2>{t('Team members')} <span className="uc-count">{members.length}</span></h2>
             {ctx.canAddMembers && <AddMemberButton workspaceId={wsId} />}
           </div>
           <ul className="member-list">
@@ -114,22 +116,22 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
             <ul className="member-list invites">
               {(invites || []).map((i: any) => (
                 <li key={i.id} className="member-row">
-                  <span className="member-who"><strong>{i.email || 'Anyone with the link'}</strong><em>Invited · {i.role === 'admin' ? 'admin' : 'member'} · expires {fmt(i.expires_at)}</em></span>
+                  <span className="member-who"><strong>{i.email || t('Anyone with the link')}</strong><em>{t('Invited')} · {i.role === 'admin' ? t('admin') : t('member')} · {t('expires {date}', { date: fmt(i.expires_at) })}</em></span>
                   <RevokeInviteButton id={i.id} />
                 </li>
               ))}
             </ul>
           )}
-          {!teams && ctx.isOwner && <p className="callout">Adding team members needs the Teams plan.</p>}
+          {!teams && ctx.isOwner && <p className="callout">{t('Adding team members needs the Teams plan.')}</p>}
         </section>
       )}
 
       {ctx.isOwner && (
         <section className="detail-block danger-zone" id="delete">
-          <h2>Delete workspace</h2>
+          <h2>{t('Delete workspace')}</h2>
           <DeleteWorkspace id={wsId} name={ctx.workspace.name}
-            blocked={ctx.isDefault ? 'This workspace holds the default scope, so it can’t be deleted.'
-              : owned.length <= 1 ? 'This is your only workspace — create another before deleting it.' : null} />
+            blocked={ctx.isDefault ? t('This workspace holds the default scope, so it can’t be deleted.')
+              : owned.length <= 1 ? t('This is your only workspace — create another before deleting it.') : null} />
         </section>
       )}
     </div>

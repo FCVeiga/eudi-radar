@@ -1,18 +1,20 @@
 'use client';
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useT } from '@/lib/i18n/client';
 
 /** An inline dropdown filter that updates one URL search param. */
 export default function FilterSelect({ name, label, options }: {
   name: string; label: string; options: { value: string; label: string }[];
 }) {
+  const t = useT();
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
 
   return (
     <label className="filter-select">
-      <span>{label}</span>
+      <span>{t(label)}</span>
       <select
         value={params.get(name) ?? ''}
         onChange={(e) => {
@@ -22,8 +24,8 @@ export default function FilterSelect({ name, label, options }: {
           router.push(`${pathname}${q ? `?${q}` : ''}`);
         }}
       >
-        <option value="">All</option>
-        {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+        <option value="">{t('All')}</option>
+        {options.map((o) => <option key={o.value} value={o.value}>{t(o.label)}</option>)}
       </select>
     </label>
   );

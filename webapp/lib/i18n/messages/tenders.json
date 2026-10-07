@@ -1,0 +1,1150 @@
+{
+  "+{n} earlier update": {
+    "pt": "+{n} atualização anterior",
+    "es": "+{n} actualización anterior",
+    "fr": "+{n} mise à jour précédente",
+    "de": "+{n} frühere Aktualisierung",
+    "it": "+{n} aggiornamento precedente"
+  },
+  "+{n} earlier updates": {
+    "pt": "+{n} atualizações anteriores",
+    "es": "+{n} actualizaciones anteriores",
+    "fr": "+{n} mises à jour précédentes",
+    "de": "+{n} frühere Aktualisierungen",
+    "it": "+{n} aggiornamenti precedenti"
+  },
+  "Agent off for this scope.": {
+    "pt": "Agente desativado neste âmbito.",
+    "es": "Agente desactivado en este ámbito.",
+    "fr": "Agent désactivé pour ce périmètre.",
+    "de": "Agent für diesen Bereich deaktiviert.",
+    "it": "Agente disattivato per questo ambito."
+  },
+  "All active": {
+    "pt": "Todos ativos",
+    "es": "Todas activas",
+    "fr": "Tous actifs",
+    "de": "Alle aktiven",
+    "it": "Tutte attive"
+  },
+  "Award criteria": {
+    "pt": "Critérios de adjudicação",
+    "es": "Criterios de adjudicación",
+    "fr": "Critères d'attribution",
+    "de": "Zuschlagskriterien",
+    "it": "Criteri di aggiudicazione"
+  },
+  "Back to Tenders": {
+    "pt": "Voltar aos Concursos",
+    "es": "Volver a Licitaciones",
+    "fr": "Retour aux appels d'offres",
+    "de": "Zurück zu Ausschreibungen",
+    "it": "Torna alle Gare"
+  },
+  "Buyer": {
+    "pt": "Comprador",
+    "es": "Comprador",
+    "fr": "Acheteur",
+    "de": "Auftraggeber",
+    "it": "Committente"
+  },
+  "Checked against the source on {date}": {
+    "pt": "Verificado na fonte a {date}",
+    "es": "Verificado en la fuente el {date}",
+    "fr": "Vérifié à la source le {date}",
+    "de": "Am {date} mit der Quelle abgeglichen",
+    "it": "Verificato sulla fonte il {date}"
+  },
+  "Closed ones are in History.": {
+    "pt": "Os encerrados estão no Histórico.",
+    "es": "Las cerradas están en el Historial.",
+    "fr": "Les appels clos sont dans l'Historique.",
+    "de": "Abgeschlossene findest du im Verlauf.",
+    "it": "Quelle chiuse sono nello Storico."
+  },
+  "Couldn't run: {message}.": {
+    "pt": "Não foi possível executar: {message}.",
+    "es": "No se pudo ejecutar: {message}.",
+    "fr": "Exécution impossible : {message}.",
+    "de": "Ausführung fehlgeschlagen: {message}.",
+    "it": "Impossibile eseguire: {message}."
+  },
+  "Country A–Z": {
+    "pt": "País A–Z",
+    "es": "País A–Z",
+    "fr": "Pays A–Z",
+    "de": "Land A–Z",
+    "it": "Paese A–Z"
+  },
+  "Country Z–A": {
+    "pt": "País Z–A",
+    "es": "País Z–A",
+    "fr": "Pays Z–A",
+    "de": "Land Z–A",
+    "it": "Paese Z–A"
+  },
+  "Country": {
+    "pt": "País",
+    "es": "País",
+    "fr": "Pays",
+    "de": "Land",
+    "it": "Paese"
+  },
+  "Deadline": {
+    "pt": "Prazo",
+    "es": "Plazo",
+    "fr": "Date limite",
+    "de": "Frist",
+    "it": "Scadenza"
+  },
+  "Download proposal brief (.md)": {
+    "pt": "Descarregar resumo da proposta (.md)",
+    "es": "Descargar resumen de la propuesta (.md)",
+    "fr": "Télécharger la note de proposition (.md)",
+    "de": "Angebotsbriefing herunterladen (.md)",
+    "it": "Scarica il brief dell'offerta (.md)"
+  },
+  "Download ↓": {
+    "pt": "Descarregar ↓",
+    "es": "Descargar ↓",
+    "fr": "Télécharger ↓",
+    "de": "Herunterladen ↓",
+    "it": "Scarica ↓"
+  },
+  "EU / Intl": {
+    "pt": "UE / Intl",
+    "es": "UE / Intl",
+    "fr": "UE / Intl",
+    "de": "EU / Intl",
+    "it": "UE / Intl"
+  },
+  "Earliest deadline": {
+    "pt": "Prazo mais próximo",
+    "es": "Plazo más próximo",
+    "fr": "Date limite la plus proche",
+    "de": "Früheste Frist",
+    "it": "Scadenza più vicina"
+  },
+  "Error loading tenders.": {
+    "pt": "Erro ao carregar os concursos.",
+    "es": "Error al cargar las licitaciones.",
+    "fr": "Erreur lors du chargement des appels d'offres.",
+    "de": "Fehler beim Laden der Ausschreibungen.",
+    "it": "Errore nel caricamento delle gare."
+  },
+  "Error.": {
+    "pt": "Erro.",
+    "es": "Error.",
+    "fr": "Erreur.",
+    "de": "Fehler.",
+    "it": "Errore."
+  },
+  "Evidence:": {
+    "pt": "Prova:",
+    "es": "Evidencia:",
+    "fr": "Justificatif :",
+    "de": "Nachweis:",
+    "it": "Prova:"
+  },
+  "Fit score": {
+    "pt": "Pontuação de adequação",
+    "es": "Puntuación de encaje",
+    "fr": "Score d'adéquation",
+    "de": "Passungswert",
+    "it": "Punteggio di idoneità"
+  },
+  "Fit": {
+    "pt": "Adequação",
+    "es": "Encaje",
+    "fr": "Adéquation",
+    "de": "Passung",
+    "it": "Idoneità"
+  },
+  "Gaps & to confirm": {
+    "pt": "Lacunas e a confirmar",
+    "es": "Carencias y por confirmar",
+    "fr": "Lacunes et points à confirmer",
+    "de": "Lücken & zu klären",
+    "it": "Lacune e da confermare"
+  },
+  "Highest relevance": {
+    "pt": "Maior relevância",
+    "es": "Mayor relevancia",
+    "fr": "Pertinence la plus élevée",
+    "de": "Höchste Relevanz",
+    "it": "Rilevanza più alta"
+  },
+  "Highest value": {
+    "pt": "Maior valor",
+    "es": "Mayor valor",
+    "fr": "Valeur la plus élevée",
+    "de": "Höchster Wert",
+    "it": "Valore più alto"
+  },
+  "International": {
+    "pt": "Internacional",
+    "es": "Internacional",
+    "fr": "International",
+    "de": "International",
+    "it": "Internazionale"
+  },
+  "Latest deadline": {
+    "pt": "Prazo mais distante",
+    "es": "Plazo más lejano",
+    "fr": "Date limite la plus lointaine",
+    "de": "Späteste Frist",
+    "it": "Scadenza più lontana"
+  },
+  "Log in": {
+    "pt": "Iniciar sessão",
+    "es": "Iniciar sesión",
+    "fr": "Se connecter",
+    "de": "Anmelden",
+    "it": "Accedi"
+  },
+  "Mandatory": {
+    "pt": "Obrigatório",
+    "es": "Obligatorio",
+    "fr": "Obligatoire",
+    "de": "Verpflichtend",
+    "it": "Obbligatorio"
+  },
+  "Match": {
+    "pt": "Correspondência",
+    "es": "Coincidencia",
+    "fr": "Correspondance",
+    "de": "Abgleich",
+    "it": "Corrispondenza"
+  },
+  "New": {
+    "pt": "Novo",
+    "es": "Nueva",
+    "fr": "Nouveau",
+    "de": "Neu",
+    "it": "Nuova"
+  },
+  "Next step after the evaluation": {
+    "pt": "Passo seguinte à avaliação",
+    "es": "Siguiente paso tras la evaluación",
+    "fr": "Étape suivant l'évaluation",
+    "de": "Nächster Schritt nach der Bewertung",
+    "it": "Passo successivo alla valutazione"
+  },
+  "Next steps": {
+    "pt": "Próximos passos",
+    "es": "Próximos pasos",
+    "fr": "Prochaines étapes",
+    "de": "Nächste Schritte",
+    "it": "Prossimi passi"
+  },
+  "No deadline stated": {
+    "pt": "Sem prazo indicado",
+    "es": "Sin plazo indicado",
+    "fr": "Aucune date limite indiquée",
+    "de": "Keine Frist angegeben",
+    "it": "Nessuna scadenza indicata"
+  },
+  "No deadline": {
+    "pt": "Sem prazo",
+    "es": "Sin plazo",
+    "fr": "Sans date limite",
+    "de": "Keine Frist",
+    "it": "Nessuna scadenza"
+  },
+  "No documents found yet": {
+    "pt": "Ainda não foram encontrados documentos",
+    "es": "Aún no se han encontrado documentos",
+    "fr": "Aucun document trouvé pour l'instant",
+    "de": "Noch keine Dokumente gefunden",
+    "it": "Nessun documento trovato finora"
+  },
+  "No proposal brief yet.": {
+    "pt": "Ainda não há resumo da proposta.",
+    "es": "Aún no hay resumen de la propuesta.",
+    "fr": "Pas encore de note de proposition.",
+    "de": "Noch kein Angebotsbriefing.",
+    "it": "Ancora nessun brief dell'offerta."
+  },
+  "No tender with this ID.": {
+    "pt": "Não existe nenhum concurso com este ID.",
+    "es": "No hay ninguna licitación con este ID.",
+    "fr": "Aucun appel d'offres avec cet identifiant.",
+    "de": "Keine Ausschreibung mit dieser ID.",
+    "it": "Nessuna gara con questo ID."
+  },
+  "No tenders match these filters.": {
+    "pt": "Nenhum concurso corresponde a estes filtros.",
+    "es": "Ninguna licitación coincide con estos filtros.",
+    "fr": "Aucun appel d'offres ne correspond à ces filtres.",
+    "de": "Keine Ausschreibungen entsprechen diesen Filtern.",
+    "it": "Nessuna gara corrisponde a questi filtri."
+  },
+  "None in the last {n} days.": {
+    "pt": "Nenhum nos últimos {n} dias.",
+    "es": "Ninguna en los últimos {n} días.",
+    "fr": "Aucun ces {n} derniers jours.",
+    "de": "Keine in den letzten {n} Tagen.",
+    "it": "Nessuna negli ultimi {n} giorni."
+  },
+  "None published yet.": {
+    "pt": "Ainda nenhum publicado.",
+    "es": "Aún no se ha publicado ninguno.",
+    "fr": "Aucune publiée pour l'instant.",
+    "de": "Noch keine veröffentlicht.",
+    "it": "Ancora nessuno pubblicato."
+  },
+  "Not disclosed": {
+    "pt": "Não divulgado",
+    "es": "No divulgado",
+    "fr": "Non communiqué",
+    "de": "Nicht angegeben",
+    "it": "Non dichiarato"
+  },
+  "Not found": {
+    "pt": "Não encontrado",
+    "es": "No encontrado",
+    "fr": "Introuvable",
+    "de": "Nicht gefunden",
+    "it": "Non trovato"
+  },
+  "Not recorded": {
+    "pt": "Não registado",
+    "es": "No registrado",
+    "fr": "Non enregistrée",
+    "de": "Nicht erfasst",
+    "it": "Non registrata"
+  },
+  "Nothing here right now.": {
+    "pt": "Nada por aqui de momento.",
+    "es": "Nada por aquí de momento.",
+    "fr": "Rien pour le moment.",
+    "de": "Gerade nichts hier.",
+    "it": "Niente qui per ora."
+  },
+  "Notice text (translation pending): {text}": {
+    "pt": "Texto do anúncio (tradução pendente): {text}",
+    "es": "Texto del anuncio (traducción pendiente): {text}",
+    "fr": "Texte de l'avis (traduction en attente) : {text}",
+    "de": "Bekanntmachungstext (Übersetzung ausstehend): {text}",
+    "it": "Testo del bando (traduzione in attesa): {text}"
+  },
+  "Open": {
+    "pt": "Aberto",
+    "es": "Abierta",
+    "fr": "Ouvert",
+    "de": "Offen",
+    "it": "Aperta"
+  },
+  "Optional": {
+    "pt": "Opcional",
+    "es": "Opcional",
+    "fr": "Facultatif",
+    "de": "Optional",
+    "it": "Facoltativo"
+  },
+  "Original": {
+    "pt": "Original",
+    "es": "Original",
+    "fr": "Original",
+    "de": "Original",
+    "it": "Originale"
+  },
+  "Partners needed": {
+    "pt": "Parceiros necessários",
+    "es": "Socios necesarios",
+    "fr": "Partenaires nécessaires",
+    "de": "Benötigte Partner",
+    "it": "Partner necessari"
+  },
+  "Pending analysis.": {
+    "pt": "Análise pendente.",
+    "es": "Análisis pendiente.",
+    "fr": "Analyse en attente.",
+    "de": "Analyse ausstehend.",
+    "it": "Analisi in attesa."
+  },
+  "Portal ↗": {
+    "pt": "Portal ↗",
+    "es": "Portal ↗",
+    "fr": "Portail ↗",
+    "de": "Portal ↗",
+    "it": "Portale ↗"
+  },
+  "Preliminary summary.": {
+    "pt": "Resumo preliminar.",
+    "es": "Resumen preliminar.",
+    "fr": "Résumé préliminaire.",
+    "de": "Vorläufige Zusammenfassung.",
+    "it": "Riepilogo preliminare."
+  },
+  "Prepare proposal brief": {
+    "pt": "Preparar resumo da proposta",
+    "es": "Preparar resumen de la propuesta",
+    "fr": "Préparer la note de proposition",
+    "de": "Angebotsbriefing erstellen",
+    "it": "Prepara il brief dell'offerta"
+  },
+  "Proposal Manager Agent": {
+    "pt": "Agente Gestor de Propostas",
+    "es": "Agente Gestor de Propuestas",
+    "fr": "Agent Responsable des propositions",
+    "de": "Agent Angebotsmanagement",
+    "it": "Agente Gestore delle offerte"
+  },
+  "Proposal brief from {date}": {
+    "pt": "Resumo da proposta de {date}",
+    "es": "Resumen de la propuesta del {date}",
+    "fr": "Note de proposition du {date}",
+    "de": "Angebotsbriefing vom {date}",
+    "it": "Brief dell'offerta del {date}"
+  },
+  "Proposal deadline": {
+    "pt": "Prazo da proposta",
+    "es": "Plazo de presentación",
+    "fr": "Date limite de dépôt",
+    "de": "Angebotsfrist",
+    "it": "Scadenza offerte"
+  },
+  "Radar agent": {
+    "pt": "Agente Radar",
+    "es": "Agente Radar",
+    "fr": "Agent Radar",
+    "de": "Radar-Agent",
+    "it": "Agente Radar"
+  },
+  "Re-run evaluation": {
+    "pt": "Repetir avaliação",
+    "es": "Repetir evaluación",
+    "fr": "Relancer l'évaluation",
+    "de": "Bewertung erneut ausführen",
+    "it": "Ripeti la valutazione"
+  },
+  "Regenerate": {
+    "pt": "Gerar novamente",
+    "es": "Regenerar",
+    "fr": "Régénérer",
+    "de": "Neu erstellen",
+    "it": "Rigenera"
+  },
+  "Relevance": {
+    "pt": "Relevância",
+    "es": "Relevancia",
+    "fr": "Pertinence",
+    "de": "Relevanz",
+    "it": "Rilevanza"
+  },
+  "Requirement": {
+    "pt": "Requisito",
+    "es": "Requisito",
+    "fr": "Exigence",
+    "de": "Anforderung",
+    "it": "Requisito"
+  },
+  "Requirements & Match Status": {
+    "pt": "Requisitos e correspondência",
+    "es": "Requisitos y coincidencia",
+    "fr": "Exigences et correspondance",
+    "de": "Anforderungen & Abgleich",
+    "it": "Requisiti e corrispondenza"
+  },
+  "Requirements changed since this report — re-run it.": {
+    "pt": "Os requisitos mudaram desde este relatório — volte a executá-lo.",
+    "es": "Los requisitos han cambiado desde este informe: vuelve a ejecutarlo.",
+    "fr": "Les exigences ont changé depuis ce rapport — relancez-le.",
+    "de": "Die Anforderungen haben sich seit diesem Bericht geändert – bitte erneut ausführen.",
+    "it": "I requisiti sono cambiati da questo report: eseguilo di nuovo."
+  },
+  "Requirements": {
+    "pt": "Requisitos",
+    "es": "Requisitos",
+    "fr": "Exigences",
+    "de": "Anforderungen",
+    "it": "Requisiti"
+  },
+  "Run Tender Evaluation Agent": {
+    "pt": "Executar Agente de Avaliação de Concursos",
+    "es": "Ejecutar Agente de Evaluación de Licitaciones",
+    "fr": "Lancer l'Agent d'évaluation des appels d'offres",
+    "de": "Agent Ausschreibungsbewertung starten",
+    "it": "Avvia l'Agente di valutazione gare"
+  },
+  "Run by your workspace’s admins.": {
+    "pt": "Executado pelos administradores do teu espaço de trabalho.",
+    "es": "Lo ejecutan los administradores de tu espacio de trabajo.",
+    "fr": "Lancé par les administrateurs de votre espace de travail.",
+    "de": "Wird von den Admins deines Arbeitsbereichs ausgeführt.",
+    "it": "Eseguito dagli amministratori della tua area di lavoro."
+  },
+  "Scores your fit and recommends whether to bid.": {
+    "pt": "Avalia a tua adequação e recomenda se deves concorrer.",
+    "es": "Puntúa tu encaje y recomienda si presentarte.",
+    "fr": "Évalue votre adéquation et recommande de soumissionner ou non.",
+    "de": "Bewertet deine Passung und empfiehlt, ob du bieten solltest.",
+    "it": "Valuta la tua idoneità e consiglia se partecipare."
+  },
+  "Soon": {
+    "pt": "Em breve",
+    "es": "Pronto",
+    "fr": "Bientôt",
+    "de": "Bald",
+    "it": "A breve"
+  },
+  "Sort by country": {
+    "pt": "Ordenar por país",
+    "es": "Ordenar por país",
+    "fr": "Trier par pays",
+    "de": "Nach Land sortieren",
+    "it": "Ordina per paese"
+  },
+  "Sort by proposal deadline": {
+    "pt": "Ordenar por prazo da proposta",
+    "es": "Ordenar por plazo de presentación",
+    "fr": "Trier par date limite de dépôt",
+    "de": "Nach Angebotsfrist sortieren",
+    "it": "Ordina per scadenza offerte"
+  },
+  "Sort by relevance": {
+    "pt": "Ordenar por relevância",
+    "es": "Ordenar por relevancia",
+    "fr": "Trier par pertinence",
+    "de": "Nach Relevanz sortieren",
+    "it": "Ordina per rilevanza"
+  },
+  "Sort by value": {
+    "pt": "Ordenar por valor",
+    "es": "Ordenar por valor",
+    "fr": "Trier par valeur",
+    "de": "Nach Wert sortieren",
+    "it": "Ordina per valore"
+  },
+  "Source": {
+    "pt": "Fonte",
+    "es": "Fuente",
+    "fr": "Source",
+    "de": "Quelle",
+    "it": "Fonte"
+  },
+  "Status": {
+    "pt": "Estado",
+    "es": "Estado",
+    "fr": "Statut",
+    "de": "Status",
+    "it": "Stato"
+  },
+  "Strengths": {
+    "pt": "Pontos fortes",
+    "es": "Puntos fuertes",
+    "fr": "Points forts",
+    "de": "Stärken",
+    "it": "Punti di forza"
+  },
+  "Summary": {
+    "pt": "Resumo",
+    "es": "Resumen",
+    "fr": "Résumé",
+    "de": "Zusammenfassung",
+    "it": "Riepilogo"
+  },
+  "TED monitor": {
+    "pt": "Monitor TED",
+    "es": "Monitor TED",
+    "fr": "Veille TED",
+    "de": "TED-Monitor",
+    "it": "Monitor TED"
+  },
+  "Tender Analysis Agent": {
+    "pt": "Agente de Análise de Concursos",
+    "es": "Agente de Análisis de Licitaciones",
+    "fr": "Agent d'analyse des appels d'offres",
+    "de": "Agent Ausschreibungsanalyse",
+    "it": "Agente di analisi gare"
+  },
+  "Tender Documents": {
+    "pt": "Documentos do concurso",
+    "es": "Documentos de la licitación",
+    "fr": "Documents de l'appel d'offres",
+    "de": "Ausschreibungsunterlagen",
+    "it": "Documenti di gara"
+  },
+  "Tender Evaluation Agent": {
+    "pt": "Agente de Avaliação de Concursos",
+    "es": "Agente de Evaluación de Licitaciones",
+    "fr": "Agent d'évaluation des appels d'offres",
+    "de": "Agent Ausschreibungsbewertung",
+    "it": "Agente di valutazione gare"
+  },
+  "Tender Evaluation": {
+    "pt": "Avaliação do concurso",
+    "es": "Evaluación de la licitación",
+    "fr": "Évaluation de l'appel d'offres",
+    "de": "Ausschreibungsbewertung",
+    "it": "Valutazione della gara"
+  },
+  "Tender History": {
+    "pt": "Histórico de concursos",
+    "es": "Historial de licitaciones",
+    "fr": "Historique des appels d'offres",
+    "de": "Ausschreibungsverlauf",
+    "it": "Storico gare"
+  },
+  "Tenders": {
+    "pt": "Concursos",
+    "es": "Licitaciones",
+    "fr": "Appels d'offres",
+    "de": "Ausschreibungen",
+    "it": "Gare"
+  },
+  "New tenders": {
+    "pt": "Novos concursos",
+    "es": "Nuevas licitaciones",
+    "fr": "Nouveaux appels d'offres",
+    "de": "Neue Ausschreibungen",
+    "it": "Nuove gare"
+  },
+  "The Proposal Manager Agent is mapping every requirement to your company material — a few minutes.": {
+    "pt": "O Agente Gestor de Propostas está a associar cada requisito ao material da tua empresa — alguns minutos.",
+    "es": "El Agente Gestor de Propuestas está relacionando cada requisito con el material de tu empresa (unos minutos).",
+    "fr": "L'Agent Responsable des propositions associe chaque exigence aux documents de votre entreprise — quelques minutes.",
+    "de": "Der Agent Angebotsmanagement ordnet jede Anforderung deinen Unternehmensunterlagen zu – ein paar Minuten.",
+    "it": "L'Agente Gestore delle offerte sta associando ogni requisito al materiale della tua azienda: qualche minuto."
+  },
+  "The Tender Evaluation Agent is checking every requirement against WalliD's profile — about a minute.": {
+    "pt": "O Agente de Avaliação de Concursos está a verificar cada requisito face ao perfil da WalliD — cerca de um minuto.",
+    "es": "El Agente de Evaluación de Licitaciones está comprobando cada requisito frente al perfil de WalliD (alrededor de un minuto).",
+    "fr": "L'Agent d'évaluation des appels d'offres vérifie chaque exigence par rapport au profil de WalliD — environ une minute.",
+    "de": "Der Agent Ausschreibungsbewertung prüft jede Anforderung anhand des WalliD-Profils – etwa eine Minute.",
+    "it": "L'Agente di valutazione gare sta verificando ogni requisito rispetto al profilo di WalliD: circa un minuto."
+  },
+  "Threshold": {
+    "pt": "Limiar",
+    "es": "Umbral",
+    "fr": "Seuil",
+    "de": "Schwellenwert",
+    "it": "Soglia"
+  },
+  "Title": {
+    "pt": "Título",
+    "es": "Título",
+    "fr": "Titre",
+    "de": "Titel",
+    "it": "Titolo"
+  },
+  "Today": {
+    "pt": "Hoje",
+    "es": "Hoy",
+    "fr": "Aujourd'hui",
+    "de": "Heute",
+    "it": "Oggi"
+  },
+  "Type": {
+    "pt": "Tipo",
+    "es": "Tipo",
+    "fr": "Type",
+    "de": "Typ",
+    "it": "Tipo"
+  },
+  "Updated": {
+    "pt": "Atualizado",
+    "es": "Actualizada",
+    "fr": "Mis à jour",
+    "de": "Aktualisiert",
+    "it": "Aggiornata"
+  },
+  "Updates": {
+    "pt": "Atualizações",
+    "es": "Actualizaciones",
+    "fr": "Mises à jour",
+    "de": "Aktualisierungen",
+    "it": "Aggiornamenti"
+  },
+  "Upgrade": {
+    "pt": "Fazer upgrade",
+    "es": "Mejorar plan",
+    "fr": "Passer à l'offre supérieure",
+    "de": "Upgrade",
+    "it": "Passa a un piano superiore"
+  },
+  "Value n/d": {
+    "pt": "Valor n/d",
+    "es": "Valor n/d",
+    "fr": "Valeur n/d",
+    "de": "Wert k. A.",
+    "it": "Valore n/d"
+  },
+  "Value": {
+    "pt": "Valor",
+    "es": "Valor",
+    "fr": "Valeur",
+    "de": "Wert",
+    "it": "Valore"
+  },
+  "Waits for the Tender Analysis Agent to read this tender.": {
+    "pt": "Aguarda que o Agente de Análise de Concursos leia este concurso.",
+    "es": "Espera a que el Agente de Análisis de Licitaciones lea esta licitación.",
+    "fr": "Attend que l'Agent d'analyse des appels d'offres lise cet appel d'offres.",
+    "de": "Wartet, bis der Agent Ausschreibungsanalyse diese Ausschreibung gelesen hat.",
+    "it": "Attende che l'Agente di analisi gare legga questa gara."
+  },
+  "Writes the proposal brief for the bid team: the tender summary, deadlines and evaluation criteria; every eligibility, reference, team, technical and project requirement with the answer the scope’s context supports (who fills each role, which references and certificates); the documents to submit; the gaps and the next steps.": {
+    "pt": "Escreve o resumo da proposta para a equipa de candidatura: o resumo do concurso, prazos e critérios de avaliação; cada requisito de elegibilidade, referências, equipa, técnico e de projeto com a resposta suportada pelo contexto do âmbito (quem assume cada função, que referências e certificados); os documentos a submeter; as lacunas e os próximos passos.",
+    "es": "Redacta el resumen de la propuesta para el equipo de licitación: el resumen de la licitación, plazos y criterios de evaluación; cada requisito de elegibilidad, referencias, equipo, técnico y de proyecto con la respuesta que respalda el contexto del ámbito (quién ocupa cada rol, qué referencias y certificados); los documentos que presentar; las carencias y los próximos pasos.",
+    "fr": "Rédige la note de proposition pour l'équipe de réponse : le résumé de l'appel d'offres, les échéances et les critères d'évaluation ; chaque exigence d'éligibilité, de références, d'équipe, technique et de projet, avec la réponse qu'étaye le contexte du périmètre (qui occupe chaque rôle, quelles références et certifications) ; les documents à fournir ; les lacunes et les prochaines étapes.",
+    "de": "Erstellt das Angebotsbriefing für das Bid-Team: Zusammenfassung der Ausschreibung, Fristen und Bewertungskriterien; jede Eignungs-, Referenz-, Team-, technische und Projektanforderung mit der Antwort, die der Kontext des Bereichs stützt (wer welche Rolle übernimmt, welche Referenzen und Zertifikate); die einzureichenden Unterlagen; die Lücken und die nächsten Schritte.",
+    "it": "Redige il brief dell'offerta per il team di gara: il riepilogo della gara, le scadenze e i criteri di valutazione; ogni requisito di ammissibilità, referenze, team, tecnico e di progetto con la risposta supportata dal contesto dell'ambito (chi ricopre ogni ruolo, quali referenze e certificazioni); i documenti da presentare; le lacune e i prossimi passi."
+  },
+  "and create a scope to evaluate tenders against your own context.": {
+    "pt": "e cria um âmbito para avaliar concursos face ao teu próprio contexto.",
+    "es": "y crea un ámbito para evaluar licitaciones según tu propio contexto.",
+    "fr": "et créez un périmètre pour évaluer les appels d'offres selon votre propre contexte.",
+    "de": "und erstelle einen Bereich, um Ausschreibungen anhand deines eigenen Kontexts zu bewerten.",
+    "it": "e crea un ambito per valutare le gare in base al tuo contesto."
+  },
+  "by {date}": {
+    "pt": "até {date}",
+    "es": "antes del {date}",
+    "fr": "d'ici le {date}",
+    "de": "bis {date}",
+    "it": "entro il {date}"
+  },
+  "from the notice and the tender documents": {
+    "pt": "a partir do anúncio e dos documentos do concurso",
+    "es": "a partir del anuncio y los documentos de la licitación",
+    "fr": "d'après l'avis et les documents de l'appel d'offres",
+    "de": "aus der Bekanntmachung und den Ausschreibungsunterlagen",
+    "it": "dal bando e dai documenti di gara"
+  },
+  "from the notice and the tender page": {
+    "pt": "a partir do anúncio e da página do concurso",
+    "es": "a partir del anuncio y la página de la licitación",
+    "fr": "d'après l'avis et la page de l'appel d'offres",
+    "de": "aus der Bekanntmachung und der Ausschreibungsseite",
+    "it": "dal bando e dalla pagina della gara"
+  },
+  "n/d": {
+    "pt": "n/d",
+    "es": "n/d",
+    "fr": "n/d",
+    "de": "k. A.",
+    "it": "n/d"
+  },
+  "not scored yet": {
+    "pt": "ainda sem pontuação",
+    "es": "aún sin puntuar",
+    "fr": "pas encore évalué",
+    "de": "noch nicht bewertet",
+    "it": "non ancora valutato"
+  },
+  "record": {
+    "pt": "registo",
+    "es": "registro",
+    "fr": "enregistrement",
+    "de": "Eintrag",
+    "it": "record"
+  },
+  "records": {
+    "pt": "registos",
+    "es": "registros",
+    "fr": "enregistrements",
+    "de": "Einträge",
+    "it": "record"
+  },
+  "report from {date}": {
+    "pt": "relatório de {date}",
+    "es": "informe del {date}",
+    "fr": "rapport du {date}",
+    "de": "Bericht vom {date}",
+    "it": "report del {date}"
+  },
+  "the request failed": {
+    "pt": "o pedido falhou",
+    "es": "la solicitud falló",
+    "fr": "la requête a échoué",
+    "de": "die Anfrage ist fehlgeschlagen",
+    "it": "la richiesta non è riuscita"
+  },
+  "the run is taking too long": {
+    "pt": "a execução está a demorar demasiado",
+    "es": "la ejecución está tardando demasiado",
+    "fr": "l'exécution prend trop de temps",
+    "de": "der Lauf dauert zu lange",
+    "it": "l'esecuzione sta impiegando troppo tempo"
+  },
+  "to evaluate tenders against your own scope’s context.": {
+    "pt": "para avaliar concursos face ao contexto do teu âmbito.",
+    "es": "para evaluar licitaciones según el contexto de tu ámbito.",
+    "fr": "pour évaluer les appels d'offres selon le contexte de votre périmètre.",
+    "de": "um Ausschreibungen anhand des Kontexts deines Bereichs zu bewerten.",
+    "it": "per valutare le gare in base al contesto del tuo ambito."
+  },
+  "today": {
+    "pt": "hoje",
+    "es": "hoy",
+    "fr": "aujourd'hui",
+    "de": "heute",
+    "it": "oggi"
+  },
+  "unknown error": {
+    "pt": "erro desconhecido",
+    "es": "error desconocido",
+    "fr": "erreur inconnue",
+    "de": "unbekannter Fehler",
+    "it": "errore sconosciuto"
+  },
+  "{n} document": {
+    "pt": "{n} documento",
+    "es": "{n} documento",
+    "fr": "{n} document",
+    "de": "{n} Dokument",
+    "it": "{n} documento"
+  },
+  "{n} documents": {
+    "pt": "{n} documentos",
+    "es": "{n} documentos",
+    "fr": "{n} documents",
+    "de": "{n} Dokumente",
+    "it": "{n} documenti"
+  },
+  "{n} months": {
+    "pt": "{n} meses",
+    "es": "{n} meses",
+    "fr": "{n} mois",
+    "de": "{n} Monate",
+    "it": "{n} mesi"
+  },
+  "{n} years": {
+    "pt": "{n} anos",
+    "es": "{n} años",
+    "fr": "{n} ans",
+    "de": "{n} Jahre",
+    "it": "{n} anni"
+  },
+  "{n}d ago": {
+    "pt": "há {n} d",
+    "es": "hace {n} d",
+    "fr": "il y a {n} j",
+    "de": "vor {n} T.",
+    "it": "{n} g fa"
+  },
+  "{n}d left": {
+    "pt": "faltam {n} d",
+    "es": "quedan {n} d",
+    "fr": "{n} j restants",
+    "de": "noch {n} T.",
+    "it": "{n} g rimasti"
+  },
+  "{n}d": {
+    "pt": "{n} d",
+    "es": "{n} d",
+    "fr": "{n} j",
+    "de": "{n} T.",
+    "it": "{n} g"
+  },
+  "“Portal ↗” documents download from the buyer's portal, which may ask you to register.": {
+    "pt": "Os documentos “Portal ↗” são descarregados do portal do comprador, que pode pedir registo.",
+    "es": "Los documentos “Portal ↗” se descargan del portal del comprador, que puede pedirte que te registres.",
+    "fr": "Les documents « Portail ↗ » se téléchargent depuis le portail de l'acheteur, qui peut demander une inscription.",
+    "de": "„Portal ↗“-Dokumente werden vom Portal des Auftraggebers heruntergeladen, das eine Registrierung verlangen kann.",
+    "it": "I documenti “Portale ↗” si scaricano dal portale del committente, che potrebbe richiedere la registrazione."
+  },
+  "RFPs": {
+    "pt": "RFPs",
+    "es": "RFPs",
+    "fr": "RFPs",
+    "de": "RFPs",
+    "it": "RFP"
+  },
+  "RFIs": {
+    "pt": "RFIs",
+    "es": "RFIs",
+    "fr": "RFIs",
+    "de": "RFIs",
+    "it": "RFI"
+  },
+  "Grants": {
+    "pt": "Subvenções",
+    "es": "Subvenciones",
+    "fr": "Subventions",
+    "de": "Förderungen",
+    "it": "Sovvenzioni"
+  },
+  "Signals": {
+    "pt": "Sinais",
+    "es": "Señales",
+    "fr": "Signaux",
+    "de": "Signale",
+    "it": "Segnali"
+  },
+  "RFP": {
+    "pt": "RFP",
+    "es": "RFP",
+    "fr": "RFP",
+    "de": "RFP",
+    "it": "RFP"
+  },
+  "RFI": {
+    "pt": "RFI",
+    "es": "RFI",
+    "fr": "RFI",
+    "de": "RFI",
+    "it": "RFI"
+  },
+  "Grant": {
+    "pt": "Subvenção",
+    "es": "Subvención",
+    "fr": "Subvention",
+    "de": "Förderung",
+    "it": "Sovvenzione"
+  },
+  "Signal": {
+    "pt": "Sinal",
+    "es": "Señal",
+    "fr": "Signal",
+    "de": "Signal",
+    "it": "Segnale"
+  },
+  "Notices": {
+    "pt": "Anúncios",
+    "es": "Anuncios",
+    "fr": "Avis",
+    "de": "Bekanntmachungen",
+    "it": "Bandi"
+  },
+  "Clarifications & Q&A": {
+    "pt": "Esclarecimentos e perguntas",
+    "es": "Aclaraciones y preguntas",
+    "fr": "Clarifications et questions-réponses",
+    "de": "Klarstellungen & Fragen",
+    "it": "Chiarimenti e domande"
+  },
+  "Tender documents": {
+    "pt": "Peças do concurso",
+    "es": "Pliegos de la licitación",
+    "fr": "Dossier de consultation",
+    "de": "Vergabeunterlagen",
+    "it": "Documenti di gara"
+  },
+  "Specifications": {
+    "pt": "Especificações",
+    "es": "Especificaciones",
+    "fr": "Spécifications",
+    "de": "Spezifikationen",
+    "it": "Specifiche"
+  },
+  "Evaluation": {
+    "pt": "Avaliação",
+    "es": "Evaluación",
+    "fr": "Évaluation",
+    "de": "Bewertung",
+    "it": "Valutazione"
+  },
+  "Price & financial forms": {
+    "pt": "Preço e formulários financeiros",
+    "es": "Precio y formularios financieros",
+    "fr": "Prix et formulaires financiers",
+    "de": "Preis & Finanzformulare",
+    "it": "Prezzo e moduli finanziari"
+  },
+  "Forms to complete": {
+    "pt": "Formulários a preencher",
+    "es": "Formularios que completar",
+    "fr": "Formulaires à remplir",
+    "de": "Auszufüllende Formulare",
+    "it": "Moduli da compilare"
+  },
+  "Contract": {
+    "pt": "Contrato",
+    "es": "Contrato",
+    "fr": "Contrat",
+    "de": "Vertrag",
+    "it": "Contratto"
+  },
+  "Other documents": {
+    "pt": "Outros documentos",
+    "es": "Otros documentos",
+    "fr": "Autres documents",
+    "de": "Weitere Dokumente",
+    "it": "Altri documenti"
+  },
+  "Official TED notice (PDF)": {
+    "pt": "Anúncio oficial TED (PDF)",
+    "es": "Anuncio oficial de TED (PDF)",
+    "fr": "Avis officiel TED (PDF)",
+    "de": "Offizielle TED-Bekanntmachung (PDF)",
+    "it": "Bando ufficiale TED (PDF)"
+  },
+  "Direct download from the buyer portal": {
+    "pt": "Descarga direta do portal do comprador",
+    "es": "Descarga directa desde el portal del comprador",
+    "fr": "Téléchargement direct depuis le portail de l'acheteur",
+    "de": "Direkter Download vom Portal des Auftraggebers",
+    "it": "Download diretto dal portale del committente"
+  },
+  "Opens the buyer portal page where this document is downloaded": {
+    "pt": "Abre a página do portal do comprador onde este documento é descarregado",
+    "es": "Abre la página del portal del comprador donde se descarga este documento",
+    "fr": "Ouvre la page du portail de l'acheteur où télécharger ce document",
+    "de": "Öffnet die Portalseite des Auftraggebers, auf der dieses Dokument heruntergeladen wird",
+    "it": "Apre la pagina del portale del committente da cui scaricare questo documento"
+  },
+  "Deadline change": {
+    "pt": "Alteração de prazo",
+    "es": "Cambio de plazo",
+    "fr": "Modification de la date limite",
+    "de": "Friständerung",
+    "it": "Modifica della scadenza"
+  },
+  "Status change": {
+    "pt": "Alteração de estado",
+    "es": "Cambio de estado",
+    "fr": "Changement de statut",
+    "de": "Statusänderung",
+    "it": "Cambio di stato"
+  },
+  "Tender update": {
+    "pt": "Atualização do concurso",
+    "es": "Actualización de la licitación",
+    "fr": "Mise à jour de l'appel d'offres",
+    "de": "Ausschreibungsaktualisierung",
+    "it": "Aggiornamento della gara"
+  },
+  "Update": {
+    "pt": "Atualização",
+    "es": "Actualización",
+    "fr": "Mise à jour",
+    "de": "Aktualisierung",
+    "it": "Aggiornamento"
+  },
+  "Bid": {
+    "pt": "Concorrer",
+    "es": "Presentarse",
+    "fr": "Soumissionner",
+    "de": "Bieten",
+    "it": "Partecipare"
+  },
+  "Bid with a partner": {
+    "pt": "Concorrer com um parceiro",
+    "es": "Presentarse con un socio",
+    "fr": "Soumissionner avec un partenaire",
+    "de": "Mit Partner bieten",
+    "it": "Partecipare con un partner"
+  },
+  "Consider": {
+    "pt": "Ponderar",
+    "es": "Valorar",
+    "fr": "À considérer",
+    "de": "Prüfen",
+    "it": "Da valutare"
+  },
+  "No bid": {
+    "pt": "Não concorrer",
+    "es": "No presentarse",
+    "fr": "Ne pas soumissionner",
+    "de": "Nicht bieten",
+    "it": "Non partecipare"
+  },
+  "Partner needed": {
+    "pt": "Parceiro necessário",
+    "es": "Socio necesario",
+    "fr": "Partenaire nécessaire",
+    "de": "Partner nötig",
+    "it": "Partner necessario"
+  },
+  "No match": {
+    "pt": "Sem correspondência",
+    "es": "Sin coincidencia",
+    "fr": "Aucune correspondance",
+    "de": "Keine Übereinstimmung",
+    "it": "Nessuna corrispondenza"
+  },
+  "Partial": {
+    "pt": "Parcial",
+    "es": "Parcial",
+    "fr": "Partiel",
+    "de": "Teilweise",
+    "it": "Parziale"
+  },
+  "Unknown": {
+    "pt": "Desconhecido",
+    "es": "Desconocido",
+    "fr": "Inconnu",
+    "de": "Unbekannt",
+    "it": "Sconosciuto"
+  },
+  "Eligibility criteria": {
+    "pt": "Critérios de elegibilidade",
+    "es": "Criterios de elegibilidad",
+    "fr": "Critères d'éligibilité",
+    "de": "Eignungskriterien",
+    "it": "Criteri di ammissibilità"
+  },
+  "Project references": {
+    "pt": "Referências de projetos",
+    "es": "Referencias de proyectos",
+    "fr": "Références de projets",
+    "de": "Projektreferenzen",
+    "it": "Referenze di progetto"
+  },
+  "Human resource requirements": {
+    "pt": "Requisitos de recursos humanos",
+    "es": "Requisitos de recursos humanos",
+    "fr": "Exigences en ressources humaines",
+    "de": "Personalanforderungen",
+    "it": "Requisiti di risorse umane"
+  },
+  "Technical & project requirements": {
+    "pt": "Requisitos técnicos e de projeto",
+    "es": "Requisitos técnicos y de proyecto",
+    "fr": "Exigences techniques et de projet",
+    "de": "Technische & Projektanforderungen",
+    "it": "Requisiti tecnici e di progetto"
+  },
+  "OPEN": {
+    "pt": "ABERTO",
+    "es": "ABIERTA",
+    "fr": "OUVERT",
+    "de": "OFFEN",
+    "it": "APERTA"
+  },
+  "CLOSED": {
+    "pt": "ENCERRADO",
+    "es": "CERRADA",
+    "fr": "CLOS",
+    "de": "GESCHLOSSEN",
+    "it": "CHIUSA"
+  },
+  "AWARDED": {
+    "pt": "ADJUDICADO",
+    "es": "ADJUDICADA",
+    "fr": "ATTRIBUÉ",
+    "de": "VERGEBEN",
+    "it": "AGGIUDICATA"
+  },
+  "CANCELLED": {
+    "pt": "CANCELADO",
+    "es": "CANCELADA",
+    "fr": "ANNULÉ",
+    "de": "STORNIERT",
+    "it": "ANNULLATA"
+  },
+  "SIGNAL": {
+    "pt": "SINAL",
+    "es": "SEÑAL",
+    "fr": "SIGNAL",
+    "de": "SIGNAL",
+    "it": "SEGNALE"
+  },
+  "UNVERIFIED": {
+    "pt": "NÃO VERIFICADO",
+    "es": "NO VERIFICADA",
+    "fr": "NON VÉRIFIÉ",
+    "de": "UNBESTÄTIGT",
+    "it": "NON VERIFICATA"
+  },
+  "NOT AN OPPORTUNITY": {
+    "pt": "NÃO É OPORTUNIDADE",
+    "es": "NO ES UNA OPORTUNIDAD",
+    "fr": "PAS UNE OPPORTUNITÉ",
+    "de": "KEINE CHANCE",
+    "it": "NON È UN'OPPORTUNITÀ"
+  }
+}

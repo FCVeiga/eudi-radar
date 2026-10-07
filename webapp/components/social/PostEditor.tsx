@@ -12,6 +12,7 @@ import TableHeader from '@tiptap/extension-table-header';
 import TableCell from '@tiptap/extension-table-cell';
 import { Markdown } from 'tiptap-markdown';
 import { FormState, createPost, createPostMediaUpload } from '@/app/social/actions';
+import { useT } from '@/lib/i18n/client';
 
 type Media = { type: 'image' | 'video'; url: string; path: string };
 const MAX_TAGS = 10;
@@ -42,12 +43,14 @@ function Tool({ icon, label, active, onClick, disabled }: { icon: keyof typeof I
 }
 
 function Submit({ disabled }: { disabled: boolean }) {
+  const t = useT();
   const { pending } = useFormStatus();
-  return <button type="submit" className="btn primary pe-post" disabled={pending || disabled}>{pending ? 'Posting…' : 'Post'}</button>;
+  return <button type="submit" className="btn primary pe-post" disabled={pending || disabled}>{pending ? t('Posting…') : t('Post')}</button>;
 }
 
 /** Reddit-style post editor: title, tags, rich text (or Markdown) body with media. Saves Markdown. */
 export default function PostEditor({ suggestions }: { suggestions: string[] }) {
+  const t = useT();
   const [state, action] = useFormState<FormState, FormData>(createPost, null);
   const [title, setTitle] = useState('');
   const [mode, setMode] = useState<'rich' | 'markdown'>('rich');
@@ -69,11 +72,11 @@ export default function PostEditor({ suggestions }: { suggestions: string[] }) {
     extensions: [
       StarterKit.configure({ heading: { levels: [2, 3] } }),
       Link.configure({ openOnClick: false, autolink: true, HTMLAttributes: { rel: 'noopener noreferrer nofollow', target: '_blank' } }),
-      Placeholder.configure({ placeholder: 'Body Text (Optional)' }),
+      Placeholder.configure({ placeholder: t('Body Text (Optional)') }),
       Table.configure({ resizable: false }), TableRow, TableHeader, TableCell,
       Markdown.configure({ html: false, transformPastedText: true, linkify: true }),
     ],
-    editorProps: { attributes: { class: 'pe-rich', 'aria-label': 'Body text' } },
+    editorProps: { attributes: { class: 'pe-rich', 'aria-label': t('Body text') } },
     onUpdate: ({ editor: e }) => setMarkdown(getMd(e)),
   });
 
@@ -108,7 +111,7 @@ export default function PostEditor({ suggestions }: { suggestions: string[] }) {
   async function uploadFiles(files: FileList) {
     setUploadError(null);
     for (const file of Array.from(files)) {
-      if (media.length >= 10) { setUploadError('Up to 10 images or videos per post.'); break; }
+      if (media.length >= 10) { setUploadError(t('Up to 10 images or videos per post.')); break; }
       setUploading(file.name);
       const target = await createPostMediaUpload(file.name, file.size);
       if ('error' in target) { setUploadError(`${file.name}: ${target.error}`); continue; }
@@ -116,7 +119,7 @@ export default function PostEditor({ suggestions }: { suggestions: string[] }) {
       body.append('cacheControl', '3600');
       body.append('', file);
       const res = await fetch(target.url!, { method: 'PUT', body, headers: { 'x-upsert': 'false' } });
-      if (!res.ok) { setUploadError(`${file.name}: upload failed (${res.status})`); continue; }
+      if (!res.ok) { setUploadError(`${file.name}: ${t('upload failed ({status})', { status: res.status })}`); continue; }
       setMedia((m) => [...m, { type: target.type!, url: target.publicUrl!, path: target.path! }]);
     }
     setUploading(null);
@@ -131,9 +134,9 @@ export default function PostEditor({ suggestions }: { suggestions: string[] }) {
   }
 
   function addTag(raw: string) {
-    const t = raw.trim().toLowerCase().slice(0, 50);
-    if (!t || tags.includes(t) || tags.length >= MAX_TAGS) return;
-    setTags([...tags, t]);
+    const tag = raw.trim().toLowerCase().slice(0, 50);
+    if (!tag || tags.includes(tag) || tags.length >= MAX_TAGS) return;
+    setTags([...tags, tag]);
   }
 
   const e = editor;
@@ -147,23 +150,23 @@ export default function PostEditor({ suggestions }: { suggestions: string[] }) {
 
       <label className="pe-title">
         <input name="title" value={title} onChange={(ev) => setTitle(ev.target.value)} required minLength={3} maxLength={300}
-          placeholder=" " autoFocus aria-label="Title (required)" />
-        <span className="pe-title-label" aria-hidden="true">Title<span className="pe-req">*</span></span>
+          placeholder=" " autoFocus aria-label={t('Title (required)')} />
+        <span className="pe-title-label" aria-hidden="true">{t('Title')}<span className="pe-req">*</span></span>
         <span className="pe-count">{title.length}/300</span>
       </label>
 
       <div className="pe-tags">
         <button type="button" className="pe-add-tags" onClick={() => tagsDialog.current?.showModal()}>
-          <svg viewBox="0 0 16 16" aria-hidden="true">{I.tag}</svg>Add tags
+          <svg viewBox="0 0 16 16" aria-hidden="true">{I.tag}</svg>{t('Add tags')}
         </button>
-        {tags.map((t) => (
-          <span key={t} className="pe-chip">{t}<button type="button" aria-label={`Remove tag ${t}`} onClick={() => setTags(tags.filter((x) => x !== t))}>×</button></span>
+        {tags.map((tag) => (
+          <span key={tag} className="pe-chip">{tag}<button type="button" aria-label={t('Remove tag {tag}', { tag })} onClick={() => setTags(tags.filter((x) => x !== tag))}>×</button></span>
         ))}
       </div>
 
       <div className={`pe-body ${mode}`}>
         {mode === 'rich' ? <EditorContent editor={editor} />
-          : <textarea ref={mdArea} className="pe-md" value={markdown} onChange={(ev) => setMarkdown(ev.target.value)} placeholder="Body Text (Optional) — Markdown" aria-label="Body text (Markdown)" />}
+          : <textarea ref={mdArea} className="pe-md" value={markdown} onChange={(ev) => setMarkdown(ev.target.value)} placeholder={`${t('Body Text (Optional)')} — Markdown`} aria-label={t('Body text (Markdown)')} />}
 
         {(media.length > 0 || uploading) && (
           <div className="pe-media">
@@ -171,56 +174,56 @@ export default function PostEditor({ suggestions }: { suggestions: string[] }) {
               <div key={m.path} className="pe-media-item">
                 {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/media-has-caption */}
                 {m.type === 'image' ? <img src={m.url} alt="" /> : <video src={m.url} muted playsInline />}
-                <button type="button" aria-label="Remove" onClick={() => setMedia(media.filter((x) => x.path !== m.path))}>×</button>
+                <button type="button" aria-label={t('Remove')} onClick={() => setMedia(media.filter((x) => x.path !== m.path))}>×</button>
               </div>
             ))}
             {uploading && <div className="pe-media-item uploading"><span className="dots" /></div>}
           </div>
         )}
 
-        <div className="pe-toolbar" role="toolbar" aria-label="Formatting">
+        <div className="pe-toolbar" role="toolbar" aria-label={t('Formatting')}>
           <div className="pe-tools">
             <span className="pe-pop-anchor">
-              <Tool icon="link" label="Link" active={mode === 'rich' && !!e?.isActive('link')} onClick={() => { setLinkUrl((e?.getAttributes('link').href as string) || ''); setLinkOpen(!linkOpen); setSizeOpen(false); }} />
+              <Tool icon="link" label={t('Link')} active={mode === 'rich' && !!e?.isActive('link')} onClick={() => { setLinkUrl((e?.getAttributes('link').href as string) || ''); setLinkOpen(!linkOpen); setSizeOpen(false); }} />
               {linkOpen && (
                 <span className="pe-pop pe-link-pop">
                   <input autoFocus value={linkUrl} onChange={(ev) => setLinkUrl(ev.target.value)} placeholder="https://"
-                    onKeyDown={(ev) => { if (ev.key === 'Enter') { ev.preventDefault(); applyLink(); } if (ev.key === 'Escape') setLinkOpen(false); }} aria-label="Link URL" />
-                  <button type="button" className="btn primary" onClick={applyLink}>Add</button>
-                  {mode === 'rich' && e?.isActive('link') && <button type="button" className="btn" onClick={() => { e.chain().focus().unsetLink().run(); setLinkOpen(false); }}>Remove</button>}
+                    onKeyDown={(ev) => { if (ev.key === 'Enter') { ev.preventDefault(); applyLink(); } if (ev.key === 'Escape') setLinkOpen(false); }} aria-label={t('Link URL')} />
+                  <button type="button" className="btn primary" onClick={applyLink}>{t('Add')}</button>
+                  {mode === 'rich' && e?.isActive('link') && <button type="button" className="btn" onClick={() => { e.chain().focus().unsetLink().run(); setLinkOpen(false); }}>{t('Remove')}</button>}
                 </span>
               )}
             </span>
-            <Tool icon="image" label="Add images" onClick={() => pick('image')} disabled={!!uploading} />
-            <Tool icon="video" label="Add a video" onClick={() => pick('video')} disabled={!!uploading} />
+            <Tool icon="image" label={t('Add images')} onClick={() => pick('image')} disabled={!!uploading} />
+            <Tool icon="video" label={t('Add a video')} onClick={() => pick('video')} disabled={!!uploading} />
             {mode === 'rich' && e && (
               <>
                 <span className="pe-sep" />
-                <Tool icon="bold" label="Bold" active={e.isActive('bold')} onClick={() => e.chain().focus().toggleBold().run()} />
-                <Tool icon="italic" label="Italic" active={e.isActive('italic')} onClick={() => e.chain().focus().toggleItalic().run()} />
+                <Tool icon="bold" label={t('Bold')} active={e.isActive('bold')} onClick={() => e.chain().focus().toggleBold().run()} />
+                <Tool icon="italic" label={t('Italic')} active={e.isActive('italic')} onClick={() => e.chain().focus().toggleItalic().run()} />
                 <span className="pe-pop-anchor">
-                  <Tool icon="size" label={`Text size: ${sizeLabel}`} active={sizeLabel !== 'Normal'} onClick={() => { setSizeOpen(!sizeOpen); setLinkOpen(false); }} />
+                  <Tool icon="size" label={t('Text size: {size}', { size: t(sizeLabel) })} active={sizeLabel !== 'Normal'} onClick={() => { setSizeOpen(!sizeOpen); setLinkOpen(false); }} />
                   {sizeOpen && (
                     <span className="pe-pop pe-size-pop" role="menu">
                       {([['Large', 2], ['Medium', 3], ['Normal', 0]] as const).map(([label, level]) => (
                         <button key={label} type="button" role="menuitem" className={`pe-size-${label.toLowerCase()} ${sizeLabel === label ? 'on' : ''}`}
                           onMouseDown={(ev) => ev.preventDefault()}
                           onClick={() => { level ? e.chain().focus().setHeading({ level }).run() : e.chain().focus().setParagraph().run(); setSizeOpen(false); }}>
-                          {label}
+                          {t(label)}
                         </button>
                       ))}
                     </span>
                   )}
                 </span>
-                <Tool icon="bullet" label="Bulleted list" active={e.isActive('bulletList')} onClick={() => e.chain().focus().toggleBulletList().run()} />
-                <Tool icon="ordered" label="Numbered list" active={e.isActive('orderedList')} onClick={() => e.chain().focus().toggleOrderedList().run()} />
-                <Tool icon="quote" label="Quote" active={e.isActive('blockquote')} onClick={() => e.chain().focus().toggleBlockquote().run()} />
-                <Tool icon="code" label="Code block" active={e.isActive('codeBlock')} onClick={() => e.chain().focus().toggleCodeBlock().run()} />
-                <Tool icon="table" label="Table" active={e.isActive('table')} onClick={() => e.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()} />
+                <Tool icon="bullet" label={t('Bulleted list')} active={e.isActive('bulletList')} onClick={() => e.chain().focus().toggleBulletList().run()} />
+                <Tool icon="ordered" label={t('Numbered list')} active={e.isActive('orderedList')} onClick={() => e.chain().focus().toggleOrderedList().run()} />
+                <Tool icon="quote" label={t('Quote')} active={e.isActive('blockquote')} onClick={() => e.chain().focus().toggleBlockquote().run()} />
+                <Tool icon="code" label={t('Code block')} active={e.isActive('codeBlock')} onClick={() => e.chain().focus().toggleCodeBlock().run()} />
+                <Tool icon="table" label={t('Table')} active={e.isActive('table')} onClick={() => e.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()} />
               </>
             )}
           </div>
-          <Tool icon="more" label={mode === 'rich' ? 'Switch to Markdown' : 'Switch to rich text editor'} active={mode === 'markdown'} onClick={switchMode} />
+          <Tool icon="more" label={mode === 'rich' ? t('Switch to Markdown') : t('Switch to rich text editor')} active={mode === 'markdown'} onClick={switchMode} />
         </div>
       </div>
       <input ref={fileInput} type="file" multiple hidden onChange={(ev) => { if (ev.target.files?.length) uploadFiles(ev.target.files); ev.target.value = ''; }} />
@@ -240,32 +243,33 @@ export default function PostEditor({ suggestions }: { suggestions: string[] }) {
 function TagsModal({ tags, suggestions, onAdd, onRemove, onDone }: {
   tags: string[]; suggestions: string[]; onAdd: (t: string) => void; onRemove: (t: string) => void; onDone: () => void;
 }) {
+  const t = useT();
   const [draft, setDraft] = useState('');
   useEffect(() => { if (tags.length >= MAX_TAGS) setDraft(''); }, [tags.length]);
   return (
     <div className="modal-body">
       <div className="modal-head">
-        <h2>Add tags</h2>
-        <button type="button" className="modal-close" aria-label="Close" onClick={onDone}>×</button>
+        <h2>{t('Add tags')}</h2>
+        <button type="button" className="modal-close" aria-label={t('Close')} onClick={onDone}>×</button>
       </div>
-      <p className="field-hint">Up to {MAX_TAGS}.</p>
+      <p className="field-hint">{t('Up to {n}.', { n: MAX_TAGS })}</p>
       <div className="pe-tag-input">
-        <input value={draft} maxLength={50} placeholder="Type a tag and press Enter" disabled={tags.length >= MAX_TAGS}
+        <input value={draft} maxLength={50} placeholder={t('Type a tag and press Enter')} disabled={tags.length >= MAX_TAGS}
           onChange={(ev) => setDraft(ev.target.value)}
-          onKeyDown={(ev) => { if (ev.key === 'Enter') { ev.preventDefault(); onAdd(draft); setDraft(''); } }} aria-label="New tag" />
+          onKeyDown={(ev) => { if (ev.key === 'Enter') { ev.preventDefault(); onAdd(draft); setDraft(''); } }} aria-label={t('New tag')} />
         <span className="pe-count">{draft.length}/50</span>
-        <button type="button" className="btn" disabled={!draft.trim() || tags.length >= MAX_TAGS} onClick={() => { onAdd(draft); setDraft(''); }}>Add</button>
+        <button type="button" className="btn" disabled={!draft.trim() || tags.length >= MAX_TAGS} onClick={() => { onAdd(draft); setDraft(''); }}>{t('Add')}</button>
       </div>
       {tags.length > 0 && (
-        <div className="pe-tag-list">{tags.map((t) => <span key={t} className="pe-chip on">{t}<button type="button" aria-label={`Remove tag ${t}`} onClick={() => onRemove(t)}>×</button></span>)}</div>
+        <div className="pe-tag-list">{tags.map((tag) => <span key={tag} className="pe-chip on">{tag}<button type="button" aria-label={t('Remove tag {tag}', { tag })} onClick={() => onRemove(tag)}>×</button></span>)}</div>
       )}
-      <h3 className="pe-sugg-title">Suggestions</h3>
+      <h3 className="pe-sugg-title">{t('Suggestions')}</h3>
       <div className="pe-tag-list">
         {suggestions.filter((s) => !tags.includes(s)).map((s) => (
           <button key={s} type="button" className="pe-chip pe-sugg" onClick={() => onAdd(s)} disabled={tags.length >= MAX_TAGS}>+ {s}</button>
         ))}
       </div>
-      <div className="modal-actions"><button type="button" className="btn primary" onClick={onDone}>Done</button></div>
+      <div className="modal-actions"><button type="button" className="btn primary" onClick={onDone}>{t('Done')}</button></div>
     </div>
   );
 }

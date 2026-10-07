@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { usePathname } from 'next/navigation';
 import { switchWorkspace } from '@/app/workspaces/actions';
+import { useT } from '@/lib/i18n/client';
 
 export type SwitcherWorkspace = { id: string; name: string; sharedBy: string | null; role: 'admin' | 'member' };
 
@@ -18,6 +19,7 @@ export function WorkspaceMark({ id, name, size = 28 }: { id: string; name: strin
 
 /** Sidebar: the active workspace; click to switch to another one (like switching accounts). */
 export default function WorkspaceSwitcher({ workspaces, activeId }: { workspaces: SwitcherWorkspace[]; activeId: string }) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [pending, start] = useTransition();
   const [target, setTarget] = useState<string | null>(null);
@@ -42,27 +44,27 @@ export default function WorkspaceSwitcher({ workspaces, activeId }: { workspaces
       <button type="button" className={`ws-current ${open ? 'open' : ''}`} aria-haspopup="listbox" aria-expanded={open} onClick={() => setOpen(!open)}>
         <WorkspaceMark id={active.id} name={active.name} />
         <span className="ws-current-text">
-          <em>Workspace</em>
+          <em>{t('Workspace')}</em>
           <strong>{pending && target ? workspaces.find((w) => w.id === target)?.name : active.name}</strong>
         </span>
         <svg className="ws-chevrons" viewBox="0 0 16 16" aria-hidden="true"><path d="m5 6 3-3 3 3M5 10l3 3 3-3" /></svg>
       </button>
       {open && (
-        <div className="ws-pop" role="listbox" aria-label="Switch workspace">
+        <div className="ws-pop" role="listbox" aria-label={t('Switch workspace')}>
           {workspaces.map((w) => {
             const on = w.id === active.id;
             return (
               <button key={w.id} type="button" role="option" aria-selected={on} className={`ws-option ${on ? 'on' : ''}`} disabled={pending}
                 onClick={() => { if (on) { setOpen(false); return; } setTarget(w.id); start(() => switchWorkspace(w.id, next)); }}>
                 <WorkspaceMark id={w.id} name={w.name} size={24} />
-                <span className="ws-option-text"><strong>{w.name}</strong><em>{w.sharedBy ? `u/${w.sharedBy}` : 'Yours'} · {w.role === 'admin' ? 'Admin' : 'Member'}</em></span>
-                {on && <svg className="ws-tick" viewBox="0 0 16 16" aria-label="Active"><path d="m3.5 8.5 3 3 6-7" /></svg>}
+                <span className="ws-option-text"><strong>{w.name}</strong><em>{w.sharedBy ? `u/${w.sharedBy}` : t('Yours')} · {w.role === 'admin' ? t('Admin') : t('Member')}</em></span>
+                {on && <svg className="ws-tick" viewBox="0 0 16 16" aria-label={t('Active')}><path d="m3.5 8.5 3 3 6-7" /></svg>}
               </button>
             );
           })}
           <div className="ws-pop-foot">
-            <Link href="/workspaces">Manage</Link>
-            <Link href="/workspaces?new=1">+ New</Link>
+            <Link href="/workspaces">{t('Manage')}</Link>
+            <Link href="/workspaces?new=1">+ {t('New')}</Link>
           </div>
         </div>
       )}

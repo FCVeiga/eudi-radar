@@ -4,16 +4,18 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@supabase/supabase-js';
 import { getSupabaseServerClient } from '@/lib/supabase';
-import { authClient, getCurrentUser, siteOrigin } from '@/lib/auth';
+import { authClient, getCurrentUser, safeNext, siteOrigin } from '@/lib/auth';
 import { getPersonalAccount, isPlatformAdmin } from '@/lib/accounts';
 import { PLANS, planOf } from '@/lib/plans';
 import { PRICE_ENV, billingReady, stripe } from '@/lib/billing';
-import { TARGET_LINE } from '@/lib/language';
-import { SITE_LANGUAGES } from '@/lib/siteLanguages';
+import { getT, setPrefCookies } from '@/lib/i18n/server';
+import { isTheme, isUiLang } from '@/lib/i18n/languages';
 
 export type SettingsState = { ok: boolean; message: string } | null;
+export type Result = { error?: string };
 const db = () => getSupabaseServerClient();
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const GENDERS = ['woman', 'man', 'non_binary', 'other', 'prefer_not'];
 
 /** The signed-in auth user (with identities), or null. */
 async function authUser() {
@@ -30,32 +32,59 @@ async function passwordOk(email: string, password: string) {
   return !error;
 }
 
+async function updateProfile(fields: Record<string, unknown>, paths: string[] = ['/settings']): Promise<Result> {
+  const t = await getT();
+  const user = await getCurrentUser();
+  if (!user) return { error: t('Your session expired — log in again.') };
+  const { error } = await db().from('profiles').update({ ...fields, updated_at: new Date().toISOString() }).eq('id', user.id);
+  if (error) return { error: error.message };
+  for (const p of [...paths, `/u/${user.username}`]) revalidatePath(p);
+  return {};
+}
+
 /* ---------------- Account ---------------- */
 
 export async function changeEmail(_prev: SettingsState, form: FormData): Promise<SettingsState> {
+  const t = await getT();
   const user = await authUser();
-  if (!user?.email) return { ok: false, message: 'Your session expired — log in again.' };
+  if (!user?.email) return { ok: false, message: t('Your session expired — log in again.') };
   const email = String(form.get('email') || '').trim().toLowerCase();
-  if (!EMAIL.test(email)) return { ok: false, message: 'Enter a valid email address.' };
-  if (email === user.email.toLowerCase()) return { ok: false, message: 'That’s already your email.' };
-  if (hasPassword(user) && !(await passwordOk(user.email, String(form.get('password') || '')))) return { ok: false, message: 'Your current password is wrong.' };
+  if (!EMAIL.test(email)) return { ok: false, message: t('Enter a valid email address.') };
+  if (email === user.email.toLowerCase()) return { ok: false, message: t('That’s already your email.') };
+  if (hasPassword(user) && !(await passwordOk(user.email, String(form.get('password') || '')))) return { ok: false, message: t('Your current password is wrong.') };
   // Applied straight away: confirmation emails need an email provider on Supabase (see Help).
   const { error } = await db().auth.admin.updateUserById(user.id, { email, email_confirm: true });
-  if (error) return { ok: false, message: /already|registered|exists/i.test(error.message) ? 'Another account uses that email.' : error.message };
+  if (error) return { ok: false, message: /already|registered|exists/i.test(error.message) ? t('Another account uses that email.') : error.message };
   revalidatePath('/settings');
-  return { ok: true, message: `Your email is now ${email}. Use it to log in.` };
+  return { ok: true, message: t('Your email is now {email}.', { email }) };
 }
 
 export async function changePassword(_prev: SettingsState, form: FormData): Promise<SettingsState> {
+  const t = await getT();
   const user = await authUser();
-  if (!user?.email) return { ok: false, message: 'Your session expired — log in again.' };
+  if (!user?.email) return { ok: false, message: t('Your session expired — log in again.') };
   const password = String(form.get('password') || '');
-  if (password.length < 8) return { ok: false, message: 'Use a password of at least 8 characters.' };
-  if (password !== String(form.get('confirm') || '')) return { ok: false, message: 'The new passwords don’t match.' };
-  if (hasPassword(user) && !(await passwordOk(user.email, String(form.get('current') || '')))) return { ok: false, message: 'Your current password is wrong.' };
+  if (password.length < 8) return { ok: false, message: t('Use a password of at least 8 characters.') };
+  if (password !== String(form.get('confirm') || '')) return { ok: false, message: t('The new passwords don’t match.') };
+  if (hasPassword(user) && !(await passwordOk(user.email, String(form.get('current') || '')))) return { ok: false, message: t('Your current password is wrong.') };
   const { error } = await db().auth.admin.updateUserById(user.id, { password });
   if (error) return { ok: false, message: error.message };
-  return { ok: true, message: hasPassword(user) ? 'Password changed.' : 'Password set — you can now also log in with your email.' };
+  return { ok: true, message: hasPassword(user) ? t('Password changed.') : t('Password set — you can now also log in with your email.') };
+}
+
+export async function setBirthday(value: string | null): Promise<Result> {
+  const t = await getT();
+  if (value) {
+    const d = new Date(`${value}T00:00:00Z`);
+    const age = (Date.now() - d.getTime()) / (365.25 * 86400_000);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value) || isNaN(d.getTime()) || age < 13 || age > 120) return { error: t('Enter a valid date of birth.') };
+  }
+  return updateProfile({ birthday: value || null });
+}
+
+export async function setGender(value: string | null): Promise<Result> {
+  if (value && !GENDERS.includes(value)) return { error: (await getT())('Unknown option.') };
+  return updateProfile({ gender: value || null });
 }
 
 /** Signs out every browser and device, this one included. */
@@ -65,44 +94,124 @@ export async function logOutEverywhere() {
   redirect('/login');
 }
 
-/* ---------------- Chat & privacy ---------------- */
+/** Authorization: connect Google (identity linking) — needs the Google provider enabled on Supabase. */
+export async function connectGoogle(): Promise<Result> {
+  const t = await getT();
+  const settings = await fetch(`${process.env.SUPABASE_URL}/auth/v1/settings`, {
+    headers: { apikey: process.env.SUPABASE_SERVICE_KEY! }, cache: 'no-store',
+  }).then((r) => r.json()).catch(() => null);
+  if (!settings?.external?.google) return { error: t('Google sign-in isn’t switched on for EUDI Radar yet.') };
+  const { data, error } = await authClient().auth.linkIdentity({
+    provider: 'google', options: { redirectTo: `${siteOrigin()}/auth/callback?next=${encodeURIComponent(safeNext('/settings/account'))}` },
+  });
+  if (error || !data?.url) return { error: error?.message || t('Could not reach Google.') };
+  redirect(data.url);
+}
 
-export async function setChatPermission(value: string): Promise<{ error?: string }> {
-  const user = await getCurrentUser();
-  if (!user) return { error: 'Log in first.' };
-  if (!['everyone', 'workspace', 'nobody'].includes(value)) return { error: 'Unknown option.' };
-  await db().from('profiles').update({ chat_permission: value }).eq('id', user.id);
+export async function disconnectGoogle(): Promise<Result> {
+  const t = await getT();
+  const user = await authUser();
+  if (!user) return { error: t('Your session expired — log in again.') };
+  const google = (user.identities || []).find((i) => i.provider === 'google');
+  if (!google) return {};
+  if (!hasPassword(user)) return { error: t('Set a password first — Google is how you log in.') };
+  const { error } = await authClient().auth.unlinkIdentity(google);
+  if (error) return { error: error.message };
+  revalidatePath('/settings/account');
   return {};
 }
 
-/* ---------------- Language ---------------- */
+/* ---------------- Profile ---------------- */
 
-/** Site language: the Translator Agent's "Target language" line. Admins only. */
-export async function setSiteLanguage(code: string): Promise<{ error?: string }> {
-  if (!(await isPlatformAdmin())) return { error: 'Not allowed.' };
-  const lang = SITE_LANGUAGES.find((l) => l.code === code);
-  if (!lang) return { error: 'Unknown language.' };
-  const { data } = await db().from('agent_settings').select('prompt_override, default_prompt').eq('agent_key', 'translator').maybeSingle();
-  const base = data?.prompt_override || data?.default_prompt;
-  if (!base || !TARGET_LINE.test(base)) return { error: 'The Translator Agent’s configuration has no “Target language” line.' };
-  const line = `Target language: ${lang.name} (${lang.code})`;
-  const next = base.replace(TARGET_LINE, line);
-  const isDefault = data?.default_prompt && next === data.default_prompt;
-  await db().from('agent_settings').update({ prompt_override: isDefault ? null : next }).eq('agent_key', 'translator');
+export async function setDisplayName(value: string): Promise<Result> {
+  const t = await getT();
+  const v = value.trim().slice(0, 60);
+  if (v.length < 2) return { error: t('Use at least 2 characters.') };
+  const r = await updateProfile({ display_name: v });
+  if (!r.error) revalidatePath('/', 'layout');
+  return r;
+}
+
+export async function setBio(value: string): Promise<Result> {
+  return updateProfile({ bio: value.trim().slice(0, 1000) || null });
+}
+
+function socialUrl(raw: string, label: string, hosts: string[], handleBase?: string) {
+  const v = raw.trim();
+  if (!v) return null;
+  const handle = v.replace(/^@/, '');
+  if (handleBase && /^[A-Za-z0-9_.-]{1,60}$/.test(handle)) return `${handleBase}${handle}`;
+  let url: URL;
+  try { url = new URL(/^https?:\/\//i.test(v) ? v : `https://${v}`); } catch { throw new Error(`${label}: invalid link`); }
+  const host = url.hostname.replace(/^www\./, '').toLowerCase();
+  if (hosts.length && !hosts.some((h) => host === h || host.endsWith(`.${h}`))) throw new Error(`${label}: ${hosts[0]}`);
+  url.protocol = 'https:';
+  return url.toString().slice(0, 300);
+}
+
+export async function setSocialLinks(links: { website: string; linkedin: string; x: string; github: string }): Promise<Result> {
+  const t = await getT();
+  try {
+    return await updateProfile({
+      website_url: socialUrl(links.website, 'Website', []),
+      linkedin_url: socialUrl(links.linkedin, 'LinkedIn', ['linkedin.com']),
+      x_url: socialUrl(links.x, 'X', ['x.com', 'twitter.com'], 'https://x.com/'),
+      github_url: socialUrl(links.github, 'GitHub', ['github.com'], 'https://github.com/'),
+    });
+  } catch (e: any) {
+    const [label, host] = String(e.message).split(': ');
+    return { error: host === 'invalid link' ? t('{label}: that isn’t a valid link.', { label: t(label) }) : t('{label}: use a link on {host}.', { label: t(label), host }) };
+  }
+}
+
+export async function setWorkDetails(v: { company: string; role: string; location: string; expertise: string }): Promise<Result> {
+  const text = (s: string, max: number) => s.trim().slice(0, max) || null;
+  const expertise = Array.from(new Set(v.expertise.split(',').map((x) => x.trim().slice(0, 40)).filter(Boolean))).slice(0, 15);
+  return updateProfile({ company: text(v.company, 100), role: text(v.role, 100), location: text(v.location, 100), expertise });
+}
+
+/* ---------------- Privacy ---------------- */
+
+export async function setChatPermission(value: string): Promise<Result> {
+  if (!['everyone', 'workspace', 'nobody'].includes(value)) return { error: (await getT())('Unknown option.') };
+  return updateProfile({ chat_permission: value });
+}
+
+export async function setSearchable(on: boolean): Promise<Result> {
+  return updateProfile({ searchable: !!on });
+}
+
+/* ---------------- Preferences ---------------- */
+
+export async function setUiLanguage(code: string): Promise<Result> {
+  if (!isUiLang(code)) return { error: (await getT())('Unknown language.') };
+  const r = await updateProfile({ ui_language: code });
+  if (r.error) return r;
+  setPrefCookies({ lang: code });
+  revalidatePath('/', 'layout');
+  return {};
+}
+
+export async function setTheme(value: string): Promise<Result> {
+  if (!isTheme(value)) return { error: (await getT())('Unknown option.') };
+  const r = await updateProfile({ theme: value });
+  if (r.error) return r;
+  setPrefCookies({ theme: value });
   revalidatePath('/', 'layout');
   return {};
 }
 
 /* ---------------- Plan & billing ---------------- */
 
-export async function startCheckout(plan: string): Promise<{ error?: string }> {
+export async function startCheckout(plan: string): Promise<Result> {
+  const t = await getT();
   const user = await getCurrentUser();
-  if (!user) return { error: 'Log in first.' };
+  if (!user) return { error: t('Your session expired — log in again.') };
   const account = await getPersonalAccount(user.id);
   const p = planOf(plan);
-  if (!account || p.key === 'free') return { error: 'That plan isn’t available.' };
+  if (!account || p.key === 'free') return { error: t('That plan isn’t available.') };
   const s = stripe();
-  if (!s || !billingReady()) return { error: 'Online payments aren’t set up yet — contact us to change your plan.' };
+  if (!s || !billingReady()) return { error: t('Online payments aren’t set up yet — contact us to change your plan.') };
   let customer = account.stripeCustomerId;
   if (!customer) {
     const c = await s.customers.create({ email: user.email, name: user.displayName, metadata: { account_id: account.id } });
@@ -111,14 +220,14 @@ export async function startCheckout(plan: string): Promise<{ error?: string }> {
   }
   // Already subscribed: plan changes and cancellations go through the billing portal.
   if (account.planKey !== 'free' && account.planStatus !== 'comped' && account.planStatus !== 'canceled') {
-    const portal = await s.billingPortal.sessions.create({ customer, return_url: `${siteOrigin()}/settings#billing` });
+    const portal = await s.billingPortal.sessions.create({ customer, return_url: `${siteOrigin()}/settings/account` });
     redirect(portal.url);
   }
   const session = await s.checkout.sessions.create({
     mode: 'subscription', customer,
     line_items: [{ price: process.env[PRICE_ENV[p.key]]!, quantity: 1 }],
-    success_url: `${siteOrigin()}/settings?billing=success#billing`,
-    cancel_url: `${siteOrigin()}/settings#billing`,
+    success_url: `${siteOrigin()}/settings/account?billing=success`,
+    cancel_url: `${siteOrigin()}/settings/account`,
     metadata: { account_id: account.id, plan: p.key },
     subscription_data: { metadata: { account_id: account.id, plan: p.key } },
     allow_promotion_codes: true,
@@ -126,19 +235,21 @@ export async function startCheckout(plan: string): Promise<{ error?: string }> {
   redirect(session.url!);
 }
 
-export async function openBillingPortal(): Promise<{ error?: string }> {
+export async function openBillingPortal(): Promise<Result> {
+  const t = await getT();
   const user = await getCurrentUser();
   const account = user ? await getPersonalAccount(user.id) : null;
   const s = stripe();
-  if (!s || !account?.stripeCustomerId) return { error: 'No billing account yet.' };
-  const portal = await s.billingPortal.sessions.create({ customer: account.stripeCustomerId, return_url: `${siteOrigin()}/settings#billing` });
+  if (!s || !account?.stripeCustomerId) return { error: t('No billing account yet.') };
+  const portal = await s.billingPortal.sessions.create({ customer: account.stripeCustomerId, return_url: `${siteOrigin()}/settings/account` });
   redirect(portal.url);
 }
 
 /** Internal: assign a plan by hand (complimentary), e.g. before Stripe is set up. */
-export async function adminSetPlan(userId: string, plan: string): Promise<{ error?: string }> {
-  if (!(await isPlatformAdmin())) return { error: 'Not allowed.' };
-  if (!PLANS.some((p) => p.key === plan)) return { error: 'Unknown plan.' };
+export async function adminSetPlan(userId: string, plan: string): Promise<Result> {
+  const t = await getT();
+  if (!(await isPlatformAdmin())) return { error: t('Not allowed.') };
+  if (!PLANS.some((p) => p.key === plan)) return { error: t('Unknown plan.') };
   await db().from('accounts').update({ plan, plan_status: plan === 'free' ? 'active' : 'comped' }).eq('kind', 'personal').eq('owner_id', userId);
   revalidatePath('/', 'layout');
   return {};

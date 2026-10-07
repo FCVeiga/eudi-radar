@@ -1,0 +1,1185 @@
+{
+  "Settings": {
+    "pt": "Definições",
+    "es": "Configuración",
+    "fr": "Paramètres",
+    "de": "Einstellungen",
+    "it": "Impostazioni"
+  },
+  "Account": {
+    "pt": "Conta",
+    "es": "Cuenta",
+    "fr": "Compte",
+    "de": "Konto",
+    "it": "Account"
+  },
+  "Profile": {
+    "pt": "Perfil",
+    "es": "Perfil",
+    "fr": "Profil",
+    "de": "Profil",
+    "it": "Profilo"
+  },
+  "Privacy": {
+    "pt": "Privacidade",
+    "es": "Privacidad",
+    "fr": "Confidentialité",
+    "de": "Datenschutz",
+    "it": "Privacy"
+  },
+  "Preferences": {
+    "pt": "Preferências",
+    "es": "Preferencias",
+    "fr": "Préférences",
+    "de": "Präferenzen",
+    "it": "Preferenze"
+  },
+  "Notifications": {
+    "pt": "Notificações",
+    "es": "Notificaciones",
+    "fr": "Notifications",
+    "de": "Benachrichtigungen",
+    "it": "Notifiche"
+  },
+  "Close": {
+    "pt": "Fechar",
+    "es": "Cerrar",
+    "fr": "Fermer",
+    "de": "Schließen",
+    "it": "Chiudi"
+  },
+  "Cancel": {
+    "pt": "Cancelar",
+    "es": "Cancelar",
+    "fr": "Annuler",
+    "de": "Abbrechen",
+    "it": "Annulla"
+  },
+  "Save": {
+    "pt": "Guardar",
+    "es": "Guardar",
+    "fr": "Enregistrer",
+    "de": "Speichern",
+    "it": "Salva"
+  },
+  "Saving…": {
+    "pt": "A guardar…",
+    "es": "Guardando…",
+    "fr": "Enregistrement…",
+    "de": "Wird gespeichert…",
+    "it": "Salvataggio…"
+  },
+  "Payment received — your plan updates in a few seconds.": {
+    "pt": "Pagamento recebido — o seu plano é atualizado dentro de segundos.",
+    "es": "Pago recibido: tu plan se actualizará en unos segundos.",
+    "fr": "Paiement reçu — votre offre sera mise à jour dans quelques secondes.",
+    "de": "Zahlung erhalten – dein Tarif wird in wenigen Sekunden aktualisiert.",
+    "it": "Pagamento ricevuto: il tuo piano si aggiornerà tra pochi secondi."
+  },
+  "General": {
+    "pt": "Geral",
+    "es": "General",
+    "fr": "Général",
+    "de": "Allgemein",
+    "it": "Generale"
+  },
+  "Email address": {
+    "pt": "Endereço de email",
+    "es": "Dirección de correo electrónico",
+    "fr": "Adresse e-mail",
+    "de": "E-Mail-Adresse",
+    "it": "Indirizzo email"
+  },
+  "Password": {
+    "pt": "Palavra-passe",
+    "es": "Contraseña",
+    "fr": "Mot de passe",
+    "de": "Passwort",
+    "it": "Password"
+  },
+  "Change password": {
+    "pt": "Alterar palavra-passe",
+    "es": "Cambiar contraseña",
+    "fr": "Modifier le mot de passe",
+    "de": "Passwort ändern",
+    "it": "Cambia password"
+  },
+  "Set password": {
+    "pt": "Definir palavra-passe",
+    "es": "Establecer contraseña",
+    "fr": "Définir un mot de passe",
+    "de": "Passwort festlegen",
+    "it": "Imposta password"
+  },
+  "Not set": {
+    "pt": "Não definido",
+    "es": "No establecido",
+    "fr": "Non défini",
+    "de": "Nicht festgelegt",
+    "it": "Non impostato"
+  },
+  "Birthday": {
+    "pt": "Data de nascimento",
+    "es": "Fecha de nacimiento",
+    "fr": "Date de naissance",
+    "de": "Geburtstag",
+    "it": "Data di nascita"
+  },
+  "Gender": {
+    "pt": "Género",
+    "es": "Género",
+    "fr": "Genre",
+    "de": "Geschlecht",
+    "it": "Genere"
+  },
+  "Woman": {
+    "pt": "Mulher",
+    "es": "Mujer",
+    "fr": "Femme",
+    "de": "Frau",
+    "it": "Donna"
+  },
+  "Man": {
+    "pt": "Homem",
+    "es": "Hombre",
+    "fr": "Homme",
+    "de": "Mann",
+    "it": "Uomo"
+  },
+  "Non-binary": {
+    "pt": "Não binário",
+    "es": "No binario",
+    "fr": "Non binaire",
+    "de": "Nicht-binär",
+    "it": "Non binario"
+  },
+  "Other": {
+    "pt": "Outro",
+    "es": "Otro",
+    "fr": "Autre",
+    "de": "Divers",
+    "it": "Altro"
+  },
+  "Prefer not to say": {
+    "pt": "Prefiro não dizer",
+    "es": "Prefiero no decirlo",
+    "fr": "Je préfère ne pas le dire",
+    "de": "Keine Angabe",
+    "it": "Preferisco non dirlo"
+  },
+  "Subscription": {
+    "pt": "Subscrição",
+    "es": "Suscripción",
+    "fr": "Abonnement",
+    "de": "Abonnement",
+    "it": "Abbonamento"
+  },
+  "Plan": {
+    "pt": "Plano",
+    "es": "Plan",
+    "fr": "Offre",
+    "de": "Tarif",
+    "it": "Piano"
+  },
+  "complimentary": {
+    "pt": "oferta",
+    "es": "de cortesía",
+    "fr": "offert",
+    "de": "kostenlos",
+    "it": "omaggio"
+  },
+  "Authorization": {
+    "pt": "Autorização",
+    "es": "Autorización",
+    "fr": "Autorisation",
+    "de": "Autorisierung",
+    "it": "Autorizzazione"
+  },
+  "Connected as {email}": {
+    "pt": "Ligado como {email}",
+    "es": "Conectado como {email}",
+    "fr": "Connecté en tant que {email}",
+    "de": "Verbunden als {email}",
+    "it": "Connesso come {email}"
+  },
+  "Log in with your Google account": {
+    "pt": "Inicie sessão com a sua conta Google",
+    "es": "Inicia sesión con tu cuenta de Google",
+    "fr": "Connectez-vous avec votre compte Google",
+    "de": "Mit deinem Google-Konto anmelden",
+    "it": "Accedi con il tuo account Google"
+  },
+  "Advanced": {
+    "pt": "Avançado",
+    "es": "Avanzado",
+    "fr": "Avancé",
+    "de": "Erweitert",
+    "it": "Avanzate"
+  },
+  "Log out everywhere": {
+    "pt": "Terminar sessão em todo o lado",
+    "es": "Cerrar sesión en todas partes",
+    "fr": "Se déconnecter partout",
+    "de": "Überall abmelden",
+    "it": "Esci ovunque"
+  },
+  "Ends every session, this one included": {
+    "pt": "Termina todas as sessões, incluindo esta",
+    "es": "Cierra todas las sesiones, incluida esta",
+    "fr": "Met fin à toutes les sessions, y compris celle-ci",
+    "de": "Beendet alle Sitzungen, auch diese",
+    "it": "Chiude tutte le sessioni, compresa questa"
+  },
+  "Delete account": {
+    "pt": "Eliminar conta",
+    "es": "Eliminar cuenta",
+    "fr": "Supprimer le compte",
+    "de": "Konto löschen",
+    "it": "Elimina account"
+  },
+  "New email": {
+    "pt": "Novo email",
+    "es": "Nuevo correo electrónico",
+    "fr": "Nouvel e-mail",
+    "de": "Neue E-Mail-Adresse",
+    "it": "Nuova email"
+  },
+  "Current password": {
+    "pt": "Palavra-passe atual",
+    "es": "Contraseña actual",
+    "fr": "Mot de passe actuel",
+    "de": "Aktuelles Passwort",
+    "it": "Password attuale"
+  },
+  "Done": {
+    "pt": "Concluído",
+    "es": "Listo",
+    "fr": "Terminé",
+    "de": "Fertig",
+    "it": "Fatto"
+  },
+  "New password": {
+    "pt": "Nova palavra-passe",
+    "es": "Nueva contraseña",
+    "fr": "Nouveau mot de passe",
+    "de": "Neues Passwort",
+    "it": "Nuova password"
+  },
+  "Confirm new password": {
+    "pt": "Confirmar nova palavra-passe",
+    "es": "Confirmar nueva contraseña",
+    "fr": "Confirmer le nouveau mot de passe",
+    "de": "Neues Passwort bestätigen",
+    "it": "Conferma nuova password"
+  },
+  "Date of birth": {
+    "pt": "Data de nascimento",
+    "es": "Fecha de nacimiento",
+    "fr": "Date de naissance",
+    "de": "Geburtsdatum",
+    "it": "Data di nascita"
+  },
+  "Not shown on your profile.": {
+    "pt": "Não é mostrada no seu perfil.",
+    "es": "No se muestra en tu perfil.",
+    "fr": "N’apparaît pas sur votre profil.",
+    "de": "Wird nicht in deinem Profil angezeigt.",
+    "it": "Non viene mostrata sul tuo profilo."
+  },
+  "Disconnect": {
+    "pt": "Desligar",
+    "es": "Desconectar",
+    "fr": "Déconnecter",
+    "de": "Trennen",
+    "it": "Disconnetti"
+  },
+  "Connect": {
+    "pt": "Ligar",
+    "es": "Conectar",
+    "fr": "Connecter",
+    "de": "Verbinden",
+    "it": "Connetti"
+  },
+  "Log out on every device, including this one?": {
+    "pt": "Terminar sessão em todos os dispositivos, incluindo este?",
+    "es": "¿Cerrar sesión en todos los dispositivos, incluido este?",
+    "fr": "Se déconnecter sur tous les appareils, y compris celui-ci ?",
+    "de": "Auf allen Geräten abmelden, auch auf diesem?",
+    "it": "Uscire da tutti i dispositivi, compreso questo?"
+  },
+  "Log out": {
+    "pt": "Terminar sessão",
+    "es": "Cerrar sesión",
+    "fr": "Se déconnecter",
+    "de": "Abmelden",
+    "it": "Esci"
+  },
+  "Renews {date}": {
+    "pt": "Renova a {date}",
+    "es": "Se renueva el {date}",
+    "fr": "Renouvellement le {date}",
+    "de": "Verlängert sich am {date}",
+    "it": "Si rinnova il {date}"
+  },
+  "Current": {
+    "pt": "Atual",
+    "es": "Actual",
+    "fr": "Actuelle",
+    "de": "Aktuell",
+    "it": "Attuale"
+  },
+  "month": {
+    "pt": "mês",
+    "es": "mes",
+    "fr": "mois",
+    "de": "Monat",
+    "it": "mese"
+  },
+  "Upgrade to {plan}": {
+    "pt": "Mudar para {plan}",
+    "es": "Mejorar a {plan}",
+    "fr": "Passer à {plan}",
+    "de": "Auf {plan} upgraden",
+    "it": "Passa a {plan}"
+  },
+  "Switch to {plan}": {
+    "pt": "Mudar para {plan}",
+    "es": "Cambiar a {plan}",
+    "fr": "Passer à {plan}",
+    "de": "Zu {plan} wechseln",
+    "it": "Passa a {plan}"
+  },
+  "Manage billing": {
+    "pt": "Gerir faturação",
+    "es": "Gestionar facturación",
+    "fr": "Gérer la facturation",
+    "de": "Abrechnung verwalten",
+    "it": "Gestisci fatturazione"
+  },
+  "Set plan": {
+    "pt": "Definir plano",
+    "es": "Asignar plan",
+    "fr": "Définir l’offre",
+    "de": "Tarif festlegen",
+    "it": "Imposta piano"
+  },
+  "Invoices": {
+    "pt": "Faturas",
+    "es": "Facturas",
+    "fr": "Factures",
+    "de": "Rechnungen",
+    "it": "Fatture"
+  },
+  "No invoices yet.": {
+    "pt": "Ainda não há faturas.",
+    "es": "Aún no hay facturas.",
+    "fr": "Aucune facture pour l’instant.",
+    "de": "Noch keine Rechnungen.",
+    "it": "Ancora nessuna fattura."
+  },
+  "Follow the radar’s default scope.": {
+    "pt": "Siga o âmbito predefinido do radar.",
+    "es": "Sigue el ámbito predeterminado del radar.",
+    "fr": "Suivez le périmètre par défaut du radar.",
+    "de": "Folge dem Standardbereich des Radars.",
+    "it": "Segui l’ambito predefinito del radar."
+  },
+  "One workspace": {
+    "pt": "Um espaço de trabalho",
+    "es": "Un espacio de trabajo",
+    "fr": "Un espace de travail",
+    "de": "Ein Arbeitsbereich",
+    "it": "Un’area di lavoro"
+  },
+  "The default scope (EUDI Wallet & digital identity)": {
+    "pt": "O âmbito predefinido (EUDI Wallet e identidade digital)",
+    "es": "El ámbito predeterminado (EUDI Wallet e identidad digital)",
+    "fr": "Le périmètre par défaut (EUDI Wallet et identité numérique)",
+    "de": "Der Standardbereich (EUDI Wallet & digitale Identität)",
+    "it": "L’ambito predefinito (EUDI Wallet e identità digitale)"
+  },
+  "Agents update tenders and news once a day": {
+    "pt": "Os agentes atualizam concursos e notícias uma vez por dia",
+    "es": "Los agentes actualizan licitaciones y noticias una vez al día",
+    "fr": "Les agents mettent à jour appels d’offres et actualités une fois par jour",
+    "de": "Agenten aktualisieren Ausschreibungen und Nachrichten einmal täglich",
+    "it": "Gli agenti aggiornano gare e notizie una volta al giorno"
+  },
+  "Community, chat and notifications": {
+    "pt": "Comunidade, chat e notificações",
+    "es": "Comunidad, chat y notificaciones",
+    "fr": "Communauté, chat et notifications",
+    "de": "Community, Chat und Benachrichtigungen",
+    "it": "Community, chat e notifiche"
+  },
+  "Your own radar, tuned to your business.": {
+    "pt": "O seu próprio radar, ajustado ao seu negócio.",
+    "es": "Tu propio radar, adaptado a tu negocio.",
+    "fr": "Votre propre radar, adapté à votre activité.",
+    "de": "Dein eigenes Radar, abgestimmt auf dein Geschäft.",
+    "it": "Il tuo radar, su misura per la tua attività."
+  },
+  "One customizable scope — your instructions, context and agents": {
+    "pt": "Um âmbito personalizável — as suas instruções, contexto e agentes",
+    "es": "Un ámbito personalizable: tus instrucciones, contexto y agentes",
+    "fr": "Un périmètre personnalisable — vos instructions, votre contexte et vos agents",
+    "de": "Ein anpassbarer Bereich – deine Anweisungen, dein Kontext und deine Agenten",
+    "it": "Un ambito personalizzabile: le tue istruzioni, il tuo contesto e i tuoi agenti"
+  },
+  "Tender evaluations and proposal briefs": {
+    "pt": "Avaliações de concursos e resumos de proposta",
+    "es": "Evaluaciones de licitaciones y resúmenes de propuesta",
+    "fr": "Évaluations d’appels d’offres et notes de proposition",
+    "de": "Bewertungen von Ausschreibungen und Angebotsbriefings",
+    "it": "Valutazioni delle gare e brief di offerta"
+  },
+  "Agents update twice a day": {
+    "pt": "Os agentes atualizam duas vezes por dia",
+    "es": "Los agentes actualizan dos veces al día",
+    "fr": "Les agents mettent à jour deux fois par jour",
+    "de": "Agenten aktualisieren zweimal täglich",
+    "it": "Gli agenti aggiornano due volte al giorno"
+  },
+  "Several markets or projects at once.": {
+    "pt": "Vários mercados ou projetos em simultâneo.",
+    "es": "Varios mercados o proyectos a la vez.",
+    "fr": "Plusieurs marchés ou projets à la fois.",
+    "de": "Mehrere Märkte oder Projekte gleichzeitig.",
+    "it": "Più mercati o progetti contemporaneamente."
+  },
+  "Up to 5 customizable scopes": {
+    "pt": "Até 5 âmbitos personalizáveis",
+    "es": "Hasta 5 ámbitos personalizables",
+    "fr": "Jusqu’à 5 périmètres personnalisables",
+    "de": "Bis zu 5 anpassbare Bereiche",
+    "it": "Fino a 5 ambiti personalizzabili"
+  },
+  "Agents update three times a day": {
+    "pt": "Os agentes atualizam três vezes por dia",
+    "es": "Los agentes actualizan tres veces al día",
+    "fr": "Les agents mettent à jour trois fois par jour",
+    "de": "Agenten aktualisieren dreimal täglich",
+    "it": "Gli agenti aggiornano tre volte al giorno"
+  },
+  "For firms with departments and projects.": {
+    "pt": "Para empresas com departamentos e projetos.",
+    "es": "Para empresas con departamentos y proyectos.",
+    "fr": "Pour les entreprises avec départements et projets.",
+    "de": "Für Unternehmen mit Abteilungen und Projekten.",
+    "it": "Per aziende con reparti e progetti."
+  },
+  "Unlimited workspaces": {
+    "pt": "Espaços de trabalho ilimitados",
+    "es": "Espacios de trabajo ilimitados",
+    "fr": "Espaces de travail illimités",
+    "de": "Unbegrenzte Arbeitsbereiche",
+    "it": "Aree di lavoro illimitate"
+  },
+  "Unlimited team members (admins configure, members see results)": {
+    "pt": "Membros de equipa ilimitados (os administradores configuram, os membros veem os resultados)",
+    "es": "Miembros de equipo ilimitados (los administradores configuran, los miembros ven los resultados)",
+    "fr": "Membres d’équipe illimités (les administrateurs configurent, les membres voient les résultats)",
+    "de": "Unbegrenzte Teammitglieder (Admins konfigurieren, Mitglieder sehen die Ergebnisse)",
+    "it": "Membri del team illimitati (gli amministratori configurano, i membri vedono i risultati)"
+  },
+  "Unlimited scopes": {
+    "pt": "Âmbitos ilimitados",
+    "es": "Ámbitos ilimitados",
+    "fr": "Périmètres illimités",
+    "de": "Unbegrenzte Bereiche",
+    "it": "Ambiti illimitati"
+  },
+  "Agents update six times a day": {
+    "pt": "Os agentes atualizam seis vezes por dia",
+    "es": "Los agentes actualizan seis veces al día",
+    "fr": "Les agents mettent à jour six fois par jour",
+    "de": "Agenten aktualisieren sechsmal täglich",
+    "it": "Gli agenti aggiornano sei volte al giorno"
+  },
+  "Display name": {
+    "pt": "Nome a mostrar",
+    "es": "Nombre visible",
+    "fr": "Nom affiché",
+    "de": "Anzeigename",
+    "it": "Nome visualizzato"
+  },
+  "Shown on your posts, comments and profile": {
+    "pt": "Mostrado nas suas publicações, comentários e perfil",
+    "es": "Se muestra en tus publicaciones, comentarios y perfil",
+    "fr": "Affiché sur vos publications, commentaires et profil",
+    "de": "Wird bei deinen Beiträgen, Kommentaren und im Profil angezeigt",
+    "it": "Mostrato nei tuoi post, commenti e profilo"
+  },
+  "About description": {
+    "pt": "Descrição",
+    "es": "Descripción",
+    "fr": "Description",
+    "de": "Beschreibung",
+    "it": "Descrizione"
+  },
+  "A short bio on your profile": {
+    "pt": "Uma breve biografia no seu perfil",
+    "es": "Una breve biografía en tu perfil",
+    "fr": "Une courte bio sur votre profil",
+    "de": "Eine kurze Bio in deinem Profil",
+    "it": "Una breve bio sul tuo profilo"
+  },
+  "Avatar": {
+    "pt": "Avatar",
+    "es": "Avatar",
+    "fr": "Avatar",
+    "de": "Avatar",
+    "it": "Avatar"
+  },
+  "Images must be PNG, JPG, WebP or GIF": {
+    "pt": "As imagens têm de ser PNG, JPG, WebP ou GIF",
+    "es": "Las imágenes deben ser PNG, JPG, WebP o GIF",
+    "fr": "Les images doivent être au format PNG, JPG, WebP ou GIF",
+    "de": "Bilder müssen PNG, JPG, WebP oder GIF sein",
+    "it": "Le immagini devono essere PNG, JPG, WebP o GIF"
+  },
+  "Work details": {
+    "pt": "Dados profissionais",
+    "es": "Datos profesionales",
+    "fr": "Informations professionnelles",
+    "de": "Berufliche Angaben",
+    "it": "Dati professionali"
+  },
+  "Company, role, location and expertise": {
+    "pt": "Empresa, cargo, localização e competências",
+    "es": "Empresa, cargo, ubicación y especialidad",
+    "fr": "Entreprise, poste, lieu et expertise",
+    "de": "Unternehmen, Rolle, Standort und Expertise",
+    "it": "Azienda, ruolo, località e competenze"
+  },
+  "Social links": {
+    "pt": "Redes sociais",
+    "es": "Redes sociales",
+    "fr": "Réseaux sociaux",
+    "de": "Social-Media-Links",
+    "it": "Link social"
+  },
+  "LinkedIn, X, GitHub and your website": {
+    "pt": "LinkedIn, X, GitHub e o seu website",
+    "es": "LinkedIn, X, GitHub y tu sitio web",
+    "fr": "LinkedIn, X, GitHub et votre site web",
+    "de": "LinkedIn, X, GitHub und deine Website",
+    "it": "LinkedIn, X, GitHub e il tuo sito web"
+  },
+  "Company": {
+    "pt": "Empresa",
+    "es": "Empresa",
+    "fr": "Entreprise",
+    "de": "Unternehmen",
+    "it": "Azienda"
+  },
+  "Role": {
+    "pt": "Cargo",
+    "es": "Cargo",
+    "fr": "Poste",
+    "de": "Rolle",
+    "it": "Ruolo"
+  },
+  "Location": {
+    "pt": "Localização",
+    "es": "Ubicación",
+    "fr": "Lieu",
+    "de": "Standort",
+    "it": "Località"
+  },
+  "Expertise": {
+    "pt": "Competências",
+    "es": "Especialidad",
+    "fr": "Expertise",
+    "de": "Expertise",
+    "it": "Competenze"
+  },
+  "Comma-separated, e.g. eIDAS, wallets": {
+    "pt": "Separadas por vírgulas, p. ex. eIDAS, wallets",
+    "es": "Separadas por comas, p. ej. eIDAS, wallets",
+    "fr": "Séparées par des virgules, p. ex. eIDAS, wallets",
+    "de": "Durch Kommas getrennt, z. B. eIDAS, Wallets",
+    "it": "Separate da virgole, ad es. eIDAS, wallet"
+  },
+  "Website": {
+    "pt": "Website",
+    "es": "Sitio web",
+    "fr": "Site web",
+    "de": "Website",
+    "it": "Sito web"
+  },
+  "username": {
+    "pt": "nome de utilizador",
+    "es": "nombre de usuario",
+    "fr": "nom d’utilisateur",
+    "de": "Benutzername",
+    "it": "nome utente"
+  },
+  "Social interactions": {
+    "pt": "Interações sociais",
+    "es": "Interacciones sociales",
+    "fr": "Interactions sociales",
+    "de": "Soziale Interaktionen",
+    "it": "Interazioni social"
+  },
+  "Who can send you chat requests": {
+    "pt": "Quem lhe pode enviar pedidos de chat",
+    "es": "Quién puede enviarte solicitudes de chat",
+    "fr": "Qui peut vous envoyer des demandes de chat",
+    "de": "Wer dir Chat-Anfragen senden kann",
+    "it": "Chi può inviarti richieste di chat"
+  },
+  "Everyone": {
+    "pt": "Todos",
+    "es": "Todos",
+    "fr": "Tout le monde",
+    "de": "Alle",
+    "it": "Tutti"
+  },
+  "People in my workspaces": {
+    "pt": "Pessoas nos meus espaços de trabalho",
+    "es": "Personas de mis espacios de trabajo",
+    "fr": "Personnes de mes espaces de travail",
+    "de": "Personen in meinen Arbeitsbereichen",
+    "it": "Persone nelle mie aree di lavoro"
+  },
+  "Nobody": {
+    "pt": "Ninguém",
+    "es": "Nadie",
+    "fr": "Personne",
+    "de": "Niemand",
+    "it": "Nessuno"
+  },
+  "Existing chats carry on": {
+    "pt": "Os chats existentes continuam",
+    "es": "Los chats existentes continúan",
+    "fr": "Les conversations existantes continuent",
+    "de": "Bestehende Chats bleiben bestehen",
+    "it": "Le chat esistenti continuano"
+  },
+  "Discoverability": {
+    "pt": "Visibilidade",
+    "es": "Visibilidad",
+    "fr": "Visibilité",
+    "de": "Auffindbarkeit",
+    "it": "Visibilità"
+  },
+  "Show up in search results": {
+    "pt": "Aparecer nos resultados de pesquisa",
+    "es": "Aparecer en los resultados de búsqueda",
+    "fr": "Apparaître dans les résultats de recherche",
+    "de": "In Suchergebnissen erscheinen",
+    "it": "Compari nei risultati di ricerca"
+  },
+  "Others can find your profile in EUDI Radar search and search engines": {
+    "pt": "Outras pessoas podem encontrar o seu perfil na pesquisa do EUDI Radar e em motores de busca",
+    "es": "Otras personas pueden encontrar tu perfil en la búsqueda de EUDI Radar y en buscadores",
+    "fr": "Les autres peuvent trouver votre profil via la recherche EUDI Radar et les moteurs de recherche",
+    "de": "Andere finden dein Profil über die EUDI-Radar-Suche und Suchmaschinen",
+    "it": "Gli altri possono trovare il tuo profilo nella ricerca di EUDI Radar e nei motori di ricerca"
+  },
+  "Language": {
+    "pt": "Idioma",
+    "es": "Idioma",
+    "fr": "Langue",
+    "de": "Sprache",
+    "it": "Lingua"
+  },
+  "Display language": {
+    "pt": "Idioma de apresentação",
+    "es": "Idioma de la interfaz",
+    "fr": "Langue d’affichage",
+    "de": "Anzeigesprache",
+    "it": "Lingua dell’interfaccia"
+  },
+  "The site’s menus, buttons and messages. Tenders and news stay in the language the agents write in.": {
+    "pt": "Os menus, botões e mensagens do site. Os concursos e as notícias ficam no idioma em que os agentes escrevem.",
+    "es": "Los menús, botones y mensajes del sitio. Las licitaciones y noticias se mantienen en el idioma en que escriben los agentes.",
+    "fr": "Les menus, boutons et messages du site. Les appels d’offres et actualités restent dans la langue des agents.",
+    "de": "Menüs, Schaltflächen und Meldungen der Website. Ausschreibungen und Nachrichten bleiben in der Sprache, in der die Agenten schreiben.",
+    "it": "Menu, pulsanti e messaggi del sito. Gare e notizie restano nella lingua in cui scrivono gli agenti."
+  },
+  "Experience": {
+    "pt": "Experiência",
+    "es": "Experiencia",
+    "fr": "Expérience",
+    "de": "Darstellung",
+    "it": "Esperienza"
+  },
+  "Display mode": {
+    "pt": "Modo de apresentação",
+    "es": "Modo de visualización",
+    "fr": "Mode d’affichage",
+    "de": "Anzeigemodus",
+    "it": "Modalità di visualizzazione"
+  },
+  "Light": {
+    "pt": "Claro",
+    "es": "Claro",
+    "fr": "Clair",
+    "de": "Hell",
+    "it": "Chiaro"
+  },
+  "Dark": {
+    "pt": "Escuro",
+    "es": "Oscuro",
+    "fr": "Sombre",
+    "de": "Dunkel",
+    "it": "Scuro"
+  },
+  "Auto": {
+    "pt": "Automático",
+    "es": "Automático",
+    "fr": "Automatique",
+    "de": "Automatisch",
+    "it": "Automatico"
+  },
+  "Follows your device": {
+    "pt": "Segue o seu dispositivo",
+    "es": "Sigue tu dispositivo",
+    "fr": "Suit votre appareil",
+    "de": "Folgt deinem Gerät",
+    "it": "Segue il tuo dispositivo"
+  },
+  "Activity": {
+    "pt": "Atividade",
+    "es": "Actividad",
+    "fr": "Activité",
+    "de": "Aktivität",
+    "it": "Attività"
+  },
+  "Likes": {
+    "pt": "Gostos",
+    "es": "Me gusta",
+    "fr": "J’aime",
+    "de": "Likes",
+    "it": "Mi piace"
+  },
+  "On your posts and comments": {
+    "pt": "Nas suas publicações e comentários",
+    "es": "En tus publicaciones y comentarios",
+    "fr": "Sur vos publications et commentaires",
+    "de": "Zu deinen Beiträgen und Kommentaren",
+    "it": "Sui tuoi post e commenti"
+  },
+  "Comments": {
+    "pt": "Comentários",
+    "es": "Comentarios",
+    "fr": "Commentaires",
+    "de": "Kommentare",
+    "it": "Commenti"
+  },
+  "On your posts": {
+    "pt": "Nas suas publicações",
+    "es": "En tus publicaciones",
+    "fr": "Sur vos publications",
+    "de": "Zu deinen Beiträgen",
+    "it": "Sui tuoi post"
+  },
+  "Replies": {
+    "pt": "Respostas",
+    "es": "Respuestas",
+    "fr": "Réponses",
+    "de": "Antworten",
+    "it": "Risposte"
+  },
+  "To your comments": {
+    "pt": "Aos seus comentários",
+    "es": "A tus comentarios",
+    "fr": "À vos commentaires",
+    "de": "Auf deine Kommentare",
+    "it": "Ai tuoi commenti"
+  },
+  "New followers": {
+    "pt": "Novos seguidores",
+    "es": "Nuevos seguidores",
+    "fr": "Nouveaux abonnés",
+    "de": "Neue Follower",
+    "it": "Nuovi follower"
+  },
+  "Tenders": {
+    "pt": "Concursos",
+    "es": "Licitaciones",
+    "fr": "Appels d’offres",
+    "de": "Ausschreibungen",
+    "it": "Gare"
+  },
+  "New tenders": {
+    "pt": "Novos concursos",
+    "es": "Nuevas licitaciones",
+    "fr": "Nouveaux appels d’offres",
+    "de": "Neue Ausschreibungen",
+    "it": "Nuove gare"
+  },
+  "Matching your scopes": {
+    "pt": "Que correspondem aos seus âmbitos",
+    "es": "Que coinciden con tus ámbitos",
+    "fr": "Correspondant à vos périmètres",
+    "de": "Passend zu deinen Bereichen",
+    "it": "In linea con i tuoi ambiti"
+  },
+  "Tender updates": {
+    "pt": "Atualizações de concursos",
+    "es": "Actualizaciones de licitaciones",
+    "fr": "Mises à jour d’appels d’offres",
+    "de": "Ausschreibungs-Updates",
+    "it": "Aggiornamenti sulle gare"
+  },
+  "On tenders you follow": {
+    "pt": "Nos concursos que segue",
+    "es": "En las licitaciones que sigues",
+    "fr": "Sur les appels d’offres que vous suivez",
+    "de": "Zu Ausschreibungen, denen du folgst",
+    "it": "Sulle gare che segui"
+  },
+  "Your session expired — log in again.": {
+    "pt": "A sua sessão expirou — inicie sessão novamente.",
+    "es": "Tu sesión ha caducado: vuelve a iniciar sesión.",
+    "fr": "Votre session a expiré — reconnectez-vous.",
+    "de": "Deine Sitzung ist abgelaufen – bitte melde dich erneut an.",
+    "it": "La sessione è scaduta: accedi di nuovo."
+  },
+  "Enter a valid email address.": {
+    "pt": "Introduza um endereço de email válido.",
+    "es": "Introduce una dirección de correo electrónico válida.",
+    "fr": "Saisissez une adresse e-mail valide.",
+    "de": "Gib eine gültige E-Mail-Adresse ein.",
+    "it": "Inserisci un indirizzo email valido."
+  },
+  "That’s already your email.": {
+    "pt": "Esse já é o seu email.",
+    "es": "Ese ya es tu correo electrónico.",
+    "fr": "C’est déjà votre adresse e-mail.",
+    "de": "Das ist bereits deine E-Mail-Adresse.",
+    "it": "È già la tua email."
+  },
+  "Your current password is wrong.": {
+    "pt": "A sua palavra-passe atual está errada.",
+    "es": "Tu contraseña actual no es correcta.",
+    "fr": "Votre mot de passe actuel est incorrect.",
+    "de": "Dein aktuelles Passwort ist falsch.",
+    "it": "La password attuale non è corretta."
+  },
+  "Another account uses that email.": {
+    "pt": "Outra conta já usa esse email.",
+    "es": "Otra cuenta ya usa ese correo electrónico.",
+    "fr": "Un autre compte utilise cette adresse e-mail.",
+    "de": "Ein anderes Konto verwendet diese E-Mail-Adresse.",
+    "it": "Un altro account usa questa email."
+  },
+  "Your email is now {email}.": {
+    "pt": "O seu email é agora {email}.",
+    "es": "Tu correo electrónico ahora es {email}.",
+    "fr": "Votre adresse e-mail est désormais {email}.",
+    "de": "Deine E-Mail-Adresse ist jetzt {email}.",
+    "it": "La tua email ora è {email}."
+  },
+  "Use a password of at least 8 characters.": {
+    "pt": "Use uma palavra-passe com pelo menos 8 caracteres.",
+    "es": "Usa una contraseña de al menos 8 caracteres.",
+    "fr": "Utilisez un mot de passe d’au moins 8 caractères.",
+    "de": "Verwende ein Passwort mit mindestens 8 Zeichen.",
+    "it": "Usa una password di almeno 8 caratteri."
+  },
+  "The new passwords don’t match.": {
+    "pt": "As novas palavras-passe não coincidem.",
+    "es": "Las nuevas contraseñas no coinciden.",
+    "fr": "Les nouveaux mots de passe ne correspondent pas.",
+    "de": "Die neuen Passwörter stimmen nicht überein.",
+    "it": "Le nuove password non coincidono."
+  },
+  "Password changed.": {
+    "pt": "Palavra-passe alterada.",
+    "es": "Contraseña cambiada.",
+    "fr": "Mot de passe modifié.",
+    "de": "Passwort geändert.",
+    "it": "Password modificata."
+  },
+  "Password set — you can now also log in with your email.": {
+    "pt": "Palavra-passe definida — agora também pode iniciar sessão com o seu email.",
+    "es": "Contraseña establecida: ahora también puedes iniciar sesión con tu correo electrónico.",
+    "fr": "Mot de passe défini — vous pouvez aussi vous connecter avec votre e-mail.",
+    "de": "Passwort festgelegt – du kannst dich jetzt auch mit deiner E-Mail-Adresse anmelden.",
+    "it": "Password impostata: ora puoi accedere anche con la tua email."
+  },
+  "Enter a valid date of birth.": {
+    "pt": "Introduza uma data de nascimento válida.",
+    "es": "Introduce una fecha de nacimiento válida.",
+    "fr": "Saisissez une date de naissance valide.",
+    "de": "Gib ein gültiges Geburtsdatum ein.",
+    "it": "Inserisci una data di nascita valida."
+  },
+  "Unknown option.": {
+    "pt": "Opção desconhecida.",
+    "es": "Opción desconocida.",
+    "fr": "Option inconnue.",
+    "de": "Unbekannte Option.",
+    "it": "Opzione sconosciuta."
+  },
+  "Unknown language.": {
+    "pt": "Idioma desconhecido.",
+    "es": "Idioma desconocido.",
+    "fr": "Langue inconnue.",
+    "de": "Unbekannte Sprache.",
+    "it": "Lingua sconosciuta."
+  },
+  "Not allowed.": {
+    "pt": "Não permitido.",
+    "es": "No permitido.",
+    "fr": "Non autorisé.",
+    "de": "Nicht erlaubt.",
+    "it": "Non consentito."
+  },
+  "Unknown plan.": {
+    "pt": "Plano desconhecido.",
+    "es": "Plan desconocido.",
+    "fr": "Offre inconnue.",
+    "de": "Unbekannter Tarif.",
+    "it": "Piano sconosciuto."
+  },
+  "Google sign-in isn’t switched on for EUDI Radar yet.": {
+    "pt": "O início de sessão com Google ainda não está ativo no EUDI Radar.",
+    "es": "El inicio de sesión con Google aún no está activado en EUDI Radar.",
+    "fr": "La connexion avec Google n’est pas encore activée sur EUDI Radar.",
+    "de": "Die Anmeldung mit Google ist für EUDI Radar noch nicht aktiviert.",
+    "it": "L’accesso con Google non è ancora attivo su EUDI Radar."
+  },
+  "Could not reach Google.": {
+    "pt": "Não foi possível contactar a Google.",
+    "es": "No se pudo conectar con Google.",
+    "fr": "Impossible de joindre Google.",
+    "de": "Google ist nicht erreichbar.",
+    "it": "Impossibile raggiungere Google."
+  },
+  "Set a password first — Google is how you log in.": {
+    "pt": "Defina primeiro uma palavra-passe — é com a Google que inicia sessão.",
+    "es": "Primero establece una contraseña: inicias sesión con Google.",
+    "fr": "Définissez d’abord un mot de passe — vous vous connectez avec Google.",
+    "de": "Lege zuerst ein Passwort fest – du meldest dich über Google an.",
+    "it": "Imposta prima una password: accedi tramite Google."
+  },
+  "Use at least 2 characters.": {
+    "pt": "Use pelo menos 2 caracteres.",
+    "es": "Usa al menos 2 caracteres.",
+    "fr": "Utilisez au moins 2 caractères.",
+    "de": "Verwende mindestens 2 Zeichen.",
+    "it": "Usa almeno 2 caratteri."
+  },
+  "{label}: that isn’t a valid link.": {
+    "pt": "{label}: esse link não é válido.",
+    "es": "{label}: ese enlace no es válido.",
+    "fr": "{label} : ce lien n’est pas valide.",
+    "de": "{label}: Das ist kein gültiger Link.",
+    "it": "{label}: il link non è valido."
+  },
+  "{label}: use a link on {host}.": {
+    "pt": "{label}: use um link de {host}.",
+    "es": "{label}: usa un enlace de {host}.",
+    "fr": "{label} : utilisez un lien sur {host}.",
+    "de": "{label}: Verwende einen Link auf {host}.",
+    "it": "{label}: usa un link su {host}."
+  },
+  "That plan isn’t available.": {
+    "pt": "Esse plano não está disponível.",
+    "es": "Ese plan no está disponible.",
+    "fr": "Cette offre n’est pas disponible.",
+    "de": "Dieser Tarif ist nicht verfügbar.",
+    "it": "Questo piano non è disponibile."
+  },
+  "Online payments aren’t set up yet — contact us to change your plan.": {
+    "pt": "Os pagamentos online ainda não estão configurados — contacte-nos para mudar de plano.",
+    "es": "Los pagos en línea aún no están configurados: contáctanos para cambiar de plan.",
+    "fr": "Les paiements en ligne ne sont pas encore configurés — contactez-nous pour changer d’offre.",
+    "de": "Online-Zahlungen sind noch nicht eingerichtet – kontaktiere uns, um deinen Tarif zu ändern.",
+    "it": "I pagamenti online non sono ancora attivi: contattaci per cambiare piano."
+  },
+  "No billing account yet.": {
+    "pt": "Ainda não tem conta de faturação.",
+    "es": "Aún no hay cuenta de facturación.",
+    "fr": "Pas encore de compte de facturation.",
+    "de": "Noch kein Abrechnungskonto.",
+    "it": "Nessun account di fatturazione per ora."
+  },
+  "Log in first.": {
+    "pt": "Inicie sessão primeiro.",
+    "es": "Inicia sesión primero.",
+    "fr": "Connectez-vous d’abord.",
+    "de": "Melde dich zuerst an.",
+    "it": "Accedi prima."
+  },
+  "Last updated {date}": {
+    "pt": "Última atualização: {date}",
+    "es": "Última actualización: {date}",
+    "fr": "Dernière mise à jour : {date}",
+    "de": "Zuletzt aktualisiert: {date}",
+    "it": "Ultimo aggiornamento: {date}"
+  },
+  "This document is available in English only.": {
+    "pt": "Este documento está disponível apenas em inglês.",
+    "es": "Este documento solo está disponible en inglés.",
+    "fr": "Ce document est disponible en anglais uniquement.",
+    "de": "Dieses Dokument ist nur auf Englisch verfügbar.",
+    "it": "Questo documento è disponibile solo in inglese."
+  },
+  "Draft for legal review.": {
+    "pt": "Rascunho para revisão jurídica.",
+    "es": "Borrador para revisión legal.",
+    "fr": "Projet soumis à relecture juridique.",
+    "de": "Entwurf zur rechtlichen Prüfung.",
+    "it": "Bozza per revisione legale."
+  },
+  "Items in [brackets] are to be completed by WalliD before this is relied on.": {
+    "pt": "Os elementos entre [parênteses retos] serão completados pela WalliD antes de este documento ser válido.",
+    "es": "Los elementos entre [corchetes] deben ser completados por WalliD antes de que este documento sea válido.",
+    "fr": "Les éléments entre [crochets] doivent être complétés par WalliD avant que ce document ne fasse foi.",
+    "de": "Angaben in [eckigen Klammern] werden von WalliD ergänzt, bevor dieses Dokument verbindlich ist.",
+    "it": "Gli elementi tra [parentesi quadre] devono essere completati da WalliD prima che il documento sia valido."
+  },
+  "Terms & Conditions": {
+    "pt": "Termos e Condições",
+    "es": "Términos y condiciones",
+    "fr": "Conditions générales",
+    "de": "Allgemeine Geschäftsbedingungen",
+    "it": "Termini e condizioni"
+  },
+  "Privacy Policy": {
+    "pt": "Política de Privacidade",
+    "es": "Política de privacidad",
+    "fr": "Politique de confidentialité",
+    "de": "Datenschutzerklärung",
+    "it": "Informativa sulla privacy"
+  },
+  "Help": {
+    "pt": "Ajuda",
+    "es": "Ayuda",
+    "fr": "Aide",
+    "de": "Hilfe",
+    "it": "Aiuto"
+  },
+  "Still stuck?": {
+    "pt": "Ainda com dúvidas?",
+    "es": "¿Sigues con dudas?",
+    "fr": "Toujours bloqué ?",
+    "de": "Kommst du nicht weiter?",
+    "it": "Hai ancora bisogno di aiuto?"
+  },
+  "Write to us at [support email] and we’ll get back to you.": {
+    "pt": "Escreva-nos para [support email] e entraremos em contacto.",
+    "es": "Escríbenos a [support email] y te responderemos.",
+    "fr": "Écrivez-nous à [support email] et nous vous répondrons.",
+    "de": "Schreib uns an [support email], wir melden uns bei dir.",
+    "it": "Scrivici a [support email] e ti risponderemo."
+  },
+  "What is EUDI Radar?": {
+    "pt": "O que é o EUDI Radar?",
+    "es": "¿Qué es EUDI Radar?",
+    "fr": "Qu’est-ce qu’EUDI Radar ?",
+    "de": "Was ist EUDI Radar?",
+    "it": "Che cos’è EUDI Radar?"
+  },
+  "A radar for public tenders, grants and market news in your field. Agents search TED, national portals, news and the sources you follow every day, sort what matters, and write it up for you.": {
+    "pt": "Um radar de concursos públicos, financiamentos e notícias de mercado da sua área. Todos os dias, agentes pesquisam o TED, portais nacionais, notícias e as fontes que segue, selecionam o que importa e redigem-no para si.",
+    "es": "Un radar de licitaciones públicas, subvenciones y noticias del mercado de tu sector. Cada día, los agentes buscan en TED, portales nacionales, noticias y las fuentes que sigues, seleccionan lo importante y te lo resumen.",
+    "fr": "Un radar des appels d’offres publics, subventions et actualités du marché dans votre domaine. Chaque jour, des agents parcourent TED, les portails nationaux, l’actualité et les sources que vous suivez, trient l’essentiel et le rédigent pour vous.",
+    "de": "Ein Radar für öffentliche Ausschreibungen, Förderungen und Marktnachrichten in deinem Bereich. Agenten durchsuchen täglich TED, nationale Portale, Nachrichten und die Quellen, denen du folgst, filtern das Wichtige heraus und fassen es für dich zusammen.",
+    "it": "Un radar per gare pubbliche, finanziamenti e notizie di mercato nel tuo settore. Ogni giorno gli agenti cercano su TED, portali nazionali, notizie e le fonti che segui, selezionano ciò che conta e lo scrivono per te."
+  },
+  "How is the home feed ordered?": {
+    "pt": "Como é ordenado o feed inicial?",
+    "es": "¿Cómo se ordena el feed de inicio?",
+    "fr": "Comment le fil d’accueil est-il trié ?",
+    "de": "Wie ist der Start-Feed sortiert?",
+    "it": "Come è ordinato il feed principale?"
+  },
+  "<b>Top</b> blends each item’s relevance with how recent it is, so important news stays up longer. <b>Relevance</b> is the AI score alone; <b>New</b> is newest first.": {
+    "pt": "<b>Destaques</b> combina a relevância de cada item com a sua atualidade, para que as notícias importantes fiquem mais tempo no topo. <b>Relevância</b> é apenas a pontuação da IA; <b>Novos</b> mostra os mais recentes primeiro.",
+    "es": "<b>Destacados</b> combina la relevancia de cada elemento con su actualidad, para que las noticias importantes permanezcan más tiempo arriba. <b>Relevancia</b> es solo la puntuación de la IA; <b>Nuevos</b> muestra primero lo más reciente.",
+    "fr": "<b>Top</b> combine la pertinence de chaque élément et sa fraîcheur, pour que les actualités importantes restent visibles plus longtemps. <b>Pertinence</b> correspond au seul score de l’IA ; <b>Nouveautés</b> affiche les plus récents d’abord.",
+    "de": "<b>Top</b> verbindet die Relevanz jedes Eintrags mit seiner Aktualität, damit wichtige Nachrichten länger oben bleiben. <b>Relevanz</b> ist allein der KI-Score; <b>Neu</b> zeigt die neuesten zuerst.",
+    "it": "<b>In evidenza</b> combina la rilevanza di ogni elemento con quanto è recente, così le notizie importanti restano in alto più a lungo. <b>Rilevanza</b> è solo il punteggio dell’IA; <b>Nuovi</b> mostra prima i più recenti."
+  },
+  "What does the heart do?": {
+    "pt": "Para que serve o coração?",
+    "es": "¿Para qué sirve el corazón?",
+    "fr": "À quoi sert le cœur ?",
+    "de": "Was macht das Herz?",
+    "it": "A cosa serve il cuore?"
+  },
+  "It follows a tender or news story. Everything you follow is under <b>Following</b> on your profile, visible only to you.": {
+    "pt": "Serve para seguir um concurso ou notícia. Tudo o que segue está em <b>A seguir</b> no seu perfil, visível apenas para si.",
+    "es": "Sirve para seguir una licitación o noticia. Todo lo que sigues está en <b>Siguiendo</b> en tu perfil, visible solo para ti.",
+    "fr": "Il permet de suivre un appel d’offres ou une actualité. Tout ce que vous suivez se trouve dans <b>Suivis</b> sur votre profil, visible de vous seul.",
+    "de": "Damit folgst du einer Ausschreibung oder Nachricht. Alles, dem du folgst, findest du unter <b>Gefolgt</b> in deinem Profil – nur für dich sichtbar.",
+    "it": "Serve a seguire una gara o una notizia. Tutto ciò che segui è in <b>Seguiti</b> sul tuo profilo, visibile solo a te."
+  },
+  "What are the agents?": {
+    "pt": "O que são os agentes?",
+    "es": "¿Qué son los agentes?",
+    "fr": "Que sont les agents ?",
+    "de": "Was sind die Agenten?",
+    "it": "Cosa sono gli agenti?"
+  },
+  "Each step of the radar is an agent — search, triage, documents, analysis, evaluation, proposal brief, news reports, feed writing and translation. Each scope in your <workspaces>Workspaces</workspaces> has its own; on a paid plan you can switch them on or off and tune them in plain language.": {
+    "pt": "Cada etapa do radar é um agente — pesquisa, triagem, documentos, análise, avaliação, resumo de proposta, relatórios de notícias, redação do feed e tradução. Cada âmbito nos seus <workspaces>Espaços de trabalho</workspaces> tem os seus; num plano pago pode ativá-los ou desativá-los e ajustá-los em linguagem simples.",
+    "es": "Cada paso del radar es un agente: búsqueda, cribado, documentos, análisis, evaluación, resumen de propuesta, informes de noticias, redacción del feed y traducción. Cada ámbito de tus <workspaces>Espacios de trabajo</workspaces> tiene los suyos; con un plan de pago puedes activarlos o desactivarlos y ajustarlos en lenguaje natural.",
+    "fr": "Chaque étape du radar est un agent — recherche, tri, documents, analyse, évaluation, note de proposition, rapports d’actualité, rédaction du fil et traduction. Chaque périmètre de vos <workspaces>Espaces de travail</workspaces> a les siens ; avec une offre payante, vous pouvez les activer, les désactiver et les régler en langage courant.",
+    "de": "Jeder Schritt des Radars ist ein Agent – Suche, Vorauswahl, Dokumente, Analyse, Bewertung, Angebotsbriefing, Nachrichtenberichte, Feed-Texte und Übersetzung. Jeder Bereich in deinen <workspaces>Arbeitsbereichen</workspaces> hat eigene; mit einem kostenpflichtigen Tarif kannst du sie ein- und ausschalten und in einfacher Sprache anpassen.",
+    "it": "Ogni fase del radar è un agente: ricerca, selezione, documenti, analisi, valutazione, brief di offerta, report di notizie, redazione del feed e traduzione. Ogni ambito nelle tue <workspaces>Aree di lavoro</workspaces> ha i propri; con un piano a pagamento puoi attivarli o disattivarli e regolarli in linguaggio semplice."
+  },
+  "How do I get a fit score for a tender?": {
+    "pt": "Como obtenho uma pontuação de adequação para um concurso?",
+    "es": "¿Cómo obtengo una puntuación de encaje para una licitación?",
+    "fr": "Comment obtenir un score d’adéquation pour un appel d’offres ?",
+    "de": "Wie bekomme ich einen Passungs-Score für eine Ausschreibung?",
+    "it": "Come ottengo un punteggio di idoneità per una gara?"
+  },
+  "Open the tender and run the <b>Tender Evaluation Agent</b>. It checks the requirements against your scope’s instructions and context in Workspace. Then the <b>Proposal Manager Agent</b> can write the proposal brief.": {
+    "pt": "Abra o concurso e execute o <b>Tender Evaluation Agent</b>. Este compara os requisitos com as instruções e o contexto do seu âmbito no Espaço de trabalho. Depois, o <b>Proposal Manager Agent</b> pode redigir o resumo da proposta.",
+    "es": "Abre la licitación y ejecuta el <b>Tender Evaluation Agent</b>. Compara los requisitos con las instrucciones y el contexto de tu ámbito en el Espacio de trabajo. Después, el <b>Proposal Manager Agent</b> puede redactar el resumen de propuesta.",
+    "fr": "Ouvrez l’appel d’offres et lancez le <b>Tender Evaluation Agent</b>. Il compare les exigences aux instructions et au contexte de votre périmètre dans l’Espace de travail. Le <b>Proposal Manager Agent</b> peut ensuite rédiger la note de proposition.",
+    "de": "Öffne die Ausschreibung und starte den <b>Tender Evaluation Agent</b>. Er prüft die Anforderungen anhand der Anweisungen und des Kontexts deines Bereichs im Arbeitsbereich. Danach kann der <b>Proposal Manager Agent</b> das Angebotsbriefing schreiben.",
+    "it": "Apri la gara ed esegui il <b>Tender Evaluation Agent</b>. Confronta i requisiti con le istruzioni e il contesto del tuo ambito nell’Area di lavoro. Poi il <b>Proposal Manager Agent</b> può scrivere il brief di offerta."
+  },
+  "What are workspaces and plans?": {
+    "pt": "O que são espaços de trabalho e planos?",
+    "es": "¿Qué son los espacios de trabajo y los planes?",
+    "fr": "Que sont les espaces de travail et les offres ?",
+    "de": "Was sind Arbeitsbereiche und Tarife?",
+    "it": "Cosa sono aree di lavoro e piani?"
+  },
+  "A workspace holds your scopes — the configurations of the radar you work with. Free follows the default scope; Starter and Pro let you build your own scopes; Teams adds unlimited workspaces, each with its own team members (admins configure, members see the results). Create workspaces and add members on <workspaces>Workspaces</workspaces>, change your plan in <settings>Settings</settings>, and switch workspaces from your account menu.": {
+    "pt": "Um espaço de trabalho reúne os seus âmbitos — as configurações do radar com que trabalha. O Free segue o âmbito predefinido; o Starter e o Pro permitem criar os seus próprios âmbitos; o Teams acrescenta espaços de trabalho ilimitados, cada um com os seus membros (os administradores configuram, os membros veem os resultados). Crie espaços de trabalho e adicione membros em <workspaces>Espaços de trabalho</workspaces>, mude de plano nas <settings>Definições</settings> e alterne entre espaços de trabalho no menu da conta.",
+    "es": "Un espacio de trabajo agrupa tus ámbitos, las configuraciones del radar con las que trabajas. Free sigue el ámbito predeterminado; Starter y Pro te permiten crear tus propios ámbitos; Teams añade espacios de trabajo ilimitados, cada uno con sus miembros (los administradores configuran, los miembros ven los resultados). Crea espacios de trabajo y añade miembros en <workspaces>Espacios de trabajo</workspaces>, cambia de plan en <settings>Configuración</settings> y cambia de espacio de trabajo desde el menú de tu cuenta.",
+    "fr": "Un espace de travail regroupe vos périmètres — les configurations du radar avec lesquelles vous travaillez. Free suit le périmètre par défaut ; Starter et Pro vous permettent de créer vos propres périmètres ; Teams ajoute des espaces de travail illimités, chacun avec ses membres (les administrateurs configurent, les membres voient les résultats). Créez des espaces de travail et ajoutez des membres dans <workspaces>Espaces de travail</workspaces>, changez d’offre dans <settings>Paramètres</settings> et passez d’un espace de travail à l’autre depuis le menu de votre compte.",
+    "de": "Ein Arbeitsbereich enthält deine Bereiche – die Konfigurationen des Radars, mit denen du arbeitest. Free folgt dem Standardbereich; mit Starter und Pro erstellst du eigene Bereiche; Teams bietet unbegrenzte Arbeitsbereiche mit jeweils eigenen Teammitgliedern (Admins konfigurieren, Mitglieder sehen die Ergebnisse). Arbeitsbereiche erstellen und Mitglieder hinzufügen kannst du unter <workspaces>Arbeitsbereiche</workspaces>, deinen Tarif änderst du in den <settings>Einstellungen</settings>, und zwischen Arbeitsbereichen wechselst du im Kontomenü.",
+    "it": "Un’area di lavoro raccoglie i tuoi ambiti, cioè le configurazioni del radar con cui lavori. Free segue l’ambito predefinito; Starter e Pro ti permettono di creare i tuoi ambiti; Teams aggiunge aree di lavoro illimitate, ognuna con i propri membri (gli amministratori configurano, i membri vedono i risultati). Crea aree di lavoro e aggiungi membri in <workspaces>Aree di lavoro</workspaces>, cambia piano nelle <settings>Impostazioni</settings> e passa da un’area di lavoro all’altra dal menu dell’account."
+  },
+  "I forgot my password.": {
+    "pt": "Esqueci-me da palavra-passe.",
+    "es": "He olvidado mi contraseña.",
+    "fr": "J’ai oublié mon mot de passe.",
+    "de": "Ich habe mein Passwort vergessen.",
+    "it": "Ho dimenticato la password."
+  },
+  "Use <reset>Reset your password</reset> on the log-in page. (Reset emails need the platform’s email service to be set up; until then, contact us.)": {
+    "pt": "Use <reset>Repor a palavra-passe</reset> na página de início de sessão. (Os emails de reposição precisam que o serviço de email da plataforma esteja configurado; até lá, contacte-nos.)",
+    "es": "Usa <reset>Restablecer contraseña</reset> en la página de inicio de sesión. (Los correos de restablecimiento requieren que el servicio de correo de la plataforma esté configurado; mientras tanto, contáctanos.)",
+    "fr": "Utilisez <reset>Réinitialiser votre mot de passe</reset> sur la page de connexion. (Les e-mails de réinitialisation nécessitent que le service d’e-mail de la plateforme soit configuré ; d’ici là, contactez-nous.)",
+    "de": "Nutze <reset>Passwort zurücksetzen</reset> auf der Anmeldeseite. (Für E-Mails zum Zurücksetzen muss der E-Mail-Dienst der Plattform eingerichtet sein; bis dahin kontaktiere uns.)",
+    "it": "Usa <reset>Reimposta la password</reset> nella pagina di accesso. (Le email di reimpostazione richiedono che il servizio email della piattaforma sia configurato; nel frattempo, contattaci.)"
+  },
+  "How do I change my profile or delete my account?": {
+    "pt": "Como altero o meu perfil ou elimino a minha conta?",
+    "es": "¿Cómo cambio mi perfil o elimino mi cuenta?",
+    "fr": "Comment modifier mon profil ou supprimer mon compte ?",
+    "de": "Wie ändere ich mein Profil oder lösche mein Konto?",
+    "it": "Come modifico il profilo o elimino l’account?"
+  },
+  "Profile → <b>Edit profile</b>. You can change your picture, name, username and description, change your password, or delete your account and all its data.": {
+    "pt": "Perfil → <b>Editar perfil</b>. Pode alterar a fotografia, o nome, o nome de utilizador e a descrição, mudar a palavra-passe ou eliminar a conta e todos os seus dados.",
+    "es": "Perfil → <b>Editar perfil</b>. Puedes cambiar tu foto, nombre, nombre de usuario y descripción, cambiar tu contraseña o eliminar tu cuenta y todos sus datos.",
+    "fr": "Profil → <b>Modifier le profil</b>. Vous pouvez changer votre photo, votre nom, votre nom d’utilisateur et votre description, modifier votre mot de passe ou supprimer votre compte et toutes ses données.",
+    "de": "Profil → <b>Profil bearbeiten</b>. Dort kannst du Bild, Name, Benutzername und Beschreibung ändern, dein Passwort ändern oder dein Konto mit allen Daten löschen.",
+    "it": "Profilo → <b>Modifica profilo</b>. Puoi cambiare foto, nome, nome utente e descrizione, modificare la password o eliminare l’account e tutti i suoi dati."
+  }
+}

@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LINKS, isActive } from './SideNav';
+import { useT } from '@/lib/i18n/client';
 
 const setMenu = (open: boolean) => {
   document.documentElement.toggleAttribute('data-menu-open', open);
@@ -11,6 +12,7 @@ const setMenu = (open: boolean) => {
 
 /** Phones: the top bar's menu button — opens the sidebar (Following, Working Agents, account) as a drawer. */
 export function MenuButton() {
+  const t = useT();
   const path = usePathname();
   useEffect(() => setMenu(false), [path]);  // close on navigation
   useEffect(() => {
@@ -19,7 +21,7 @@ export function MenuButton() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
   return (
-    <button type="button" className="menu-button" aria-label="Open menu: sources, agents and account"
+    <button type="button" className="menu-button" aria-label={t('Open menu: sources, agents and account')}
       onClick={() => setMenu(!document.documentElement.hasAttribute('data-menu-open'))}>
       <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14" /></svg>
     </button>
@@ -33,15 +35,16 @@ export function MenuBackdrop() {
 
 /** Phones: the app's sections as a bottom tab bar (Workspace is in the menu drawer). */
 export function BottomNav() {
+  const t = useT();
   const path = usePathname() || '/';
   return (
-    <nav className="bottom-nav" aria-label="Sections">
+    <nav className="bottom-nav" aria-label={t('Sections')}>
       {LINKS.filter((l) => l.href !== '/workspaces').map((l) => {
         const active = isActive(l.href, path);
         return (
           <Link key={l.href} href={l.href} className={`bottom-link ${active ? 'active' : ''}`} aria-current={active ? 'page' : undefined}>
             <span className="bottom-icon"><svg viewBox="0 0 16 16" aria-hidden="true">{l.icon}</svg></span>
-            <span className="bottom-label">{l.label}</span>
+            <span className="bottom-label">{t(l.label)}</span>
           </Link>
         );
       })}

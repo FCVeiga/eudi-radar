@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
+import { getT } from '@/lib/i18n/server';
 import { chatOverview, counts, findConversation, listNotifications, membership, notify, thread } from '@/lib/social';
 
 export type FormState = { ok: boolean; message: string } | null;
@@ -59,38 +60,40 @@ const MEDIA = /\.(png|jpe?g|webp|gif|mp4|webm|mov)$/i;
 
 /** Post media: a one-time upload URL in the public 'post-media' bucket (images and videos, up to 50 MB). */
 export async function createPostMediaUpload(filename: string, size: number) {
+  const t = await getT();
   const user = await getCurrentUser();
-  if (!user) return { error: 'Log in to post.' };
+  if (!user) return { error: t('Log in to post.') };
   const ext = filename.match(MEDIA)?.[1]?.toLowerCase();
-  if (!ext) return { error: 'Use PNG, JPG, WebP, GIF, MP4, WebM or MOV files.' };
-  if (size > 50 * 1024 * 1024) return { error: 'Files up to 50 MB.' };
+  if (!ext) return { error: t('Use PNG, JPG, WebP, GIF, MP4, WebM or MOV files.') };
+  if (size > 50 * 1024 * 1024) return { error: t('Files up to 50 MB.') };
   const path = `${user.id}/${crypto.randomUUID()}.${ext === 'jpeg' ? 'jpg' : ext}`;
   const { data, error } = await db().storage.from('post-media').createSignedUploadUrl(path);
-  if (error || !data) return { error: error?.message || 'Could not start the upload.' };
+  if (error || !data) return { error: error?.message || t('Could not start the upload.') };
   return { path, url: data.signedUrl, publicUrl: db().storage.from('post-media').getPublicUrl(path).data.publicUrl,
            type: /^(mp4|webm|mov)$/.test(ext) ? 'video' as const : 'image' as const };
 }
 
 export async function createPost(_prev: FormState, form: FormData): Promise<FormState> {
+  const t = await getT();
   const user = await getCurrentUser();
-  if (!user) return { ok: false, message: 'Log in to post.' };
+  if (!user) return { ok: false, message: t('Log in to post.') };
   const title = String(form.get('title') || '').trim();
   const body = String(form.get('body') || '').trim();
-  if (title.length < 3) return { ok: false, message: 'Give your post a title.' };
-  if (title.length > 300) return { ok: false, message: 'Titles are up to 300 characters.' };
+  if (title.length < 3) return { ok: false, message: t('Give your post a title.') };
+  if (title.length > 300) return { ok: false, message: t('Titles are up to 300 characters.') };
   let tags: string[] = [];
   let media: { type: string; url: string; path: string }[] = [];
   try {
     tags = (JSON.parse(String(form.get('tags') || '[]')) as unknown[]).map((t) => String(t).trim().toLowerCase().slice(0, 50)).filter(Boolean);
     media = (JSON.parse(String(form.get('media') || '[]')) as any[]).filter((m) =>
       (m?.type === 'image' || m?.type === 'video') && typeof m.path === 'string' && m.path.startsWith(`${user.id}/`)).slice(0, 10);
-  } catch { return { ok: false, message: 'Something went wrong with the tags or media — try again.' }; }
+  } catch { return { ok: false, message: t('Something went wrong with the tags or media — try again.') }; }
   const bucket = db().storage.from('post-media');
   const { data, error } = await db().from('posts').insert({
     user_id: user.id, title, body: body.slice(0, 40000) || null, tags: Array.from(new Set(tags)).slice(0, 10),
     media: media.map((m) => ({ type: m.type, path: m.path, url: bucket.getPublicUrl(m.path).data.publicUrl })),
   }).select('id').single();
-  if (error || !data) return { ok: false, message: error?.message || 'Could not publish the post.' };
+  if (error || !data) return { ok: false, message: error?.message || t('Could not publish the post.') };
   revalidatePath('/community');
   revalidatePath(`/u/${user.username}`);
   redirect(`/posts/${data.id}`);
@@ -119,24 +122,25 @@ const itemHref = (t: string, id: string) => (t === 'post' ? `/posts/${id}` : t =
 
 /** A comment on a post, news story or tender — or a reply to another comment. */
 export async function addComment(_prev: FormState, form: FormData): Promise<FormState> {
+  const t = await getT();
   const user = await getCurrentUser();
-  if (!user) return { ok: false, message: 'Log in to comment.' };
+  if (!user) return { ok: false, message: t('Log in to comment.') };
   const ref = String(form.get('item') || '').match(ITEM);
   const parent = String(form.get('parent') || '');
   const body = String(form.get('body') || '').trim();
-  if (!ref || !body) return { ok: false, message: 'Write a comment first.' };
+  if (!ref || !body) return { ok: false, message: t('Write a comment first.') };
   const [, type, id] = ref;
-  if (parent && !UUID.test(parent)) return { ok: false, message: 'That comment no longer exists.' };
+  if (parent && !UUID.test(parent)) return { ok: false, message: t('That comment no longer exists.') };
   let parentAuthor: string | null = null;
   if (parent) {
     const { data: p } = await db().from('comments').select('user_id, item_type, item_id').eq('id', parent).maybeSingle();
-    if (!p || p.item_type !== type || p.item_id !== id) return { ok: false, message: 'That comment no longer exists.' };
+    if (!p || p.item_type !== type || p.item_id !== id) return { ok: false, message: t('That comment no longer exists.') };
     parentAuthor = p.user_id;
   }
   let postAuthor: string | null = null, postTitle = '';
   if (type === 'post') {
     const { data: post } = await db().from('posts').select('user_id, title').eq('id', id).maybeSingle();
-    if (!post) return { ok: false, message: 'That post no longer exists.' };
+    if (!post) return { ok: false, message: t('That post no longer exists.') };
     postAuthor = post.user_id; postTitle = post.title;
   }
   const { error } = await db().from('comments').insert({
@@ -150,7 +154,7 @@ export async function addComment(_prev: FormState, form: FormData): Promise<Form
     await notify(postAuthor, { type: 'comment', title: `u/${user.username} commented on your post`, body: postTitle, link, actorId: user.id });
   }
   revalidatePath(itemHref(type, id));
-  return { ok: true, message: 'Comment posted.' };
+  return { ok: true, message: t('Comment posted.') };
 }
 
 /** Repost / undo: shares the item to your profile, and counts on the card. */
@@ -217,25 +221,26 @@ async function chatBlocked(fromId: string, toId: string): Promise<string | null>
 }
 
 export async function startChat(username: string, body: string): Promise<{ error: string } | { conversationId: string }> {
+  const t = await getT();
   const user = await getCurrentUser();
-  if (!user) return { error: 'Log in to chat.' };
+  if (!user) return { error: t('Log in to chat.') };
   const text = body.trim();
-  if (!text) return { error: 'Write a first message.' };
+  if (!text) return { error: t('Write a first message.') };
   const { data: target } = await db().from('profiles').select('id, username').ilike('username', username.replace(/_/g, '\\_')).maybeSingle();
-  if (!target) return { error: 'No such user.' };
-  if (target.id === user.id) return { error: 'That’s you.' };
+  if (!target) return { error: t('No such user.') };
+  if (target.id === user.id) return { error: t('That’s you.') };
   const existing = await findConversation(user.id, target.id);
   if (!existing) {
     const blocked = await chatBlocked(user.id, target.id);
-    if (blocked) return { error: `u/${target.username} ${blocked}.` };
+    if (blocked) return { error: t(`u/{username} ${blocked}.`, { username: target.username }) };
   }
   if (existing) {
-    if (existing.status === 'declined') return { error: `u/${target.username} declined your chat request.` };
+    if (existing.status === 'declined') return { error: t('u/{username} declined your chat request.', { username: target.username }) };
     const sent = await sendMessage(existing.conversation_id, text);
     return 'error' in sent && sent.error ? { error: sent.error } : { conversationId: existing.conversation_id };
   }
   const { data: conv, error } = await db().from('conversations').insert({ created_by: user.id }).select('id').single();
-  if (error || !conv) return { error: error?.message || 'Could not start the chat.' };
+  if (error || !conv) return { error: error?.message || t('Could not start the chat.') };
   await db().from('conversation_members').insert([
     { conversation_id: conv.id, user_id: user.id, status: 'accepted', last_read_at: new Date().toISOString() },
     { conversation_id: conv.id, user_id: target.id, status: 'pending' },
@@ -258,13 +263,14 @@ export async function respondToRequest(conversationId: string, accept: boolean) 
 }
 
 export async function sendMessage(conversationId: string, body: string) {
+  const t = await getT();
   const user = await getCurrentUser();
-  if (!user || !UUID.test(conversationId)) return { error: 'Log in to chat.' };
+  if (!user || !UUID.test(conversationId)) return { error: t('Log in to chat.') };
   const text = body.trim().slice(0, 4000);
-  if (!text) return { error: 'Empty message.' };
-  if ((await membership(conversationId, user.id)) !== 'accepted') return { error: 'Accept the chat request first.' };
+  if (!text) return { error: t('Empty message.') };
+  if ((await membership(conversationId, user.id)) !== 'accepted') return { error: t('Accept the chat request first.') };
   const { data: other } = await db().from('conversation_members').select('status').eq('conversation_id', conversationId).neq('user_id', user.id).maybeSingle();
-  if (other?.status === 'declined') return { error: 'This chat request was declined.' };
+  if (other?.status === 'declined') return { error: t('This chat request was declined.') };
   const now = new Date().toISOString();
   const { error } = await db().from('messages').insert({ conversation_id: conversationId, sender_id: user.id, body: text });
   if (error) return { error: error.message };

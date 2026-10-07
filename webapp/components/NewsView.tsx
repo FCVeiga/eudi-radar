@@ -6,11 +6,13 @@ import FeedCard from './FeedCard';
 import SectionTabs from './SectionTabs';
 import { likeTarget } from '@/lib/likes';
 import { getEngagement } from '@/lib/engagement';
+import { getT } from '@/lib/i18n/server';
 
 
 type View = 'all' | 'signals' | (typeof NEWS_CATEGORIES)[number]['slug'];
 
 export default async function NewsView({ view }: { view: View }) {
+  const t = await getT();
   const now = new Date();
   const [{ news: all, error }, { opportunities: signals }] = await Promise.all([getNews(), getActiveOpportunities('signal')]);
   const heading = view === 'signals' ? { label: 'Signals' } : NEWS_CATEGORIES.find((c) => c.slug === view);
@@ -37,7 +39,7 @@ export default async function NewsView({ view }: { view: View }) {
     return {
       key: `signal:${o.opportunity_id}`, kind: 'opportunity', event: 'signal', href: `/tenders/${o.opportunity_id}`,
       headline: firstInLanguage(p?.headline) ?? titleOf(o), body: firstInLanguage(p?.body, o.summary),
-      category: 'signal', categoryLabel: 'Signal', kindLabel: 'Planned procurement',
+      category: 'signal', categoryLabel: t('Signal'), kindLabel: t('Planned procurement'),
       country: o.country, at, score, combined: Math.round(newsScore(score, at, now)),
       movement: !p || p.rank == null ? 'same' : p.prev_rank == null || p.rank < p.prev_rank ? 'up' : p.rank > p.prev_rank ? 'down' : 'same',
       deadline: o.deadline, isNew: now.getTime() - at.getTime() <= 2 * 86400_000,
@@ -56,7 +58,7 @@ export default async function NewsView({ view }: { view: View }) {
         key: n.news_id, kind: 'news', event: 'news', href: `/news/${n.news_id}`,
         headline: firstInLanguage(p?.headline) ?? titleOf(n),
         body: firstInLanguage(p?.body, n.summary),
-        category: n.category || 'market', categoryLabel: newsCategoryLabel(n.category), kindLabel: 'News',
+        category: n.category || 'market', categoryLabel: t(newsCategoryLabel(n.category)), kindLabel: t('News'),
         country: n.region && n.region !== 'EU / International' ? n.region : null,
         at, score, combined: Math.round(newsScore(score, at, now)), movement,
         deadline: null, isNew: now.getTime() - at.getTime() <= 2 * 86400_000,
@@ -67,27 +69,27 @@ export default async function NewsView({ view }: { view: View }) {
     .sort((a, b) => b.combined - a.combined || b.at.getTime() - a.at.getTime());
 
   // Action bars: news stories and signals (tenders).
-  const idsOf = (t: string) => items.map((i) => likeTarget(i.href)).filter((x) => x?.[0] === t).map((x) => x![1]);
+  const idsOf = (k: string) => items.map((i) => likeTarget(i.href)).filter((x) => x?.[0] === k).map((x) => x![1]);
   const [newsEng, tenderEng] = await Promise.all([getEngagement('news', idsOf('news')), getEngagement('tender', idsOf('tender'))]);
-  const engOf = (href: string) => { const t = likeTarget(href); return t?.[0] === 'tender' ? tenderEng : newsEng; };
-  const visible = items.filter((i) => { const t = likeTarget(i.href); return !t || !engOf(i.href).hidden.has(t[1]); });
+  const engOf = (href: string) => { const tg = likeTarget(href); return tg?.[0] === 'tender' ? tenderEng : newsEng; };
+  const visible = items.filter((i) => { const tg = likeTarget(i.href); return !tg || !engOf(i.href).hidden.has(tg[1]); });
   const tabs = [
-    { href: '/news', label: 'All', count: all.length + signals.length },
+    { href: '/news', label: t('All'), count: all.length + signals.length },
     ...NEWS_CATEGORIES.map((c) => ({
-      href: `/news/${c.slug}`, label: c.label, count: all.filter((n) => n.category === c.slug).length,
+      href: `/news/${c.slug}`, label: t(c.label), count: all.filter((n) => n.category === c.slug).length,
     })),
-    { href: '/news/signals', label: 'Signals', count: signals.length },
+    { href: '/news/signals', label: t('Signals'), count: signals.length },
   ];
 
   return (
     <div className="news-page">
-      <h1 className="opps-h1">{heading ? heading.label : 'EUDI News'}</h1>
+      <h1 className="opps-h1">{heading ? t(heading.label) : t('EUDI News')}</h1>
       <SectionTabs tabs={tabs} active={view === 'all' ? '/news' : `/news/${view}`} />
 
-      {error && <div className="callout error"><strong>Error loading news.</strong> {error.message}</div>}
+      {error && <div className="callout error"><strong>{t('Error loading news.')}</strong> {error.message}</div>}
       {!error && visible.length === 0 && (
         <div className="callout">
-          <strong>{view === 'signals' ? 'No confirmed signals right now.' : 'No news in this section yet.'}</strong>
+          <strong>{view === 'signals' ? t('No confirmed signals right now.') : t('No news in this section yet.')}</strong>
         </div>
       )}
 

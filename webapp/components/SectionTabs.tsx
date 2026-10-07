@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { getTSync } from '@/lib/i18n/server';
 
 export type Tab = { href: string; label: string; count?: number };
 
@@ -18,15 +19,16 @@ const ICONS: Record<string, JSX.Element> = {
 
 /** Section pills for Tenders and News, styled like the home feed's sort pills. */
 export default function SectionTabs({ tabs, active }: { tabs: Tab[]; active: string }) {
+  const tr = getTSync();
   return (
-    <nav className="feed-sort section-tabs" aria-label="Sections">
+    <nav className="feed-sort section-tabs" aria-label={tr('Sections')}>
       {tabs.map((t) => {
         const icon = ICONS[t.href.split('/').filter(Boolean).pop() ?? ''];
         const on = t.href === active;
         return (
           <Link key={t.href} href={t.href} className={`feed-sort-link ${on ? 'active' : ''}`} aria-current={on ? 'page' : undefined}>
             {icon && <svg className="feed-sort-icon" viewBox="0 0 16 16" aria-hidden="true">{icon}</svg>}
-            {t.label}
+            {tr(t.label)}
             {t.count !== undefined && <span className="pill-count">{t.count}</span>}
           </Link>
         );

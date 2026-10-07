@@ -3,9 +3,11 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { toggleFollow } from '@/app/social/actions';
+import { useT } from '@/lib/i18n/client';
 
 /** Follow a member: their posts rank higher in your Community Feed. */
 export default function FollowButton({ username, following: initial }: { username: string; following: boolean }) {
+  const t = useT();
   const [following, setFollowing] = useState(initial);
   const [pending, start] = useTransition();
   const router = useRouter();
@@ -19,7 +21,7 @@ export default function FollowButton({ username, following: initial }: { usernam
           else { setFollowing(r.following); router.refresh(); }
         });
       }}>
-      {following ? 'Following' : 'Follow'}
+      {following ? t('Following') : t('Follow')}
     </button>
   );
 }

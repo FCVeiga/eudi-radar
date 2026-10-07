@@ -1,11 +1,16 @@
 import Link from 'next/link';
 import LegalPage from '@/components/LegalPage';
+import { getT, getTSync } from '@/lib/i18n/server';
 
-export const metadata = { title: 'Terms & Conditions — EUDI Radar' };
+export async function generateMetadata() {
+  const t = await getT();
+  return { title: `${t('Terms & Conditions')} — EUDI Radar` };
+}
 
 export default function TermsPage() {
+  const t = getTSync();
   return (
-    <LegalPage title="Terms & Conditions" updated="2 October 2026" draft>
+    <LegalPage title={t('Terms & Conditions')} updated="2026-10-02" draft englishOnly>
       <h2>1. Who we are</h2>
       <p>EUDI Radar is operated by [WalliD legal entity name], [registered address], [company registration number] (“WalliD”, “we”). Contact: [contact email].</p>
       <h2>2. Your account</h2>

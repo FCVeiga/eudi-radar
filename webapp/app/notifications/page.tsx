@@ -4,12 +4,17 @@ import { getCurrentUser } from '@/lib/auth';
 import { NOTIFICATION_TABS, listNotifications } from '@/lib/social';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { NotificationList, NotificationSettings } from '@/components/social/NotificationsPage';
+import { getT } from '@/lib/i18n/server';
 
-export const metadata = { title: 'Notifications — EUDI Radar' };
+export async function generateMetadata() {
+  const t = await getT();
+  return { title: `${t('Notifications')} — EUDI Radar` };
+}
 
 export default async function NotificationsPage({ searchParams }: { searchParams: { tab?: string } }) {
   const user = await getCurrentUser();
   if (!user) redirect('/login?next=/notifications');
+  const tr = await getT();
   const tab = NOTIFICATION_TABS.find((t) => t.key === searchParams.tab) ?? NOTIFICATION_TABS[0];
   const [notes, { data: prefs }] = await Promise.all([
     listNotifications(user.id, 100, tab.types),
@@ -18,11 +23,11 @@ export default async function NotificationsPage({ searchParams }: { searchParams
   return (
     <div className="notifications-page">
       <div className="np-main">
-        <h1 className="opps-h1">Notifications</h1>
-        <nav className="feed-sort" aria-label="Notification types">
+        <h1 className="opps-h1">{tr('Notifications')}</h1>
+        <nav className="feed-sort" aria-label={tr('Notification types')}>
           {NOTIFICATION_TABS.map((t) => (
             <Link key={t.key} href={t.key === 'all' ? '/notifications' : `/notifications?tab=${t.key}`}
-              className={`feed-sort-link ${tab.key === t.key ? 'active' : ''}`} aria-current={tab.key === t.key ? 'page' : undefined}>{t.label}</Link>
+              className={`feed-sort-link ${tab.key === t.key ? 'active' : ''}`} aria-current={tab.key === t.key ? 'page' : undefined}>{tr(t.label)}</Link>
           ))}
         </nav>
         <NotificationList key={tab.key} notes={notes} />

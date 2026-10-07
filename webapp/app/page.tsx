@@ -4,6 +4,7 @@ import { getActivity } from '@/lib/sources';
 import FeedCard from '@/components/FeedCard';
 import LiveActivity from '@/components/LiveActivity';
 import { getFeedLikes, likeTarget } from '@/lib/likes';
+import { getT } from '@/lib/i18n/server';
 
 const likeOf = (likes: { signedIn: boolean; liked: Set<string> }, href: string) => {
   const t = likeTarget(href);
@@ -21,6 +22,7 @@ const VIEW_ICONS: Record<FeedView, JSX.Element> = {
 
 export default async function FeedPage({ searchParams }: { searchParams: { view?: string; n?: string } }) {
   const now = new Date();
+  const t = await getT();
   const view = (FEED_VIEWS.find((v) => v.slug === searchParams.view)?.slug ?? 'top') as FeedView;
   const [{ items, error }, activity] = await Promise.all([getFeed(view, now), getActivity(30)]);
   const shown = Math.max(PAGE, Number(searchParams.n) || PAGE);
@@ -37,19 +39,19 @@ export default async function FeedPage({ searchParams }: { searchParams: { view?
   // panel lines up with the first post card.
   return (
     <div className="home-layout">
-      <nav className="feed-sort" aria-label="Sort the feed">
+      <nav className="feed-sort" aria-label={t('Sort the feed')}>
         {FEED_VIEWS.map((v) => (
           <Link key={v.slug} href={href(v.slug)} className={`feed-sort-link ${v.slug === view ? 'active' : ''}`}
                 aria-current={v.slug === view ? 'page' : undefined}>
             <svg className="feed-sort-icon" viewBox="0 0 16 16" aria-hidden="true">{VIEW_ICONS[v.slug]}</svg>
-            {v.label}
+            {t(v.label)}
           </Link>
         ))}
       </nav>
 
       <div className="feed-page">
-        {error && <div className="callout error"><strong>Error loading the feed.</strong> {error.message}</div>}
-        {!error && items.length === 0 && <div className="callout">Nothing here yet.</div>}
+        {error && <div className="callout error"><strong>{t('Error loading the feed.')}</strong> {error.message}</div>}
+        {!error && items.length === 0 && <div className="callout">{t('Nothing here yet.')}</div>}
         <div className="feed">
           {items.slice(0, shown).map((item) => (
             <FeedCard key={item.key} item={item} now={now} value={view === 'relevance' ? item.score : item.combined} like={likeOf(likes, item.href)} />
@@ -57,7 +59,7 @@ export default async function FeedPage({ searchParams }: { searchParams: { view?
         </div>
         {items.length > shown && (
           <Link href={href(view, shown + PAGE)} scroll={false} className="feed-more">
-            Show more <span className="mono">({items.length - shown} left)</span>
+            {t('Show more')} <span className="mono">({t('{n} left', { n: items.length - shown })})</span>
           </Link>
         )}
       </div>

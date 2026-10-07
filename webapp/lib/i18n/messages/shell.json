@@ -1,0 +1,1024 @@
+{
+ "Digital identity & wallet opportunity intelligence": {
+  "pt": "Inteligência de oportunidades em identidade digital e carteiras",
+  "es": "Inteligencia de oportunidades en identidad digital y carteras",
+  "fr": "Veille des opportunités en identité numérique et portefeuilles",
+  "de": "Marktinformationen zu digitaler Identität und Wallets",
+  "it": "Intelligence sulle opportunità di identità digitale e wallet"
+ },
+ "EUDI Radar home": {
+  "pt": "Início do EUDI Radar",
+  "es": "Inicio de EUDI Radar",
+  "fr": "Accueil EUDI Radar",
+  "de": "EUDI Radar Startseite",
+  "it": "Home di EUDI Radar"
+ },
+ "Log in": {
+  "pt": "Iniciar sessão",
+  "es": "Iniciar sesión",
+  "fr": "Se connecter",
+  "de": "Anmelden",
+  "it": "Accedi"
+ },
+ "Sign up": {
+  "pt": "Registar",
+  "es": "Registrarse",
+  "fr": "S'inscrire",
+  "de": "Registrieren",
+  "it": "Registrati"
+ },
+ "Sources and agents": {
+  "pt": "Fontes e agentes",
+  "es": "Fuentes y agentes",
+  "fr": "Sources et agents",
+  "de": "Quellen und Agenten",
+  "it": "Fonti e agenti"
+ },
+ "New post": {
+  "pt": "Nova publicação",
+  "es": "Nueva publicación",
+  "fr": "Nouvelle publication",
+  "de": "Neuer Beitrag",
+  "it": "Nuovo post"
+ },
+ "New Post": {
+  "pt": "Nova publicação",
+  "es": "Nueva publicación",
+  "fr": "Nouvelle publication",
+  "de": "Neuer Beitrag",
+  "it": "Nuovo post"
+ },
+ "Notifications": {
+  "pt": "Notificações",
+  "es": "Notificaciones",
+  "fr": "Notifications",
+  "de": "Benachrichtigungen",
+  "it": "Notifiche"
+ },
+ "Chat": {
+  "pt": "Chat",
+  "es": "Chat",
+  "fr": "Messagerie",
+  "de": "Chat",
+  "it": "Chat"
+ },
+ "Workspaces": {
+  "pt": "Espaços de trabalho",
+  "es": "Espacios de trabajo",
+  "fr": "Espaces de travail",
+  "de": "Arbeitsbereiche",
+  "it": "Aree di lavoro"
+ },
+ "Workspace": {
+  "pt": "Espaço de trabalho",
+  "es": "Espacio de trabajo",
+  "fr": "Espace de travail",
+  "de": "Arbeitsbereich",
+  "it": "Area di lavoro"
+ },
+ "Settings": {
+  "pt": "Definições",
+  "es": "Configuración",
+  "fr": "Paramètres",
+  "de": "Einstellungen",
+  "it": "Impostazioni"
+ },
+ "Help": {
+  "pt": "Ajuda",
+  "es": "Ayuda",
+  "fr": "Aide",
+  "de": "Hilfe",
+  "it": "Aiuto"
+ },
+ "Terms & Conditions": {
+  "pt": "Termos e condições",
+  "es": "Términos y condiciones",
+  "fr": "Conditions générales",
+  "de": "AGB",
+  "it": "Termini e condizioni"
+ },
+ "Privacy policy": {
+  "pt": "Política de privacidade",
+  "es": "Política de privacidad",
+  "fr": "Politique de confidentialité",
+  "de": "Datenschutzerklärung",
+  "it": "Informativa sulla privacy"
+ },
+ "Log out": {
+  "pt": "Terminar sessão",
+  "es": "Cerrar sesión",
+  "fr": "Se déconnecter",
+  "de": "Abmelden",
+  "it": "Esci"
+ },
+ "official portals": {
+  "pt": "portais oficiais",
+  "es": "portales oficiales",
+  "fr": "portails officiels",
+  "de": "offizielle Portale",
+  "it": "portali ufficiali"
+ },
+ "Sort the feed": {
+  "pt": "Ordenar o feed",
+  "es": "Ordenar el feed",
+  "fr": "Trier le feed",
+  "de": "Feed sortieren",
+  "it": "Ordina il feed"
+ },
+ "Top": {
+  "pt": "Destaques",
+  "es": "Destacados",
+  "fr": "Populaires",
+  "de": "Top",
+  "it": "In evidenza"
+ },
+ "Relevance": {
+  "pt": "Relevância",
+  "es": "Relevancia",
+  "fr": "Pertinence",
+  "de": "Relevanz",
+  "it": "Rilevanza"
+ },
+ "New": {
+  "pt": "Novo",
+  "es": "Nuevo",
+  "fr": "Nouveau",
+  "de": "Neu",
+  "it": "Nuovo"
+ },
+ "Error loading the feed.": {
+  "pt": "Erro ao carregar o feed.",
+  "es": "Error al cargar el feed.",
+  "fr": "Erreur lors du chargement du feed.",
+  "de": "Fehler beim Laden des Feeds.",
+  "it": "Errore durante il caricamento del feed."
+ },
+ "Nothing here yet.": {
+  "pt": "Ainda não há nada aqui.",
+  "es": "Aún no hay nada aquí.",
+  "fr": "Rien pour l'instant.",
+  "de": "Hier ist noch nichts.",
+  "it": "Non c'è ancora niente qui."
+ },
+ "Show more": {
+  "pt": "Mostrar mais",
+  "es": "Mostrar más",
+  "fr": "Afficher plus",
+  "de": "Mehr anzeigen",
+  "it": "Mostra altro"
+ },
+ "{n} left": {
+  "pt": "faltam {n}",
+  "es": "quedan {n}",
+  "fr": "{n} restants",
+  "de": "{n} weitere",
+  "it": "altri {n}"
+ },
+ "Search": {
+  "pt": "Pesquisar",
+  "es": "Buscar",
+  "fr": "Rechercher",
+  "de": "Suche",
+  "it": "Cerca"
+ },
+ "Results for “{q}”": {
+  "pt": "Resultados para “{q}”",
+  "es": "Resultados de “{q}”",
+  "fr": "Résultats pour « {q} »",
+  "de": "Ergebnisse für „{q}“",
+  "it": "Risultati per “{q}”"
+ },
+ "Search tenders and news.": {
+  "pt": "Pesquise concursos e notícias.",
+  "es": "Busca licitaciones y noticias.",
+  "fr": "Recherchez des appels d'offres et des actualités.",
+  "de": "Ausschreibungen und Nachrichten durchsuchen.",
+  "it": "Cerca gare e notizie."
+ },
+ "Use at least one word of two or more letters.": {
+  "pt": "Use pelo menos uma palavra com duas ou mais letras.",
+  "es": "Usa al menos una palabra de dos o más letras.",
+  "fr": "Utilisez au moins un mot de deux lettres ou plus.",
+  "de": "Verwenden Sie mindestens ein Wort mit zwei oder mehr Buchstaben.",
+  "it": "Usa almeno una parola di due o più lettere."
+ },
+ "{n} result": {
+  "pt": "{n} resultado",
+  "es": "{n} resultado",
+  "fr": "{n} résultat",
+  "de": "{n} Ergebnis",
+  "it": "{n} risultato"
+ },
+ "{n} results": {
+  "pt": "{n} resultados",
+  "es": "{n} resultados",
+  "fr": "{n} résultats",
+  "de": "{n} Ergebnisse",
+  "it": "{n} risultati"
+ },
+ "{n} tender": {
+  "pt": "{n} concurso",
+  "es": "{n} licitación",
+  "fr": "{n} appel d'offres",
+  "de": "{n} Ausschreibung",
+  "it": "{n} gara"
+ },
+ "{n} tenders": {
+  "pt": "{n} concursos",
+  "es": "{n} licitaciones",
+  "fr": "{n} appels d'offres",
+  "de": "{n} Ausschreibungen",
+  "it": "{n} gare"
+ },
+ "{n} news": {
+  "pt": "{n} notícias",
+  "es": "{n} noticias",
+  "fr": "{n} actualités",
+  "de": "{n} Nachrichten",
+  "it": "{n} notizie"
+ },
+ "{n} person": {
+  "pt": "{n} pessoa",
+  "es": "{n} persona",
+  "fr": "{n} personne",
+  "de": "{n} Person",
+  "it": "{n} persona"
+ },
+ "{n} people": {
+  "pt": "{n} pessoas",
+  "es": "{n} personas",
+  "fr": "{n} personnes",
+  "de": "{n} Personen",
+  "it": "{n} persone"
+ },
+ "Nothing matches every word. Try fewer or broader words.": {
+  "pt": "Nada corresponde a todas as palavras. Experimente menos palavras ou palavras mais gerais.",
+  "es": "Nada coincide con todas las palabras. Prueba con menos palabras o más generales.",
+  "fr": "Aucun résultat ne contient tous les mots. Essayez des mots moins nombreux ou plus généraux.",
+  "de": "Nichts passt zu allen Wörtern. Versuchen Sie weniger oder allgemeinere Wörter.",
+  "it": "Nessun risultato contiene tutte le parole. Prova con meno parole o più generiche."
+ },
+ "People": {
+  "pt": "Pessoas",
+  "es": "Personas",
+  "fr": "Personnes",
+  "de": "Personen",
+  "it": "Persone"
+ },
+ "Tenders": {
+  "pt": "Concursos",
+  "es": "Licitaciones",
+  "fr": "Appels d'offres",
+  "de": "Ausschreibungen",
+  "it": "Gare"
+ },
+ "Tender": {
+  "pt": "Concurso",
+  "es": "Licitación",
+  "fr": "Appel d'offres",
+  "de": "Ausschreibung",
+  "it": "Gara"
+ },
+ "News": {
+  "pt": "Notícias",
+  "es": "Noticias",
+  "fr": "Actualités",
+  "de": "Nachrichten",
+  "it": "Notizie"
+ },
+ "Opportunity": {
+  "pt": "Oportunidade",
+  "es": "Oportunidad",
+  "fr": "Opportunité",
+  "de": "Chance",
+  "it": "Opportunità"
+ },
+ "Planned procurement": {
+  "pt": "Contratação prevista",
+  "es": "Contratación prevista",
+  "fr": "Marché prévu",
+  "de": "Geplante Beschaffung",
+  "it": "Appalto previsto"
+ },
+ "Sections": {
+  "pt": "Secções",
+  "es": "Secciones",
+  "fr": "Sections",
+  "de": "Bereiche",
+  "it": "Sezioni"
+ },
+ "Home": {
+  "pt": "Início",
+  "es": "Inicio",
+  "fr": "Accueil",
+  "de": "Startseite",
+  "it": "Home"
+ },
+ "Community": {
+  "pt": "Comunidade",
+  "es": "Comunidad",
+  "fr": "Communauté",
+  "de": "Community",
+  "it": "Community"
+ },
+ "History": {
+  "pt": "Histórico",
+  "es": "Historial",
+  "fr": "Historique",
+  "de": "Verlauf",
+  "it": "Storico"
+ },
+ "Open menu: sources, agents and account": {
+  "pt": "Abrir menu: fontes, agentes e conta",
+  "es": "Abrir menú: fuentes, agentes y cuenta",
+  "fr": "Ouvrir le menu : sources, agents et compte",
+  "de": "Menü öffnen: Quellen, Agenten und Konto",
+  "it": "Apri menu: fonti, agenti e account"
+ },
+ "Search EUDI Radar": {
+  "pt": "Pesquisar no EUDI Radar",
+  "es": "Buscar en EUDI Radar",
+  "fr": "Rechercher dans EUDI Radar",
+  "de": "EUDI Radar durchsuchen",
+  "it": "Cerca su EUDI Radar"
+ },
+ "Sort": {
+  "pt": "Ordenar",
+  "es": "Ordenar",
+  "fr": "Trier",
+  "de": "Sortieren",
+  "it": "Ordina"
+ },
+ "All": {
+  "pt": "Todos",
+  "es": "Todos",
+  "fr": "Tous",
+  "de": "Alle",
+  "it": "Tutti"
+ },
+ "{n}m ago": {
+  "pt": "há {n} min",
+  "es": "hace {n} min",
+  "fr": "il y a {n} min",
+  "de": "vor {n} Min.",
+  "it": "{n} min fa"
+ },
+ "{n}h ago": {
+  "pt": "há {n} h",
+  "es": "hace {n} h",
+  "fr": "il y a {n} h",
+  "de": "vor {n} Std.",
+  "it": "{n} h fa"
+ },
+ "{n}d ago": {
+  "pt": "há {n} d",
+  "es": "hace {n} d",
+  "fr": "il y a {n} j",
+  "de": "vor {n} T.",
+  "it": "{n} g fa"
+ },
+ "just now": {
+  "pt": "agora mesmo",
+  "es": "ahora mismo",
+  "fr": "à l'instant",
+  "de": "gerade eben",
+  "it": "adesso"
+ },
+ "{n}m": {
+  "pt": "{n} min",
+  "es": "{n} min",
+  "fr": "{n} min",
+  "de": "{n} Min.",
+  "it": "{n} min"
+ },
+ "{n}h": {
+  "pt": "{n} h",
+  "es": "{n} h",
+  "fr": "{n} h",
+  "de": "{n} Std.",
+  "it": "{n} h"
+ },
+ "{n}d": {
+  "pt": "{n} d",
+  "es": "{n} d",
+  "fr": "{n} j",
+  "de": "{n} T.",
+  "it": "{n} g"
+ },
+ "Moved up since the last update": {
+  "pt": "Subiu desde a última atualização",
+  "es": "Ha subido desde la última actualización",
+  "fr": "En hausse depuis la dernière mise à jour",
+  "de": "Seit dem letzten Update gestiegen",
+  "it": "Salito dall'ultimo aggiornamento"
+ },
+ "Moved down since the last update": {
+  "pt": "Desceu desde a última atualização",
+  "es": "Ha bajado desde la última actualización",
+  "fr": "En baisse depuis la dernière mise à jour",
+  "de": "Seit dem letzten Update gefallen",
+  "it": "Sceso dall'ultimo aggiornamento"
+ },
+ "No change in position": {
+  "pt": "Sem alteração de posição",
+  "es": "Sin cambios de posición",
+  "fr": "Pas de changement de position",
+  "de": "Keine Positionsänderung",
+  "it": "Nessun cambio di posizione"
+ },
+ "AI relevance {score}, top score {top}": {
+  "pt": "Relevância IA {score}, pontuação de destaque {top}",
+  "es": "Relevancia IA {score}, puntuación destacada {top}",
+  "fr": "Pertinence IA {score}, score populaire {top}",
+  "de": "KI-Relevanz {score}, Top-Wert {top}",
+  "it": "Rilevanza IA {score}, punteggio in evidenza {top}"
+ },
+ "Closed {date}": {
+  "pt": "Fechado a {date}",
+  "es": "Cerrada el {date}",
+  "fr": "Clôturé le {date}",
+  "de": "Geschlossen am {date}",
+  "it": "Chiusa il {date}"
+ },
+ "Deadline {date}": {
+  "pt": "Prazo {date}",
+  "es": "Plazo {date}",
+  "fr": "Échéance {date}",
+  "de": "Frist {date}",
+  "it": "Scadenza {date}"
+ },
+ "closes today": {
+  "pt": "fecha hoje",
+  "es": "cierra hoy",
+  "fr": "clôture aujourd'hui",
+  "de": "endet heute",
+  "it": "chiude oggi"
+ },
+ "{n} day left": {
+  "pt": "falta {n} dia",
+  "es": "queda {n} día",
+  "fr": "{n} jour restant",
+  "de": "noch {n} Tag",
+  "it": "manca {n} giorno"
+ },
+ "{n} days left": {
+  "pt": "faltam {n} dias",
+  "es": "quedan {n} días",
+  "fr": "{n} jours restants",
+  "de": "noch {n} Tage",
+  "it": "mancano {n} giorni"
+ },
+ "Awarded": {
+  "pt": "Adjudicado",
+  "es": "Adjudicada",
+  "fr": "Attribué",
+  "de": "Vergeben",
+  "it": "Aggiudicata"
+ },
+ "Not an opportunity": {
+  "pt": "Não é uma oportunidade",
+  "es": "No es una oportunidad",
+  "fr": "Pas une opportunité",
+  "de": "Keine Chance",
+  "it": "Non è un'opportunità"
+ },
+ "Unverified": {
+  "pt": "Não verificado",
+  "es": "No verificada",
+  "fr": "Non vérifié",
+  "de": "Nicht verifiziert",
+  "it": "Non verificata"
+ },
+ "Closed": {
+  "pt": "Fechado",
+  "es": "Cerrada",
+  "fr": "Clôturé",
+  "de": "Geschlossen",
+  "it": "Chiusa"
+ },
+ "RFP": {
+  "pt": "RFP",
+  "es": "RFP",
+  "fr": "RFP",
+  "de": "RFP",
+  "it": "RFP"
+ },
+ "RFI": {
+  "pt": "RFI",
+  "es": "RFI",
+  "fr": "RFI",
+  "de": "RFI",
+  "it": "RFI"
+ },
+ "RFPs": {
+  "pt": "RFPs",
+  "es": "RFPs",
+  "fr": "RFPs",
+  "de": "RFPs",
+  "it": "RFP"
+ },
+ "RFIs": {
+  "pt": "RFIs",
+  "es": "RFIs",
+  "fr": "RFIs",
+  "de": "RFIs",
+  "it": "RFI"
+ },
+ "Grant": {
+  "pt": "Subvenção",
+  "es": "Subvención",
+  "fr": "Subvention",
+  "de": "Förderung",
+  "it": "Sovvenzione"
+ },
+ "Grants": {
+  "pt": "Subvenções",
+  "es": "Subvenciones",
+  "fr": "Subventions",
+  "de": "Förderungen",
+  "it": "Sovvenzioni"
+ },
+ "Signal": {
+  "pt": "Sinal",
+  "es": "Señal",
+  "fr": "Signal",
+  "de": "Signal",
+  "it": "Segnale"
+ },
+ "Signals": {
+  "pt": "Sinais",
+  "es": "Señales",
+  "fr": "Signaux",
+  "de": "Signale",
+  "it": "Segnali"
+ },
+ "Regulation": {
+  "pt": "Regulação",
+  "es": "Regulación",
+  "fr": "Réglementation",
+  "de": "Regulierung",
+  "it": "Regolamentazione"
+ },
+ "Industry": {
+  "pt": "Indústria",
+  "es": "Industria",
+  "fr": "Industrie",
+  "de": "Branche",
+  "it": "Industria"
+ },
+ "Market": {
+  "pt": "Mercado",
+  "es": "Mercado",
+  "fr": "Marché",
+  "de": "Markt",
+  "it": "Mercato"
+ },
+ "listed a tender": {
+  "pt": "publicou um concurso",
+  "es": "publicó una licitación",
+  "fr": "a publié un appel d'offres",
+  "de": "hat eine Ausschreibung veröffentlicht",
+  "it": "ha pubblicato una gara"
+ },
+ "reported a tender": {
+  "pt": "noticiou um concurso",
+  "es": "informó de una licitación",
+  "fr": "a relayé un appel d'offres",
+  "de": "hat über eine Ausschreibung berichtet",
+  "it": "ha segnalato una gara"
+ },
+ "opened a market consultation": {
+  "pt": "abriu uma consulta ao mercado",
+  "es": "abrió una consulta al mercado",
+  "fr": "a ouvert une consultation du marché",
+  "de": "hat eine Marktkonsultation eröffnet",
+  "it": "ha aperto una consultazione di mercato"
+ },
+ "reported a market consultation": {
+  "pt": "noticiou uma consulta ao mercado",
+  "es": "informó de una consulta al mercado",
+  "fr": "a relayé une consultation du marché",
+  "de": "hat über eine Marktkonsultation berichtet",
+  "it": "ha segnalato una consultazione di mercato"
+ },
+ "announced a funding call": {
+  "pt": "anunciou um aviso de financiamento",
+  "es": "anunció una convocatoria de financiación",
+  "fr": "a annoncé un appel à financement",
+  "de": "hat einen Förderaufruf angekündigt",
+  "it": "ha annunciato un bando di finanziamento"
+ },
+ "reported a funding call": {
+  "pt": "noticiou um aviso de financiamento",
+  "es": "informó de una convocatoria de financiación",
+  "fr": "a relayé un appel à financement",
+  "de": "hat über einen Förderaufruf berichtet",
+  "it": "ha segnalato un bando di finanziamento"
+ },
+ "announced a planned procurement": {
+  "pt": "anunciou uma contratação prevista",
+  "es": "anunció una contratación prevista",
+  "fr": "a annoncé un marché prévu",
+  "de": "hat eine geplante Beschaffung angekündigt",
+  "it": "ha annunciato un appalto previsto"
+ },
+ "reported a planned procurement": {
+  "pt": "noticiou uma contratação prevista",
+  "es": "informó de una contratación prevista",
+  "fr": "a relayé un marché prévu",
+  "de": "hat über eine geplante Beschaffung berichtet",
+  "it": "ha segnalato un appalto previsto"
+ },
+ "posted in": {
+  "pt": "publicou em",
+  "es": "publicó en",
+  "fr": "a publié dans",
+  "de": "hat gepostet in",
+  "it": "ha pubblicato in"
+ },
+ "posted": {
+  "pt": "publicou",
+  "es": "publicó",
+  "fr": "a publié",
+  "de": "hat gepostet",
+  "it": "ha pubblicato"
+ },
+ "published an update": {
+  "pt": "publicou uma atualização",
+  "es": "publicó una actualización",
+  "fr": "a publié une mise à jour",
+  "de": "hat ein Update veröffentlicht",
+  "it": "ha pubblicato un aggiornamento"
+ },
+ "published a news release": {
+  "pt": "publicou um comunicado",
+  "es": "publicó un comunicado",
+  "fr": "a publié un communiqué",
+  "de": "hat eine Pressemitteilung veröffentlicht",
+  "it": "ha pubblicato un comunicato"
+ },
+ "published an article": {
+  "pt": "publicou um artigo",
+  "es": "publicó un artículo",
+  "fr": "a publié un article",
+  "de": "hat einen Artikel veröffentlicht",
+  "it": "ha pubblicato un articolo"
+ },
+ "Live activity": {
+  "pt": "Atividade em direto",
+  "es": "Actividad en directo",
+  "fr": "Activité en direct",
+  "de": "Live-Aktivität",
+  "it": "Attività in tempo reale"
+ },
+ "auto-updating": {
+  "pt": "atualização automática",
+  "es": "actualización automática",
+  "fr": "mise à jour auto",
+  "de": "automatische Aktualisierung",
+  "it": "aggiornamento automatico"
+ },
+ "No activity yet from the sources you follow.": {
+  "pt": "Ainda não há atividade das fontes que segue.",
+  "es": "Aún no hay actividad de las fuentes que sigues.",
+  "fr": "Aucune activité pour l'instant des sources que vous suivez.",
+  "de": "Noch keine Aktivität der Quellen, denen Sie folgen.",
+  "it": "Ancora nessuna attività dalle fonti che segui."
+ },
+ "Unknown source": {
+  "pt": "Fonte desconhecida",
+  "es": "Fuente desconocida",
+  "fr": "Source inconnue",
+  "de": "Unbekannte Quelle",
+  "it": "Fonte sconosciuta"
+ },
+ "portal": {
+  "pt": "portal",
+  "es": "portal",
+  "fr": "portail",
+  "de": "Portal",
+  "it": "portale"
+ },
+ "Original: {title}": {
+  "pt": "Original: {title}",
+  "es": "Original: {title}",
+  "fr": "Original : {title}",
+  "de": "Original: {title}",
+  "it": "Originale: {title}"
+ },
+ "Working Agents": {
+  "pt": "Agentes ativos",
+  "es": "Agentes activos",
+  "fr": "Agents actifs",
+  "de": "Aktive Agenten",
+  "it": "Agenti attivi"
+ },
+ "{n} switched on of {total}": {
+  "pt": "{n} ativos de {total}",
+  "es": "{n} activos de {total}",
+  "fr": "{n} activés sur {total}",
+  "de": "{n} von {total} aktiviert",
+  "it": "{n} attivi su {total}"
+ },
+ "active": {
+  "pt": "ativo",
+  "es": "activo",
+  "fr": "actif",
+  "de": "aktiv",
+  "it": "attivo"
+ },
+ "Switch workspace": {
+  "pt": "Mudar de espaço de trabalho",
+  "es": "Cambiar de espacio de trabajo",
+  "fr": "Changer d'espace de travail",
+  "de": "Arbeitsbereich wechseln",
+  "it": "Cambia area di lavoro"
+ },
+ "Yours": {
+  "pt": "Seu",
+  "es": "Tuyo",
+  "fr": "Le vôtre",
+  "de": "Ihrer",
+  "it": "Tua"
+ },
+ "Admin": {
+  "pt": "Administrador",
+  "es": "Administrador",
+  "fr": "Admin",
+  "de": "Admin",
+  "it": "Amministratore"
+ },
+ "Member": {
+  "pt": "Membro",
+  "es": "Miembro",
+  "fr": "Membre",
+  "de": "Mitglied",
+  "it": "Membro"
+ },
+ "Active": {
+  "pt": "Ativo",
+  "es": "Activo",
+  "fr": "Actif",
+  "de": "Aktiv",
+  "it": "Attivo"
+ },
+ "Manage": {
+  "pt": "Gerir",
+  "es": "Gestionar",
+  "fr": "Gérer",
+  "de": "Verwalten",
+  "it": "Gestisci"
+ },
+ "Account menu for {name}": {
+  "pt": "Menu da conta de {name}",
+  "es": "Menú de la cuenta de {name}",
+  "fr": "Menu du compte de {name}",
+  "de": "Kontomenü für {name}",
+  "it": "Menu account di {name}"
+ },
+ "New workspace": {
+  "pt": "Novo espaço de trabalho",
+  "es": "Nuevo espacio de trabajo",
+  "fr": "Nouvel espace de travail",
+  "de": "Neuer Arbeitsbereich",
+  "it": "Nuova area di lavoro"
+ },
+ "Profile": {
+  "pt": "Perfil",
+  "es": "Perfil",
+  "fr": "Profil",
+  "de": "Profil",
+  "it": "Profilo"
+ },
+ "Chat ({n} new)": {
+  "pt": "Chat ({n} novas)",
+  "es": "Chat ({n} nuevos)",
+  "fr": "Messagerie ({n} nouveaux)",
+  "de": "Chat ({n} neu)",
+  "it": "Chat ({n} nuovi)"
+ },
+ "Create a new post": {
+  "pt": "Criar uma nova publicação",
+  "es": "Crear una nueva publicación",
+  "fr": "Créer une nouvelle publication",
+  "de": "Neuen Beitrag erstellen",
+  "it": "Crea un nuovo post"
+ },
+ "Notifications ({n} new)": {
+  "pt": "Notificações ({n} novas)",
+  "es": "Notificaciones ({n} nuevas)",
+  "fr": "Notifications ({n} nouvelles)",
+  "de": "Benachrichtigungen ({n} neu)",
+  "it": "Notifiche ({n} nuove)"
+ },
+ "See all": {
+  "pt": "Ver tudo",
+  "es": "Ver todo",
+  "fr": "Tout voir",
+  "de": "Alle anzeigen",
+  "it": "Vedi tutto"
+ },
+ "Loading…": {
+  "pt": "A carregar…",
+  "es": "Cargando…",
+  "fr": "Chargement…",
+  "de": "Wird geladen…",
+  "it": "Caricamento…"
+ },
+ "You’re all caught up. Follow tenders with the heart to hear about their updates.": {
+  "pt": "Está tudo em dia. Siga concursos com o coração para receber as suas atualizações.",
+  "es": "Estás al día. Sigue licitaciones con el corazón para enterarte de sus novedades.",
+  "fr": "Vous êtes à jour. Suivez des appels d'offres avec le cœur pour être informé de leurs mises à jour.",
+  "de": "Sie sind auf dem neuesten Stand. Folgen Sie Ausschreibungen mit dem Herz, um über Updates informiert zu werden.",
+  "it": "Sei in pari. Segui le gare con il cuore per ricevere i loro aggiornamenti."
+ },
+ "Dismiss": {
+  "pt": "Fechar",
+  "es": "Descartar",
+  "fr": "Ignorer",
+  "de": "Schließen",
+  "it": "Chiudi"
+ },
+ "Like this tender": {
+  "pt": "Gostar deste concurso",
+  "es": "Me gusta esta licitación",
+  "fr": "Aimer cet appel d'offres",
+  "de": "Diese Ausschreibung liken",
+  "it": "Mi piace questa gara"
+ },
+ "Unlike this tender": {
+  "pt": "Deixar de gostar deste concurso",
+  "es": "Ya no me gusta esta licitación",
+  "fr": "Ne plus aimer cet appel d'offres",
+  "de": "Like für diese Ausschreibung entfernen",
+  "it": "Non mi piace più questa gara"
+ },
+ "Like this post": {
+  "pt": "Gostar desta publicação",
+  "es": "Me gusta esta publicación",
+  "fr": "Aimer cette publication",
+  "de": "Diesen Beitrag liken",
+  "it": "Mi piace questo post"
+ },
+ "Unlike this post": {
+  "pt": "Deixar de gostar desta publicação",
+  "es": "Ya no me gusta esta publicación",
+  "fr": "Ne plus aimer cette publication",
+  "de": "Like für diesen Beitrag entfernen",
+  "it": "Non mi piace più questo post"
+ },
+ "Like this comment": {
+  "pt": "Gostar deste comentário",
+  "es": "Me gusta este comentario",
+  "fr": "Aimer ce commentaire",
+  "de": "Diesen Kommentar liken",
+  "it": "Mi piace questo commento"
+ },
+ "Unlike this comment": {
+  "pt": "Deixar de gostar deste comentário",
+  "es": "Ya no me gusta este comentario",
+  "fr": "Ne plus aimer ce commentaire",
+  "de": "Like für diesen Kommentar entfernen",
+  "it": "Non mi piace più questo commento"
+ },
+ "Like this story": {
+  "pt": "Gostar desta notícia",
+  "es": "Me gusta esta noticia",
+  "fr": "Aimer cet article",
+  "de": "Diese Meldung liken",
+  "it": "Mi piace questa notizia"
+ },
+ "Unlike this story": {
+  "pt": "Deixar de gostar desta notícia",
+  "es": "Ya no me gusta esta noticia",
+  "fr": "Ne plus aimer cet article",
+  "de": "Like für diese Meldung entfernen",
+  "it": "Non mi piace più questa notizia"
+ },
+ "Search Agent": {
+  "pt": "Agente de Pesquisa",
+  "es": "Agente de Búsqueda",
+  "fr": "Agent de recherche",
+  "de": "Such-Agent",
+  "it": "Agente di Ricerca"
+ },
+ "Triage Agent": {
+  "pt": "Agente de Triagem",
+  "es": "Agente de Clasificación",
+  "fr": "Agent de tri",
+  "de": "Triage-Agent",
+  "it": "Agente di Triage"
+ },
+ "Tender Documents Agent": {
+  "pt": "Agente de Documentos de Concursos",
+  "es": "Agente de Documentos de Licitaciones",
+  "fr": "Agent des documents d'appels d'offres",
+  "de": "Agent für Ausschreibungsunterlagen",
+  "it": "Agente Documenti di Gara"
+ },
+ "Tender Analysis Agent": {
+  "pt": "Agente de Análise de Concursos",
+  "es": "Agente de Análisis de Licitaciones",
+  "fr": "Agent d'analyse des appels d'offres",
+  "de": "Agent für Ausschreibungsanalyse",
+  "it": "Agente Analisi Gare"
+ },
+ "Tender Evaluation Agent": {
+  "pt": "Agente de Avaliação de Concursos",
+  "es": "Agente de Evaluación de Licitaciones",
+  "fr": "Agent d'évaluation des appels d'offres",
+  "de": "Agent für Ausschreibungsbewertung",
+  "it": "Agente Valutazione Gare"
+ },
+ "Proposal Manager Agent": {
+  "pt": "Agente Gestor de Propostas",
+  "es": "Agente Gestor de Propuestas",
+  "fr": "Agent de gestion des offres",
+  "de": "Angebotsmanager-Agent",
+  "it": "Agente Gestione Offerte"
+ },
+ "News Report Agent": {
+  "pt": "Agente de Relatório de Notícias",
+  "es": "Agente de Informes de Noticias",
+  "fr": "Agent de synthèse des actualités",
+  "de": "Nachrichtenbericht-Agent",
+  "it": "Agente Report Notizie"
+ },
+ "Feed Writer Agent": {
+  "pt": "Agente Redator do Feed",
+  "es": "Agente Redactor del Feed",
+  "fr": "Agent rédacteur du feed",
+  "de": "Feed-Redaktions-Agent",
+  "it": "Agente Redattore del Feed"
+ },
+ "Translator Agent": {
+  "pt": "Agente Tradutor",
+  "es": "Agente Traductor",
+  "fr": "Agent traducteur",
+  "de": "Übersetzungs-Agent",
+  "it": "Agente Traduttore"
+ },
+ "Finds tenders and news on TED, the web and your followed sources.": {
+  "pt": "Encontra concursos e notícias no TED, na web e nas fontes que segue.",
+  "es": "Encuentra licitaciones y noticias en TED, la web y las fuentes que sigues.",
+  "fr": "Trouve des appels d'offres et des actualités sur TED, le web et vos sources suivies.",
+  "de": "Findet Ausschreibungen und Nachrichten auf TED, im Web und in Ihren gefolgten Quellen.",
+  "it": "Trova gare e notizie su TED, sul web e nelle fonti che segui."
+ },
+ "Scores each find for relevance and sorts tenders, grants and news.": {
+  "pt": "Pontua a relevância de cada resultado e organiza concursos, subvenções e notícias.",
+  "es": "Puntúa la relevancia de cada hallazgo y clasifica licitaciones, subvenciones y noticias.",
+  "fr": "Évalue la pertinence de chaque résultat et trie appels d'offres, subventions et actualités.",
+  "de": "Bewertet jeden Fund nach Relevanz und sortiert Ausschreibungen, Förderungen und Nachrichten.",
+  "it": "Valuta la rilevanza di ogni risultato e smista gare, sovvenzioni e notizie."
+ },
+ "Collects each tender’s notices and documents and spots changes.": {
+  "pt": "Recolhe os anúncios e documentos de cada concurso e deteta alterações.",
+  "es": "Recopila los anuncios y documentos de cada licitación y detecta cambios.",
+  "fr": "Rassemble les avis et documents de chaque appel d'offres et repère les modifications.",
+  "de": "Sammelt Bekanntmachungen und Unterlagen jeder Ausschreibung und erkennt Änderungen.",
+  "it": "Raccoglie avvisi e documenti di ogni gara e individua le modifiche."
+ },
+ "Writes each tender’s summary and its full list of requirements.": {
+  "pt": "Escreve o resumo de cada concurso e a lista completa de requisitos.",
+  "es": "Redacta el resumen de cada licitación y su lista completa de requisitos.",
+  "fr": "Rédige le résumé de chaque appel d'offres et la liste complète de ses exigences.",
+  "de": "Schreibt die Zusammenfassung jeder Ausschreibung und die vollständige Anforderungsliste.",
+  "it": "Scrive il riepilogo di ogni gara e l'elenco completo dei requisiti."
+ },
+ "Checks a tender against your scope, scores the fit and advises.": {
+  "pt": "Compara um concurso com o seu âmbito, pontua a adequação e aconselha.",
+  "es": "Compara una licitación con tu ámbito, puntúa el encaje y aconseja.",
+  "fr": "Confronte un appel d'offres à votre périmètre, évalue l'adéquation et conseille.",
+  "de": "Prüft eine Ausschreibung gegen Ihren Bereich, bewertet die Eignung und berät.",
+  "it": "Confronta una gara con il tuo ambito, valuta l'idoneità e consiglia."
+ },
+ "Writes the proposal brief: requirements, references, gaps and steps.": {
+  "pt": "Escreve o resumo da proposta: requisitos, referências, lacunas e passos.",
+  "es": "Redacta el resumen de la propuesta: requisitos, referencias, carencias y pasos.",
+  "fr": "Rédige la note de l'offre : exigences, références, lacunes et étapes.",
+  "de": "Schreibt das Angebotsbriefing: Anforderungen, Referenzen, Lücken und Schritte.",
+  "it": "Scrive il brief dell'offerta: requisiti, referenze, lacune e passi."
+ },
+ "Summarises a story when opened and suggests what to do about it.": {
+  "pt": "Resume uma notícia ao abri-la e sugere o que fazer.",
+  "es": "Resume una noticia al abrirla y sugiere qué hacer.",
+  "fr": "Résume un article à l'ouverture et suggère quoi faire.",
+  "de": "Fasst eine Meldung beim Öffnen zusammen und schlägt vor, was zu tun ist.",
+  "it": "Riassume una notizia all'apertura e suggerisce cosa fare."
+ },
+ "Writes the headline and post for every item in the feed.": {
+  "pt": "Escreve o título e a publicação de cada item do feed.",
+  "es": "Redacta el titular y la publicación de cada elemento del feed.",
+  "fr": "Rédige le titre et la publication de chaque élément du feed.",
+  "de": "Schreibt Überschrift und Beitrag für jeden Eintrag im Feed.",
+  "it": "Scrive il titolo e il post di ogni elemento del feed."
+ },
+ "Translates titles, documents and summaries into the site language.": {
+  "pt": "Traduz títulos, documentos e resumos para o idioma do site.",
+  "es": "Traduce títulos, documentos y resúmenes al idioma del sitio.",
+  "fr": "Traduit titres, documents et résumés dans la langue du site.",
+  "de": "Übersetzt Titel, Dokumente und Zusammenfassungen in die Sprache der Website.",
+  "it": "Traduce titoli, documenti e riepiloghi nella lingua del sito."
+ }
+}

@@ -6,12 +6,14 @@ import { getCurrentUser } from '@/lib/auth';
 import { getEditableScope, getViewScopes } from '@/lib/scopes';
 import { refreshDueFeeds, resolveSource } from '@/lib/sources';
 import { FREQUENCIES, METHODS, Method, NOT_CONNECTABLE, SOURCE_TYPES } from '@/lib/sourceMeta';
+import { getT } from '@/lib/i18n/server';
 
 export type SaveSourceState = { ok: boolean; message: string } | null;
 
 /** Add a source (no source_id) or update one, from the Following sidebar's modal. */
 export async function saveSource(_prev: SaveSourceState, form: FormData): Promise<SaveSourceState> {
-  if (!(await getCurrentUser())) return { ok: false, message: 'Log in to add or change sources.' };
+  const tr = await getT();
+  if (!(await getCurrentUser())) return { ok: false, message: tr('Log in to add or change sources.') };
   const id = String(form.get('source_id') || '');
   const type = String(form.get('source_type') || '');
   const name = String(form.get('name') || '').trim();
@@ -21,14 +23,14 @@ export async function saveSource(_prev: SaveSourceState, form: FormData): Promis
   const every = Number(form.get('check_every_days') || 7);
   const enabled = form.get('enabled') === 'on';
 
-  if (!SOURCE_TYPES.some((t) => t.value === type)) return { ok: false, message: 'Pick a type.' };
-  if (!input) return { ok: false, message: 'Enter a URL or handle.' };
-  if (!(FREQUENCIES as readonly number[]).includes(every)) return { ok: false, message: 'Pick how often to check.' };
-  if (requested !== 'auto' && !(requested in METHODS)) return { ok: false, message: 'Pick a monitoring method.' };
+  if (!SOURCE_TYPES.some((t) => t.value === type)) return { ok: false, message: tr('Pick a type.') };
+  if (!input) return { ok: false, message: tr('Enter a URL or handle.') };
+  if (!(FREQUENCIES as readonly number[]).includes(every)) return { ok: false, message: tr('Pick how often to check.') };
+  if (requested !== 'auto' && !(requested in METHODS)) return { ok: false, message: tr('Pick a monitoring method.') };
 
   const supabase = getSupabaseServerClient();
   const current = id ? (await supabase.from('sources').select('*').eq('source_id', id).single()).data : null;
-  if (id && !current) return { ok: false, message: 'That source no longer exists.' };
+  if (id && !current) return { ok: false, message: tr('That source no longer exists.') };
 
   // Resolve the feed / method when adding, when the address changed, or on "auto".
   let resolved = current
@@ -45,13 +47,13 @@ export async function saveSource(_prev: SaveSourceState, form: FormData): Promis
   let method: Method = requested === 'auto' ? resolved!.method : (requested as Method);
   if (current?.method === 'ted') method = 'ted';  // TED keeps its API
   if (NOT_CONNECTABLE.includes(type)) method = 'off';
-  if (method === 'rss' && !resolved!.feedUrl) return { ok: false, message: 'No RSS/Atom feed found at that address — use site search instead.' };
-  if (method === 'site_search' && !resolved!.url) return { ok: false, message: 'Site search needs a website URL.' };
+  if (method === 'rss' && !resolved!.feedUrl) return { ok: false, message: tr('No RSS/Atom feed found at that address — use site search instead.') };
+  if (method === 'site_search' && !resolved!.url) return { ok: false, message: tr('Site search needs a website URL.') };
 
   if (!current) {
     const { data: dupe } = await supabase.from('sources').select('name')
       .or(`url.eq."${resolved!.url}",handle.eq."${resolved!.handle ?? '__none__'}"`).limit(1);  // quoted: URLs may hold commas
-    if (dupe?.length) return { ok: false, message: `Already following this as “${dupe[0].name}”.` };
+    if (dupe?.length) return { ok: false, message: tr('Already following this as “{name}”.', { name: dupe[0].name }) };
   }
 
   const row = {
@@ -80,17 +82,18 @@ export async function saveSource(_prev: SaveSourceState, form: FormData): Promis
   if (method === 'rss' && enabled) await refreshDueFeeds();  // feed items show up straight away
   revalidatePath('/', 'layout');
   const how = method === 'off'
-    ? NOT_CONNECTABLE.includes(type) ? 'listed — this platform needs API access before it can be monitored' : 'listed, not monitored'
-    : method === 'rss' ? 'monitored through its feed' : method === 'ted' ? 'monitored through the TED API'
-      : `searched every ${every === 1 ? 'day' : `${every} days`}`;
-  return { ok: true, message: `${row.name}: ${enabled ? how : 'paused'}.` };
+    ? NOT_CONNECTABLE.includes(type) ? tr('listed — this platform needs API access before it can be monitored') : tr('listed, not monitored')
+    : method === 'rss' ? tr('monitored through its feed') : method === 'ted' ? tr('monitored through the TED API')
+      : every === 1 ? tr('searched every day') : tr('searched every {n} days', { n: every });
+  return { ok: true, message: `${row.name}: ${enabled ? how : tr('paused')}.` };
 }
 
 /** Opening a news page starts the News Report Agent for a scope the viewer is looking through. */
 export async function startNewsReport(newsId: string, scopeId: string) {
-  if (!/^[0-9a-f]{16}$/.test(newsId)) return { status: 'error' as const, message: 'unknown news item' };
+  const t = await getT();
+  if (!/^[0-9a-f]{16}$/.test(newsId)) return { status: 'error' as const, message: t('unknown news item') };
   const { scopes } = await getViewScopes();
-  if (!scopes.some((s) => s.id === scopeId)) return { status: 'error' as const, message: 'that scope isn’t one you’re viewing' };
+  if (!scopes.some((s) => s.id === scopeId)) return { status: 'error' as const, message: t('that scope isn’t one you’re viewing') };
   const { ensureNewsReport } = await import('@/lib/newsReport');
   const result = await ensureNewsReport(newsId, scopeId);
   if (result.status === 'done') revalidatePath(`/news/${newsId}`);
@@ -104,8 +107,9 @@ async function ownsScope(scopeId: string) {
 
 /** The tender page's "Run" button: starts the Tender Evaluation Agent for one of your scopes. */
 export async function startTenderEvaluation(opportunityId: string, scopeId: string) {
-  if (!(await ownsScope(scopeId))) return { status: 'error' as const, message: 'only the workspace’s admins can run this agent' };
-  if (!/^[0-9a-f]{12,40}$/.test(opportunityId)) return { status: 'error' as const, message: 'unknown opportunity' };
+  const t = await getT();
+  if (!(await ownsScope(scopeId))) return { status: 'error' as const, message: t('only the workspace’s admins can run this agent') };
+  if (!/^[0-9a-f]{12,40}$/.test(opportunityId)) return { status: 'error' as const, message: t('unknown opportunity') };
   const { ensureEvaluation } = await import('@/lib/tenderEvaluation');
   const result = await ensureEvaluation(opportunityId, scopeId);
   if (result.status === 'done') revalidatePath(`/tenders/${opportunityId}`);
@@ -114,8 +118,9 @@ export async function startTenderEvaluation(opportunityId: string, scopeId: stri
 
 /** The tender page's "Prepare proposal brief" button: starts the Proposal Manager Agent for one of your scopes. */
 export async function startProposalBrief(opportunityId: string, scopeId: string) {
-  if (!(await ownsScope(scopeId))) return { status: 'error' as const, message: 'log in, and pick one of your scopes' };
-  if (!/^[0-9a-f]{12,40}$/.test(opportunityId)) return { status: 'error' as const, message: 'unknown tender' };
+  const t = await getT();
+  if (!(await ownsScope(scopeId))) return { status: 'error' as const, message: t('log in, and pick one of your scopes') };
+  if (!/^[0-9a-f]{12,40}$/.test(opportunityId)) return { status: 'error' as const, message: t('unknown tender') };
   const { ensureProposal } = await import('@/lib/proposalManager');
   const result = await ensureProposal(opportunityId, scopeId);
   if (result.status === 'done') revalidatePath(`/tenders/${opportunityId}`);
@@ -124,7 +129,7 @@ export async function startProposalBrief(opportunityId: string, scopeId: string)
 
 /** Scope page → Following: follow or unfollow a source of the shared registry. */
 export async function setSourceFollowed(scopeId: string, sourceId: string, on: boolean): Promise<{ error?: string }> {
-  if (!(await getEditableScope(scopeId))) return { error: 'Only this workspace’s admins can change what it follows.' };
+  if (!(await getEditableScope(scopeId))) return { error: (await getT())('Only this workspace’s admins can change what it follows.') };
   const db = getSupabaseServerClient();
   const { error } = on
     ? await db.from('scope_sources').upsert({ scope_id: scopeId, source_id: sourceId }, { onConflict: 'scope_id,source_id', ignoreDuplicates: true })

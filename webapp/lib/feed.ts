@@ -119,12 +119,12 @@ export async function getFeed(view: FeedView, now = new Date()) {
 }
 
 /** "3h ago", "2d ago", "14 Sep" — compact, like a feed. */
-export function timeAgo(at: Date, now = new Date()) {
+export function timeAgo(at: Date, now = new Date(), t: (k: string, v?: Record<string, string | number>) => string = (k, v) => k.replace('{n}', String(v?.n ?? '')), locale = 'en-GB') {
   const mins = Math.round((now.getTime() - at.getTime()) / 60000);
-  if (mins < 60) return `${Math.max(1, mins)}m ago`;
+  if (mins < 60) return t('{n}m ago', { n: Math.max(1, mins) });
   const hours = Math.round(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return t('{n}h ago', { n: hours });
   const days = Math.round(hours / 24);
-  if (days < 14) return `${days}d ago`;
-  return at.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  if (days < 14) return t('{n}d ago', { n: days });
+  return at.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
 }

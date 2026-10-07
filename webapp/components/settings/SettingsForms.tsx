@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import {
   FormState, createCompanyUpload, deleteCompanyDocument, deleteScope, registerCompanyDocument, saveScope,
 } from '@/app/workspaces/actions';
+import { useLocale, useT } from '@/lib/i18n/client';
 
 function Submit({ label, busy }: { label: string; busy: string }) {
   const { pending } = useFormStatus();
@@ -15,39 +16,41 @@ const Msg = ({ state }: { state: FormState }) => state && <p className={`form-ms
 
 export function ScopeForm({ scopeId, name, instructions }: { scopeId: string; name: string; instructions: string }) {
   const [state, action] = useFormState<FormState, FormData>(saveScope, null);
+  const t = useT();
   return (
     <form action={action} className="settings-form">
       <input type="hidden" name="scope" value={scopeId} />
       <label className="field">
-        <span>Scope name</span>
-        <input name="name" defaultValue={name} placeholder="e.g. EUDI Wallet — public sector" maxLength={120} required />
+        <span>{t('Scope name')}</span>
+        <input name="name" defaultValue={name} placeholder={t('e.g. {example}', { example: t('EUDI Wallet — public sector') })} maxLength={120} required />
       </label>
       <label className="field">
-        <span>Scope instructions</span>
+        <span>{t('Scope instructions')}</span>
         <textarea name="instructions" defaultValue={instructions} rows={9} maxLength={30000}
-          placeholder={'Who the scope is for (a company, a department, a project); what you sell and to whom; products and the standards they implement; certifications; size, turnover and locations; partners; the contracts you go for and the ones you don’t.'} />
+          placeholder={t('Who the scope is for (a company, a department, a project); what you sell and to whom; products and the standards they implement; certifications; size, turnover and locations; partners; the contracts you go for and the ones you don’t.')} />
       </label>
       <Msg state={state} />
-      <div className="settings-actions"><Submit label="Save scope" busy="Saving…" /></div>
+      <div className="settings-actions"><Submit label={t('Save scope')} busy={t('Saving…')} /></div>
     </form>
   );
 }
 
 export function DeleteScopeForm({ scopeId, name }: { scopeId: string; name: string }) {
   const [state, action] = useFormState<FormState, FormData>(deleteScope, null);
+  const t = useT();
   return (
     <form action={action} className="settings-form">
       <input type="hidden" name="scope" value={scopeId} />
-      <p className="field-hint">Deletes the scope, its documents and evaluations.</p>
-      <label className="field"><span>Type <strong>{name}</strong> to confirm</span><input name="confirm" autoComplete="off" required /></label>
+      <p className="field-hint">{t('Deletes the scope, its documents and evaluations.')}</p>
+      <label className="field"><span>{t('Type {name} to confirm', { name: '\u0000' }).split('\u0000').map((part, i) => i === 0 ? part : <span key={i}><strong>{name}</strong>{part}</span>)}</span><input name="confirm" autoComplete="off" required /></label>
       <Msg state={state} />
-      <div className="settings-actions"><button type="submit" className="btn danger">Delete scope</button></div>
+      <div className="settings-actions"><button type="submit" className="btn danger">{t('Delete scope')}</button></div>
     </form>
   );
 }
 
 type Doc = { id: string; name: string; size_bytes: number | null; chars: number | null; uploaded_at: string };
-const kb = (n: number | null) => (!n ? '' : n > 1e6 ? `${(n / 1e6).toFixed(1)} MB` : `${Math.max(1, Math.round(n / 1e3))} KB`);
+const kb = (n: number | null, locale: string) => (!n ? '' : n > 1e6 ? `${(n / 1e6).toLocaleString(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} MB` : `${Math.max(1, Math.round(n / 1e3))} KB`);
 
 /** One kind of company material: its files, an upload button, delete. */
 export function DocumentGroup({ scopeId, kind, label, hint, docs }: { scopeId: string; kind: string; label: string; hint: string; docs: Doc[] }) {
@@ -56,11 +59,13 @@ export function DocumentGroup({ scopeId, kind, label, hint, docs }: { scopeId: s
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [, startTransition] = useTransition();
+  const t = useT();
+  const locale = useLocale();
 
   async function upload(files: FileList) {
     setError(null);
     for (const [i, file] of Array.from(files).entries()) {
-      setStatus(`Uploading ${file.name}${files.length > 1 ? ` (${i + 1}/${files.length})` : ''}…`);
+      setStatus(t('Uploading {name}…', { name: `${file.name}${files.length > 1 ? ` (${i + 1}/${files.length})` : ''}` }));
       const target = await createCompanyUpload(scopeId, kind, file.name, file.size);
       if ('error' in target) { setError(`${file.name}: ${target.error}`); continue; }
       // Straight to storage, so large decks don't pass through the web server.
@@ -68,8 +73,8 @@ export function DocumentGroup({ scopeId, kind, label, hint, docs }: { scopeId: s
       body.append('cacheControl', '3600');
       body.append('', file);
       const res = await fetch(target.url!, { method: 'PUT', body, headers: { 'x-upsert': 'false' } });
-      if (!res.ok) { setError(`${file.name}: upload failed (${res.status})`); continue; }
-      setStatus(`Reading ${file.name}…`);
+      if (!res.ok) { setError(`${file.name}: ${t('upload failed ({status})', { status: res.status })}`); continue; }
+      setStatus(t('Reading {name}…', { name: file.name }));
       const done = await registerCompanyDocument(scopeId, kind, target.path!, file.name, file.size);
       if ('error' in done && done.error) setError(`${file.name}: ${done.error}`);
     }
@@ -81,8 +86,8 @@ export function DocumentGroup({ scopeId, kind, label, hint, docs }: { scopeId: s
   return (
     <div className="doc-kind">
       <div className="doc-kind-head">
-        <div><h3>{label} <span className="uc-count">{docs.length}</span></h3><p>{hint}</p></div>
-        <button type="button" className="btn" onClick={() => input.current?.click()} disabled={!!status}>Upload</button>
+        <div><h3>{t(label)} <span className="uc-count">{docs.length}</span></h3><p>{t(hint)}</p></div>
+        <button type="button" className="btn" onClick={() => input.current?.click()} disabled={!!status}>{t('Upload')}</button>
         <input ref={input} type="file" multiple hidden accept=".pdf,.docx,.pptx,.xlsx,.txt,.md,.csv"
           onChange={(e) => e.target.files?.length && upload(e.target.files)} />
       </div>
@@ -91,9 +96,9 @@ export function DocumentGroup({ scopeId, kind, label, hint, docs }: { scopeId: s
           {docs.map((d) => (
             <li key={d.id}>
               <span className="doc-file-name">{d.name}</span>
-              <span className="doc-file-meta">{kb(d.size_bytes)}{d.chars ? ` · ${d.chars.toLocaleString()} characters read` : ' · no text found (scanned?)'}</span>
-              <button type="button" className="doc-file-del" aria-label={`Remove ${d.name}`}
-                onClick={() => { if (confirm(`Remove ${d.name}?`)) deleteCompanyDocument(d.id).then(() => router.refresh()); }}>×</button>
+              <span className="doc-file-meta">{kb(d.size_bytes, locale)}{d.chars ? ` · ${t('{n} characters read', { n: d.chars.toLocaleString(locale) })}` : ` · ${t('no text found (scanned?)')}`}</span>
+              <button type="button" className="doc-file-del" aria-label={t('Remove {name}', { name: d.name })}
+                onClick={() => { if (confirm(t('Remove {name}?', { name: d.name }))) deleteCompanyDocument(d.id).then(() => router.refresh()); }}>×</button>
             </li>
           ))}
         </ul>

@@ -14,6 +14,7 @@ import { getScopeItems, getViewScopes } from '@/lib/scopes';
 import { getContext } from '@/lib/accounts';
 import TenderScopeEvaluation from '@/components/TenderScopeEvaluation';
 import { getPlatformLanguage } from '@/lib/language';
+import { getLocale, getT } from '@/lib/i18n/server';
 
 // The Tender Evaluation Agent runs inside this page's server action: give it time.
 export const maxDuration = 300;
@@ -38,7 +39,6 @@ type Evaluation = {
 const VERDICTS: Record<string, string> = {
   bid: 'Bid', bid_with_partner: 'Bid with a partner', consider: 'Consider', no_bid: 'No bid',
 };
-const fmtDate = (iso: string) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
 function matchLabel(m: string | null) {
   if (m === 'MATCH') return 'Match';
@@ -57,6 +57,7 @@ function matchClass(m: string | null) {
 
 export default async function OpportunityDetailPage({ params }: { params: { id: string } }) {
   await getPlatformLanguage();  // the display filter's language
+  const t = await getT();
   const supabase = getSupabaseServerClient();
 
   const { data: o, error } = await supabase
@@ -68,8 +69,8 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
   if (error || !o) {
     return (
       <div>
-        <Link className="back-link" href="/tenders">← Back to Tenders</Link>
-        <div className="detail-block"><h2>Not found</h2><p>{error?.message || 'No tender with this ID.'}</p></div>
+        <Link className="back-link" href="/tenders">← {t('Back to Tenders')}</Link>
+        <div className="detail-block"><h2>{t('Not found')}</h2><p>{error?.message || t('No tender with this ID.')}</p></div>
       </div>
     );
   }
@@ -119,7 +120,7 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
 
   return (
     <div>
-      <Link className="back-link" href="/tenders">← Tenders</Link>
+      <Link className="back-link" href="/tenders">← {t('Tenders')}</Link>
 
       <div className="detail-head">
         <div className="detail-tags-row">
@@ -127,28 +128,28 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
           <HeartButton type="tender" id={o.opportunity_id} liked={likes.liked.has(o.opportunity_id)} signedIn={likes.signedIn} className="page-heart" />
         </div>
         <h1>{titleOf(o)}</h1>
-        <p className="page-sub">{[buyerOf(o), o.country].filter(Boolean).join(' · ') || 'International'}</p>
+        <p className="page-sub">{[buyerOf(o), o.country].filter(Boolean).join(' · ') || t('International')}</p>
         {titleOf(o) !== o.title && (
-          <p className="original-title"><span>Original{o.language ? ` (${o.language.toUpperCase()})` : ''}</span> {o.title}</p>
+          <p className="original-title"><span>{t('Original')}{o.language ? ` (${o.language.toUpperCase()})` : ''}</span> {o.title}</p>
         )}
       </div>
 
       <div className="stat-grid">
-        <div className="stat"><div className="stat-label">Relevance</div><div className="stat-num">{relevance ?? '—'}</div></div>
-        <div className="stat"><div className="stat-label">Fit</div><div className="stat-num">{fits.length ? Math.max(...fits) : '—'}</div></div>
-        <div className="stat"><div className="stat-label">Value</div><div className="stat-num small">{o.estimated_value ? `${o.currency || ''} ${o.estimated_value.toLocaleString()}` : 'Not disclosed'}</div></div>
-        <div className="stat"><div className="stat-label">Deadline</div><div className="stat-num small"><DeadlineText deadline={o.deadline} /></div></div>
+        <div className="stat"><div className="stat-label">{t('Relevance')}</div><div className="stat-num">{relevance ?? '—'}</div></div>
+        <div className="stat"><div className="stat-label">{t('Fit')}</div><div className="stat-num">{fits.length ? Math.max(...fits) : '—'}</div></div>
+        <div className="stat"><div className="stat-label">{t('Value')}</div><div className="stat-num small">{o.estimated_value ? `${o.currency || ''} ${o.estimated_value.toLocaleString(getLocale())}` : t('Not disclosed')}</div></div>
+        <div className="stat"><div className="stat-label">{t('Deadline')}</div><div className="stat-num small"><DeadlineText deadline={o.deadline} /></div></div>
       </div>
 
       <div className="opp-detail-grid">
         <div>
           {summary.length > 0 && (
             <div className="detail-block">
-              <h2>Summary</h2>
+              <h2>{t('Summary')}</h2>
               {summary.map((p: string, i: number) => <p key={i}>{p}</p>)}
               {o.tender_summary
-                ? <p className="summary-note">Tender Analysis Agent · from the notice and {o.official_url?.includes('ted.europa.eu') ? 'the tender documents' : 'the tender page'}</p>
-                : <p className="summary-note">Preliminary summary.</p>}
+                ? <p className="summary-note">{t('Tender Analysis Agent')} · {o.official_url?.includes('ted.europa.eu') ? t('from the notice and the tender documents') : t('from the notice and the tender page')}</p>
+                : <p className="summary-note">{t('Preliminary summary.')}</p>}
             </div>
           )}
 
@@ -160,30 +161,30 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
           ))}
           {changes && changes.length > 0 && (
             <div className="detail-block" id="updates">
-              <h2>Updates <span className="uc-count">{changes.length}</span></h2>
+              <h2>{t('Updates')} <span className="uc-count">{changes.length}</span></h2>
               <div className="uc-thread">
                 {(changes as UpdateEvent[]).map((c) => <UpdateComment key={c.id} e={c} />)}
               </div>
             </div>
           )}
           <div className="detail-block">
-            <h2>Status</h2>
-            <p>{oppCategoryLabel(o.opportunity_type)} — {o.status}</p>
+            <h2>{t('Status')}</h2>
+            <p>{t(oppCategoryLabel(o.opportunity_type))} — {o.status && t(o.status)}</p>
             {o.status_evidence && <p className="evidence">{o.status_evidence}</p>}
             {o.verified_at && (
-              <p className="news-meta">Checked against the source on {new Date(o.verified_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+              <p className="news-meta">{t('Checked against the source on {date}', { date: new Date(o.verified_at).toLocaleDateString(getLocale(), { day: 'numeric', month: 'short', year: 'numeric' }) })}</p>
             )}
           </div>
           <div className="detail-block">
-            <h2>Source</h2>
+            <h2>{t('Source')}</h2>
             {o.official_url
               ? <p><a className="ext-link" href={o.official_url} target="_blank" rel="noopener noreferrer">{o.official_url} ↗</a></p>
-              : <p className="mono">Not recorded</p>}
+              : <p className="mono">{t('Not recorded')}</p>}
           </div>
 
           {(award || []).length > 0 && (
             <div className="detail-block">
-              <h2>Award criteria</h2>
+              <h2>{t('Award criteria')}</h2>
               <div className="award-list">
                 {(award || []).map((a: any) => {
                   const what = firstInLanguage(a.subcriteria?.name_en, a.subcriteria?.name, a.subcriteria?.description_en, a.subcriteria?.description);
@@ -200,33 +201,33 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
           )}
 
           <div className="detail-block" id="requirements">
-            <h2>{evaluatedScopes.length ? <>Requirements &amp; Match Status</> : 'Requirements'} {reqs.length > 0 && <span className="uc-count">{reqs.length}</span>}</h2>
+            <h2>{evaluatedScopes.length ? t('Requirements & Match Status') : t('Requirements')} {reqs.length > 0 && <span className="uc-count">{reqs.length}</span>}</h2>
             {reqs.length === 0 ? (
               <p className="muted">
                 {o.tender_analysed_at
-                  ? 'None published yet.'
-                  : 'Pending analysis.'}
+                  ? t('None published yet.')
+                  : t('Pending analysis.')}
               </p>
             ) : REQ_GROUPS.map((g) => ({ ...g, rows: reqs.filter((r) => groupOf(r) === g.key) })).filter((g) => g.rows.length).map((g) => (
               <div key={g.key} className="req-category-block">
-                <div className="req-category-title">{g.label} <span className="uc-count">{g.rows.length}</span></div>
+                <div className="req-category-title">{t(g.label)} <span className="uc-count">{g.rows.length}</span></div>
                 <table className="req-table">
-                  <thead><tr><th>Requirement</th><th>Threshold</th><th>Mandatory</th>{evaluatedScopes.map((sc) => <th key={sc.id}>{evaluatedScopes.length > 1 ? `Match · ${sc.name}` : 'Match'}</th>)}</tr></thead>
+                  <thead><tr><th>{t('Requirement')}</th><th>{t('Threshold')}</th><th>{t('Mandatory')}</th>{evaluatedScopes.map((sc) => <th key={sc.id}>{evaluatedScopes.length > 1 ? `${t('Match')} · ${sc.name}` : t('Match')}</th>)}</tr></thead>
                   <tbody>
                     {g.rows.map((r) => (
                       <tr key={r.requirement_id}>
                         <td>
                           {r.requirement_text}
-                          {firstInLanguage(r.evidence_required) && <div className="req-evidence">Evidence: {r.evidence_required}</div>}
+                          {firstInLanguage(r.evidence_required) && <div className="req-evidence">{t('Evidence:')} {r.evidence_required}</div>}
                           {r.document && <div className="req-source">{r.document}</div>}
                         </td>
                         <td>{firstInLanguage(r.threshold) ?? ''}</td>
-                        <td>{r.mandatory ? <span className="mand-yes">Mandatory</span> : <span className="mand-no">Optional</span>}</td>
+                        <td>{r.mandatory ? <span className="mand-yes">{t('Mandatory')}</span> : <span className="mand-no">{t('Optional')}</span>}</td>
                         {evaluatedScopes.map((sc) => {
                           const m = matchOf(r, sc.id);
                           return (
                             <td key={sc.id}>
-                              <span className={`badge-match ${matchClass(m?.match_status)}`}>{matchLabel(m?.match_status)}</span>
+                              <span className={`badge-match ${matchClass(m?.match_status)}`}>{t(matchLabel(m?.match_status))}</span>
                               {m?.notes && <div className="req-match-note">{m.notes}</div>}
                             </td>
                           );

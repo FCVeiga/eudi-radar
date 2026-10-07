@@ -1,4 +1,5 @@
 import { inPlatformLanguage } from '@/lib/english';
+import { getLocale, getTSync } from '@/lib/i18n/server';
 
 /** A tender update shown like a Reddit comment: who posted it, when, and what changed. */
 
@@ -13,12 +14,12 @@ export type UpdateEvent = {
   note: string | null;
 };
 
-function ago(iso: string | null) {
+function ago(iso: string | null, t: ReturnType<typeof getTSync>) {
   if (!iso) return '';
   const days = Math.round((Date.now() - new Date(iso).getTime()) / 86400_000);
-  if (days < 1) return 'today';
-  if (days < 14) return `${days}d ago`;
-  return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  if (days < 1) return t('today');
+  if (days < 14) return t('{n}d ago', { n: days });
+  return new Date(iso).toLocaleDateString(getLocale(), { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 const LABELS: Record<string, string> = {
@@ -26,6 +27,7 @@ const LABELS: Record<string, string> = {
 };
 
 export default function UpdateComment({ e, compact = false }: { e: UpdateEvent; compact?: boolean }) {
+  const t = getTSync();
   const fromTed = !!e.notice_url?.includes('ted.europa.eu');
   // English note when the agent has written one; otherwise the detected change,
   // plus the notice's own words only if they are English (else in the tooltip).
@@ -38,11 +40,11 @@ export default function UpdateComment({ e, compact = false }: { e: UpdateEvent; 
       </span>
       <div className="uc-body">
         <div className="uc-meta">
-          <strong>{fromTed ? 'TED monitor' : 'Radar agent'}</strong>
-          <span className="uc-kind">{LABELS[e.event_type ?? ''] ?? 'Update'}</span>
-          <span className="uc-time">· {ago(e.detected_at)}</span>
+          <strong>{fromTed ? t('TED monitor') : t('Radar agent')}</strong>
+          <span className="uc-kind">{t(LABELS[e.event_type ?? ''] ?? 'Update')}</span>
+          <span className="uc-time">· {ago(e.detected_at, t)}</span>
         </div>
-        <p className="uc-text" title={raw && !original ? `Notice text (translation pending): ${raw}` : undefined}>
+        <p className="uc-text" title={raw && !original ? t('Notice text (translation pending): {text}', { text: raw }) : undefined}>
           {e.note || e.description?.replace(/\s*\(TED [\d-]+\)$/, '')}
           {original && <span className="uc-original" title={e.note_source ?? ''}> “{original}”</span>}
         </p>

@@ -6,16 +6,17 @@ import { usePathname, useRouter } from 'next/navigation';
 import ChatPanel from './ChatPanel';
 import { getCounts, getLatestUnread, getNotifications, markNotificationsRead } from '@/app/social/actions';
 import NotificationIcon from './NotificationIcon';
+import { useT } from '@/lib/i18n/client';
 
 type Note = { id: string; type: string; title: string; body: string | null; link: string | null; read: boolean; createdAt: string; actor: { username: string; avatarUrl: string | null } | null };
 const COUNTS_MS = 15_000;
 const TOAST_MS = 6_000;
 
-function ago(iso: string) {
+function ago(t: ReturnType<typeof useT>, iso: string) {
   const m = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
-  if (m < 60) return `${Math.max(1, m)}m`;
-  if (m < 1440) return `${Math.round(m / 60)}h`;
-  return `${Math.round(m / 1440)}d`;
+  if (m < 60) return t('{n}m', { n: Math.max(1, m) });
+  if (m < 1440) return t('{n}h', { n: Math.round(m / 60) });
+  return t('{n}d', { n: Math.round(m / 1440) });
 }
 
 /** Opens the chat window from anywhere (e.g. "Start chat" on a profile). */
@@ -25,6 +26,7 @@ export function openChat(username?: string) {
 
 /** Navbar, signed in: chat bubble (opens the chat window), + New Post, notifications bell. */
 export default function NavActions() {
+  const t = useT();
   const [count, setCount] = useState({ notifications: 0, chat: 0 });
   const [bellOpen, setBellOpen] = useState(false);
   const [notes, setNotes] = useState<Note[] | null>(null);
@@ -77,35 +79,35 @@ export default function NavActions() {
 
   return (
     <div className="nav-actions">
-      <button type="button" className="nav-icon" aria-label={`Chat${count.chat ? ` (${count.chat} new)` : ''}`}
+      <button type="button" className="nav-icon" aria-label={count.chat ? t('Chat ({n} new)', { n: count.chat }) : t('Chat')}
         onClick={() => { if (onChatPage) return; setComposeTo(null); setChatOpen(!chatOpen); }}>
         <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 4.5h13v8.6h-7.2L5.6 16v-2.9H3.5z" /><path d="M7 8.8h.01M10 8.8h.01M13 8.8h.01" /></svg>
         {count.chat > 0 && <span className="nav-badge">{count.chat > 9 ? '9+' : count.chat}</span>}
       </button>
 
-      <Link href="/posts/new" className="nav-new-post" aria-label="Create a new post">
+      <Link href="/posts/new" className="nav-new-post" aria-label={t('Create a new post')}>
         <span className="nav-new-post-box"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" /></svg></span>
-        <span className="nav-new-post-text">New Post</span>
+        <span className="nav-new-post-text">{t('New Post')}</span>
       </Link>
 
       <div className="nav-bell" ref={bell}>
-        <button type="button" className={`nav-icon ${ringing ? 'ringing' : ''}`} aria-label={`Notifications${count.notifications ? ` (${count.notifications} new)` : ''}`} aria-expanded={bellOpen} onClick={toggleBell}>
+        <button type="button" className={`nav-icon ${ringing ? 'ringing' : ''}`} aria-label={count.notifications ? t('Notifications ({n} new)', { n: count.notifications }) : t('Notifications')} aria-expanded={bellOpen} onClick={toggleBell}>
           <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.8a4.6 4.6 0 0 0-4.6 4.6v2.7L4 12.9h12l-1.4-2.8V7.4A4.6 4.6 0 0 0 10 2.8zM8.2 15.6a1.9 1.9 0 0 0 3.6 0" /></svg>
           {count.notifications > 0 && <span className="nav-badge">{count.notifications > 9 ? '9+' : count.notifications}</span>}
         </button>
         {bellOpen && (
-          <div className="notes-menu" role="dialog" aria-label="Notifications">
-            <div className="notes-head"><strong>Notifications</strong><Link href="/notifications" className="notes-all">See all</Link></div>
+          <div className="notes-menu" role="dialog" aria-label={t('Notifications')}>
+            <div className="notes-head"><strong>{t('Notifications')}</strong><Link href="/notifications" className="notes-all">{t('See all')}</Link></div>
             <ul>
-              {notes === null && <li className="notes-empty">Loading…</li>}
-              {notes?.length === 0 && <li className="notes-empty">You’re all caught up. Follow tenders with the heart to hear about their updates.</li>}
+              {notes === null && <li className="notes-empty">{t('Loading…')}</li>}
+              {notes?.length === 0 && <li className="notes-empty">{t('You’re all caught up. Follow tenders with the heart to hear about their updates.')}</li>}
               {notes?.map((n) => (
                 <li key={n.id}>
                   <button type="button" className={`note ${n.read ? '' : 'unread'}`}
                     onClick={() => { setBellOpen(false); if (n.link?.startsWith('/chat')) { setComposeTo(null); setChatOpen(true); } else if (n.link) router.push(n.link); }}>
                     <NotificationIcon type={n.type} actor={n.actor} size={32} />
                     <span className="note-text"><strong>{n.title}</strong>{n.body && <em>{n.body}</em>}</span>
-                    <time>{ago(n.createdAt)}</time>
+                    <time>{ago(t, n.createdAt)}</time>
                   </button>
                 </li>
               ))}
@@ -121,12 +123,12 @@ export default function NavActions() {
         }}>
           <NotificationIcon type={toast.type} actor={toast.actor} size={36} />
           <span className="note-text"><strong>{toast.title}</strong>{toast.body && <em>{toast.body}</em>}</span>
-          <span className="notif-toast-close" aria-label="Dismiss" onClick={(e) => { e.stopPropagation(); setToast(null); }}>×</span>
+          <span className="notif-toast-close" aria-label={t('Dismiss')} onClick={(e) => { e.stopPropagation(); setToast(null); }}>×</span>
         </button>
       )}
 
       {chatOpen && !onChatPage && (
-        <div className="chat-popup" role="dialog" aria-label="Chat">
+        <div className="chat-popup" role="dialog" aria-label={t('Chat')}>
           <ChatPanel variant="popup" composeTo={composeTo} onClose={() => setChatOpen(false)} onCountsChange={refresh} />
         </div>
       )}

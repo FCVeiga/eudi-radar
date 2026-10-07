@@ -6,6 +6,7 @@ import { SOURCE_GROUPS, Source, typeMeta } from '@/lib/sourceMeta';
 import SourceIcon from '@/components/SourceIcon';
 import { Country, SourceForm, health } from '@/components/SourcesPanel';
 import { setSourceFollowed } from '@/app/actions';
+import { useLocale, useT } from '@/lib/i18n/client';
 
 const PAGE = 12;
 type Modal = { kind: 'edit'; source: Source } | { kind: 'add' } | null;
@@ -22,6 +23,8 @@ export default function FollowingSection({ scopeId, sources, followed, countries
   const [following, setFollowing] = useState(new Set(followed));
   const [, start] = useTransition();
   const router = useRouter();
+  const t = useT();
+  const locale = useLocale();
   useEffect(() => setFollowing(new Set(followed)), [followed]);
   useEffect(() => { if (modal) dialog.current?.showModal(); }, [modal]);
   const close = () => { dialog.current?.close(); setModal(null); };
@@ -39,44 +42,44 @@ export default function FollowingSection({ scopeId, sources, followed, countries
   const needle = q.trim().toLowerCase();
   const match = (s: Source) => !needle || `${s.name} ${s.url ?? ''} ${s.handle ?? ''} ${s.country ?? ''}`.toLowerCase().includes(needle);
   const shown = (group === 'all' ? mine : groups.find((g) => g.key === group)?.list ?? []).filter(match).sort((a, b) => a.name.localeCompare(b.name));
-  const country = (code: string | null) => (code ? countries.find((c) => c.code === code)?.name ?? code : 'International');
+  const country = (code: string | null) => (code ? countries.find((c) => c.code === code)?.name ?? code : t('International'));
 
   return (
     <section className="detail-block" id="following">
       <div className="section-head">
-        <h2>Following <span className="uc-count" title="Monitored of followed">{monitored}/{mine.length}</span></h2>
-        <button type="button" className="btn primary" onClick={() => setModal({ kind: 'add' })}>Add source</button>
+        <h2>{t('Following')} <span className="uc-count" title={t('Monitored of followed')}>{monitored}/{mine.length}</span></h2>
+        <button type="button" className="btn primary" onClick={() => setModal({ kind: 'add' })}>{t('Add source')}</button>
       </div>
 
       <div className="follow-toolbar">
-        <nav className="feed-sort follow-groups" aria-label="Source groups">
+        <nav className="feed-sort follow-groups" aria-label={t('Source groups')}>
           <button type="button" className={`feed-sort-link ${group === 'all' ? 'active' : ''}`} onClick={() => { setGroup('all'); setAll(false); }}>
-            All <span className="pill-count">{mine.length}</span>
+            {t('All')} <span className="pill-count">{mine.length}</span>
           </button>
           {groups.map((g) => (
             <button key={g.key} type="button" className={`feed-sort-link ${group === g.key ? 'active' : ''}`} onClick={() => { setGroup(g.key); setAll(false); }}>
-              {g.label} <span className="pill-count">{g.list.length}</span>
+              {t(g.label)} <span className="pill-count">{g.list.length}</span>
             </button>
           ))}
         </nav>
-        <input className="follow-search" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Filter" aria-label="Filter sources" />
+        <input className="follow-search" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('Filter')} aria-label={t('Filter sources')} />
       </div>
 
-      {shown.length === 0 ? <p className="field-hint">{mine.length ? 'No sources match.' : 'Not following any sources yet.'}</p> : (
+      {shown.length === 0 ? <p className="field-hint">{mine.length ? t('No sources match.') : t('Not following any sources yet.')}</p> : (
         <ul className="follow-list">
           {(all || needle ? shown : shown.slice(0, PAGE)).map((s) => {
-            const h = health(s);
+            const h = health(s, t, locale);
             return (
               <li key={s.source_id} className="follow-item">
                 <button type="button" className="follow-row" onClick={() => setModal({ kind: 'edit', source: s })}>
                   <SourceIcon type={s.source_type} size={28} />
                   <span className="follow-main">
                     <strong>{s.name.replace(/ — national procurement portal$/, '')}</strong>
-                    <em>{typeMeta(s.source_type).label} · {country(s.country)}</em>
+                    <em>{t(typeMeta(s.source_type).label)} · {country(s.country)}</em>
                   </span>
                   <span className={`follow-status ${h.cls}`}><span className={`account-state ${h.cls}`} />{h.note}</span>
                 </button>
-                <button type="button" className="follow-unfollow" aria-label={`Unfollow ${s.name}`} title="Unfollow" onClick={() => toggle(s.source_id, false)}>
+                <button type="button" className="follow-unfollow" aria-label={t('Unfollow {name}', { name: s.name })} title={t('Unfollow')} onClick={() => toggle(s.source_id, false)}>
                   <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" /></svg>
                 </button>
               </li>
@@ -85,7 +88,7 @@ export default function FollowingSection({ scopeId, sources, followed, countries
         </ul>
       )}
       {!all && !needle && shown.length > PAGE && (
-        <button type="button" className="btn follow-more" onClick={() => setAll(true)}>Show all {shown.length}</button>
+        <button type="button" className="btn follow-more" onClick={() => setAll(true)}>{t('Show all {n}', { n: shown.length })}</button>
       )}
 
       <dialog ref={dialog} className="modal" onClose={() => setModal(null)} onClick={(e) => { if (e.target === dialog.current) close(); }}>
@@ -102,30 +105,31 @@ function AddSource({ sources, following, countries, scopeId, onFollow, onDone }:
 }) {
   const [tab, setTab] = useState<'browse' | 'new'>('browse');
   const [q, setQ] = useState('');
+  const t = useT();
   if (tab === 'new') return <SourceForm source={null} countries={countries} onDone={onDone} scopeId={scopeId} />;
   const needle = q.trim().toLowerCase();
   const available = sources.filter((s) => !following.has(s.source_id))
-    .filter((s) => !needle || `${s.name} ${s.url ?? ''} ${typeMeta(s.source_type).label}`.toLowerCase().includes(needle))
+    .filter((s) => !needle || `${s.name} ${s.url ?? ''} ${t(typeMeta(s.source_type).label)}`.toLowerCase().includes(needle))
     .sort((a, b) => a.name.localeCompare(b.name));
   return (
     <div className="modal-body">
       <div className="modal-head">
-        <h2>Add source</h2>
-        <button type="button" className="modal-close" aria-label="Close" onClick={onDone}>×</button>
+        <h2>{t('Add source')}</h2>
+        <button type="button" className="modal-close" aria-label={t('Close')} onClick={onDone}>×</button>
       </div>
       <div className="follow-add-head">
-        <input className="follow-search" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search sources" aria-label="Search sources" autoFocus />
-        <button type="button" className="btn" onClick={() => setTab('new')}>New source</button>
+        <input className="follow-search" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('Search sources')} aria-label={t('Search sources')} autoFocus />
+        <button type="button" className="btn" onClick={() => setTab('new')}>{t('New source')}</button>
       </div>
-      {available.length === 0 ? <p className="field-hint">{needle ? 'No sources match.' : 'Following every source already.'}</p> : (
+      {available.length === 0 ? <p className="field-hint">{needle ? t('No sources match.') : t('Following every source already.')}</p> : (
         <ul className="follow-list follow-browse">
           {available.map((s) => (
             <li key={s.source_id} className="follow-item">
               <span className="follow-row static">
                 <SourceIcon type={s.source_type} size={24} />
-                <span className="follow-main"><strong>{s.name.replace(/ — national procurement portal$/, '')}</strong><em>{typeMeta(s.source_type).label}</em></span>
+                <span className="follow-main"><strong>{s.name.replace(/ — national procurement portal$/, '')}</strong><em>{t(typeMeta(s.source_type).label)}</em></span>
               </span>
-              <button type="button" className="btn follow-btn" onClick={() => onFollow(s.source_id)}>Follow</button>
+              <button type="button" className="btn follow-btn" onClick={() => onFollow(s.source_id)}>{t('Follow')}</button>
             </li>
           ))}
         </ul>

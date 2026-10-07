@@ -8,6 +8,7 @@ import {
   FormState, resetAgentConfig, saveAgentConfig, saveAgentTuning, saveSearchScope, setAgentEnabled,
 } from '@/app/workspaces/actions';
 import type { AgentDef } from '@/lib/agents';
+import { useT } from '@/lib/i18n/client';
 
 function Submit({ label, busy, primary }: { label: string; busy: string; primary?: boolean }) {
   const { pending } = useFormStatus();
@@ -26,6 +27,7 @@ export default function AgentCard({ agent, enabled, instructions, config, custom
   readOnly?: boolean;        // members, Free plan, and workspace agents for non–platform admins
 }) {
   const router = useRouter();
+  const t = useT();
   const search = agent.key === 'search';
   const editable = (agent.fineTune || search) && !readOnly;
   const [on, setOn] = useState(enabled);
@@ -41,20 +43,20 @@ export default function AgentCard({ agent, enabled, instructions, config, custom
       <div className="agent-card-head">
         <AgentAvatar agent={agent.key} size={42} off={!on} />
         <div className="agent-card-id">
-          <h3>{agent.name}</h3>
-          <span className="agent-runs">{agent.runs === 'pipeline' ? 'Daily pipeline' : agent.runs === 'on click' ? 'On click' : 'When a story is opened'}{custom ? ' · customised' : ''}</span>
+          <h3>{t(agent.name)}</h3>
+          <span className="agent-runs">{agent.runs === 'pipeline' ? t('Daily pipeline') : agent.runs === 'on click' ? t('On click') : t('When a story is opened')}{custom ? ` · ${t('customised')}` : ''}</span>
         </div>
-        <button type="button" role="switch" aria-checked={on} aria-label={`${agent.name} ${on ? 'on' : 'off'}`}
+        <button type="button" role="switch" aria-checked={on} aria-label={`${t(agent.name)} ${on ? t('on') : t('off')}`}
           className={`switch ${on ? 'on' : ''}`} disabled={readOnly}
           onClick={() => { const next = !on; setOn(next); start(() => setAgentEnabled(agent.key, next, scopeId)); }}>
           <span />
         </button>
       </div>
-      <p className="agent-role">{agent.role}</p>
+      <p className="agent-role">{t(agent.role)}</p>
 
       {config && (
         <div className="agent-card-actions">
-          <button type="button" className="btn" onClick={() => dialog.current?.showModal()}>Open config</button>
+          <button type="button" className="btn" onClick={() => dialog.current?.showModal()}>{t('Open config')}</button>
         </div>
       )}
 
@@ -63,13 +65,13 @@ export default function AgentCard({ agent, enabled, instructions, config, custom
           <input type="hidden" name="agent" value={agent.key} />
           {scopeId && <input type="hidden" name="scopeId" value={scopeId} />}
           <label className="field">
-            <span>Fine-tuning <em>— in plain language</em></span>
+            <span>{t('Fine-tuning')} <em>{t('— in plain language')}</em></span>
             <textarea name={search ? 'scope' : 'instructions'} rows={3} defaultValue={instructions ?? ''} maxLength={search ? 8000 : 6000}
-              placeholder={`e.g. ${EXAMPLES[agent.key] ?? 'Be more concise.'}`} />
+              placeholder={t('e.g. {example}', { example: t(EXAMPLES[agent.key] ?? 'Be more concise.') })} />
           </label>
           {tuneState ? <p className={`form-msg ${tuneState.ok ? 'ok' : 'err'}`}>{tuneState.message}</p>
-            : status === 'error' && error ? <p className="form-msg err">Last attempt not applied: {error}.</p> : null}
-          <div className="settings-actions"><Submit label="Apply" busy="The Config Agent is working…" /></div>
+            : status === 'error' && error ? <p className="form-msg err">{t('Last attempt not applied: {error}.', { error })}</p> : null}
+          <div className="settings-actions"><Submit label={t('Apply')} busy={t('The Config Agent is working…')} /></div>
         </form>
       )}
 
@@ -78,18 +80,18 @@ export default function AgentCard({ agent, enabled, instructions, config, custom
           <input type="hidden" name="agent" value={agent.key} />
           {scopeId && <input type="hidden" name="scopeId" value={scopeId} />}
           <div className="modal-head">
-            <h2>{agent.name} — {custom ? 'customised configuration' : 'default configuration'}</h2>
-            <button type="button" className="modal-close" aria-label="Close" onClick={() => dialog.current?.close()}>×</button>
+            <h2>{t(agent.name)} — {custom ? t('customised configuration') : t('default configuration')}</h2>
+            <button type="button" className="modal-close" aria-label={t('Close')} onClick={() => dialog.current?.close()}>×</button>
           </div>
-          {readOnly && <p className="form-msg readonly-note">Read-only.</p>}
+          {readOnly && <p className="form-msg readonly-note">{t('Read-only.')}</p>}
           <p className="field-hint">
             {search
-              ? 'Search queries and relevance rules (JSON).'
+              ? t('Search queries and relevance rules (JSON).')
               : agent.key === 'tender_documents'
-                ? 'File sorting and alert rules (JSON).'
+                ? t('File sorting and alert rules (JSON).')
                 : editable
-                ? <>Keep the <span className="mono">## Output</span> section and the {'{placeholders}'}.</>
-                : readOnly ? null : 'Nothing to configure.'}
+                ? <>{t('Keep the {output} section and the {placeholders}.', { output: '\u0000', placeholders: '{placeholders}' }).split('\u0000').map((part, i) => i === 0 ? part : <span key={i}><span className="mono">## Output</span>{part}</span>)}</>
+                : readOnly ? null : t('Nothing to configure.')}
           </p>
           {editable
             ? <textarea name="config" className="config-edit" value={draft} onChange={(e) => setDraft(e.target.value)} spellCheck={false} />
@@ -99,13 +101,13 @@ export default function AgentCard({ agent, enabled, instructions, config, custom
             <div className="modal-actions">
               {custom && (
                 <button type="button" className="btn" onClick={() => {
-                  if (confirm(`Reset ${agent.name} to its default configuration${search ? '' : ' and clear its fine-tuning'}?`)) {
+                  if (confirm(search ? t('Reset {agent} to its default configuration?', { agent: t(agent.name) }) : t('Reset {agent} to its default configuration and clear its fine-tuning?', { agent: t(agent.name) }))) {
                     start(async () => { await resetAgentConfig(agent.key, scopeId); router.refresh(); });
                   }
-                }}>Reset to default</button>
+                }}>{t('Reset to default')}</button>
               )}
-              <button type="button" className="btn" onClick={() => setDraft(config ?? '')}>Discard changes</button>
-              <Submit label="Save" busy="Saving…" primary />
+              <button type="button" className="btn" onClick={() => setDraft(config ?? '')}>{t('Discard changes')}</button>
+              <Submit label={t('Save')} busy={t('Saving…')} primary />
             </div>
           )}
         </form>

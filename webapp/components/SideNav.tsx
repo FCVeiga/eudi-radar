@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useT } from '@/lib/i18n/client';
 
 export const LINKS = [
   { href: '/', label: 'Home', icon: <path d="M2.5 7.2 8 2.5l5.5 4.7V13a.5.5 0 0 1-.5.5H9.6V9.8H6.4v3.7H3a.5.5 0 0 1-.5-.5z" /> },
@@ -15,15 +16,16 @@ export const LINKS = [
 export const isActive = (href: string, path: string) => (href === '/' ? path === '/' : path === href || path.startsWith(href + '/'));
 
 export default function SideNav() {
+  const t = useT();
   const path = usePathname() || '/';
   return (
-    <nav className="side-nav" aria-label="Sections">
+    <nav className="side-nav" aria-label={t('Sections')}>
       {LINKS.map((l) => {
         const active = isActive(l.href, path);
         return (
           <Link key={l.href} href={l.href} className={`side-link ${active ? 'active' : ''}`} aria-current={active ? 'page' : undefined}>
             <svg viewBox="0 0 16 16" aria-hidden="true">{l.icon}</svg>
-            {l.label}
+            {t(l.label)}
           </Link>
         );
       })}

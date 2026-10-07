@@ -3,6 +3,7 @@ import HeartButton from './HeartButton';
 import { Opportunity, buyerOf, daysUntil, isNew, isUpdated, oppCategoryLabel, titleOf } from '@/lib/data';
 import { firstInLanguage } from '@/lib/english';
 import UpdateComment, { UpdateEvent } from './UpdateComment';
+import { getLocale, getTSync } from '@/lib/i18n/server';
 
 export type RowCopy = { headline: string | null; body: string | null } | undefined;
 
@@ -25,10 +26,11 @@ function money(value: number | null, currency: string | null) {
 const flagCode = (c: string | null) => (!c ? 'eu' : c.toUpperCase() === 'UK' ? 'gb' : c.toLowerCase());
 
 export function Ring({ value, label, gradient }: { value: number | null; label: string; gradient: string }) {
+  const t = getTSync();
   const r = 24, c = 2 * Math.PI * r;
   const v = value == null ? null : Math.max(0, Math.min(100, value));
   return (
-    <div className="ring" title={`${label}: ${v ?? 'not scored yet'}`}>
+    <div className="ring" title={`${label}: ${v ?? t('not scored yet')}`}>
       <svg viewBox="0 0 60 60" aria-hidden="true">
         <circle cx="30" cy="30" r={r} className="ring-track" />
         {v != null && (
@@ -63,44 +65,45 @@ export default function OpportunityRow({ o, copy, countryName, updates = [], lik
   const description = firstInLanguage(copy?.body, o.summary);
   const buyer = buyerOf(o);
   const urgent = days != null && days <= 14;
+  const t = getTSync();
 
   const row = (
     <Link href={`/tenders/${o.opportunity_id}`} className="opp-row">
       <div className="opp-where">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img className="flag" src={`https://flagcdn.com/${flagCode(o.country)}.svg`} alt="" width={44} height={33} loading="lazy" />
-        <span className="opp-country">{countryName ?? (o.country || 'EU / Intl')}</span>
+        <span className="opp-country">{countryName ?? (o.country || t('EU / Intl'))}</span>
       </div>
 
       <div className="opp-main">
         <div className="opp-tags">
-          {isNew(o) && <span className="tag new">New</span>}
-          {!isNew(o) && isUpdated(o) && <span className="tag updated">Updated</span>}
-          {o.opportunity_type && <span className={`tag ${o.opportunity_type}`}>{oppCategoryLabel(o.opportunity_type)}</span>}
-          {o.duration_months ? <span className="opp-chip">{o.duration_months >= 24 ? `${+(o.duration_months / 12).toFixed(1)} years` : `${o.duration_months} months`}</span> : null}
+          {isNew(o) && <span className="tag new">{t('New')}</span>}
+          {!isNew(o) && isUpdated(o) && <span className="tag updated">{t('Updated')}</span>}
+          {o.opportunity_type && <span className={`tag ${o.opportunity_type}`}>{t(oppCategoryLabel(o.opportunity_type))}</span>}
+          {o.duration_months ? <span className="opp-chip">{o.duration_months >= 24 ? t('{n} years', { n: +(o.duration_months / 12).toFixed(1) }) : t('{n} months', { n: o.duration_months })}</span> : null}
         </div>
         <h2 className="opp-title">{titleFor(o, copy)}</h2>
         {description && <p className="opp-desc">{description}</p>}
-        {buyer && <p className="opp-buyer" title={o.authority ?? ''}><span>Buyer</span>{buyer}</p>}
+        {buyer && <p className="opp-buyer" title={o.authority ?? ''}><span>{t('Buyer')}</span>{buyer}</p>}
       </div>
 
       <div className="opp-metrics">
-        <Ring value={o.opportunity_relevance_score} label="Relevance" gradient="grad-rel" />
-        <Ring value={o.bid_readiness_score} label="Fit" gradient="grad-fit" />
+        <Ring value={o.opportunity_relevance_score} label={t('Relevance')} gradient="grad-rel" />
+        <Ring value={o.bid_readiness_score} label={t('Fit')} gradient="grad-fit" />
         <div className="metric value">
-          <span className={`metric-big ${value ? 'shine' : 'muted'}`}>{value ?? 'n/d'}</span>
-          <span className="metric-label">Value</span>
+          <span className={`metric-big ${value ? 'shine' : 'muted'}`}>{value ?? t('n/d')}</span>
+          <span className="metric-label">{t('Value')}</span>
         </div>
         <div className={`metric deadline ${urgent ? 'urgent' : ''}`}>
           {days != null ? (
             <>
-              <span className={`metric-big ${urgent ? 'shine-warm' : 'shine-ink'}`}>{days <= 0 ? 'Today' : `${days}d`}</span>
-              <span className="metric-label">{new Date(o.deadline!).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+              <span className={`metric-big ${urgent ? 'shine-warm' : 'shine-ink'}`}>{days <= 0 ? t('Today') : t('{n}d', { n: days })}</span>
+              <span className="metric-label">{new Date(o.deadline!).toLocaleDateString(getLocale(), { day: 'numeric', month: 'short', year: 'numeric' })}</span>
             </>
           ) : (
             <>
-              <span className="metric-big muted">{o.opportunity_type === 'signal' ? 'Soon' : 'Open'}</span>
-              <span className="metric-label">No deadline</span>
+              <span className="metric-big muted">{o.opportunity_type === 'signal' ? t('Soon') : t('Open')}</span>
+              <span className="metric-label">{t('No deadline')}</span>
             </>
           )}
         </div>
@@ -109,7 +112,7 @@ export default function OpportunityRow({ o, copy, countryName, updates = [], lik
       {updates.length > 0 && (
         <div className="opp-updates">
           <UpdateComment e={updates[0]} compact />
-          {updates.length > 1 && <span className="uc-more">+{updates.length - 1} earlier update{updates.length > 2 ? 's' : ''}</span>}
+          {updates.length > 1 && <span className="uc-more">{updates.length > 2 ? t('+{n} earlier updates', { n: updates.length - 1 }) : t('+{n} earlier update', { n: updates.length - 1 })}</span>}
         </div>
       )}
     </Link>

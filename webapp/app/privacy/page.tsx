@@ -1,10 +1,15 @@
 import LegalPage from '@/components/LegalPage';
+import { getT, getTSync } from '@/lib/i18n/server';
 
-export const metadata = { title: 'Privacy Policy — EUDI Radar' };
+export async function generateMetadata() {
+  const t = await getT();
+  return { title: `${t('Privacy Policy')} — EUDI Radar` };
+}
 
 export default function PrivacyPage() {
+  const t = getTSync();
   return (
-    <LegalPage title="Privacy Policy" updated="2 October 2026" draft>
+    <LegalPage title={t('Privacy Policy')} updated="2026-10-02" draft englishOnly>
       <h2>Who is responsible</h2>
       <p>[WalliD legal entity name], [registered address], is the controller of the personal data described here. Contact: [privacy contact email]{' '}[and Data Protection Officer, if appointed].</p>
       <h2>What we collect</h2>

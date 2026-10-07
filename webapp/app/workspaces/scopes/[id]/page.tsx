@@ -9,6 +9,7 @@ import ScopeCard from '@/components/settings/ScopeCard';
 import { DeleteScopeForm, DocumentGroup, ScopeForm } from '@/components/settings/SettingsForms';
 import FollowingSection from '@/components/settings/FollowingSection';
 import { getCountryOptions, getFollowedSourceIds, getSources } from '@/lib/sources';
+import { getT } from '@/lib/i18n/server';
 
 // The Config Agent runs inside this page's server actions: give it time.
 export const maxDuration = 300;
@@ -19,6 +20,7 @@ export default async function ScopePage({ params }: { params: { id: string } }) 
   if (!user) redirect(`/login?next=/workspaces/scopes/${params.id}`);
   const scope = await getEditableScope(params.id);
   if (!scope) notFound();
+  const t = await getT();
   const [agents, defaults, docs, sources, countries] = await Promise.all([
     getScopeAgents(scope.id), getAgentDefaults(), getScopeDocs(scope.id), getSources(), getCountryOptions(),
   ]);
@@ -27,7 +29,7 @@ export default async function ScopePage({ params }: { params: { id: string } }) 
 
   return (
     <div className="settings">
-      <Link className="back-link" href={`/workspaces/${scope.workspaceId}`}>← Workspace</Link>
+      <Link className="back-link" href={`/workspaces/${scope.workspaceId}`}>← {t('Workspace')}</Link>
       <div className="scope-page-head">
         <h1 className="opps-h1">{scope.name}</h1>
         <div className="scope-page-switch">
@@ -37,20 +39,20 @@ export default async function ScopePage({ params }: { params: { id: string } }) 
       </div>
 
       <section className="detail-block" id="scope">
-        <h2>Scope</h2>
+        <h2>{t('Scope')}</h2>
         <ScopeForm scopeId={scope.id} name={scope.name} instructions={scope.instructions ?? ''} />
       </section>
 
       <section className="detail-block" id="context">
-        <h2>Scope context</h2>
+        <h2>{t('Scope context')}</h2>
         {DOC_KINDS.map((k) => (
           <DocumentGroup key={k.kind} scopeId={scope.id} kind={k.kind} label={k.label} hint={k.hint} docs={docs.filter((d) => d.kind === k.kind)} />
         ))}
-        <p className="field-hint">PDF, Word, PowerPoint, Excel or text · up to 50 MB · private</p>
+        <p className="field-hint">{t('PDF, Word, PowerPoint, Excel or text · up to 50 MB · private')}</p>
       </section>
 
       <section className="detail-block" id="agents">
-        <h2>Agents</h2>
+        <h2>{t('Agents')}</h2>
         <div className="agent-grid">
           {AGENTS.filter((a) => SCOPE_AGENT_KEYS.includes(a.key)).map((a) => {
             const s = agents.get(a.key);
@@ -74,7 +76,7 @@ export default async function ScopePage({ params }: { params: { id: string } }) 
 
       {!scope.isDefault && (
         <section className="detail-block danger-zone">
-          <h2>Delete scope</h2>
+          <h2>{t('Delete scope')}</h2>
           <DeleteScopeForm scopeId={scope.id} name={scope.name} />
         </section>
       )}

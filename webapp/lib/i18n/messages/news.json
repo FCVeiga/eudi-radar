@@ -1,0 +1,1010 @@
+{
+  "+{n} replies": {
+    "pt": "+{n} respostas",
+    "es": "+{n} respuestas",
+    "fr": "+{n} réponses",
+    "de": "+{n} Antworten",
+    "it": "+{n} risposte"
+  },
+  "+{n} reply": {
+    "pt": "+{n} resposta",
+    "es": "+{n} respuesta",
+    "fr": "+{n} réponse",
+    "de": "+{n} Antwort",
+    "it": "+{n} risposta"
+  },
+  "Add": {
+    "pt": "Adicionar",
+    "es": "Añadir",
+    "fr": "Ajouter",
+    "de": "Hinzufügen",
+    "it": "Aggiungi"
+  },
+  "Add a comment": {
+    "pt": "Adicionar um comentário",
+    "es": "Añade un comentario",
+    "fr": "Ajouter un commentaire",
+    "de": "Kommentar hinzufügen",
+    "it": "Aggiungi un commento"
+  },
+  "Add a video": {
+    "pt": "Adicionar um vídeo",
+    "es": "Añadir un vídeo",
+    "fr": "Ajouter une vidéo",
+    "de": "Video hinzufügen",
+    "it": "Aggiungi un video"
+  },
+  "Add images": {
+    "pt": "Adicionar imagens",
+    "es": "Añadir imágenes",
+    "fr": "Ajouter des images",
+    "de": "Bilder hinzufügen",
+    "it": "Aggiungi immagini"
+  },
+  "Add tags": {
+    "pt": "Adicionar etiquetas",
+    "es": "Añadir etiquetas",
+    "fr": "Ajouter des tags",
+    "de": "Tags hinzufügen",
+    "it": "Aggiungi tag"
+  },
+  "Agent off for this scope.": {
+    "pt": "Agente desativado para este âmbito.",
+    "es": "Agente desactivado para este ámbito.",
+    "fr": "Agent désactivé pour ce périmètre.",
+    "de": "Agent für diesen Bereich deaktiviert.",
+    "it": "Agente disattivato per questo ambito."
+  },
+  "All": {
+    "pt": "Todas",
+    "es": "Todas",
+    "fr": "Toutes",
+    "de": "Alle",
+    "it": "Tutte"
+  },
+  "Body Text (Optional)": {
+    "pt": "Texto (opcional)",
+    "es": "Texto (opcional)",
+    "fr": "Texte (facultatif)",
+    "de": "Text (optional)",
+    "it": "Testo (facoltativo)"
+  },
+  "Body text": {
+    "pt": "Texto",
+    "es": "Texto",
+    "fr": "Texte",
+    "de": "Text",
+    "it": "Testo"
+  },
+  "Body text (Markdown)": {
+    "pt": "Texto (Markdown)",
+    "es": "Texto (Markdown)",
+    "fr": "Texte (Markdown)",
+    "de": "Text (Markdown)",
+    "it": "Testo (Markdown)"
+  },
+  "Bold": {
+    "pt": "Negrito",
+    "es": "Negrita",
+    "fr": "Gras",
+    "de": "Fett",
+    "it": "Grassetto"
+  },
+  "Bulleted list": {
+    "pt": "Lista com marcadores",
+    "es": "Lista con viñetas",
+    "fr": "Liste à puces",
+    "de": "Aufzählung",
+    "it": "Elenco puntato"
+  },
+  "Cancel": {
+    "pt": "Cancelar",
+    "es": "Cancelar",
+    "fr": "Annuler",
+    "de": "Abbrechen",
+    "it": "Annulla"
+  },
+  "Close": {
+    "pt": "Fechar",
+    "es": "Cerrar",
+    "fr": "Fermer",
+    "de": "Schließen",
+    "it": "Chiudi"
+  },
+  "Code block": {
+    "pt": "Bloco de código",
+    "es": "Bloque de código",
+    "fr": "Bloc de code",
+    "de": "Codeblock",
+    "it": "Blocco di codice"
+  },
+  "Collapse replies": {
+    "pt": "Recolher respostas",
+    "es": "Contraer respuestas",
+    "fr": "Masquer les réponses",
+    "de": "Antworten einklappen",
+    "it": "Comprimi risposte"
+  },
+  "Comment": {
+    "pt": "Comentar",
+    "es": "Comentar",
+    "fr": "Commenter",
+    "de": "Kommentieren",
+    "it": "Commenta"
+  },
+  "Comments": {
+    "pt": "Comentários",
+    "es": "Comentarios",
+    "fr": "Commentaires",
+    "de": "Kommentare",
+    "it": "Commenti"
+  },
+  "Community": {
+    "pt": "Comunidade",
+    "es": "Comunidad",
+    "fr": "Communauté",
+    "de": "Community",
+    "it": "Community"
+  },
+  "Copy link": {
+    "pt": "Copiar ligação",
+    "es": "Copiar enlace",
+    "fr": "Copier le lien",
+    "de": "Link kopieren",
+    "it": "Copia link"
+  },
+  "Create a post": {
+    "pt": "Criar publicação",
+    "es": "Crear publicación",
+    "fr": "Créer une publication",
+    "de": "Beitrag erstellen",
+    "it": "Crea un post"
+  },
+  "Create the first post": {
+    "pt": "Criar a primeira publicação",
+    "es": "Crear la primera publicación",
+    "fr": "Créer la première publication",
+    "de": "Ersten Beitrag erstellen",
+    "it": "Crea il primo post"
+  },
+  "Details": {
+    "pt": "Detalhes",
+    "es": "Detalles",
+    "fr": "Détails",
+    "de": "Details",
+    "it": "Dettagli"
+  },
+  "Done": {
+    "pt": "Concluído",
+    "es": "Listo",
+    "fr": "Terminé",
+    "de": "Fertig",
+    "it": "Fatto"
+  },
+  "EUDI News": {
+    "pt": "Notícias EUDI",
+    "es": "Noticias EUDI",
+    "fr": "Actualités EUDI",
+    "de": "EUDI-Nachrichten",
+    "it": "Notizie EUDI"
+  },
+  "Email": {
+    "pt": "Email",
+    "es": "Correo electrónico",
+    "fr": "E-mail",
+    "de": "E-Mail",
+    "it": "Email"
+  },
+  "Error loading news.": {
+    "pt": "Erro ao carregar as notícias.",
+    "es": "Error al cargar las noticias.",
+    "fr": "Erreur lors du chargement des actualités.",
+    "de": "Fehler beim Laden der Nachrichten.",
+    "it": "Errore durante il caricamento delle notizie."
+  },
+  "Expand replies": {
+    "pt": "Expandir respostas",
+    "es": "Expandir respuestas",
+    "fr": "Afficher les réponses",
+    "de": "Antworten ausklappen",
+    "it": "Espandi risposte"
+  },
+  "Follow": {
+    "pt": "Seguir",
+    "es": "Seguir",
+    "fr": "Suivre",
+    "de": "Folgen",
+    "it": "Segui"
+  },
+  "Following": {
+    "pt": "A seguir",
+    "es": "Siguiendo",
+    "fr": "Abonné",
+    "de": "Gefolgt",
+    "it": "Segui già"
+  },
+  "Formatting": {
+    "pt": "Formatação",
+    "es": "Formato",
+    "fr": "Mise en forme",
+    "de": "Formatierung",
+    "it": "Formattazione"
+  },
+  "Hide": {
+    "pt": "Ocultar",
+    "es": "Ocultar",
+    "fr": "Masquer",
+    "de": "Ausblenden",
+    "it": "Nascondi"
+  },
+  "Italic": {
+    "pt": "Itálico",
+    "es": "Cursiva",
+    "fr": "Italique",
+    "de": "Kursiv",
+    "it": "Corsivo"
+  },
+  "Link": {
+    "pt": "Ligação",
+    "es": "Enlace",
+    "fr": "Lien",
+    "de": "Link",
+    "it": "Link"
+  },
+  "Link URL": {
+    "pt": "URL da ligação",
+    "es": "URL del enlace",
+    "fr": "URL du lien",
+    "de": "Link-URL",
+    "it": "URL del link"
+  },
+  "Link copied": {
+    "pt": "Ligação copiada",
+    "es": "Enlace copiado",
+    "fr": "Lien copié",
+    "de": "Link kopiert",
+    "it": "Link copiato"
+  },
+  "Log in": {
+    "pt": "Iniciar sessão",
+    "es": "Iniciar sesión",
+    "fr": "Se connecter",
+    "de": "Anmelden",
+    "it": "Accedi"
+  },
+  "Log in to post": {
+    "pt": "Inicie sessão para publicar",
+    "es": "Inicia sesión para publicar",
+    "fr": "Connectez-vous pour publier",
+    "de": "Zum Posten anmelden",
+    "it": "Accedi per pubblicare"
+  },
+  "More options": {
+    "pt": "Mais opções",
+    "es": "Más opciones",
+    "fr": "Plus d'options",
+    "de": "Weitere Optionen",
+    "it": "Altre opzioni"
+  },
+  "New tag": {
+    "pt": "Nova etiqueta",
+    "es": "Nueva etiqueta",
+    "fr": "Nouveau tag",
+    "de": "Neuer Tag",
+    "it": "Nuovo tag"
+  },
+  "News": {
+    "pt": "Notícias",
+    "es": "Noticias",
+    "fr": "Actualités",
+    "de": "Nachrichten",
+    "it": "Notizie"
+  },
+  "News Report Agent Analysis": {
+    "pt": "Análise do Agente de Relatórios de Notícias",
+    "es": "Análisis del Agente de Informes de Noticias",
+    "fr": "Analyse de l'agent Rapport d'actualités",
+    "de": "Analyse des News-Report-Agents",
+    "it": "Analisi dell'Agente Report Notizie"
+  },
+  "Next step": {
+    "pt": "Próximo passo",
+    "es": "Siguiente paso",
+    "fr": "Prochaine étape",
+    "de": "Nächster Schritt",
+    "it": "Prossimo passo"
+  },
+  "No English summary yet.": {
+    "pt": "Ainda sem resumo em inglês.",
+    "es": "Aún no hay resumen en inglés.",
+    "fr": "Pas encore de résumé en anglais.",
+    "de": "Noch keine englische Zusammenfassung.",
+    "it": "Ancora nessun riassunto in inglese."
+  },
+  "No comments yet — start the conversation.": {
+    "pt": "Ainda sem comentários — comece a conversa.",
+    "es": "Aún no hay comentarios: inicia la conversación.",
+    "fr": "Aucun commentaire pour l'instant — lancez la discussion.",
+    "de": "Noch keine Kommentare – starte die Unterhaltung.",
+    "it": "Ancora nessun commento — avvia la conversazione."
+  },
+  "No confirmed signals right now.": {
+    "pt": "Sem sinais confirmados de momento.",
+    "es": "No hay señales confirmadas por ahora.",
+    "fr": "Aucun signal confirmé pour le moment.",
+    "de": "Derzeit keine bestätigten Signale.",
+    "it": "Nessun segnale confermato al momento."
+  },
+  "No news in this section yet.": {
+    "pt": "Ainda sem notícias nesta secção.",
+    "es": "Aún no hay noticias en esta sección.",
+    "fr": "Pas encore d'actualités dans cette rubrique.",
+    "de": "Noch keine Nachrichten in diesem Bereich.",
+    "it": "Ancora nessuna notizia in questa sezione."
+  },
+  "No news item with this ID.": {
+    "pt": "Nenhuma notícia com este ID.",
+    "es": "No hay ninguna noticia con este ID.",
+    "fr": "Aucune actualité avec cet ID.",
+    "de": "Keine Nachricht mit dieser ID.",
+    "it": "Nessuna notizia con questo ID."
+  },
+  "No posts yet — start the conversation": {
+    "pt": "Ainda sem publicações — comece a conversa",
+    "es": "Aún no hay publicaciones: inicia la conversación",
+    "fr": "Aucune publication pour l'instant — lancez la discussion",
+    "de": "Noch keine Beiträge – starte die Unterhaltung",
+    "it": "Ancora nessun post — avvia la conversazione"
+  },
+  "Not found": {
+    "pt": "Não encontrado",
+    "es": "No encontrado",
+    "fr": "Introuvable",
+    "de": "Nicht gefunden",
+    "it": "Non trovato"
+  },
+  "Numbered list": {
+    "pt": "Lista numerada",
+    "es": "Lista numerada",
+    "fr": "Liste numérotée",
+    "de": "Nummerierte Liste",
+    "it": "Elenco numerato"
+  },
+  "Planned procurement": {
+    "pt": "Contratação prevista",
+    "es": "Contratación prevista",
+    "fr": "Marché prévu",
+    "de": "Geplante Beschaffung",
+    "it": "Appalto previsto"
+  },
+  "Post": {
+    "pt": "Publicar",
+    "es": "Publicar",
+    "fr": "Publier",
+    "de": "Posten",
+    "it": "Pubblica"
+  },
+  "Posting…": {
+    "pt": "A publicar…",
+    "es": "Publicando…",
+    "fr": "Publication…",
+    "de": "Wird gepostet…",
+    "it": "Pubblicazione…"
+  },
+  "Preview — the News Report Agent replaces this with the full summary.": {
+    "pt": "Pré-visualização — o Agente de Relatórios de Notícias substitui isto pelo resumo completo.",
+    "es": "Vista previa: el Agente de Informes de Noticias la sustituirá por el resumen completo.",
+    "fr": "Aperçu — l'agent Rapport d'actualités le remplace par le résumé complet.",
+    "de": "Vorschau – der News-Report-Agent ersetzt sie durch die vollständige Zusammenfassung.",
+    "it": "Anteprima — l'Agente Report Notizie la sostituisce con il riassunto completo."
+  },
+  "Quote": {
+    "pt": "Citação",
+    "es": "Cita",
+    "fr": "Citation",
+    "de": "Zitat",
+    "it": "Citazione"
+  },
+  "Remove": {
+    "pt": "Remover",
+    "es": "Quitar",
+    "fr": "Retirer",
+    "de": "Entfernen",
+    "it": "Rimuovi"
+  },
+  "Remove tag {tag}": {
+    "pt": "Remover etiqueta {tag}",
+    "es": "Quitar etiqueta {tag}",
+    "fr": "Retirer le tag {tag}",
+    "de": "Tag {tag} entfernen",
+    "it": "Rimuovi tag {tag}"
+  },
+  "Reply": {
+    "pt": "Responder",
+    "es": "Responder",
+    "fr": "Répondre",
+    "de": "Antworten",
+    "it": "Rispondi"
+  },
+  "Reply to comment": {
+    "pt": "Responder ao comentário",
+    "es": "Responder al comentario",
+    "fr": "Répondre au commentaire",
+    "de": "Auf Kommentar antworten",
+    "it": "Rispondi al commento"
+  },
+  "Reply to u/{username}": {
+    "pt": "Responder a u/{username}",
+    "es": "Responder a u/{username}",
+    "fr": "Répondre à u/{username}",
+    "de": "u/{username} antworten",
+    "it": "Rispondi a u/{username}"
+  },
+  "Report": {
+    "pt": "Denunciar",
+    "es": "Denunciar",
+    "fr": "Signaler",
+    "de": "Melden",
+    "it": "Segnala"
+  },
+  "Report from {date}": {
+    "pt": "Relatório de {date}",
+    "es": "Informe del {date}",
+    "fr": "Rapport du {date}",
+    "de": "Bericht vom {date}",
+    "it": "Report del {date}"
+  },
+  "Repost": {
+    "pt": "Republicar",
+    "es": "Republicar",
+    "fr": "Republier",
+    "de": "Reposten",
+    "it": "Ripubblica"
+  },
+  "Score {score}: relevance {relevance}, following {following}, likes {likes}, recency {recency}": {
+    "pt": "Pontuação {score}: relevância {relevance}, segue {following}, gostos {likes}, atualidade {recency}",
+    "es": "Puntuación {score}: relevancia {relevance}, siguiendo {following}, me gusta {likes}, actualidad {recency}",
+    "fr": "Score {score} : pertinence {relevance}, abonné {following}, j'aime {likes}, fraîcheur {recency}",
+    "de": "Score {score}: Relevanz {relevance}, gefolgt {following}, Likes {likes}, Aktualität {recency}",
+    "it": "Punteggio {score}: rilevanza {relevance}, seguito {following}, like {likes}, attualità {recency}"
+  },
+  "Share": {
+    "pt": "Partilhar",
+    "es": "Compartir",
+    "fr": "Partager",
+    "de": "Teilen",
+    "it": "Condividi"
+  },
+  "Share via…": {
+    "pt": "Partilhar via…",
+    "es": "Compartir mediante…",
+    "fr": "Partager via…",
+    "de": "Teilen über…",
+    "it": "Condividi tramite…"
+  },
+  "Show more": {
+    "pt": "Mostrar mais",
+    "es": "Mostrar más",
+    "fr": "Afficher plus",
+    "de": "Mehr anzeigen",
+    "it": "Mostra altro"
+  },
+  "Signal": {
+    "pt": "Sinal",
+    "es": "Señal",
+    "fr": "Signal",
+    "de": "Signal",
+    "it": "Segnale"
+  },
+  "Signals": {
+    "pt": "Sinais",
+    "es": "Señales",
+    "fr": "Signaux",
+    "de": "Signale",
+    "it": "Segnali"
+  },
+  "Social post — unconfirmed.": {
+    "pt": "Publicação em rede social — não confirmada.",
+    "es": "Publicación en redes sociales: sin confirmar.",
+    "fr": "Publication sur les réseaux sociaux — non confirmée.",
+    "de": "Social-Media-Beitrag – unbestätigt.",
+    "it": "Post sui social — non confermato."
+  },
+  "Sort posts": {
+    "pt": "Ordenar publicações",
+    "es": "Ordenar publicaciones",
+    "fr": "Trier les publications",
+    "de": "Beiträge sortieren",
+    "it": "Ordina i post"
+  },
+  "Source: {domain}": {
+    "pt": "Fonte: {domain}",
+    "es": "Fuente: {domain}",
+    "fr": "Source : {domain}",
+    "de": "Quelle: {domain}",
+    "it": "Fonte: {domain}"
+  },
+  "Start chat": {
+    "pt": "Iniciar conversa",
+    "es": "Iniciar chat",
+    "fr": "Démarrer une discussion",
+    "de": "Chat starten",
+    "it": "Avvia chat"
+  },
+  "Suggestions": {
+    "pt": "Sugestões",
+    "es": "Sugerencias",
+    "fr": "Suggestions",
+    "de": "Vorschläge",
+    "it": "Suggerimenti"
+  },
+  "Summary": {
+    "pt": "Resumo",
+    "es": "Resumen",
+    "fr": "Résumé",
+    "de": "Zusammenfassung",
+    "it": "Riassunto"
+  },
+  "Switch to Markdown": {
+    "pt": "Mudar para Markdown",
+    "es": "Cambiar a Markdown",
+    "fr": "Passer en Markdown",
+    "de": "Zu Markdown wechseln",
+    "it": "Passa a Markdown"
+  },
+  "Switch to rich text editor": {
+    "pt": "Mudar para o editor de texto formatado",
+    "es": "Cambiar al editor de texto enriquecido",
+    "fr": "Passer à l'éditeur de texte enrichi",
+    "de": "Zum Rich-Text-Editor wechseln",
+    "it": "Passa all'editor di testo formattato"
+  },
+  "Table": {
+    "pt": "Tabela",
+    "es": "Tabla",
+    "fr": "Tableau",
+    "de": "Tabelle",
+    "it": "Tabella"
+  },
+  "Text size: {size}": {
+    "pt": "Tamanho do texto: {size}",
+    "es": "Tamaño del texto: {size}",
+    "fr": "Taille du texte : {size}",
+    "de": "Textgröße: {size}",
+    "it": "Dimensione testo: {size}"
+  },
+  "Thanks — we’ll review it.": {
+    "pt": "Obrigado — vamos analisar.",
+    "es": "Gracias: lo revisaremos.",
+    "fr": "Merci — nous allons l'examiner.",
+    "de": "Danke – wir prüfen das.",
+    "it": "Grazie — lo esamineremo."
+  },
+  "The News Report Agent couldn't run: {error}. It will try again the next time this page is opened.": {
+    "pt": "O Agente de Relatórios de Notícias não conseguiu correr: {error}. Vai tentar novamente da próxima vez que esta página for aberta.",
+    "es": "El Agente de Informes de Noticias no pudo ejecutarse: {error}. Lo intentará de nuevo la próxima vez que se abra esta página.",
+    "fr": "L'agent Rapport d'actualités n'a pas pu s'exécuter : {error}. Il réessaiera à la prochaine ouverture de cette page.",
+    "de": "Der News-Report-Agent konnte nicht ausgeführt werden: {error}. Er versucht es beim nächsten Öffnen dieser Seite erneut.",
+    "it": "L'Agente Report Notizie non è riuscito a funzionare: {error}. Riproverà alla prossima apertura di questa pagina."
+  },
+  "The News Report Agent is reading the full article and writing the summary and its report — about a minute.": {
+    "pt": "O Agente de Relatórios de Notícias está a ler o artigo completo e a escrever o resumo e o relatório — cerca de um minuto.",
+    "es": "El Agente de Informes de Noticias está leyendo el artículo completo y redactando el resumen y su informe: alrededor de un minuto.",
+    "fr": "L'agent Rapport d'actualités lit l'article complet et rédige le résumé et son rapport — environ une minute.",
+    "de": "Der News-Report-Agent liest den vollständigen Artikel und schreibt die Zusammenfassung und seinen Bericht – etwa eine Minute.",
+    "it": "L'Agente Report Notizie sta leggendo l'articolo completo e scrivendo il riassunto e il report — circa un minuto."
+  },
+  "Title": {
+    "pt": "Título",
+    "es": "Título",
+    "fr": "Titre",
+    "de": "Titel",
+    "it": "Titolo"
+  },
+  "Title (required)": {
+    "pt": "Título (obrigatório)",
+    "es": "Título (obligatorio)",
+    "fr": "Titre (obligatoire)",
+    "de": "Titel (erforderlich)",
+    "it": "Titolo (obbligatorio)"
+  },
+  "Type a tag and press Enter": {
+    "pt": "Escreva uma etiqueta e prima Enter",
+    "es": "Escribe una etiqueta y pulsa Intro",
+    "fr": "Saisissez un tag et appuyez sur Entrée",
+    "de": "Tag eingeben und Enter drücken",
+    "it": "Scrivi un tag e premi Invio"
+  },
+  "Undo repost": {
+    "pt": "Anular republicação",
+    "es": "Deshacer republicación",
+    "fr": "Annuler la republication",
+    "de": "Repost rückgängig machen",
+    "it": "Annulla ripubblicazione"
+  },
+  "Unverified": {
+    "pt": "Não verificado",
+    "es": "Sin verificar",
+    "fr": "Non vérifié",
+    "de": "Unbestätigt",
+    "it": "Non verificato"
+  },
+  "Up to 10 images or videos per post.": {
+    "pt": "Até 10 imagens ou vídeos por publicação.",
+    "es": "Hasta 10 imágenes o vídeos por publicación.",
+    "fr": "Jusqu'à 10 images ou vidéos par publication.",
+    "de": "Bis zu 10 Bilder oder Videos pro Beitrag.",
+    "it": "Fino a 10 immagini o video per post."
+  },
+  "Up to {n}.": {
+    "pt": "Até {n}.",
+    "es": "Hasta {n}.",
+    "fr": "Jusqu'à {n}.",
+    "de": "Bis zu {n}.",
+    "it": "Fino a {n}."
+  },
+  "What’s wrong with it?": {
+    "pt": "Qual é o problema?",
+    "es": "¿Cuál es el problema?",
+    "fr": "Quel est le problème ?",
+    "de": "Was stimmt damit nicht?",
+    "it": "Qual è il problema?"
+  },
+  "by {date}": {
+    "pt": "até {date}",
+    "es": "antes del {date}",
+    "fr": "d'ici le {date}",
+    "de": "bis {date}",
+    "it": "entro il {date}"
+  },
+  "deleted user": {
+    "pt": "utilizador eliminado",
+    "es": "usuario eliminado",
+    "fr": "utilisateur supprimé",
+    "de": "gelöschter Nutzer",
+    "it": "utente eliminato"
+  },
+  "no": {
+    "pt": "não",
+    "es": "no",
+    "fr": "non",
+    "de": "nein",
+    "it": "no"
+  },
+  "optional": {
+    "pt": "opcional",
+    "es": "opcional",
+    "fr": "facultatif",
+    "de": "optional",
+    "it": "facoltativo"
+  },
+  "score": {
+    "pt": "pontuação",
+    "es": "puntuación",
+    "fr": "score",
+    "de": "Score",
+    "it": "punteggio"
+  },
+  "the request failed": {
+    "pt": "o pedido falhou",
+    "es": "la solicitud falló",
+    "fr": "la requête a échoué",
+    "de": "die Anfrage ist fehlgeschlagen",
+    "it": "la richiesta non è riuscita"
+  },
+  "the run is taking too long": {
+    "pt": "a execução está a demorar demasiado",
+    "es": "la ejecución está tardando demasiado",
+    "fr": "l'exécution prend trop de temps",
+    "de": "der Lauf dauert zu lange",
+    "it": "l'esecuzione sta richiedendo troppo tempo"
+  },
+  "to comment.": {
+    "pt": "para comentar.",
+    "es": "para comentar.",
+    "fr": "pour commenter.",
+    "de": "um zu kommentieren.",
+    "it": "per commentare."
+  },
+  "unknown error": {
+    "pt": "erro desconhecido",
+    "es": "error desconocido",
+    "fr": "erreur inconnue",
+    "de": "unbekannter Fehler",
+    "it": "errore sconosciuto"
+  },
+  "upload failed ({status})": {
+    "pt": "falha no carregamento ({status})",
+    "es": "error al subir ({status})",
+    "fr": "échec de l'envoi ({status})",
+    "de": "Upload fehlgeschlagen ({status})",
+    "it": "caricamento non riuscito ({status})"
+  },
+  "yes": {
+    "pt": "sim",
+    "es": "sí",
+    "fr": "oui",
+    "de": "ja",
+    "it": "sì"
+  },
+  "{n} comment": {
+    "pt": "{n} comentário",
+    "es": "{n} comentario",
+    "fr": "{n} commentaire",
+    "de": "{n} Kommentar",
+    "it": "{n} commento"
+  },
+  "{n} comments": {
+    "pt": "{n} comentários",
+    "es": "{n} comentarios",
+    "fr": "{n} commentaires",
+    "de": "{n} Kommentare",
+    "it": "{n} commenti"
+  },
+  "{n} left": {
+    "pt": "faltam {n}",
+    "es": "quedan {n}",
+    "fr": "{n} restantes",
+    "de": "{n} übrig",
+    "it": "{n} rimanenti"
+  },
+  "{n}d ago": {
+    "pt": "há {n} d",
+    "es": "hace {n} d",
+    "fr": "il y a {n} j",
+    "de": "vor {n} T.",
+    "it": "{n} g fa"
+  },
+  "{n}h ago": {
+    "pt": "há {n} h",
+    "es": "hace {n} h",
+    "fr": "il y a {n} h",
+    "de": "vor {n} Std.",
+    "it": "{n} h fa"
+  },
+  "{n}m ago": {
+    "pt": "há {n} min",
+    "es": "hace {n} min",
+    "fr": "il y a {n} min",
+    "de": "vor {n} Min.",
+    "it": "{n} min fa"
+  },
+  "Regulation": {
+    "pt": "Regulação",
+    "es": "Regulación",
+    "fr": "Réglementation",
+    "de": "Regulierung",
+    "it": "Regolamentazione"
+  },
+  "Industry": {
+    "pt": "Indústria",
+    "es": "Industria",
+    "fr": "Industrie",
+    "de": "Branche",
+    "it": "Industria"
+  },
+  "Market": {
+    "pt": "Mercado",
+    "es": "Mercado",
+    "fr": "Marché",
+    "de": "Markt",
+    "it": "Mercato"
+  },
+  "Laws, implementing acts, regulators, certification and standards": {
+    "pt": "Leis, atos de execução, reguladores, certificação e normas",
+    "es": "Leyes, actos de ejecución, reguladores, certificación y normas",
+    "fr": "Lois, actes d'exécution, régulateurs, certification et normes",
+    "de": "Gesetze, Durchführungsrechtsakte, Regulierungsbehörden, Zertifizierung und Normen",
+    "it": "Leggi, atti di esecuzione, autorità di regolamentazione, certificazione e norme"
+  },
+  "Vendors and industry players — launches, funding, partnerships, acquisitions": {
+    "pt": "Fornecedores e players da indústria — lançamentos, financiamento, parcerias, aquisições",
+    "es": "Proveedores y actores del sector: lanzamientos, financiación, alianzas, adquisiciones",
+    "fr": "Fournisseurs et acteurs du secteur — lancements, financements, partenariats, acquisitions",
+    "de": "Anbieter und Branchenakteure – Produktstarts, Finanzierung, Partnerschaften, Übernahmen",
+    "it": "Fornitori e operatori del settore — lanci, finanziamenti, partnership, acquisizioni"
+  },
+  "Governments, banks and other adopters launching or taking a stance on wallets": {
+    "pt": "Governos, bancos e outros adotantes a lançar carteiras ou a tomar posição sobre elas",
+    "es": "Gobiernos, bancos y otros adoptantes que lanzan carteras o se posicionan sobre ellas",
+    "fr": "Gouvernements, banques et autres adoptants qui lancent des portefeuilles ou prennent position",
+    "de": "Regierungen, Banken und andere Anwender, die Wallets einführen oder dazu Stellung beziehen",
+    "it": "Governi, banche e altri utilizzatori che lanciano wallet o prendono posizione"
+  },
+  "Best": {
+    "pt": "Melhores",
+    "es": "Mejores",
+    "fr": "Meilleurs",
+    "de": "Beste",
+    "it": "Migliori"
+  },
+  "New": {
+    "pt": "Novas",
+    "es": "Nuevas",
+    "fr": "Nouveaux",
+    "de": "Neu",
+    "it": "Nuovi"
+  },
+  "Top": {
+    "pt": "Top",
+    "es": "Top",
+    "fr": "Top",
+    "de": "Top",
+    "it": "Top"
+  },
+  "Tender": {
+    "pt": "Concurso",
+    "es": "Licitación",
+    "fr": "Appel d'offres",
+    "de": "Ausschreibung",
+    "it": "Gara"
+  },
+  "Publish": {
+    "pt": "Publicar",
+    "es": "Publicar",
+    "fr": "Publier",
+    "de": "Veröffentlichen",
+    "it": "Pubblicare"
+  },
+  "Participate": {
+    "pt": "Participar",
+    "es": "Participar",
+    "fr": "Participer",
+    "de": "Teilnehmen",
+    "it": "Partecipare"
+  },
+  "Announce": {
+    "pt": "Anunciar",
+    "es": "Anunciar",
+    "fr": "Annoncer",
+    "de": "Ankündigen",
+    "it": "Annunciare"
+  },
+  "Reach out": {
+    "pt": "Contactar",
+    "es": "Contactar",
+    "fr": "Prendre contact",
+    "de": "Kontakt aufnehmen",
+    "it": "Contattare"
+  },
+  "Bid": {
+    "pt": "Concorrer",
+    "es": "Licitar",
+    "fr": "Soumissionner",
+    "de": "Bieten",
+    "it": "Partecipare alla gara"
+  },
+  "Product": {
+    "pt": "Produto",
+    "es": "Producto",
+    "fr": "Produit",
+    "de": "Produkt",
+    "it": "Prodotto"
+  },
+  "Monitor": {
+    "pt": "Acompanhar",
+    "es": "Seguir de cerca",
+    "fr": "Surveiller",
+    "de": "Beobachten",
+    "it": "Monitorare"
+  },
+  "Act on this": {
+    "pt": "Agir",
+    "es": "Actuar",
+    "fr": "Agir",
+    "de": "Handeln",
+    "it": "Agire"
+  },
+  "A clear opening for WalliD": {
+    "pt": "Uma oportunidade clara para a WalliD",
+    "es": "Una oportunidad clara para WalliD",
+    "fr": "Une ouverture claire pour WalliD",
+    "de": "Eine klare Chance für WalliD",
+    "it": "Un'opportunità chiara per WalliD"
+  },
+  "Worth considering": {
+    "pt": "Vale a pena considerar",
+    "es": "Merece la pena considerarlo",
+    "fr": "À considérer",
+    "de": "Eine Überlegung wert",
+    "it": "Da valutare"
+  },
+  "Discuss with the team": {
+    "pt": "Discutir com a equipa",
+    "es": "Comentarlo con el equipo",
+    "fr": "À discuter avec l'équipe",
+    "de": "Mit dem Team besprechen",
+    "it": "Discutine con il team"
+  },
+  "Nothing to do yet": {
+    "pt": "Nada a fazer por agora",
+    "es": "Nada que hacer por ahora",
+    "fr": "Rien à faire pour l'instant",
+    "de": "Noch nichts zu tun",
+    "it": "Niente da fare per ora"
+  },
+  "high priority": {
+    "pt": "prioridade alta",
+    "es": "prioridad alta",
+    "fr": "priorité haute",
+    "de": "hohe Priorität",
+    "it": "priorità alta"
+  },
+  "medium priority": {
+    "pt": "prioridade média",
+    "es": "prioridad media",
+    "fr": "priorité moyenne",
+    "de": "mittlere Priorität",
+    "it": "priorità media"
+  },
+  "low priority": {
+    "pt": "prioridade baixa",
+    "es": "prioridad baja",
+    "fr": "priorité basse",
+    "de": "niedrige Priorität",
+    "it": "priorità bassa"
+  },
+  "Spam": {
+    "pt": "Spam",
+    "es": "Spam",
+    "fr": "Spam",
+    "de": "Spam",
+    "it": "Spam"
+  },
+  "Misleading or false": {
+    "pt": "Enganador ou falso",
+    "es": "Engañoso o falso",
+    "fr": "Trompeur ou faux",
+    "de": "Irreführend oder falsch",
+    "it": "Fuorviante o falso"
+  },
+  "Harassment or abuse": {
+    "pt": "Assédio ou abuso",
+    "es": "Acoso o abuso",
+    "fr": "Harcèlement ou abus",
+    "de": "Belästigung oder Missbrauch",
+    "it": "Molestie o abusi"
+  },
+  "Off-topic": {
+    "pt": "Fora do tema",
+    "es": "Fuera de tema",
+    "fr": "Hors sujet",
+    "de": "Themenfremd",
+    "it": "Fuori tema"
+  },
+  "Copyright": {
+    "pt": "Direitos de autor",
+    "es": "Derechos de autor",
+    "fr": "Droits d'auteur",
+    "de": "Urheberrecht",
+    "it": "Copyright"
+  },
+  "Something else": {
+    "pt": "Outro motivo",
+    "es": "Otro motivo",
+    "fr": "Autre chose",
+    "de": "Etwas anderes",
+    "it": "Altro"
+  },
+  "Large": {
+    "pt": "Grande",
+    "es": "Grande",
+    "fr": "Grand",
+    "de": "Groß",
+    "it": "Grande"
+  },
+  "Medium": {
+    "pt": "Médio",
+    "es": "Mediano",
+    "fr": "Moyen",
+    "de": "Mittel",
+    "it": "Medio"
+  },
+  "Normal": {
+    "pt": "Normal",
+    "es": "Normal",
+    "fr": "Normal",
+    "de": "Normal",
+    "it": "Normale"
+  }
+}

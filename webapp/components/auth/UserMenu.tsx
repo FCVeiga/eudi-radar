@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import UserAvatar from '@/components/UserAvatar';
 import { logOut } from '@/app/auth/actions';
 import { switchWorkspace } from '@/app/workspaces/actions';
+import { useT } from '@/lib/i18n/client';
 
 export type WorkspaceItem = { id: string; name: string; sharedBy: string | null };
 
@@ -23,6 +24,7 @@ const ITEMS = [
 export default function UserMenu({ user, workspaces = [], currentWorkspace }: {
   user: { username: string; displayName: string; avatarUrl: string | null }; workspaces?: WorkspaceItem[]; currentWorkspace?: string | null;
 }) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const box = useRef<HTMLDivElement>(null);
   const path = usePathname();
@@ -39,7 +41,7 @@ export default function UserMenu({ user, workspaces = [], currentWorkspace }: {
   return (
     <div className="user-menu" ref={box}>
       <button type="button" className="user-menu-button" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen(!open)}
-        aria-label={`Account menu for ${user.displayName}`} title={user.displayName}>
+        aria-label={t('Account menu for {name}', { name: user.displayName })} title={user.displayName}>
         <UserAvatar name={user.username} src={user.avatarUrl} size={34} />
       </button>
       {open && (
@@ -49,8 +51,8 @@ export default function UserMenu({ user, workspaces = [], currentWorkspace }: {
             <div><strong>{user.displayName}</strong><span>u/{user.username}</span></div>
           </div>
           {workspaces.length > 0 && (
-            <div className="ws-switch" role="group" aria-label="Workspaces">
-              <div className="ws-switch-title">Workspaces</div>
+            <div className="ws-switch" role="group" aria-label={t('Workspaces')}>
+              <div className="ws-switch-title">{t('Workspaces')}</div>
               {workspaces.map((w) => (
                 <form key={w.id} action={switchWorkspace.bind(null, w.id, path || '/')}>
                   <button type="submit" role="menuitemradio" aria-checked={w.id === currentWorkspace} className={`user-menu-item ws-item ${w.id === currentWorkspace ? 'on' : ''}`}>
@@ -59,17 +61,17 @@ export default function UserMenu({ user, workspaces = [], currentWorkspace }: {
                   </button>
                 </form>
               ))}
-              <Link href="/workspaces?new=1" className="user-menu-item ws-new">+ New workspace</Link>
+              <Link href="/workspaces?new=1" className="user-menu-item ws-new">+ {t('New workspace')}</Link>
             </div>
           )}
           {ITEMS.map((i) => (
             <Link key={i.href} role="menuitem" href={i.href === 'profile' ? `/u/${user.username}` : i.href} className="user-menu-item">
-              <svg viewBox="0 0 16 16" aria-hidden="true">{i.icon}</svg>{i.label}
+              <svg viewBox="0 0 16 16" aria-hidden="true">{i.icon}</svg>{t(i.label)}
             </Link>
           ))}
           <form action={logOut}>
             <button type="submit" role="menuitem" className="user-menu-item danger">
-              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 2.5H3.5v11H6M10 5l3 3-3 3M13 8H6.5" /></svg>Log out
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 2.5H3.5v11H6M10 5l3 3-3 3M13 8H6.5" /></svg>{t('Log out')}
             </button>
           </form>
         </div>

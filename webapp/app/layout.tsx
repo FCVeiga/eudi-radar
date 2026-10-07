@@ -9,6 +9,8 @@ import SourcesSidebar from '@/components/SourcesSidebar';
 import WorkingAgents from '@/components/WorkingAgents';
 import { getPlatformLanguage } from '@/lib/language';
 import { getCurrentUser } from '@/lib/auth';
+import { I18nProvider } from '@/lib/i18n/client';
+import { getLang, getT, getTheme, messagesFor } from '@/lib/i18n/server';
 import WorkspaceSwitcher from '@/components/WorkspaceSwitcher';
 import UserMenu, { type WorkspaceItem } from '@/components/auth/UserMenu';
 import { getContext, getMyWorkspaces } from '@/lib/accounts';
@@ -28,22 +30,29 @@ const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', displ
 // viewport-fit=cover: the layout pads itself for the notch and home indicator.
 export const viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover', themeColor: '#ffffff' };
 
-export const metadata = {
-  title: 'EUDI Radar — WalliD',
-  description: 'Digital identity & wallet opportunity intelligence',
-};
+export async function generateMetadata() {
+  const t = await getT();
+  return {
+    title: 'EUDI Radar — WalliD',
+    description: t('Digital identity & wallet opportunity intelligence'),
+  };
+}
 
 // Reddit-style shell: fixed navbar, fixed left sidebar (sections + followed
 // workspaces); pages render in the remaining area.
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const [language, user] = await Promise.all([getPlatformLanguage(), getCurrentUser()]);
+  const [, user] = await Promise.all([getPlatformLanguage(), getCurrentUser()]);
+  const uiLang = getLang();
+  const theme = getTheme();
+  const t = await getT();
   const [mine, ctx] = user ? await Promise.all([getMyWorkspaces(), getContext()]) : [[], null];
   const workspaces: WorkspaceItem[] = mine.map((m) => ({ id: m.workspace.id, name: m.workspace.name, sharedBy: m.workspace.ownerId === user?.id ? null : m.owner.username }));
   return (
-    <html lang={language.code} className={`${sans.variable} ${mono.variable}`}>
+    <html lang={uiLang} data-theme={theme} className={`${sans.variable} ${mono.variable}`}>
       <body>
+        <I18nProvider lang={uiLang} messages={messagesFor(uiLang)}>
         <header className="topbar">
-          <Link href="/" className="brand" aria-label="EUDI Radar home">
+          <Link href="/" className="brand" aria-label={t('EUDI Radar home')}>
             <Image src="/wallid-logo-mark.png" alt="WalliD" width={98} height={26} priority />
             <span className="brand-divider" />
             <span className="brand-product">EUDI Radar</span>
@@ -53,8 +62,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <div className="auth-buttons">
             {user ? <UserMenu user={{ username: user.username, displayName: user.displayName, avatarUrl: user.avatarUrl }} workspaces={workspaces} currentWorkspace={ctx?.workspace.id ?? null} /> : (
               <>
-                <Link href="/login" className="btn">Log in</Link>
-                <Link href="/signup" className="btn primary">Sign up</Link>
+                <Link href="/login" className="btn">{t('Log in')}</Link>
+                <Link href="/signup" className="btn primary">{t('Sign up')}</Link>
               </>
             )}
           </div>
@@ -62,7 +71,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </header>
         <div className="shell">
           <MenuBackdrop />
-          <aside className="sidebar" aria-label="Sources and agents">
+          <aside className="sidebar" aria-label={t('Sources and agents')}>
             {ctx && <WorkspaceSwitcher activeId={ctx.workspace.id} workspaces={mine.map((m) => ({
               id: m.workspace.id, name: m.workspace.name, role: m.role, sharedBy: m.workspace.ownerId === user?.id ? null : m.owner.username,
             }))} />}
@@ -78,22 +87,23 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   <span><strong>{user.displayName}</strong><em>u/{user.username}</em></span>
                 </Link>
                 <nav className="sidebar-user-links">
-                  <Link href="/posts/new">New post</Link><Link href="/notifications">Notifications</Link><Link href="/chat">Chat</Link><Link href="/workspaces">Workspaces</Link><Link href="/settings">Settings</Link>
-                  <Link href="/help">Help</Link><Link href="/terms">Terms &amp; Conditions</Link><Link href="/privacy">Privacy policy</Link>
+                  <Link href="/posts/new">{t('New post')}</Link><Link href="/notifications">{t('Notifications')}</Link><Link href="/chat">{t('Chat')}</Link><Link href="/workspaces">{t('Workspaces')}</Link><Link href="/settings">{t('Settings')}</Link>
+                  <Link href="/help">{t('Help')}</Link><Link href="/terms">{t('Terms & Conditions')}</Link><Link href="/privacy">{t('Privacy policy')}</Link>
                 </nav>
-                <form action={logOut}><button type="submit" className="btn">Log out</button></form>
+                <form action={logOut}><button type="submit" className="btn">{t('Log out')}</button></form>
               </div>
             ) : (
               <div className="sidebar-auth">
-                <Link href="/login" className="btn">Log in</Link>
-                <Link href="/signup" className="btn primary">Sign up</Link>
+                <Link href="/login" className="btn">{t('Log in')}</Link>
+                <Link href="/signup" className="btn primary">{t('Sign up')}</Link>
               </div>
             )}
-            <div className="sidebar-foot">WalliD · EUDI Radar<br /><span className="mono">TED · Tavily · official portals</span></div>
+            <div className="sidebar-foot">WalliD · EUDI Radar<br /><span className="mono">TED · Tavily · {t('official portals')}</span></div>
           </aside>
           <main className="content">{children}</main>
         </div>
         <BottomNav />
+        </I18nProvider>
       </body>
     </html>
   );

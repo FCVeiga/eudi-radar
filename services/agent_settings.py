@@ -73,9 +73,10 @@ def load(session, search_defaults: dict = None) -> None:
         _state["overrides"] = {r.agent_key: r.prompt_override for r in rows if r.prompt_override and r.agent_key in PLATFORM_AGENTS + ["translator"]}
 
         scopes = session.execute(text("""select s.id, s.name, s.instructions, s.active, s.is_default, s.search_config, s.last_run_at,
-                   s.workspace_id, a.kind, a.plan,
+                   s.workspace_id, a.plan,
                    row_number() over (partition by s.workspace_id order by s.created_at) as rank
-            from scopes s left join workspaces w on w.id = s.workspace_id left join accounts a on a.id = w.account_id
+            from scopes s left join workspaces w on w.id = s.workspace_id
+            left join accounts a on a.owner_id = w.owner_id and a.kind = 'personal'
             order by s.is_default desc, s.created_at""")).fetchall()
         scopes = [s for s in scopes if _due(s)]
         agents = session.execute(text("select scope_id, agent_key, enabled, prompt_override from scope_agent_settings")).fetchall()
@@ -96,7 +97,7 @@ def load(session, search_defaults: dict = None) -> None:
 
 
 def _due(s) -> bool:
-    """Does this scope run now? Active, covered by its account's plan, and due
+    """Does this scope run now? Active, covered by its workspace owner's plan, and due
     by the plan's cadence (the default scope: once a day). FORCE_ALL_SCOPES=1
     runs every eligible scope regardless of cadence."""
     from datetime import datetime, timezone
@@ -105,13 +106,10 @@ def _due(s) -> bool:
     else:
         if not s.active:
             return False
-        if s.kind == "platform":
-            runs = 1
-        else:
-            plan = s.plan or "free"
-            if s.rank > SCOPES_PER_PLAN.get(plan, 0):
-                return False  # beyond the plan's scopes (e.g. after a downgrade), or Free
-            runs = RUNS_PER_DAY.get(plan, 1)
+        plan = s.plan or "free"  # the workspace owner's plan
+        if s.rank > SCOPES_PER_PLAN.get(plan, 0):
+            return False  # beyond the plan's scopes (e.g. after a downgrade), or Free
+        runs = RUNS_PER_DAY.get(plan, 1)
     if os.environ.get("FORCE_ALL_SCOPES") == "1" or s.last_run_at is None:
         return True
     hours = (datetime.now(timezone.utc) - s.last_run_at).total_seconds() / 3600

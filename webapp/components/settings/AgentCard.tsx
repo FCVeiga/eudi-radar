@@ -81,7 +81,7 @@ export default function AgentCard({ agent, enabled, instructions, config, custom
             <h2>{agent.name} — {custom ? 'customised configuration' : 'default configuration'}</h2>
             <button type="button" className="modal-close" aria-label="Close" onClick={() => dialog.current?.close()}>×</button>
           </div>
-          {readOnly && <p className="form-msg readonly-note">Read-only — {scopeId ? 'only this workspace’s admins can change it, on a plan that allows customizing' : 'workspace agents are configured by the platform’s admins'}.</p>}
+          {readOnly && <p className="form-msg readonly-note">Read-only — {scopeId ? 'only this workspace’s admins can change it, on a plan that allows customizing' : 'workspace agents are managed for you'}.</p>}
           <p className="field-hint">
             {search
               ? 'JSON: the TED phrases, web and news queries, site-search terms and the Triage Agent’s relevance rules. Fine-tuning describes the search scope and replaces it.'

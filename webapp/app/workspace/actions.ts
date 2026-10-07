@@ -9,13 +9,17 @@ import { getCurrentUser } from '@/lib/auth';
 import { AGENTS, agentByKey } from '@/lib/agents';
 import { DOC_KINDS } from '@/lib/settings';
 import { PLATFORM_AGENT_KEYS, SCOPE_AGENT_KEYS, getEditableScope } from '@/lib/scopes';
-import { getContext, isPlatformAdmin } from '@/lib/accounts';
+import { getContext, getMembership, getMyWorkspaces, getPersonalAccount, isPlatformAdmin } from '@/lib/accounts';
+import { randomBytes } from 'crypto';
+import { siteOrigin } from '@/lib/auth';
+import { PLANS, planOf } from '@/lib/plans';
+import { PRICE_ENV, billingReady, stripe } from '@/lib/billing';
 import { fileText } from '@/lib/fileText';
 import {
   friendlyError, parseSearchScope, tuneJson, tunePrompt, validateDocumentsConfig, validatePrompt, validateSearchConfig,
 } from '@/lib/configAgent';
 
-export type FormState = { ok: boolean; message: string } | null;
+export type FormState = { ok: boolean; message: string; link?: string } | null;
 const BUCKET = 'company-files';
 const MAX_BYTES = 50 * 1024 * 1024;
 const FILE_TYPES = /\.(pdf|docx|pptx|xlsx|txt|md|csv)$/i;
@@ -41,9 +45,9 @@ const refresh = (scopeId?: string) => {
 export async function createScope() {
   const ctx = await getContext();
   if (!ctx) redirect('/login?next=/workspace');
-  if (!ctx.canCustomize) redirect('/settings#billing');
+  if (!ctx.canCustomize) redirect('/workspace#plan');
   const { count } = await db().from('scopes').select('id', { count: 'exact', head: true }).eq('workspace_id', ctx.workspace.id);
-  if (ctx.account.kind !== 'platform' && (count ?? 0) >= ctx.account.plan.scopes) redirect('/settings#billing');
+  if (!ctx.isDefault && (count ?? 0) >= ctx.plan.scopes) redirect('/workspace#plan');
   const { data, error } = await db().from('scopes').insert({ owner_id: (await getCurrentUser())!.id, workspace_id: ctx.workspace.id, name: 'New scope', active: true })
     .select('id').single();
   if (error || !data) throw new Error(error?.message || 'Could not create the scope.');
@@ -263,4 +267,174 @@ export async function resetAgentConfig(key: string, scopeId: string | null = nul
     await t.write({ instructions: null, prompt_override: null, status: null, error: null });
   }
   refresh(scopeId ?? undefined);
+}
+
+/* ---------------- Workspaces ---------------- */
+
+/** Make a workspace the one the whole site shows (any workspace the user is in). */
+export async function switchWorkspace(workspaceId: string, next?: string) {
+  const user = await getCurrentUser();
+  if (!user) redirect('/login');
+  if (await getMembership(workspaceId)) await db().from('profiles').update({ current_workspace_id: workspaceId }).eq('id', user.id);
+  revalidatePath('/', 'layout');
+  redirect(next && next.startsWith('/') && !next.startsWith('//') ? next : '/');
+}
+
+/** A new workspace of your own (Teams: unlimited; other plans: one). You're its admin; the site switches to it. */
+export async function createWorkspace(_prev: FormState, form: FormData): Promise<FormState> {
+  const user = await getCurrentUser();
+  if (!user) return { ok: false, message: 'Log in first.' };
+  const name = String(form.get('name') || '').trim().slice(0, 80);
+  if (name.length < 2) return { ok: false, message: 'Give the workspace a name.' };
+  const account = await getPersonalAccount(user.id);
+  if (!account) return { ok: false, message: 'Your account isn’t set up yet.' };
+  const owned = (await getMyWorkspaces()).filter((m) => m.workspace.ownerId === user.id && !m.isDefault).length;
+  if (account.plan.workspaces !== null && owned >= account.plan.workspaces) {
+    return { ok: false, message: `The ${account.plan.name} plan has ${account.plan.workspaces} workspace — Teams has unlimited workspaces.` };
+  }
+  const { data: ws, error } = await db().from('workspaces').insert({ account_id: account.id, owner_id: user.id, name, created_by: user.id }).select('id').single();
+  if (error || !ws) return { ok: false, message: error?.message || 'Could not create the workspace.' };
+  await db().from('workspace_members').insert({ workspace_id: ws.id, user_id: user.id, role: 'admin' });
+  await db().from('profiles').update({ current_workspace_id: ws.id }).eq('id', user.id);
+  revalidatePath('/', 'layout');
+  redirect('/workspace');
+}
+
+export async function renameWorkspace(workspaceId: string, name: string) {
+  const m = await getMembership(workspaceId);
+  if (!m || m.role !== 'admin' || name.trim().length < 2) return;
+  await db().from('workspaces').update({ name: name.trim().slice(0, 80) }).eq('id', workspaceId);
+  revalidatePath('/', 'layout');
+}
+
+/** Delete a workspace you own (not your last one, not the default scope's). */
+export async function deleteWorkspace(workspaceId: string): Promise<{ error?: string }> {
+  const user = await getCurrentUser();
+  const mine = await getMyWorkspaces();
+  const m = mine.find((x) => x.workspace.id === workspaceId);
+  if (!user || !m || m.workspace.ownerId !== user.id) return { error: 'Only the workspace’s owner can delete it.' };
+  if (m.isDefault) return { error: 'This workspace holds the default scope.' };
+  if (mine.filter((x) => x.workspace.ownerId === user.id && !x.isDefault).length <= 1) return { error: 'You keep at least one workspace.' };
+  await db().from('workspaces').delete().eq('id', workspaceId);
+  await db().from('profiles').update({ current_workspace_id: null }).eq('current_workspace_id', workspaceId);
+  revalidatePath('/', 'layout');
+  redirect('/workspace');
+}
+
+/* ---------------- Members (Teams) ---------------- */
+
+/** An invitation link to this workspace (as admin or member). The owner must be on Teams. */
+export async function inviteMember(_prev: FormState, form: FormData): Promise<FormState> {
+  const workspaceId = String(form.get('workspace') || '');
+  const m = await getMembership(workspaceId);
+  if (!m || m.role !== 'admin') return { ok: false, message: 'Only this workspace’s admins can add people.' };
+  if (m.plan.key !== 'teams') return { ok: false, message: 'Adding team members needs the Teams plan.' };
+  const email = String(form.get('email') || '').trim().toLowerCase().slice(0, 200) || null;
+  const role = form.get('role') === 'admin' ? 'admin' : 'member';
+  const account = await getPersonalAccount(m.workspace.ownerId);
+  const user = await getCurrentUser();
+  const token = randomBytes(24).toString('base64url');
+  const { error } = await db().from('account_invites').insert({ account_id: account!.id, workspace_id: workspaceId, email, role, token, invited_by: user!.id });
+  if (error) return { ok: false, message: error.message };
+  revalidatePath('/workspace');
+  return { ok: true, message: 'Invitation ready — copy the link and send it. It works for 14 days.', link: `${siteOrigin()}/invite/${token}` };
+}
+
+export async function revokeInvite(inviteId: string) {
+  const { data: inv } = await db().from('account_invites').select('workspace_id').eq('id', inviteId).maybeSingle();
+  const m = inv?.workspace_id ? await getMembership(inv.workspace_id) : null;
+  if (!m || m.role !== 'admin') return;
+  await db().from('account_invites').delete().eq('id', inviteId);
+  revalidatePath('/workspace');
+}
+
+async function adminCount(workspaceId: string) {
+  const { count } = await db().from('workspace_members').select('user_id', { count: 'exact', head: true }).eq('workspace_id', workspaceId).eq('role', 'admin');
+  return count ?? 0;
+}
+
+export async function setMemberRole(workspaceId: string, userId: string, role: 'admin' | 'member'): Promise<{ error?: string }> {
+  const m = await getMembership(workspaceId);
+  if (!m || m.role !== 'admin') return { error: 'Only admins can change roles.' };
+  if (userId === m.workspace.ownerId) return { error: 'The workspace’s owner is always an admin.' };
+  await db().from('workspace_members').update({ role }).match({ workspace_id: workspaceId, user_id: userId });
+  revalidatePath('/workspace');
+  return {};
+}
+
+/** Remove someone from the workspace (admins), or leave it yourself. */
+export async function removeMember(workspaceId: string, userId: string): Promise<{ error?: string }> {
+  const user = await getCurrentUser();
+  const m = await getMembership(workspaceId);
+  if (!user || !m) return { error: 'Not allowed.' };
+  const self = userId === user.id;
+  if (userId === m.workspace.ownerId) return { error: 'The owner can’t leave their own workspace — delete it instead.' };
+  if (!self && m.role !== 'admin') return { error: 'Only admins can remove people.' };
+  const { data: target } = await db().from('workspace_members').select('role').match({ workspace_id: workspaceId, user_id: userId }).maybeSingle();
+  if (target?.role === 'admin' && (await adminCount(workspaceId)) <= 1) return { error: 'The workspace needs at least one admin.' };
+  await db().from('workspace_members').delete().match({ workspace_id: workspaceId, user_id: userId });
+  await db().from('profiles').update({ current_workspace_id: null }).eq('id', userId).eq('current_workspace_id', workspaceId);
+  revalidatePath('/', 'layout');
+  if (self) redirect('/workspace');
+  return {};
+}
+
+/** /invite/[token]: join the workspace. */
+export async function acceptInvite(token: string): Promise<{ error?: string }> {
+  const user = await getCurrentUser();
+  if (!user) redirect(`/login?next=/invite/${encodeURIComponent(token)}`);
+  const { data: inv } = await db().from('account_invites').select('*').eq('token', token).maybeSingle();
+  if (!inv?.workspace_id || inv.accepted_at || new Date(inv.expires_at) < new Date()) return { error: 'This invitation has expired or was already used.' };
+  if (inv.email && inv.email !== user.email.toLowerCase()) return { error: `This invitation is for ${inv.email}. Log in with that account.` };
+  await db().from('workspace_members').upsert({ workspace_id: inv.workspace_id, user_id: user.id, role: inv.role }, { onConflict: 'workspace_id,user_id' });
+  await db().from('account_invites').update({ accepted_by: user.id, accepted_at: new Date().toISOString() }).eq('id', inv.id);
+  await db().from('profiles').update({ current_workspace_id: inv.workspace_id }).eq('id', user.id);
+  revalidatePath('/', 'layout');
+  redirect('/');
+}
+
+/* ---------------- Plan (your personal account) ---------------- */
+
+export async function startCheckout(plan: string): Promise<{ error?: string }> {
+  const user = await getCurrentUser();
+  if (!user) return { error: 'Log in first.' };
+  const account = await getPersonalAccount(user.id);
+  const p = planOf(plan);
+  if (!account || p.key === 'free') return { error: 'That plan isn’t available.' };
+  const s = stripe();
+  if (!s || !billingReady()) return { error: 'Online payments aren’t set up yet — contact us to change your plan.' };
+  let customer = account.stripeCustomerId;
+  if (!customer) {
+    const c = await s.customers.create({ email: user.email, name: user.displayName, metadata: { account_id: account.id } });
+    customer = c.id;
+    await db().from('accounts').update({ stripe_customer_id: customer }).eq('id', account.id);
+  }
+  const session = await s.checkout.sessions.create({
+    mode: 'subscription', customer,
+    line_items: [{ price: process.env[PRICE_ENV[p.key]]!, quantity: 1 }],
+    success_url: `${siteOrigin()}/workspace?billing=success#plan`,
+    cancel_url: `${siteOrigin()}/workspace#plan`,
+    metadata: { account_id: account.id, plan: p.key },
+    subscription_data: { metadata: { account_id: account.id, plan: p.key } },
+    allow_promotion_codes: true,
+  });
+  redirect(session.url!);
+}
+
+export async function openBillingPortal(): Promise<{ error?: string }> {
+  const user = await getCurrentUser();
+  const account = user ? await getPersonalAccount(user.id) : null;
+  const s = stripe();
+  if (!s || !account?.stripeCustomerId) return { error: 'No billing account yet.' };
+  const portal = await s.billingPortal.sessions.create({ customer: account.stripeCustomerId, return_url: `${siteOrigin()}/workspace#plan` });
+  redirect(portal.url);
+}
+
+/** Internal: assign a plan by hand (complimentary), e.g. before Stripe is set up. */
+export async function adminSetPlan(userId: string, plan: string): Promise<{ error?: string }> {
+  if (!(await isPlatformAdmin())) return { error: 'Not allowed.' };
+  if (!PLANS.some((p) => p.key === plan)) return { error: 'Unknown plan.' };
+  await db().from('accounts').update({ plan, plan_status: plan === 'free' ? 'active' : 'comped' }).eq('kind', 'personal').eq('owner_id', userId);
+  revalidatePath('/', 'layout');
+  return {};
 }

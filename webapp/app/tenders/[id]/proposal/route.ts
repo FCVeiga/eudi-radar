@@ -1,6 +1,6 @@
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
-import { getMyAccounts } from '@/lib/accounts';
+import { getMembership } from '@/lib/accounts';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,7 +11,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   if (!/^[0-9a-f]{12,40}$/.test(params.id) || !user || !/^[0-9a-f-]{36}$/.test(scopeId)) return new Response('Not found', { status: 404 });
   const db = getSupabaseServerClient();
   const { data: scope } = await db.from('scopes').select('workspace_id').eq('id', scopeId).maybeSingle();
-  const mine = (await getMyAccounts()).some((a) => a.workspaces.some((w) => w.id === scope?.workspace_id));
+  const mine = !!scope?.workspace_id && !!(await getMembership(scope.workspace_id));
   if (!mine) return new Response('Not found', { status: 404 });
   const [{ data: row }, { data: o }] = await Promise.all([
     db.from('scope_evaluations').select('proposal_brief').match({ scope_id: scopeId, opportunity_id: params.id }).maybeSingle(),

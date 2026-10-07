@@ -39,7 +39,9 @@ export async function ensurePersonalAccount(userId: string, name: string) {
   const { data: acc } = await db.from('accounts').insert({ kind: 'personal', name, owner_id: userId, plan: 'free' }).select('id').single();
   if (!acc) return;
   await db.from('account_members').insert({ account_id: acc.id, user_id: userId, role: 'admin' });
-  const { data: ws } = await db.from('workspaces').insert({ account_id: acc.id, name: 'My workspace', created_by: userId }).select('id').single();
-  if (ws) await db.from('profiles').update({ current_workspace_id: ws.id }).eq('id', userId);
+  const { data: ws } = await db.from('workspaces').insert({ account_id: acc.id, owner_id: userId, name: 'My workspace', created_by: userId }).select('id').single();
+  if (!ws) return;
+  await db.from('workspace_members').insert({ workspace_id: ws.id, user_id: userId, role: 'admin' });
+  await db.from('profiles').update({ current_workspace_id: ws.id }).eq('id', userId);
 }
 

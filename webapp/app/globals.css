@@ -1489,10 +1489,13 @@ a.profile-post:hover { border-color: var(--border-strong); }
 .ws-chip-dot { width: 26px; height: 26px; border-radius: 8px; background: var(--brand-gradient); flex-shrink: 0; }
 .ws-switch { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin: 4px 0; padding: 6px 0; max-height: 300px; overflow-y: auto; }
 .ws-switch-title { font-family: var(--font-mono-stack); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--subtle); padding: 4px 10px; }
-.ws-group-label { display: flex; justify-content: space-between; padding: 6px 10px 2px; font-size: 12px; font-weight: 600; color: var(--ink); }
-.ws-group-label span { font-weight: 500; color: var(--subtle); font-size: 11px; }
 .ws-item { padding-left: 12px; }
 .ws-item.on { color: var(--accent); font-weight: 600; }
+.ws-owner { margin-left: auto; font-size: 11px; color: var(--subtle); font-weight: 400; }
+.ws-title { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.ws-title .ws-delete { margin-left: 8px; height: 30px; font-size: 12.5px; }
+.ws-rename input { font-size: 18px; font-weight: 600; }
+.member-error { flex-basis: 100%; margin: 0; }
 .ws-check { width: 14px; text-align: center; color: var(--accent); }
 .ws-new { color: var(--accent); font-weight: 600; }
 .account-tabs { margin-bottom: 16px; flex-wrap: wrap; }

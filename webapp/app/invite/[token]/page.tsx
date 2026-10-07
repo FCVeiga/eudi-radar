@@ -3,17 +3,17 @@ import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import AuthCard from '@/components/auth/AuthCard';
-import { acceptInvite } from '@/app/settings/actions';
+import { acceptInvite } from '@/app/workspace/actions';
 
-export const metadata = { title: 'Join a team — EUDI Radar' };
+export const metadata = { title: 'Join a workspace — EUDI Radar' };
 
-/** An invitation link: shows the team and role; joining needs an account (log in or sign up first). */
+/** An invitation link: shows the workspace and role; joining needs an account (log in or sign up first). */
 export default async function InvitePage({ params, searchParams }: { params: { token: string }; searchParams: { error?: string } }) {
   const db = getSupabaseServerClient();
-  const { data: inv } = await db.from('account_invites').select('role, email, expires_at, accepted_at, accounts(name)').eq('token', params.token).maybeSingle();
+  const { data: inv } = await db.from('account_invites').select('role, email, expires_at, accepted_at, workspaces(name)').eq('token', params.token).maybeSingle();
   const user = await getCurrentUser();
   const valid = inv && !inv.accepted_at && new Date(inv.expires_at) > new Date();
-  const team = (inv as any)?.accounts?.name ?? 'a team';
+  const team = (inv as any)?.workspaces?.name ?? 'a workspace';
   const join = async () => {
     'use server';
     const r = await acceptInvite(params.token);
@@ -21,7 +21,7 @@ export default async function InvitePage({ params, searchParams }: { params: { t
   };
   return (
     <AuthCard title={valid ? `Join ${team}` : 'Invitation not valid'}
-      sub={valid ? `You’re invited as ${inv!.role === 'admin' ? 'an admin — you’ll configure the team’s workspaces and agents' : 'a member — you’ll see the results of the team’s agents'}.` : 'This invitation has expired or was already used. Ask the team’s admin for a new link.'}>
+      sub={valid ? `You’re invited as ${inv!.role === 'admin' ? 'an admin — you’ll configure its scopes and agents' : 'a member — you’ll see the results of its agents'}.` : 'This invitation has expired or was already used. Ask the workspace’s admin for a new link.'}>
       {searchParams.error && <p className="form-msg err">{searchParams.error}</p>}
       {valid && (user
         ? <form action={join} className="auth-form"><button type="submit" className="btn primary auth-submit">Join {team}</button></form>

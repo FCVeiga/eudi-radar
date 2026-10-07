@@ -9,8 +9,8 @@ import SourcesSidebar from '@/components/SourcesSidebar';
 import WorkingAgents from '@/components/WorkingAgents';
 import { getPlatformLanguage } from '@/lib/language';
 import { getCurrentUser } from '@/lib/auth';
-import UserMenu, { type WorkspaceGroup } from '@/components/auth/UserMenu';
-import { getContext, getMyAccounts } from '@/lib/accounts';
+import UserMenu, { type WorkspaceItem } from '@/components/auth/UserMenu';
+import { getContext, getMyWorkspaces } from '@/lib/accounts';
 import NavActions from '@/components/social/NavActions';
 import UserAvatar from '@/components/UserAvatar';
 import { logOut } from '@/app/auth/actions';
@@ -33,14 +33,11 @@ export const metadata = {
 };
 
 // Reddit-style shell: fixed navbar, fixed left sidebar (sections + followed
-// accounts); pages render in the remaining area.
+// workspaces); pages render in the remaining area.
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const [language, user] = await Promise.all([getPlatformLanguage(), getCurrentUser()]);
-  const [accounts, ctx] = user ? await Promise.all([getMyAccounts(), getContext()]) : [[], null];
-  const groups: WorkspaceGroup[] = accounts.map(({ account: a, workspaces }) => ({
-    label: a.kind === 'personal' ? 'Personal' : a.name, plan: a.kind === 'platform' ? 'Platform' : a.plan.name,
-    items: workspaces.map((w) => ({ id: w.id, name: w.name })),
-  }));
+  const [mine, ctx] = user ? await Promise.all([getMyWorkspaces(), getContext()]) : [[], null];
+  const workspaces: WorkspaceItem[] = mine.map((m) => ({ id: m.workspace.id, name: m.workspace.name, sharedBy: m.workspace.ownerId === user?.id ? null : m.owner.username }));
   return (
     <html lang={language.code} className={`${sans.variable} ${mono.variable}`}>
       <body>
@@ -53,7 +50,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <Suspense fallback={<div className="search-box" />}><SearchBox /></Suspense>
           {user && <NavActions />}
           <div className="auth-buttons">
-            {user ? <UserMenu user={{ username: user.username, displayName: user.displayName, avatarUrl: user.avatarUrl }} groups={groups} currentWorkspace={ctx?.workspace.id ?? null} /> : (
+            {user ? <UserMenu user={{ username: user.username, displayName: user.displayName, avatarUrl: user.avatarUrl }} workspaces={workspaces} currentWorkspace={ctx?.workspace.id ?? null} /> : (
               <>
                 <Link href="/login" className="btn">Log in</Link>
                 <Link href="/signup" className="btn primary">Sign up</Link>
@@ -68,7 +65,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             {ctx && (
               <Link href="/workspace" className="ws-chip" title="Your current workspace — switch from your account menu">
                 <span className="ws-chip-dot" aria-hidden="true" />
-                <span><strong>{ctx.workspace.name}</strong><em>{ctx.account.kind === 'personal' ? 'Personal' : ctx.account.name} · {ctx.account.kind === 'platform' ? 'Platform' : ctx.account.plan.name}</em></span>
+                <span><strong>{ctx.workspace.name}</strong><em>{ctx.isOwner ? 'Yours' : `Shared by u/${ctx.owner.username}`} · {ctx.isAdmin ? 'Admin' : 'Member'}</em></span>
               </Link>
             )}
             <SideNav />
@@ -83,7 +80,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   <span><strong>{user.displayName}</strong><em>u/{user.username}</em></span>
                 </Link>
                 <nav className="sidebar-user-links">
-                  <Link href="/posts/new">New post</Link><Link href="/notifications">Notifications</Link><Link href="/chat">Chat</Link><Link href="/workspace">Workspace</Link><Link href="/settings">Settings</Link>
+                  <Link href="/posts/new">New post</Link><Link href="/notifications">Notifications</Link><Link href="/chat">Chat</Link><Link href="/workspace">Workspace</Link>
                   <Link href="/help">Help</Link><Link href="/terms">Terms &amp; Conditions</Link><Link href="/privacy">Privacy policy</Link>
                 </nav>
                 <form action={logOut}><button type="submit" className="btn">Log out</button></form>

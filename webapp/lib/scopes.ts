@@ -59,7 +59,7 @@ export const getViewScopes = cache(async (): Promise<{ scopes: Scope[]; own: boo
   const ctx = await getContext();
   const db = getSupabaseServerClient();
   if (ctx) {
-    const limit = ctx.account.kind === 'platform' ? 1000 : ctx.account.plan.scopes;
+    const limit = ctx.isDefault ? 1000 : ctx.plan.scopes;
     const { data } = limit > 0
       ? await db.from('scopes').select('*').eq('workspace_id', ctx.workspace.id).order('created_at').limit(limit)
       : { data: [] as any[] };

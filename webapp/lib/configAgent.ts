@@ -1,6 +1,6 @@
 /**
  * Config Agent — the platform's internal agent that turns what people write
- * on the Settings page into configuration the other agents run on:
+ * on the Workspace page into configuration the other agents run on:
  *   - the search scope → TED phrases, web / news queries, site-search terms
  *     and the Triage Agent's relevance rules (used by the daily pipeline);
  *   - an agent's fine-tuning → a rewrite of that agent's prompt, with its

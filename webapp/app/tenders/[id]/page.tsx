@@ -100,7 +100,7 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
   const reqs = (requirements || []).filter((r) => firstInLanguage(r.requirement_text));
   // Scopes: the viewer's active scopes (or the default scope): relevance, evaluations, match columns.
   const [{ scopes: viewScopes, own, canRun }, ctx] = await Promise.all([getViewScopes(), getContext()]);
-  const locked = !ctx ? null : !ctx.account.plan.customize ? 'plan' : !ctx.isAdmin ? 'member' : null;
+  const locked = !ctx ? null : !ctx.canCustomize && ctx.isAdmin ? 'plan' : !ctx.isAdmin ? 'member' : null;
   const { data: scopeEvals } = await supabase.from('scope_evaluations').select('*').eq('opportunity_id', params.id)
     .in('scope_id', viewScopes.map((s) => s.id));
   const evalOf = (scopeId: string) => (scopeEvals || []).find((r: any) => r.scope_id === scopeId) ?? null;

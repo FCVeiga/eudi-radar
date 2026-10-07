@@ -98,7 +98,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <Link href="/signup" className="btn primary">{t('Sign up')}</Link>
               </div>
             )}
-            <div className="sidebar-foot">WalliD · EUDI Radar<br /><span className="mono">TED · Tavily · {t('official portals')}</span></div>
           </aside>
           <main className="content">{children}</main>
         </div>

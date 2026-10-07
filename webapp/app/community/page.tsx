@@ -48,7 +48,7 @@ export default async function CommunityPage({ searchParams }: { searchParams: { 
       {posts.length === 0 ? (
         <div className="profile-empty">
           <p className="profile-empty-title">No posts yet — start the conversation</p>
-          <p className="muted">Share a take on a tender, ask the market a question, or post lessons from a bid.</p>
+          
           <Link href={user ? '/posts/new' : '/login?next=/posts/new'} className="btn primary profile-empty-cta">Create the first post</Link>
         </div>
       ) : (

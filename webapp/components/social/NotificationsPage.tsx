@@ -28,7 +28,7 @@ export function NotificationList({ notes }: { notes: Note[] }) {
         {unread > 0 && <button type="button" className="btn" onClick={() => { setRead(new Set(notes.map((n) => n.id))); start(async () => { await markNotificationsRead(); router.refresh(); }); }}>Mark all as read</button>}
       </div>
       {notes.length === 0 ? (
-        <div className="profile-empty"><p className="profile-empty-title">No notifications here yet</p><p className="muted">Likes and comments on your posts and comments, and new tenders for your search scope, show up here.</p></div>
+        <div className="profile-empty"><p className="profile-empty-title">No notifications yet</p></div>
       ) : (
         <ul className="np-list">
           {notes.map((n) => {
@@ -57,26 +57,25 @@ const PREFS: [string, string, string][] = [
   ['likes', 'Likes', 'On your posts and comments'],
   ['comments', 'Comments', 'On your posts'],
   ['replies', 'Replies', 'To your comments'],
-  ['new_tender', 'New tenders', 'Open tenders matching the Search Agent’s scope'],
-  ['tender_update', 'Tender updates', 'Deadline changes and clarifications on tenders you follow'],
-  ['follows', 'New followers', 'When someone follows you'],
+  ['new_tender', 'New tenders', 'Matching your scopes'],
+  ['tender_update', 'Tender updates', 'On tenders you follow'],
+  ['follows', 'New followers', ''],
 ];
 
 /** Which notifications to receive (saved as you switch). */
-export function NotificationSettings({ prefs }: { prefs: Record<string, boolean> }) {
+export function NotificationSettings({ prefs, heading = true }: { prefs: Record<string, boolean>; heading?: boolean }) {
   const [on, setOn] = useState<Record<string, boolean>>(Object.fromEntries(PREFS.map(([k]) => [k, prefs[k] !== false])));
   const [, start] = useTransition();
   return (
-    <div className="np-settings">
-      <h3>Notify me about</h3>
+    <div className={`np-settings ${heading ? "" : "flat"}`}>
+      {heading && <h3>Notify me about</h3>}
       {PREFS.map(([key, label, hint]) => (
         <div key={key} className="np-pref">
-          <span><strong>{label}</strong><em>{hint}</em></span>
+          <span><strong>{label}</strong>{hint && <em>{hint}</em>}</span>
           <button type="button" role="switch" aria-checked={on[key]} aria-label={label} className={`switch ${on[key] ? 'on' : ''}`}
             onClick={() => { const next = !on[key]; setOn({ ...on, [key]: next }); start(() => setNotificationPref(key, next)); }}><span /></button>
         </div>
       ))}
-      <p className="field-hint">Chat requests always notify you.</p>
     </div>
   );
 }

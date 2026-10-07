@@ -77,7 +77,7 @@ export default async function ProfilePage({ params, searchParams }: { params: { 
         <section className="detail-block">
           <h2>About</h2>
           {profile.bio ? <p className="profile-bio">{profile.bio}</p>
-            : <p className="muted">{own ? 'Tell people who you are and what you bid on.' : `u/${profile.username} hasn’t written anything yet.`}</p>}
+            : <p className="muted">{own ? 'No bio yet.' : `u/${profile.username} hasn’t written anything yet.`}</p>}
           {own && <Link href="/profile/edit" className="btn">{profile.bio ? 'Edit description' : 'Add a description'}</Link>}
         </section>
         <section className="detail-block">
@@ -90,7 +90,7 @@ export default async function ProfilePage({ params, searchParams }: { params: { 
               {profile.expertise.length > 0 && <div className="wide"><dt>Expertise</dt><dd className="cc-tags">{profile.expertise.map((e) => <span key={e} className="cc-tag">{e}</span>)}</dd></div>}
               {hasLinks(profile.links) && <div className="wide"><dt>Connections</dt><dd><SocialLinks links={profile.links} variant="list" /></dd></div>}
             </dl>
-          ) : <p className="muted">{own ? 'Add your company, role, expertise and social links.' : `u/${profile.username} hasn’t added any details yet.`}</p>}
+          ) : <p className="muted">{own ? 'No details yet.' : `u/${profile.username} hasn’t added any details yet.`}</p>}
         </section>
         <section className="detail-block">
           <h2>Achievements <span className="uc-count">0/{ACHIEVEMENTS.length}</span></h2>
@@ -102,7 +102,7 @@ export default async function ProfilePage({ params, searchParams }: { params: { 
               </div>
             ))}
           </div>
-          <p className="field-hint">Achievements unlock as you post, comment and follow — coming with the community features.</p>
+          
         </section>
       </div>
     );

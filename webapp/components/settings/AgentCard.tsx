@@ -81,15 +81,15 @@ export default function AgentCard({ agent, enabled, instructions, config, custom
             <h2>{agent.name} — {custom ? 'customised configuration' : 'default configuration'}</h2>
             <button type="button" className="modal-close" aria-label="Close" onClick={() => dialog.current?.close()}>×</button>
           </div>
-          {readOnly && <p className="form-msg readonly-note">Read-only — {scopeId ? 'only this workspace’s admins can change it, on a plan that allows customizing' : 'workspace agents are managed for you'}.</p>}
+          {readOnly && <p className="form-msg readonly-note">Read-only.</p>}
           <p className="field-hint">
             {search
-              ? 'JSON: the TED phrases, web and news queries, site-search terms and the Triage Agent’s relevance rules. Fine-tuning describes the search scope and replaces it.'
+              ? 'Search queries and relevance rules (JSON).'
               : agent.key === 'tender_documents'
-                ? 'JSON: how files are sorted by name (type_patterns, first match wins), which new files post an update (alert_on_new), which are skipped, and whether only open tenders are covered.'
+                ? 'File sorting and alert rules (JSON).'
                 : editable
-                ? <>The agent’s instructions{agent.prompt ? <> (<span className="mono">{agent.prompt}</span>)</> : null}. Edit freely, but keep the <span className="mono">## Output</span> section and the placeholders in braces — the platform depends on them.</>
-                : readOnly ? <>The agent’s instructions{agent.prompt ? <> (<span className="mono">{agent.prompt}</span>)</> : null}.</> : 'This agent doesn’t use AI instructions; nothing to configure.'}
+                ? <>Keep the <span className="mono">## Output</span> section and the {'{placeholders}'}.</>
+                : readOnly ? null : 'Nothing to configure.'}
           </p>
           {editable
             ? <textarea name="config" className="config-edit" value={draft} onChange={(e) => setDraft(e.target.value)} spellCheck={false} />

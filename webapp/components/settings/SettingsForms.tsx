@@ -23,11 +23,11 @@ export function ScopeForm({ scopeId, name, instructions }: { scopeId: string; na
         <input name="name" defaultValue={name} placeholder="e.g. EUDI Wallet — public sector" maxLength={120} required />
       </label>
       <label className="field">
-        <span>Scope instructions <em>— what this scope’s agents should know</em></span>
+        <span>Scope instructions</span>
         <textarea name="instructions" defaultValue={instructions} rows={9} maxLength={30000}
           placeholder={'Who the scope is for (a company, a department, a project); what you sell and to whom; products and the standards they implement; certifications; size, turnover and locations; partners; the contracts you go for and the ones you don’t.'} />
       </label>
-      <p className="field-hint">This scope’s Tender Evaluation, Proposal Manager and News Report agents read these instructions.</p>
+      <p className="field-hint">Read by the evaluation, proposal and news agents.</p>
       <Msg state={state} />
       <div className="settings-actions"><Submit label="Save scope" busy="Saving…" /></div>
     </form>
@@ -39,7 +39,7 @@ export function DeleteScopeForm({ scopeId, name }: { scopeId: string; name: stri
   return (
     <form action={action} className="settings-form">
       <input type="hidden" name="scope" value={scopeId} />
-      <p className="settings-intro">Deletes the scope with its instructions, context documents, agent settings, evaluations and proposal briefs. Tenders and news it found stay on the platform for other scopes.</p>
+      <p className="field-hint">Deletes the scope, its documents and evaluations.</p>
       <label className="field"><span>Type <strong>{name}</strong> to confirm</span><input name="confirm" autoComplete="off" required /></label>
       <Msg state={state} />
       <div className="settings-actions"><button type="submit" className="btn danger">Delete scope</button></div>

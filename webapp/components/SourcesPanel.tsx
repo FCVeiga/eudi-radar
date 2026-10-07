@@ -101,10 +101,10 @@ function SourceForm({ source, countries, onDone }: { source: Source | null; coun
         </label>
       </div>
       <p className="field-hint">
-        {blocked ? 'X and LinkedIn have no free feed: the source is listed, and monitored once API access is set up.'
-          : method === 'auto' ? 'We look for an RSS/Atom feed on the site; without one, the radar searches the site on the schedule you pick.'
+        {blocked ? 'Monitored once API access is set up.'
+          : method === 'auto' ? 'Uses the site’s feed if it has one.'
             : METHODS[(isTed ? 'ted' : method) as Method].hint}
-        {method === 'rss' && ' Feeds are read daily, and every few minutes while the site is open.'}
+        
       </p>
 
       <label className="toggle">

@@ -21,7 +21,7 @@ export default async function InvitePage({ params, searchParams }: { params: { t
   };
   return (
     <AuthCard title={valid ? `Join ${team}` : 'Invitation not valid'}
-      sub={valid ? `You’re invited as ${inv!.role === 'admin' ? 'an admin — you’ll configure its scopes and agents' : 'a member — you’ll see the results of its agents'}.` : 'This invitation has expired or was already used. Ask the workspace’s admin for a new link.'}>
+      sub={valid ? `You’re invited as ${inv!.role === 'admin' ? 'an admin' : 'a member'}.` : 'Expired or already used. Ask for a new link.'}>
       {searchParams.error && <p className="form-msg err">{searchParams.error}</p>}
       {valid && (user
         ? <form action={join} className="auth-form"><button type="submit" className="btn primary auth-submit">Join {team}</button></form>

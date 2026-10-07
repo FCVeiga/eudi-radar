@@ -67,7 +67,7 @@ export function DeleteAccountForm({ username }: { username: string }) {
   const [state, action] = useFormState<AuthState, FormData>(deleteAccount, null);
   return (
     <form action={action} className="settings-form">
-      <p className="settings-intro">Deletes your account, profile, picture, the tenders and news you follow, and any posts and comments. This can’t be undone.</p>
+      <p className="field-hint">Deletes your account, posts, comments and the workspaces you own. This can’t be undone.</p>
       <label className="field"><span>Type <strong>{username}</strong> to confirm</span><input name="confirm" autoComplete="off" required /></label>
       <Msg state={state} />
       <div className="settings-actions"><Submit label="Delete my account" busy="Deleting…" danger /></div>

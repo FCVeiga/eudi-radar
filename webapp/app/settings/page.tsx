@@ -1,16 +1,15 @@
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { authClient, getCurrentUser } from '@/lib/auth';
 import { getPersonalAccount, isPlatformAdmin } from '@/lib/accounts';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { PLANS } from '@/lib/plans';
-import { billingReady, stripe } from '@/lib/billing';
+import { stripe } from '@/lib/billing';
 import { getPlatformLanguage } from '@/lib/language';
 import { SITE_LANGUAGES } from '@/lib/siteLanguages';
 import { NotificationSettings } from '@/components/social/NotificationsPage';
 import { DeleteAccountForm } from '@/components/auth/ProfileForms';
 import {
-  ChatPermission, EmailForm, LogOutEverywhere, PasswordForm, PlanButton, PortalButton, SetPlan, SiteLanguage,
+  AccountActions, ChatPermission, PlanButton, PortalButton, SetPlan, SiteLanguage,
 } from '@/components/settings/SettingsControls';
 
 export const metadata = { title: 'Settings — EUDI Radar' };
@@ -29,7 +28,6 @@ export default async function SettingsPage({ searchParams }: { searchParams: { b
     getSupabaseServerClient().from('profiles').select('notification_prefs, chat_permission').eq('id', user.id).maybeSingle(),
   ]);
   const hasPassword = (auth?.identities || []).some((i: any) => i.provider === 'email');
-  const providers = Array.from(new Set((auth?.identities || []).map((i: any) => i.provider))).filter((p) => p !== 'email');
   const plan = account?.plan ?? PLANS[0];
 
   // Invoices from Stripe, when billing is set up and you've paid before.
@@ -46,44 +44,23 @@ export default async function SettingsPage({ searchParams }: { searchParams: { b
   return (
     <div className="settings">
       <h1 className="opps-h1">Settings</h1>
-      <nav className="settings-nav" aria-label="Settings sections">
-        <a href="#account">Account</a><a href="#billing">Plan &amp; billing</a><a href="#notifications">Notifications</a>
-        <a href="#chat">Chat</a><a href="#language">Language</a><a href="#data">Your data</a>
-      </nav>
-
       {/* ---------- Account ---------- */}
       <section className="detail-block" id="account">
         <h2>Account</h2>
-        <p className="settings-intro">
-          Signed in as <strong>{user.email}</strong>{providers.length ? ` (also with ${providers.map((p) => p[0].toUpperCase() + p.slice(1)).join(', ')})` : ''} ·
-          member since {fmt(user.createdAt)}. Your name, picture and bio are on <Link href="/profile/edit">Edit profile</Link>.
-        </p>
-        <h3 className="form-subhead">Email</h3>
-        <EmailForm email={user.email} needsPassword={hasPassword} />
-        <h3 className="form-subhead">{hasPassword ? 'Password' : 'Set a password'}</h3>
-        {!hasPassword && <p className="field-hint">You sign in with {providers.join(', ') || 'a provider'}. Set a password to also log in with your email.</p>}
-        <PasswordForm hasPassword={hasPassword} />
-        <h3 className="form-subhead">Sessions</h3>
-        <p className="field-hint">Lost a device or used a shared computer? End every session, including this one.</p>
-        <LogOutEverywhere />
+        <AccountActions email={user.email} hasPassword={hasPassword} />
       </section>
 
       {/* ---------- Plan & billing ---------- */}
       <section className="detail-block" id="billing">
         <h2>Plan &amp; billing</h2>
-        {searchParams.billing === 'success' && <p className="form-msg ok">Thanks — your plan is being activated. It can take a few seconds to show here.</p>}
-        <p className="settings-intro">
-          You’re on the <strong>{plan.name}</strong> plan
-          {account?.planStatus === 'comped' ? ' (complimentary)' : account && account.planStatus !== 'active' ? ` (${account.planStatus.replace('_', ' ')})` : ''}
-          {account?.periodEnd ? ` · renews ${fmt(account.periodEnd)}` : ''}. It applies to the <Link href="/workspace">workspaces</Link> you own.
-          {!billingReady() && ' Online payments aren’t switched on yet — contact us to change plans.'}
-        </p>
+        {searchParams.billing === 'success' && <p className="form-msg ok">Payment received — your plan updates in a few seconds.</p>}
         <div className="plan-grid">
           {PLANS.map((p) => {
             const current = plan.key === p.key;
             return (
               <div key={p.key} className={`plan-card ${current ? 'current' : ''}`}>
                 <div className="plan-head"><h3>{p.name}</h3>{current && <span className="scope-badge">Current</span>}</div>
+                {current && account?.periodEnd && <p className="plan-renews">Renews {fmt(account.periodEnd)}</p>}
                 <p className="plan-price">€{p.priceEur}<span>/month</span></p>
                 <p className="plan-blurb">{p.blurb}</p>
                 <ul>{p.features.map((f) => <li key={f}>{f}</li>)}</ul>
@@ -93,12 +70,12 @@ export default async function SettingsPage({ searchParams }: { searchParams: { b
           })}
         </div>
         <div className="billing-actions">
-          {account?.stripeCustomerId && <PortalButton label="Payment method, cancel or downgrade" />}
+          {account?.stripeCustomerId && <PortalButton />}
           {admin && <SetPlan userId={user.id} plan={plan.key} options={PLANS.map((p) => ({ key: p.key, name: p.name }))} />}
         </div>
         <h3 className="form-subhead">Invoices</h3>
-        {invoiceError ? <p className="form-msg err">Couldn’t load invoices from Stripe right now.</p>
-          : invoices.length === 0 ? <p className="field-hint">No invoices yet — they appear here after your first payment.</p> : (
+        {invoiceError ? <p className="form-msg err">Couldn’t load invoices.</p>
+          : invoices.length === 0 ? <p className="field-hint">No invoices yet.</p> : (
             <div className="table-wrap">
               <table className="data-table">
                 <thead><tr><th>Date</th><th>Invoice</th><th>Status</th><th className="num">Amount</th><th /></tr></thead>
@@ -119,8 +96,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: { b
       {/* ---------- Notifications ---------- */}
       <section className="detail-block" id="notifications">
         <h2>Notifications</h2>
-        <p className="settings-intro">What shows up under the bell. Saved as you switch.</p>
-        <NotificationSettings prefs={profile?.notification_prefs || {}} />
+        <NotificationSettings prefs={profile?.notification_prefs || {}} heading={false} />
       </section>
 
       {/* ---------- Chat ---------- */}
@@ -132,23 +108,17 @@ export default async function SettingsPage({ searchParams }: { searchParams: { b
       {/* ---------- Language ---------- */}
       <section className="detail-block" id="language">
         <h2>Language</h2>
-        <p className="settings-intro">
-          The site is in <strong>{language.name}</strong>. Tenders, documents and news from every country are translated into it by the
-          Translator Agent, so everyone reads the same text.
-        </p>
-        {admin && <SiteLanguage code={language.code} options={SITE_LANGUAGES} />}
+        {admin ? <SiteLanguage code={language.code} options={SITE_LANGUAGES} /> : <p className="settings-value">{language.name}</p>}
       </section>
 
       {/* ---------- Your data ---------- */}
       <section className="detail-block" id="data">
         <h2>Your data</h2>
-        <p className="settings-intro">Download everything you’ve added — profile, posts, comments, likes, people you follow, messages you sent and your workspaces — as a JSON file.</p>
-        <a href="/settings/export" className="btn" download>Download your data</a>
+                <a href="/settings/export" className="btn" download>Download your data</a>
       </section>
 
       <section className="detail-block danger-zone" id="delete">
         <h2>Delete account</h2>
-        <p className="field-hint">Workspaces you own are deleted too, for everyone in them. To keep one for your team, have its members export what they need first.</p>
         <DeleteAccountForm username={user.username} />
       </section>
     </div>

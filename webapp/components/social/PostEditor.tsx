@@ -248,7 +248,7 @@ function TagsModal({ tags, suggestions, onAdd, onRemove, onDone }: {
         <h2>Add tags</h2>
         <button type="button" className="modal-close" aria-label="Close" onClick={onDone}>×</button>
       </div>
-      <p className="field-hint">Tags help the right people find your post in the Community Feed. Up to {MAX_TAGS}.</p>
+      <p className="field-hint">Up to {MAX_TAGS}.</p>
       <div className="pe-tag-input">
         <input value={draft} maxLength={50} placeholder="Type a tag and press Enter" disabled={tags.length >= MAX_TAGS}
           onChange={(ev) => setDraft(ev.target.value)}

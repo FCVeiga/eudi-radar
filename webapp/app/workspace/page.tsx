@@ -38,7 +38,6 @@ export default async function WorkspacePage() {
       {/* ---------- Your workspaces ---------- */}
       <section className="detail-block" id="workspaces">
         <h2>Your workspaces <span className="uc-count">{mine.length}</span></h2>
-        <p className="settings-intro">Each workspace has its own scopes and team members — open one to manage them. The site shows one workspace’s results at a time; switch from your account menu.</p>
         <div className="table-wrap">
           <table className="data-table ws-table">
             <thead><tr><th>Workspace</th><th>Owner</th><th>Your role</th><th className="num">Scopes</th><th className="num">Members</th></tr></thead>
@@ -67,10 +66,6 @@ export default async function WorkspacePage() {
       {/* ---------- Workspace agents ---------- */}
       <section className="detail-block" id="workspace-agents">
         <h2>Workspace agents</h2>
-        <p className="settings-intro">
-          These agents work on the data every workspace shares — a tender’s documents and requirements, the feed’s posts,
-          and translation into the site’s language. They’re managed for you.
-        </p>
         <div className="agent-grid">
           {AGENTS.filter((a) => PLATFORM_AGENT_KEYS.includes(a.key)).map((a) => {
             const s = agentDefaults.get(a.key);

@@ -32,9 +32,9 @@ export default function TenderScopeEvaluation({ opportunityId, scope, row, showN
         </div>
         {evaluation && <span className={`verdict eval-${evaluation.verdict}`}>{VERDICTS[evaluation.verdict] ?? evaluation.verdict}</span>}
       </div>
-      {!evaluation && <p className="agent-intro">Checks every requirement of this tender against the scope’s instructions and context, scores the fit and recommends whether to bid.</p>}
+      {!evaluation && <p className="agent-intro">Scores your fit and recommends whether to bid.</p>}
       {evaluation && analysedAt && row?.evaluated_at && analysedAt > row.evaluated_at && (
-        <p className="summary-note">The requirements were updated after this report (new tender documents) — re-run the evaluation.</p>
+        <p className="summary-note">Requirements changed since this report — re-run it.</p>
       )}
       {evaluation && (
         <div className="eval-report">
@@ -52,9 +52,9 @@ export default function TenderScopeEvaluation({ opportunityId, scope, row, showN
           )}
         </div>
       )}
-      {!evaluatorOn ? <p className="muted">The Tender Evaluation Agent is switched off for this scope.</p>
+      {!evaluatorOn ? <p className="muted">Agent off for this scope.</p>
         : !canRun ? (!signedIn ? login
-          : locked === 'member' ? <p className="muted">Your workspace’s admins run this agent; you see its results here.</p>
+          : locked === 'member' ? <p className="muted">Run by your workspace’s admins.</p>
           : locked === 'plan' ? <p className="muted"><Link href="/settings#billing">Upgrade</Link> to evaluate tenders against your own scope’s context.</p> : null)
           : <TenderEvaluationRunner opportunityId={opportunityId} scopeId={scope.id} evaluatedAt={row?.evaluated_at ?? null} running={running}
               ready={ready} lastError={row?.evaluation_error ?? null} />}

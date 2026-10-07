@@ -59,8 +59,8 @@ export default async function OpportunitiesView({ view }: { view: View }) {
         <div className="callout">
           <strong>Nothing here right now.</strong>{' '}
           {view === 'new'
-            ? `No active tender has appeared in the last ${NEW_WINDOW_DAYS} days.`
-            : 'No active tenders in this category. Closed and awarded ones are on the History page.'}
+            ? `None in the last ${NEW_WINDOW_DAYS} days.`
+            : 'Closed ones are in History.'}
         </div>
       )}
       <RingGradients />

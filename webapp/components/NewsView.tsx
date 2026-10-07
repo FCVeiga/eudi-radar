@@ -88,7 +88,6 @@ export default async function NewsView({ view }: { view: View }) {
       {!error && visible.length === 0 && (
         <div className="callout">
           <strong>{view === 'signals' ? 'No confirmed signals right now.' : 'No news in this section yet.'}</strong>
-          {view === 'signals' && ' A signal is a named buyer announcing a procurement that isn’t open yet — a prior information notice, an approved budget, a mandated system. They appear here, and on the home feed, once the pipeline has checked them against the source.'}
         </div>
       )}
 

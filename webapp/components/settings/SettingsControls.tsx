@@ -15,40 +15,58 @@ const Msg = ({ state }: { state: SettingsState }) => state && <p className={`for
 
 /* ---------------- Account ---------------- */
 
-export function EmailForm({ email, needsPassword }: { email: string; needsPassword: boolean }) {
+/** Email and password: buttons that open the form for that change. */
+export function AccountActions({ email, hasPassword }: { email: string; hasPassword: boolean }) {
+  const [open, setOpen] = useState<'email' | 'password' | null>(null);
+  const toggle = (k: 'email' | 'password') => setOpen(open === k ? null : k);
+  return (
+    <div className="account-actions">
+      <div className="account-row">
+        <span className="account-email">{email}</span>
+        <div className="account-buttons">
+          <button type="button" className={`btn ${open === 'email' ? 'active' : ''}`} aria-expanded={open === 'email'} onClick={() => toggle('email')}>Change email</button>
+          <button type="button" className={`btn ${open === 'password' ? 'active' : ''}`} aria-expanded={open === 'password'} onClick={() => toggle('password')}>
+            {hasPassword ? 'Change password' : 'Set password'}
+          </button>
+          <LogOutEverywhere />
+        </div>
+      </div>
+      {open === 'email' && <EmailForm needsPassword={hasPassword} onCancel={() => setOpen(null)} />}
+      {open === 'password' && <PasswordForm hasPassword={hasPassword} onCancel={() => setOpen(null)} />}
+    </div>
+  );
+}
+
+function EmailForm({ needsPassword, onCancel }: { needsPassword: boolean; onCancel: () => void }) {
   const [state, action] = useFormState<SettingsState, FormData>(changeEmail, null);
   return (
-    <form action={action} className="settings-form">
-      <div className="field-row">
-        <label className="field"><span>New email</span><input name="email" type="email" autoComplete="email" placeholder={email} required /></label>
-        {needsPassword && <label className="field"><span>Current password</span><input name="password" type="password" autoComplete="current-password" required /></label>}
-      </div>
+    <form action={action} className="settings-form account-form">
+      <label className="field"><span>New email</span><input name="email" type="email" autoComplete="email" required autoFocus /></label>
+      {needsPassword && <label className="field"><span>Current password</span><input name="password" type="password" autoComplete="current-password" required /></label>}
       <Msg state={state} />
-      <div className="settings-actions"><Submit label="Change email" busy="Saving…" /></div>
+      <div className="settings-actions"><button type="button" className="btn" onClick={onCancel}>Cancel</button><Submit label="Save" busy="Saving…" /></div>
     </form>
   );
 }
 
-export function PasswordForm({ hasPassword }: { hasPassword: boolean }) {
+function PasswordForm({ hasPassword, onCancel }: { hasPassword: boolean; onCancel: () => void }) {
   const [state, action] = useFormState<SettingsState, FormData>(changePassword, null);
   return (
-    <form action={action} className="settings-form" key={state?.ok ? 'done' : 'form'}>
-      {hasPassword && <label className="field"><span>Current password</span><input name="current" type="password" autoComplete="current-password" required /></label>}
-      <div className="field-row">
-        <label className="field"><span>New password</span><input name="password" type="password" autoComplete="new-password" minLength={8} required /></label>
-        <label className="field"><span>Confirm new password</span><input name="confirm" type="password" autoComplete="new-password" minLength={8} required /></label>
-      </div>
+    <form action={action} className="settings-form account-form">
+      {hasPassword && <label className="field"><span>Current password</span><input name="current" type="password" autoComplete="current-password" required autoFocus /></label>}
+      <label className="field"><span>New password</span><input name="password" type="password" autoComplete="new-password" minLength={8} required /></label>
+      <label className="field"><span>Confirm new password</span><input name="confirm" type="password" autoComplete="new-password" minLength={8} required /></label>
       <Msg state={state} />
-      <div className="settings-actions"><Submit label={hasPassword ? 'Change password' : 'Set password'} busy="Saving…" /></div>
+      <div className="settings-actions"><button type="button" className="btn" onClick={onCancel}>Cancel</button><Submit label="Save" busy="Saving…" /></div>
     </form>
   );
 }
 
-export function LogOutEverywhere() {
+function LogOutEverywhere() {
   const [pending, start] = useTransition();
   return (
     <button type="button" className="btn" disabled={pending}
-      onClick={() => { if (confirm('Log out on every browser and device, this one included?')) start(() => logOutEverywhere()); }}>
+      onClick={() => { if (confirm('Log out on every device, including this one?')) start(() => logOutEverywhere()); }}>
       {pending ? 'Logging out…' : 'Log out everywhere'}
     </button>
   );
@@ -57,14 +75,13 @@ export function LogOutEverywhere() {
 /* ---------------- Chat ---------------- */
 
 const CHAT_OPTIONS = [
-  { value: 'everyone', label: 'Everyone', hint: 'Any member can send you a chat request.' },
-  { value: 'workspace', label: 'People in my workspaces', hint: 'Only people who share a workspace with you.' },
-  { value: 'nobody', label: 'Nobody', hint: 'No new chat requests. Existing chats carry on.' },
+  { value: 'everyone', label: 'Everyone', hint: '' },
+  { value: 'workspace', label: 'People in my workspaces', hint: '' },
+  { value: 'nobody', label: 'Nobody', hint: 'Existing chats carry on' },
 ];
 
 export function ChatPermission({ value }: { value: string }) {
   const [v, setV] = useState(value);
-  const [saved, setSaved] = useState(false);
   const [, start] = useTransition();
   return (
     <fieldset className="radio-list">
@@ -72,11 +89,10 @@ export function ChatPermission({ value }: { value: string }) {
       {CHAT_OPTIONS.map((o) => (
         <label key={o.value} className={`radio-row ${v === o.value ? 'on' : ''}`}>
           <input type="radio" name="chat_permission" value={o.value} checked={v === o.value}
-            onChange={() => { setV(o.value); setSaved(false); start(async () => { await setChatPermission(o.value); setSaved(true); }); }} />
-          <span><strong>{o.label}</strong><em>{o.hint}</em></span>
+            onChange={() => { setV(o.value); start(async () => { await setChatPermission(o.value); }); }} />
+          <span><strong>{o.label}</strong>{o.hint && <em>{o.hint}</em>}</span>
         </label>
       ))}
-      {saved && <p className="form-msg ok" role="status">Saved.</p>}
     </fieldset>
   );
 }
@@ -95,9 +111,9 @@ export function SiteLanguage({ code, options }: { code: string; options: { code:
       </select>
       <button type="button" className="btn primary" disabled={pending || v === code} onClick={() => {
         const name = options.find((o) => o.code === v)?.name;
-        if (!confirm(`Switch the whole site to ${name}? The agents translate into it from their next runs; until then, items not yet translated are hidden.`)) return;
-        start(async () => { const r = await setSiteLanguage(v); setMsg(r.error ? { ok: false, text: r.error } : { ok: true, text: `The site language is now ${name}.` }); router.refresh(); });
-      }}>{pending ? 'Saving…' : 'Change language'}</button>
+        if (!confirm(`Switch the site to ${name}? Items not yet translated are hidden until the next runs.`)) return;
+        start(async () => { const r = await setSiteLanguage(v); setMsg(r.error ? { ok: false, text: r.error } : null); router.refresh(); });
+      }}>{pending ? 'Saving…' : 'Change'}</button>
       {msg && <p className={`form-msg ${msg.ok ? 'ok' : 'err'}`}>{msg.text}</p>}
     </div>
   );

@@ -21,7 +21,7 @@ export default async function SearchPage({ searchParams }: { searchParams: { q?:
           <div className="eyebrow">Search</div>
           <h1>{q ? <>Results for “{q}”</> : 'Search'}</h1>
           <p className="page-sub">
-            {!q ? 'Type in the search box above to find tenders and news.'
+            {!q ? 'Search tenders and news.'
               : !searchWords(q).length ? 'Use at least one word of two or more letters.'
                 : `${total} result${total === 1 ? '' : 's'} — ${opportunities.length} tender${opportunities.length === 1 ? '' : 's'}, ${news.length} news.`}
           </p>

@@ -9,9 +9,9 @@ import { getPlatformLanguage } from '@/lib/language';
 import { SCOPE_AGENT_KEYS, getScope, getViewScopes } from '@/lib/scopes';
 
 export const DOC_KINDS = [
-  { kind: 'presentation', label: 'Commercial presentations', hint: 'Company and product decks, one-pagers, brochures' },
-  { kind: 'reference', label: 'Contracts & project references', hint: 'Signed contracts, reference letters, case studies — with client, value, dates and scope' },
-  { kind: 'cv', label: 'Team CVs', hint: 'CVs of the people you would put on a bid team' },
+  { kind: 'presentation', label: 'Commercial presentations', hint: 'Decks, one-pagers, brochures' },
+  { kind: 'reference', label: 'Contracts & project references', hint: 'Contracts, reference letters, case studies' },
+  { kind: 'cv', label: 'Team CVs', hint: 'Your bid team' },
 ] as const;
 export type DocKind = (typeof DOC_KINDS)[number]['kind'];
 

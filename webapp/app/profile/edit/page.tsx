@@ -23,7 +23,6 @@ export default async function EditProfilePage() {
 
       <section className="detail-block" id="details">
         <h2>About you</h2>
-        <p className="settings-intro">Shown on your profile’s About tab and card.</p>
         <ProfileDetailsForm v={{
           company: p?.company ?? '', role: p?.role ?? '', location: p?.location ?? '', expertise: (p?.expertise ?? []).join(', '),
           website: p?.links.website ?? '', linkedin: p?.links.linkedin ?? '', x: p?.links.x ?? '', github: p?.links.github ?? '',

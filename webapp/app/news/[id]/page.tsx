@@ -94,7 +94,7 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
         {facts.length > 0 && (
           <ul className="key-facts">{facts.map((f, i) => <li key={i}>{f}</li>)}</ul>
         )}
-        {n.unverified && <p className="muted">From a tracked social account, not a primary source — treat as unconfirmed.</p>}
+        {n.unverified && <p className="muted">Social post — unconfirmed.</p>}
       </section>
 
       {viewScopes.map((scope) => {
@@ -113,7 +113,7 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
             </div>
             {!analysis && (agentOn
               ? <NewsReportRunner newsId={n.news_id} scopeId={scope.id} lastError={r?.error ?? null} />
-              : <p className="muted">The News Report Agent is switched off for this scope.</p>)}
+              : <p className="muted">Agent off for this scope.</p>)}
             {analysis && (
               <>
                 {firstInLanguage(analysis.take) && <p className="analysis-take">{analysis.take}</p>}

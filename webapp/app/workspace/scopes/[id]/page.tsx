@@ -38,23 +38,14 @@ export default async function ScopePage({ params }: { params: { id: string } }) 
 
       <section className="detail-block" id="context">
         <h2>Scope context</h2>
-        <p className="settings-intro">
-          What this scope’s Tender Evaluation and Proposal Manager agents check each tender against: they read the text of
-          every file here, alongside the scope instructions. The more specific — clients, contract values, dates, team roles —
-          the fewer requirements come back “Unknown”.
-        </p>
         {DOC_KINDS.map((k) => (
           <DocumentGroup key={k.kind} scopeId={scope.id} kind={k.kind} label={k.label} hint={k.hint} docs={docs.filter((d) => d.kind === k.kind)} />
         ))}
-        <p className="field-hint">PDF, Word, PowerPoint, Excel or text, up to 50 MB each. Files are stored privately; only this scope’s agents read them.</p>
+        <p className="field-hint">PDF, Word, PowerPoint, Excel or text · up to 50 MB · private</p>
       </section>
 
       <section className="detail-block" id="agents">
         <h2>Agents</h2>
-        <p className="settings-intro">
-          This scope’s agents. Switch one off to stop its work for this scope. Tell it what to change in plain language and the
-          Config Agent rewrites its configuration — or open the configuration and edit it yourself.
-        </p>
         <div className="agent-grid">
           {AGENTS.filter((a) => SCOPE_AGENT_KEYS.includes(a.key)).map((a) => {
             const s = agents.get(a.key);

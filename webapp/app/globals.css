@@ -1535,10 +1535,6 @@ a.profile-post:hover { border-color: var(--border-strong); }
 @media (max-width: 900px) { .ws-chip { margin: 0 8px 12px; } .inline-form input { font-size: 16px; } }
 
 /* Settings */
-.settings-nav { position: sticky; top: var(--topbar-h); z-index: 5; display: flex; gap: 6px; overflow-x: auto; margin: 4px 0 18px; padding: 8px 0; background: var(--bg); scrollbar-width: none; }
-.settings-nav::-webkit-scrollbar { display: none; }
-.settings-nav a { flex: none; padding: 6px 12px; border: 1px solid var(--border); border-radius: 999px; font-size: 13px; color: var(--text); text-decoration: none; background: var(--surface); }
-.settings-nav a:hover { border-color: var(--border-strong); color: var(--ink); }
 .settings .detail-block[id] { scroll-margin-top: 120px; }
 .radio-list { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; max-width: 560px; }
 .radio-list legend { font-size: 13.5px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
@@ -1548,3 +1544,11 @@ a.profile-post:hover { border-color: var(--border-strong); }
 .radio-row strong { display: block; font-size: 13.5px; color: var(--ink); }
 .radio-row em { font-style: normal; font-size: 12.5px; color: var(--muted); }
 #billing .data-table td a { color: var(--accent); font-weight: 600; }
+.account-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+.account-email { font-size: 14px; font-weight: 600; color: var(--ink); }
+.account-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.account-buttons .btn.active { border-color: var(--accent); color: var(--accent); }
+.account-form { max-width: 420px; margin-top: 14px; }
+.settings-value { margin: 0; font-size: 14px; color: var(--ink); }
+.plan-renews { margin: -4px 0 0; font-size: 12px; color: var(--muted); }
+.np-settings.flat { border: 0; padding: 0; background: none; box-shadow: none; position: static; max-width: 560px; }

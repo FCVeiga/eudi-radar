@@ -65,26 +65,20 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
         </div>
       </div>
 
-      {!ctx.isAdmin && <p className="callout">You’re a member of this workspace: you see its agents’ results. Its admins configure the scopes.</p>}
+      {!ctx.isAdmin && <p className="callout">View only — admins configure this workspace.</p>}
       {ctx.isAdmin && !ctx.canCustomize && (
         <p className="callout">
-          On the Free plan you follow the default scope — {defaultScope?.name ?? 'EUDI Wallet & digital identity'} — updated once a day.
-          {ctx.isOwner && <Link href="/settings#billing"> Upgrade</Link>} to create your own scopes with your instructions, context and agents.
+          Free plan: default scope only.{ctx.isOwner && <> <Link href="/settings#billing">Upgrade</Link> to create your own.</>}
         </p>
       )}
 
       {/* ---------- Scopes ---------- */}
       <section className="detail-block" id="scopes">
         <h2>Scopes <span className="uc-count">{scopes.length}{Number.isFinite(limit) && plan.customize ? `/${limit}` : ''}</span></h2>
-        <p className="settings-intro">
-          A scope is one configuration of the radar — for a company, a department or a project: its instructions, context
-          documents, search and agents. Home, Community, Tenders, News and History show the results of this workspace’s active
-          scopes together. Agents update them {runs === 1 ? 'once' : runs === 2 ? 'twice' : `${runs} times`} a day.
-        </p>
+        <p className="field-hint">Updated {runs === 1 ? 'once' : runs === 2 ? 'twice' : `${runs} times`} a day.</p>
         {scopes.length === 0 ? (
           <div className="profile-empty">
             <p className="profile-empty-title">No scopes in this workspace</p>
-            <p className="muted">Until there is one, it shows the default scope ({defaultScope?.name ?? 'EUDI Wallet & digital identity'}).</p>
             {canAdd ? <form action={addScope}><button type="submit" className="btn primary profile-empty-cta">Create the first scope</button></form>
               : ctx.isAdmin && <Link href="/settings#billing" className="btn primary profile-empty-cta">See plans</Link>}
           </div>
@@ -101,7 +95,7 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
           </div>
         )}
         {ctx.canCustomize && !canAdd && Number.isFinite(limit) && (
-          <p className="field-hint">You’ve reached the {plan.name} plan’s {limit} {limit === 1 ? 'scope' : 'scopes'}.{ctx.isOwner && <> <Link href="/settings#billing">Upgrade</Link> for more.</>}</p>
+          <p className="field-hint">Scope limit reached.{ctx.isOwner && <> <Link href="/settings#billing">Upgrade</Link></>}</p>
         )}
       </section>
 
@@ -109,7 +103,6 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
       {(teams || members.length > 1) && (
         <section className="detail-block" id="members">
           <h2>Team members <span className="uc-count">{members.length}</span></h2>
-          <p className="settings-intro">Admins configure this workspace’s scopes and agents; members see the results.</p>
           <ul className="member-list">
             {members.map((m) => (
               <MemberRow key={m.userId} workspaceId={wsId} member={m} canManage={ctx.isAdmin}

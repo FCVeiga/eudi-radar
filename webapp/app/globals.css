@@ -1552,3 +1552,55 @@ a.profile-post:hover { border-color: var(--border-strong); }
 .settings-value { margin: 0; font-size: 14px; color: var(--ink); }
 .plan-renews { margin: -4px 0 0; font-size: 12px; color: var(--muted); }
 .np-settings.flat { border: 0; padding: 0; background: none; box-shadow: none; position: static; max-width: 560px; }
+
+/* ======================= Flat layout (Reddit-style) =======================
+   White page; no boxed sections. Lists are rows split by hairlines with a
+   soft hover fill; side panels and grid cards use a light fill, no border. */
+body { background: var(--surface); }
+:root { --fill: #F3F5F8; --fill-hover: #EEF1F5; }
+
+/* Page sections: separated by a hairline, not boxed. */
+.detail-block { background: none; border: 0; border-radius: 0; box-shadow: none; padding: 20px 0; margin: 0; border-bottom: 1px solid var(--border); }
+.detail-block:last-child, .detail-block.danger-zone { border-bottom: 0; }
+.detail-block h2 { font-size: 16px; margin-bottom: 12px; }
+
+/* Lists: rows with dividers and a hover fill. */
+.feed, .news-list, .opp-rows { gap: 0; }
+.feed-item, .news-card, .opp-row, .profile-post {
+  background: none; border: 0; border-bottom: 1px solid var(--border); border-radius: 0; box-shadow: none; margin: 0;
+  transition: background-color 0.12s;
+}
+.feed-item:hover, .news-card:hover, .opp-row:hover, .profile-post:hover {
+  background: var(--fill-hover); border-color: var(--border); box-shadow: none; transform: none;
+}
+.opp-card { box-shadow: none; border-color: transparent; background: var(--fill); }
+.opp-card:hover { background: var(--fill-hover); border-color: transparent; box-shadow: none; transform: none; }
+
+/* Panels, side rails and grid cards: light fill, no border or shadow. */
+.panel, .live-panel, .opp-sidebar, .map-container, .stat, .profile-card, .np-settings, .scope-card, .agent-card, .plan-card {
+  background: var(--fill); border-color: transparent; box-shadow: none; border-radius: 16px;
+}
+.agent-card.off, .scope-card.off { background: var(--fill); opacity: 0.65; }
+.plan-card.current { background: var(--accent-soft); border-color: transparent; box-shadow: none; }
+.np-settings.flat { background: none; }
+.panel-head { border-bottom-color: rgba(26, 35, 59, 0.06); }
+.profile-card-avatar { box-shadow: 0 0 0 3px var(--fill); }
+
+/* Tables, notification lists, chat, legal text: no outer frame. */
+.table-wrap { background: none; border: 0; border-radius: 0; box-shadow: none; }
+table.data-table th { background: none; }
+.np-list, .member-list, .ws-list { background: none; border: 0; border-radius: 0; }
+.np-list li, .member-row, .ws-row { border-bottom: 1px solid var(--border); }
+.member-row + .member-row, .ws-row + .ws-row, .np-list li + li { border-top: 0; }
+.legal-body { background: none; border: 0; border-radius: 0; padding: 0; }
+.chat-panel.page { border-color: var(--border); border-radius: 16px; }
+
+/* Callouts and empty states. */
+.callout { background: var(--fill); border: 0; border-radius: 12px; }
+.callout.error { background: var(--bad-soft); }
+.profile-empty { border: 0; background: none; }
+.radio-row { background: none; }
+.filters { background: var(--fill); border: 0; box-shadow: none; }
+.feed-sort-link:hover { background: var(--fill-hover); }
+.auth-card { border: 0; box-shadow: none; }
+.feed-votes { background: none; border-right: 0; }

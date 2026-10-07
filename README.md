@@ -77,4 +77,5 @@ Environment (pipeline): `DATABASE_URL`, `ANTHROPIC_API_KEY`
 (+ `ANTHROPIC_WORKSPACE_ID` for unscoped keys), `TAVILY_API_KEY`; optional
 `TAVILY_QUERIES_PER_RUN`, `MAX_TRIAGE_PER_RUN`.
 
-See `SETUP_CHECKLIST.md` and `API_KEYS_NEEDED.md` for accounts and keys.
+Moving to new accounts or a new computer: `MIGRATION.md`. Instructions for coding agents: `AGENTS.md`.
+Older notes on accounts and keys: `SETUP_CHECKLIST.md`, `API_KEYS_NEEDED.md`.

@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { getContext, getMyWorkspaces, getPersonalAccount, getWorkspaceContext } from '@/lib/accounts';
 import { getSupabaseServerClient } from '@/lib/supabase';
-import { SCOPE_AGENT_KEYS, getWorkspaceScopes } from '@/lib/scopes';
+import { SCOPE_AGENT_KEYS, getCatalogScopes, getWorkspaceScopes, workspaceScopeUse } from '@/lib/scopes';
 import ScopeCard from '@/components/settings/ScopeCard';
 import { AddMemberButton, DeleteWorkspace, MemberRow, RevokeInviteButton, WorkspaceName } from '@/components/settings/WorkspaceControls';
 import { createScope, switchWorkspace } from '../actions';
@@ -31,24 +31,30 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
   const t = await getT();
   const db = getSupabaseServerClient();
   const wsId = ctx.workspace.id;
-  const ownScopes = await getWorkspaceScopes(wsId);
+  const [ownScopes, catalog, use] = await Promise.all([getWorkspaceScopes(wsId), getCatalogScopes(), workspaceScopeUse(wsId)]);
   const { data: wsRow } = await db.from('workspaces').select('show_default').eq('id', wsId).maybeSingle();
-  const otherActive = ownScopes.some((s) => s.active && !s.isDefault);
+  const picked = new Set(use.pickIds);
+  const otherActive = ownScopes.some((s) => s.active && !s.isDefault && !s.catalog) || picked.size > 0;
   const showDefault = wsRow?.show_default !== false || !otherActive;
   const { data: defaultRow } = await db.from('scopes').select('*').eq('is_default', true).maybeSingle();
-  const sharedDefault = defaultRow?.active && defaultRow.workspace_id !== wsId ? {
+  const general = ownScopes.find((s) => s.isDefault) || (defaultRow?.active ? {
     id: defaultRow.id, ownerId: defaultRow.owner_id, name: defaultRow.name, instructions: defaultRow.instructions,
-    active: defaultRow.active, isDefault: true, searchScope: defaultRow.search_scope, searchConfig: defaultRow.search_config,
+    active: true, isDefault: true, catalog: false, searchScope: defaultRow.search_scope, searchConfig: defaultRow.search_config,
     searchStatus: defaultRow.search_status, searchError: defaultRow.search_error, parsedAt: defaultRow.search_parsed_at, createdAt: defaultRow.created_at,
-  } : null;
-  const scopes = sharedDefault ? [sharedDefault, ...ownScopes] : ownScopes;
+  } : null);
+  const custom = ownScopes.filter((s) => !s.isDefault && !s.catalog);
+  const scopes = [
+    ...(general ? [{ ...general, active: showDefault }] : []),
+    ...catalog.map((s) => ({ ...s, active: picked.has(s.id) })),
+    ...custom,
+  ];
   const ids = scopes.map((s) => s.id);
   const teams = ctx.plan.key === 'teams';
   const [mine, current, account, { data: docs }, { data: agentRows }, { data: items }, { data: memberRows }, { data: invites }] = await Promise.all([
     getMyWorkspaces(),
     getContext(),
     getPersonalAccount(user.id),
-    ids.length ? db.from('company_documents').select('scope_id').in('scope_id', ids) : Promise.resolve({ data: [] as any[] }),
+    ids.length ? db.from('company_documents').select('scope_id, workspace_id').in('scope_id', ids) : Promise.resolve({ data: [] as any[] }),
     ids.length ? db.from('scope_agent_settings').select('scope_id, agent_key, enabled').in('scope_id', ids) : Promise.resolve({ data: [] as any[] }),
     ids.length ? db.from('scope_items').select('scope_id').in('scope_id', ids).limit(50000) : Promise.resolve({ data: [] as any[] }),
     db.from('workspace_members').select('user_id, role').eq('workspace_id', wsId),
@@ -64,14 +70,35 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
     || (a.role === b.role ? a.username.localeCompare(b.username) : a.role === 'admin' ? -1 : 1));
 
   const count = (rows: any[] | null, id: string) => (rows || []).filter((r) => r.scope_id === id).length;
+  const docCount = (id: string, shared: boolean) => (docs || []).filter((r: any) => r.scope_id === id && (shared ? r.workspace_id === wsId : !r.workspace_id)).length;
   const plan = ctx.plan;
   const limit = ctx.isDefault ? Infinity : plan.scopes;
-  const customCount = ownScopes.filter((s) => !s.isDefault).length;
-  const canAdd = ctx.canCustomize && customCount < limit;
+  const slotsUsed = use.custom + use.pickIds.length;
+  const canAdd = ctx.canCustomize && slotsUsed < limit;
+  const showSlots = Number.isFinite(limit) && limit < 1000 && plan.customize;
   const viewerPlan = { key: account?.planKey ?? 'free', status: account?.planStatus ?? 'active', periodEnd: account?.periodEnd ?? null, hasBilling: !!account?.stripeCustomerId };
   const owned = mine.filter((m) => m.workspace.ownerId === user.id && !m.isDefault);
   const addScope = createScope.bind(null, wsId);
   const onSite = current?.workspace.id === wsId;
+  const defaults = scopes.filter((s) => s.isDefault || s.catalog).sort((a, b) => Number(b.active) - Number(a.active));
+  const customs = scopes.filter((s) => !s.isDefault && !s.catalog);
+  const scopeControl = (s: (typeof scopes)[number]) => {
+    const on = SCOPE_AGENT_KEYS.filter((k) => (agentRows || []).find((r: any) => r.scope_id === s.id && r.agent_key === k)?.enabled ?? true).length;
+    const isDefaultCard = s.isDefault;
+    const isCatalog = !!s.catalog && !isDefaultCard;
+    const locked = isDefaultCard || isCatalog;
+    return (
+      <ScopeCard key={s.id} href={`/workspaces/scopes/${s.id}?from=${wsId}`}
+        readOnly={locked || !ctx.canCustomize}
+        canToggle={isDefaultCard ? ctx.isAdmin && otherActive : isCatalog ? ctx.isAdmin : undefined}
+        showDefaultFor={isDefaultCard ? wsId : null}
+        catalogFor={isCatalog ? wsId : null}
+        atLimit={isCatalog && !s.active && slotsUsed >= limit}
+        upgrade={ctx.isAdmin ? { userId: user.id, admin: ctx.isPlatformAdmin, plan: viewerPlan } : null}
+        scope={{ id: s.id, name: s.name, instructions: s.instructions, active: isDefaultCard ? showDefault : s.active, isDefault: s.isDefault, catalog: s.catalog, topic: s.searchConfig?.topic ?? null }}
+        docs={docCount(s.id, isDefaultCard || isCatalog)} agentsOn={on} agentsTotal={SCOPE_AGENT_KEYS.length} items={count(items, s.id)} />
+    );
+  };
 
   return (
     <div className="settings">
@@ -91,7 +118,7 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
       {/* ---------- Scopes ---------- */}
       <section className="detail-block" id="scopes">
         <div className="section-head">
-          <h2>{t('Scopes')} <span className="uc-count">{scopes.length}{Number.isFinite(limit) && plan.customize ? `/${limit}` : ''}</span></h2>
+          <h2>{t('Scopes')} {showSlots && <span className="uc-count">{slotsUsed}/{limit}</span>}</h2>
           {scopes.length > 0 && (canAdd
             ? <form action={addScope}><button type="submit" className="btn primary">{t('New scope')}</button></form>
             : ctx.isAdmin && <PlanUpgradeButton label={t('New scope')} userId={user.id} admin={ctx.isPlatformAdmin} plan={viewerPlan} />)}
@@ -103,19 +130,22 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
               : ctx.isAdmin && <PlanUpgradeButton label={t('Create the first scope')} className="btn primary profile-empty-cta" userId={user.id} admin={ctx.isPlatformAdmin} plan={viewerPlan} />}
           </div>
         ) : (
-          <div className="scope-grid">
-            {scopes.map((s) => {
-              const on = SCOPE_AGENT_KEYS.filter((k) => (agentRows || []).find((r: any) => r.scope_id === s.id && r.agent_key === k)?.enabled ?? true).length;
-              const isDefaultCard = s.isDefault;
-              return (
-                <ScopeCard key={s.id} readOnly={isDefaultCard ? !ctx.isPlatformAdmin : !ctx.canCustomize}
-                  canToggle={isDefaultCard ? ctx.isAdmin && otherActive : undefined}
-                  showDefaultFor={isDefaultCard ? wsId : null}
-                  scope={{ id: s.id, name: s.name, instructions: s.instructions, active: isDefaultCard ? showDefault : s.active, isDefault: s.isDefault, topic: s.searchConfig?.topic ?? null }}
-                  docs={count(docs, s.id)} agentsOn={on} agentsTotal={SCOPE_AGENT_KEYS.length} items={count(items, s.id)} />
-              );
-            })}
-          </div>
+          <>
+            <div className="scope-rail-block">
+              <h3 className="scope-rail-label">{t('Default')}</h3>
+              <div className="scope-rail" tabIndex={0} aria-label={t('Default')}>
+                {defaults.map(scopeControl)}
+              </div>
+            </div>
+            {customs.length > 0 && (
+              <div className="scope-rail-block">
+                <h3 className="scope-rail-label">{t('Custom')}</h3>
+                <div className="scope-rail" tabIndex={0} aria-label={t('Custom')}>
+                  {customs.map(scopeControl)}
+                </div>
+              </div>
+            )}
+          </>
         )}
       </section>
 

@@ -12,26 +12,62 @@
 import 'server-only';
 import { cache } from 'react';
 import { getSupabaseServerClient } from '@/lib/supabase';
-import { canEditWorkspace, getContext } from '@/lib/accounts';
+import { canEditWorkspace, getContext, getMembership, isPlatformAdmin } from '@/lib/accounts';
+import { getCurrentUser } from '@/lib/auth';
 
 export const SCOPE_AGENT_KEYS = ['search', 'triage', 'tender_evaluation', 'proposal_manager', 'news_report'];
 export const PLATFORM_AGENT_KEYS = ['tender_documents', 'tender_analysis', 'feed_writer', 'translator'];
 
 export type Scope = {
   id: string; ownerId: string | null; name: string; instructions: string | null; active: boolean; isDefault: boolean;
+  catalog: boolean;
   searchScope: string | null; searchConfig: Record<string, any> | null; searchStatus: string | null; searchError: string | null;
   parsedAt: string | null; createdAt: string;
 };
 
+/** Ready-made scopes, in the order their cards appear under General. */
+export const CATALOG_ORDER = [
+  'Artificial Intelligence', 'Cybersecurity', 'Digital ID & Biometrics', 'EUDI Wallet',
+  'Healthcare software', 'ERP & business software', 'Cloud platforms',
+];
+
 const toScope = (r: any): Scope => ({
   id: r.id, ownerId: r.owner_id, name: r.name, instructions: r.instructions, active: r.active, isDefault: r.is_default,
+  catalog: !!r.catalog,
   searchScope: r.search_scope, searchConfig: r.search_config, searchStatus: r.search_status, searchError: r.search_error,
   parsedAt: r.search_parsed_at, createdAt: r.created_at,
 });
 
+const byCatalogOrder = (a: Scope, b: Scope) =>
+  (CATALOG_ORDER.indexOf(a.name) + 1 || 99) - (CATALOG_ORDER.indexOf(b.name) + 1 || 99);
+
+/** Shared scopes every workspace can turn on. */
+export async function getCatalogScopes(): Promise<Scope[]> {
+  const { data } = await getSupabaseServerClient().from('scopes').select('*').eq('catalog', true).eq('active', true);
+  return (data || []).map(toScope).sort(byCatalogOrder);
+}
+
 export async function getWorkspaceScopes(workspaceId: string): Promise<Scope[]> {
   const { data } = await getSupabaseServerClient().from('scopes').select('*').eq('workspace_id', workspaceId).order('created_at');
   return (data || []).map(toScope);
+}
+
+/**
+ * A scope the signed-in user may open. General and the catalog are shared, so
+ * every account can read them; only someone who may configure that workspace
+ * (and, for a catalog scope, a platform admin) can change them.
+ */
+export async function getViewableScope(id: string): Promise<(Scope & { workspaceId: string; editable: boolean }) | null> {
+  if (!/^[0-9a-f-]{36}$/.test(id)) return null;
+  if (!(await getCurrentUser())) return null;
+  const { data } = await getSupabaseServerClient().from('scopes').select('*').eq('id', id).maybeSingle();
+  if (!data?.workspace_id) return null;
+  const scope = toScope(data);
+  const shared = scope.isDefault || scope.catalog;
+  if (!shared && !(await getMembership(data.workspace_id))) return null;
+  const editor = await canEditWorkspace(data.workspace_id);
+  const editable = !!editor && (!scope.catalog || await isPlatformAdmin());
+  return { ...scope, workspaceId: data.workspace_id, editable };
 }
 
 /** A scope the user may configure: admin of its workspace, on a plan that allows customizing (else null). */
@@ -39,7 +75,10 @@ export async function getEditableScope(id: string): Promise<(Scope & { workspace
   if (!/^[0-9a-f-]{36}$/.test(id)) return null;
   const { data } = await getSupabaseServerClient().from('scopes').select('*').eq('id', id).maybeSingle();
   if (!data?.workspace_id || !(await canEditWorkspace(data.workspace_id))) return null;
-  return { ...toScope(data), workspaceId: data.workspace_id };
+  const scope = toScope(data);
+  // A catalog scope is shared. Only a platform admin edits it, and nobody deletes it from a workspace.
+  if (scope.catalog && !(await isPlatformAdmin())) return null;
+  return { ...scope, workspaceId: data.workspace_id };
 }
 
 export async function getScope(id: string): Promise<Scope | null> {
@@ -48,12 +87,21 @@ export async function getScope(id: string): Promise<Scope | null> {
   return data ? toScope(data) : null;
 }
 
+/** Custom scopes in this workspace (not General, not a shared catalog scope) and the catalog scopes it has turned on. */
+export async function workspaceScopeUse(workspaceId: string): Promise<{ custom: number; pickIds: string[] }> {
+  const db = getSupabaseServerClient();
+  const [{ count }, { data: picks }] = await Promise.all([
+    db.from('scopes').select('id', { count: 'exact', head: true }).eq('workspace_id', workspaceId).eq('is_default', false).eq('catalog', false),
+    db.from('workspace_scope_picks').select('scope_id, created_at').eq('workspace_id', workspaceId).order('created_at'),
+  ]);
+  return { custom: count ?? 0, pickIds: (picks || []).map((p: any) => p.scope_id) };
+}
+
 /**
- * The scopes whose results this viewer sees. The default scope is in every
- * account (and what visitors see). A workspace then adds its own active scopes,
- * up to what its plan allows. `own` = at least one of them belongs to the
- * workspace; `canRun` = an admin on a plan that allows customizing may run
- * on-click agents (members only see the results).
+ * The scopes whose results this viewer sees. General is in every account (and
+ * what visitors see). A workspace then turns on shared catalog scopes and its
+ * own scopes, up to what its plan allows. `own` = at least one of those is on;
+ * `canRun` = an admin on a plan that allows customizing may run on-click agents.
  */
 export const getViewScopes = cache(async (): Promise<{ scopes: Scope[]; own: boolean; canRun: boolean }> => {
   const ctx = await getContext();
@@ -62,16 +110,28 @@ export const getViewScopes = cache(async (): Promise<{ scopes: Scope[]; own: boo
   const defaults = (defRows || []).filter((s: any) => s.active).map(toScope);
   if (!ctx) return { scopes: defaults, own: false, canRun: false };
   const limit = ctx.isDefault ? 1000 : ctx.plan.scopes;
-  const { data } = limit > 0
-    ? await db.from('scopes').select('*').eq('workspace_id', ctx.workspace.id).order('created_at').limit(limit)
-    : { data: [] as any[] };
-  const own = (data || []).filter((s: any) => s.active && !s.is_default).map(toScope);
-  const seen = new Set(own.map((s) => s.id));
-  const { data: ws } = await db.from('workspaces').select('show_default').eq('id', ctx.workspace.id).maybeSingle();
-  // The default stays in the feed until this workspace has another scope switched on and has turned it off.
-  const includeDefault = ws?.show_default !== false || own.length === 0;
+  const [{ data: ownRows }, use, { data: ws }] = await Promise.all([
+    db.from('scopes').select('*').eq('workspace_id', ctx.workspace.id).order('created_at'),
+    workspaceScopeUse(ctx.workspace.id),
+    db.from('workspaces').select('show_default').eq('id', ctx.workspace.id).maybeSingle(),
+  ]);
+  const activeOwn = (ownRows || []).filter((s: any) => s.active && !s.is_default && !s.catalog).map(toScope);
+  const inactiveCustom = (ownRows || []).filter((s: any) => !s.active && !s.is_default && !s.catalog).length;
+  const budget = Math.max(0, limit - inactiveCustom);
+  const own = activeOwn.slice(0, budget);
+  const pickIds = use.pickIds.slice(0, Math.max(0, budget - own.length));
+  let catalog: Scope[] = [];
+  if (pickIds.length) {
+    const { data: catRows } = await db.from('scopes').select('*').in('id', pickIds).eq('catalog', true).eq('active', true);
+    const byId = new Map((catRows || []).map((r: any) => [r.id, toScope(r)]));
+    catalog = pickIds.map((id) => byId.get(id)).filter((s): s is Scope => !!s);
+  }
+  const extra = [...catalog, ...own];
+  const seen = new Set(extra.map((s) => s.id));
+  // General stays in the feed until this workspace has another scope on and has turned it off.
+  const includeDefault = ws?.show_default !== false || extra.length === 0;
   const defaultsShown = includeDefault ? defaults.filter((d) => !seen.has(d.id)) : [];
-  return { scopes: [...defaultsShown, ...own], own: own.length > 0, canRun: ctx.canCustomize };
+  return { scopes: [...defaultsShown, ...extra], own: extra.length > 0, canRun: ctx.canCustomize };
 });
 
 export type ScopeItems = { ids: string[]; relevance: Map<string, number>; scopesOf: Map<string, string[]> };

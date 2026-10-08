@@ -9,6 +9,7 @@ import {
 } from '@/app/workspaces/actions';
 import type { AgentDef } from '@/lib/agents';
 import { useT } from '@/lib/i18n/client';
+import { PlanUpgradeButton, type PlanState } from './PlanPanel';
 
 function Submit({ label, busy, primary }: { label: string; busy: string; primary?: boolean }) {
   const { pending } = useFormStatus();
@@ -20,17 +21,18 @@ function Submit({ label, busy, primary }: { label: string; busy: string; primary
  * (for the Search Agent: the search scope), and its configuration — shown
  * and editable under "Open config"; what is saved there is what it runs on.
  */
-export default function AgentCard({ agent, enabled, instructions, config, custom, status, error, scopeId = null, readOnly = false, locked = false }: {
+export default function AgentCard({ agent, enabled, instructions, config, custom, status, error, scopeId = null, readOnly = false, locked = false, upgrade = null }: {
   agent: AgentDef; enabled: boolean; instructions: string | null; config: string | null;
   custom: boolean; status: string | null; error: string | null;
   scopeId?: string | null;   // scope agents: the scope they belong to; workspace agents: null
   readOnly?: boolean;        // members, Free plan, and workspace agents for non–platform admins
   locked?: boolean;          // plan does not include this agent
+  upgrade?: { userId: string; admin: boolean; plan: PlanState } | null;
 }) {
   const router = useRouter();
   const t = useT();
   const search = agent.key === 'search';
-  const editable = (agent.fineTune || search) && !readOnly;
+  const editable = (agent.fineTune || search) && !readOnly && !locked;
   const [on, setOn] = useState(enabled);
   const [, start] = useTransition();
   const dialog = useRef<HTMLDialogElement>(null);
@@ -54,9 +56,13 @@ export default function AgentCard({ agent, enabled, instructions, config, custom
         </button>
       </div>
       <p className="agent-role">{t(agent.role)}</p>
-      {locked && <p className="field-hint">{t('The News Report Agent is included on Pro and Teams.')}</p>}
+      {locked && <p className="field-hint">{t(agent.key === 'proposal_manager' ? 'Proposal briefs are included on Teams.' : agent.key === 'tender_evaluation' ? 'Tender Evaluation is included from Starter.' : 'The News Report Agent is included on Pro and Teams.')}</p>}
 
-      {config && (
+      {locked && upgrade ? (
+        <div className="agent-card-actions">
+          <PlanUpgradeButton label={t('Upgrade plan')} className="btn" userId={upgrade.userId} admin={upgrade.admin} plan={upgrade.plan} />
+        </div>
+      ) : config && (
         <div className="agent-card-actions">
           <button type="button" className="btn" onClick={() => dialog.current?.showModal()}>{t('Open config')}</button>
         </div>

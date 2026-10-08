@@ -37,7 +37,7 @@ AGENT_PROMPTS = {
 SCOPE_AGENTS = ["search", "triage", "tender_evaluation", "proposal_manager", "news_report"]
 PLATFORM_AGENTS = ["tender_documents", "tender_analysis", "feed_writer", "translator"]
 ALL_AGENTS = SCOPE_AGENTS + PLATFORM_AGENTS
-DEFAULT_SCOPE_NAME = "EUDI Wallet & digital identity"
+DEFAULT_SCOPE_NAME = "General"
 # Agent updates per day by plan (keep in sync with webapp/lib/plans.ts); scopes per workspace.
 RUNS_PER_DAY = {"free": 1, "starter": 2, "pro": 3, "teams": 6}
 SCOPES_PER_PLAN = {"free": 0, "starter": 1, "pro": 5, "teams": 1000}
@@ -72,7 +72,7 @@ def load(session, search_defaults: dict = None) -> None:
         _state["enabled"] = {r.agent_key: bool(r.enabled) for r in rows if r.agent_key in PLATFORM_AGENTS}
         _state["overrides"] = {r.agent_key: r.prompt_override for r in rows if r.prompt_override and r.agent_key in PLATFORM_AGENTS + ["translator"]}
 
-        scopes = session.execute(text("""select s.id, s.name, s.instructions, s.active, s.is_default, s.search_config, s.last_run_at,
+        scopes = session.execute(text("""select s.id, s.name, s.instructions, s.active, s.is_default, s.catalog, s.search_config, s.last_run_at,
                    s.workspace_id, a.plan,
                    row_number() over (partition by s.workspace_id order by s.created_at) as rank
             from scopes s left join workspaces w on w.id = s.workspace_id
@@ -109,10 +109,13 @@ def load(session, search_defaults: dict = None) -> None:
 
 def _due(s) -> bool:
     """Does this scope run now? Active, covered by its workspace owner's plan, and due
-    by the plan's cadence (the default scope: once a day). FORCE_ALL_SCOPES=1
-    runs every eligible scope regardless of cadence."""
+    by the plan's cadence. The default scope and the shared catalog scopes run once
+    a day, whatever plan a workspace is on. FORCE_ALL_SCOPES=1 runs every eligible
+    scope regardless of cadence."""
     from datetime import datetime, timezone
-    if s.is_default:
+    if s.is_default or s.catalog:
+        if s.catalog and not s.active:
+            return False
         runs = 1
     else:
         if not s.active:

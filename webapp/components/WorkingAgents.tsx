@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { AGENTS } from '@/lib/agents';
 import { SCOPE_AGENT_KEYS } from '@/lib/scopes';
 import { workingAgentKeys } from '@/lib/settings';
+import { getContext } from '@/lib/accounts';
 import AgentAvatar from './AgentAvatar';
 import { getT } from '@/lib/i18n/server';
 
@@ -11,23 +12,31 @@ export default async function WorkingAgents() {
   const listed = AGENTS.filter((a) => SCOPE_AGENT_KEYS.includes(a.key));
   let on: Set<string> | null = null;
   try { on = await workingAgentKeys(); } catch { /* settings tables missing: all on */ }
-  const active = listed.filter((a) => !on || on.has(a.key));
+  const plan = (await getContext())?.plan;
+  const blocked = (key: string) => (key === 'tender_evaluation' && (plan?.evaluationsPerMonth ?? 0) === 0)
+    || (key === 'proposal_manager' && (plan?.proposalsPerMonth ?? 0) === 0)
+    || (key === 'news_report' && (plan?.newsReportsPerMonth ?? 0) === 0);
+  const shown = listed.filter((a) => blocked(a.key) || !on || on.has(a.key));
+  const working = shown.filter((a) => !blocked(a.key) && (!on || on.has(a.key)));
   return (
     <div className="side-panel working-agents">
       <div className="side-head">
         <h3>{t('Working Agents')}</h3>
-        <span className="side-count" title={t('{n} switched on of {total}', { n: active.length, total: listed.length })}>{active.length}/{listed.length}</span>
+        <span className="side-count" title={t('{n} switched on of {total}', { n: working.length, total: listed.length })}>{working.length}/{listed.length}</span>
       </div>
       <ul>
-        {active.map((a) => (
-          <li key={a.key}>
-            <Link href="/workspaces" title={t(a.role)}>
-              <AgentAvatar agent={a.key} size={22} />
-              <span className="wa-name">{t(a.name)}</span>
-              <span className="live-dot" aria-label={t('active')} />
-            </Link>
-          </li>
-        ))}
+        {shown.map((a) => {
+          const off = blocked(a.key);
+          return (
+            <li key={a.key}>
+              <Link href="/workspaces" title={t(a.role)}>
+                <AgentAvatar agent={a.key} size={22} off={off} />
+                <span className="wa-name">{t(a.name)}</span>
+                <span className={`live-dot ${off ? 'blocked' : ''}`} aria-label={t(off ? 'off' : 'active')} />
+              </Link>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

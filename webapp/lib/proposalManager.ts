@@ -9,7 +9,10 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { agentPrompt, companyBrief, isAgentEnabled } from '@/lib/settings';
-import { friendly, lockRow, unlockRow } from '@/lib/scopeWork';
+import { friendly, lockEvaluation, unlockEvaluation } from '@/lib/scopeWork';
+import { getScope } from '@/lib/scopes';
+import { agentRunAllowance, recordAgentRun } from '@/lib/agentQuota';
+import { getT } from '@/lib/i18n/server';
 
 const MODEL = 'claude-opus-5-5';
 const LOCK_MINUTES = 6;
@@ -19,31 +22,46 @@ const GROUPS: Record<string, string> = {
 
 export type ProposalStatus = 'done' | 'running' | 'error';
 
-export async function ensureProposal(opportunityId: string, scopeId: string): Promise<{ status: ProposalStatus; message?: string }> {
+async function proposalWorkspace(scopeId: string, workspaceId: string | null): Promise<string | null> {
+  if (!workspaceId) return null;
+  const scope = await getScope(scopeId);
+  if (!scope?.isDefault && !scope?.catalog) return null;
+  const { count } = await getSupabaseServerClient().from('company_documents').select('id', { count: 'exact', head: true })
+    .eq('scope_id', scopeId).eq('workspace_id', workspaceId);
+  return (count ?? 0) > 0 ? workspaceId : null;
+}
+
+export async function ensureProposal(opportunityId: string, scopeId: string, workspaceId: string | null = null): Promise<{ status: ProposalStatus; message?: string }> {
   if (!(await isAgentEnabled('proposal_manager', scopeId))) return { status: 'error', message: 'the Proposal Manager Agent is switched off for this scope' };
-  const key = { scope_id: scopeId, opportunity_id: opportunityId };
-  if (!(await lockRow('scope_evaluations', key, 'proposal_started_at', 'proposal_error', LOCK_MINUTES))) return { status: 'running' };
+  const allowance = await agentRunAllowance('proposal_manager');
+  if (allowance.block) return { status: 'error', message: (await getT())('Proposal briefs are included on Teams.') };
+  const owner = await proposalWorkspace(scopeId, workspaceId);
+  if (!(await lockEvaluation(scopeId, opportunityId, owner, 'proposal_started_at', 'proposal_error', LOCK_MINUTES))) return { status: 'running' };
   try {
-    await runProposal(opportunityId, scopeId);
-    await unlockRow('scope_evaluations', key, 'proposal_started_at', 'proposal_error', null);
+    await runProposal(opportunityId, scopeId, owner);
+    if (allowance.accountId && allowance.limit != null) await recordAgentRun(allowance.accountId, 'proposal_manager');
+    await unlockEvaluation(scopeId, opportunityId, owner, 'proposal_started_at', 'proposal_error', null);
     return { status: 'done' };
   } catch (e: any) {
     const message = friendly(e);
-    await unlockRow('scope_evaluations', key, 'proposal_started_at', 'proposal_error', message);
+    await unlockEvaluation(scopeId, opportunityId, owner, 'proposal_started_at', 'proposal_error', message);
     return { status: 'error', message };
   }
 }
 
-async function runProposal(opportunityId: string, scopeId: string) {
+async function runProposal(opportunityId: string, scopeId: string, workspaceId: string | null) {
   if (!process.env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY is not configured on the server.');
   const db = getSupabaseServerClient();
   const [{ data: o }, { data: reqs }, { data: award }, { data: docs }, { data: se }] = await Promise.all([
     db.from('opportunities').select('*').eq('opportunity_id', opportunityId).single(),
-    db.from('requirements').select('requirement_group, category, requirement_text, mandatory, threshold, evidence_required, document, requirement_matches(match_status, notes, scope_id)')
+    db.from('requirements').select('requirement_group, category, requirement_text, mandatory, threshold, evidence_required, document, requirement_matches(match_status, notes, scope_id, workspace_id)')
       .eq('opportunity_id', opportunityId),
     db.from('award_criteria').select('criterion, weight, subcriteria').eq('opportunity_id', opportunityId).order('weight', { ascending: false }),
     db.from('documents').select('name, name_en, document_type').eq('opportunity_id', opportunityId),
-    db.from('scope_evaluations').select('evaluation').match({ scope_id: scopeId, opportunity_id: opportunityId }).maybeSingle(),
+    (workspaceId
+      ? db.from('scope_evaluations').select('evaluation').match({ scope_id: scopeId, opportunity_id: opportunityId, workspace_id: workspaceId })
+      : db.from('scope_evaluations').select('evaluation').eq('scope_id', scopeId).eq('opportunity_id', opportunityId).is('workspace_id', null)
+    ).maybeSingle(),
   ]);
   if (!o) throw new Error('Tender not found.');
   if (!se?.evaluation) throw new Error('run the Tender Evaluation Agent for this scope first');
@@ -51,7 +69,8 @@ async function runProposal(opportunityId: string, scopeId: string) {
   const ev = se.evaluation;
   const title = o.title_en || o.title;
   const reqLines = (reqs || []).map((r: any, i: number) => {
-    const m = (r.requirement_matches || []).find((x: any) => x.scope_id === scopeId);
+    const matches = (r.requirement_matches || []).filter((x: any) => x.scope_id === scopeId);
+    const m = (workspaceId && matches.find((x: any) => x.workspace_id === workspaceId)) || matches.find((x: any) => !x.workspace_id);
     return `R${i + 1} [${GROUPS[r.requirement_group] ?? r.category}${r.mandatory ? ', mandatory' : ', optional'}] ${r.requirement_text}`
       + (r.threshold ? ` — threshold: ${r.threshold}` : '') + (r.evidence_required ? ` — evidence: ${r.evidence_required}` : '')
       + (r.document ? ` — source: ${r.document}` : '') + (m ? ` — evaluation: ${m.match_status}${m.notes ? ` (${m.notes})` : ''}` : '');
@@ -71,7 +90,7 @@ async function runProposal(opportunityId: string, scopeId: string) {
     `\nPublished tender documents:\n${(docs || []).map((d: any) => `- [${d.document_type}] ${d.name_en || d.name}`).join('\n') || '(none listed)'}`,
   ].filter(Boolean).join('\n');
 
-  const [prompt, brief] = await Promise.all([agentPrompt('proposal_manager', 'proposal_manager.md', scopeId), companyBrief({ withDocuments: true, scopeId })]);
+  const [prompt, brief] = await Promise.all([agentPrompt('proposal_manager', 'proposal_manager.md', scopeId), companyBrief({ withDocuments: true, scopeId, workspaceId })]);
   const client = new Anthropic({
     defaultHeaders: process.env.ANTHROPIC_WORKSPACE_ID ? { 'anthropic-workspace-id': process.env.ANTHROPIC_WORKSPACE_ID } : undefined,
   });
@@ -92,8 +111,10 @@ async function runProposal(opportunityId: string, scopeId: string) {
   if (!markdown.startsWith('#')) throw new Error('The agent did not return a brief.');
   if (response.stop_reason === 'max_tokens') markdown += '\n\n> _The brief was cut short at the length limit — re-run to regenerate it._\n';
 
-  const { error } = await db.from('scope_evaluations').update({
+  let saved = db.from('scope_evaluations').update({
     proposal_brief: markdown, proposal_at: new Date().toISOString(), proposal_error: null,
-  }).match({ scope_id: scopeId, opportunity_id: opportunityId });
+  }).eq('scope_id', scopeId).eq('opportunity_id', opportunityId);
+  saved = workspaceId ? saved.eq('workspace_id', workspaceId) : saved.is('workspace_id', null);
+  const { error } = await saved;
   if (error) throw new Error(error.message);
 }

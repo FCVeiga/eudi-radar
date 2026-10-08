@@ -2,6 +2,7 @@ import { getSupabaseServerClient } from '@/lib/supabase';
 import { TRANSLATION_PENDING, nameInLanguage, firstInLanguage, inPlatformLanguage } from '@/lib/english';
 import { getPlatformLanguage } from '@/lib/language';
 import { getScopeItems, getViewScopes } from '@/lib/scopes';
+import { getContext } from '@/lib/accounts';
 
 // Opportunity categories — must match OPPORTUNITY_TYPES values in run_daily.py.
 export const OPP_CATEGORIES = [
@@ -141,13 +142,21 @@ export async function inScopes<T extends { opportunity_id: string; opportunity_r
   const items = await getScopeItems('tender');
   if (!items) return rows;
   const kept = rows.filter((o) => items.relevance.has(o.opportunity_id));
-  const { scopes } = await getViewScopes();
+  const [{ scopes }, ctx] = await Promise.all([getViewScopes(), getContext()]);
+  const wsId = ctx?.workspace.id ?? null;
   const { data: evals } = kept.length && scopes.length
-    ? await getSupabaseServerClient().from('scope_evaluations').select('opportunity_id, evaluation')
+    ? await getSupabaseServerClient().from('scope_evaluations').select('opportunity_id, scope_id, workspace_id, evaluation')
         .in('scope_id', scopes.map((s) => s.id)).in('opportunity_id', kept.map((o) => o.opportunity_id)).not('evaluation', 'is', null)
     : { data: [] as any[] };
+  const picked = new Map<string, any>();
+  for (const e of evals || []) {
+    if (e.workspace_id && e.workspace_id !== wsId) continue;
+    const key = `${e.scope_id}:${e.opportunity_id}`;
+    const prev = picked.get(key);
+    if (!prev || e.workspace_id === wsId) picked.set(key, e);
+  }
   const fit = new Map<string, number>();
-  for (const e of evals || []) fit.set(e.opportunity_id, Math.max(fit.get(e.opportunity_id) ?? 0, Number(e.evaluation?.fit_score) || 0));
+  for (const e of picked.values()) fit.set(e.opportunity_id, Math.max(fit.get(e.opportunity_id) ?? 0, Number(e.evaluation?.fit_score) || 0));
   return kept.map((o) => ({ ...o, opportunity_relevance_score: items.relevance.get(o.opportunity_id) ?? o.opportunity_relevance_score,
                             bid_readiness_score: fit.get(o.opportunity_id) ?? null }))
     .sort((a, b) => (b.opportunity_relevance_score ?? 0) - (a.opportunity_relevance_score ?? 0));

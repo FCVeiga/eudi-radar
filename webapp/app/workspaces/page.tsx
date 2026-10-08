@@ -33,15 +33,15 @@ export default async function WorkspacesPage({ searchParams }: { searchParams: {
   const db = getSupabaseServerClient();
   const [mine, account, admin] = await Promise.all([getMyWorkspaces(), getPersonalAccount(user.id), isPlatformAdmin()]);
   const wsIds = mine.map((m) => m.workspace.id);
-  const [{ data: scopeRows }, { data: memberRows }, { data: defaultScope }] = await Promise.all([
-    db.from('scopes').select('workspace_id, is_default').in('workspace_id', wsIds),
+  const [{ data: scopeRows }, { data: memberRows }, { count: catalogCount }] = await Promise.all([
+    db.from('scopes').select('workspace_id, is_default, catalog').in('workspace_id', wsIds),
     db.from('workspace_members').select('workspace_id').in('workspace_id', wsIds),
-    db.from('scopes').select('id').eq('is_default', true).maybeSingle(),
+    db.from('scopes').select('id', { count: 'exact', head: true }).eq('catalog', true).eq('active', true),
   ]);
   const tally = (rows: any[] | null, id: string) => (rows || []).filter((r) => r.workspace_id === id).length;
   const scopeCount = (id: string) => {
-    const rows = (scopeRows || []).filter((r) => r.workspace_id === id);
-    return rows.length + (defaultScope && !rows.some((r) => r.is_default) ? 1 : 0);
+    const own = (scopeRows || []).filter((r) => r.workspace_id === id && !r.is_default && !r.catalog).length;
+    return 1 + (catalogCount ?? 0) + own;
   };
   const myPlan = account?.plan ?? PLANS[0];
   const teams = myPlan.key === 'teams';

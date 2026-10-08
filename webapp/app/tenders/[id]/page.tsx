@@ -92,7 +92,7 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
 
   const { data: requirements } = await supabase
     .from('requirements')
-    .select('*, requirement_matches(match_status, matched_evidence, notes, scope_id)')
+    .select('*, requirement_matches(match_status, matched_evidence, notes, scope_id, workspace_id)')
     .eq('opportunity_id', params.id);
 
   const { data: documents } = await supabase
@@ -117,17 +117,25 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
   // Scopes: the viewer's active scopes (or the default scope): relevance, evaluations, match columns.
   const [{ scopes: viewScopes, own, canRun }, ctx, account] = await Promise.all([getViewScopes(), getContext(), getPersonalAccount(user.id)]);
   const plan = ctx?.plan ?? account?.plan ?? PLANS[0];
-  const evaluationAllowed = plan.evaluation;
+  const evaluationAllowed = (plan.evaluationsPerMonth ?? 0) !== 0;
+  const proposalsAllowed = (plan.proposalsPerMonth ?? 0) !== 0;
   const showRequirements = await allowRequirements(user.id, plan.requirementViewsPerMonth);
   const locked = !ctx ? null : !ctx.canCustomize && ctx.isAdmin ? 'plan' : !ctx.isAdmin ? 'member' : null;
   const { data: scopeEvals } = await supabase.from('scope_evaluations').select('*').eq('opportunity_id', params.id)
     .in('scope_id', viewScopes.map((s) => s.id));
-  const evalOf = (scopeId: string) => (scopeEvals || []).find((r: any) => r.scope_id === scopeId) ?? null;
+  const wsId = ctx?.workspace.id ?? null;
+  const evalOf = (scopeId: string) => {
+    const rows = (scopeEvals || []).filter((r: any) => r.scope_id === scopeId);
+    return (wsId && rows.find((r: any) => r.workspace_id === wsId)) || rows.find((r: any) => !r.workspace_id) || null;
+  };
   const evaluatedScopes = viewScopes.filter((s) => evalOf(s.id)?.evaluation);
   const scopeItems = await getScopeItems('tender');
   const relevance = scopeItems?.relevance.get(params.id) ?? o.opportunity_relevance_score;
   const fits = evaluatedScopes.map((s) => evalOf(s.id).evaluation.fit_score as number);
-  const matchOf = (r: any, scopeId: string) => (r.requirement_matches || []).find((m: any) => m.scope_id === scopeId);
+  const matchOf = (r: any, scopeId: string) => {
+    const rows = (r.requirement_matches || []).filter((m: any) => m.scope_id === scopeId);
+    return (wsId && rows.find((m: any) => m.workspace_id === wsId)) || rows.find((m: any) => !m.workspace_id);
+  };
   const summary = (firstInLanguage(o.tender_summary) ?? firstInLanguage(o.summary) ?? '')
     .split(/\n{2,}/).map((p: string) => p.trim()).filter(Boolean);
   const [likes, agentFlags] = await Promise.all([
@@ -196,7 +204,7 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
           {evaluationAllowed ? viewScopes.map((scope) => (
             <TenderScopeEvaluation key={scope.id} opportunityId={o.opportunity_id} scope={{ id: scope.id, name: scope.name }}
               row={evalOf(scope.id)} showName={viewScopes.length > 1 || !own} canRun={canRun && (!scope.isDefault || !!ctx?.isPlatformAdmin)} signedIn locked={locked}
-              evaluatorOn={flags.get(scope.id)?.evaluator ?? true} proposerOn={flags.get(scope.id)?.proposer ?? true}
+              evaluatorOn={flags.get(scope.id)?.evaluator ?? true} proposerOn={(flags.get(scope.id)?.proposer ?? true) && proposalsAllowed}
               ready={!!o.tender_summary || reqs.length > 0} analysedAt={o.tender_analysed_at ?? null} />
           )) : (
             <section className="detail-block analysis-block" id="evaluation">
@@ -207,7 +215,7 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
                   <span className="agent-name">{t('Tender Evaluation Agent')}</span>
                 </div>
               </div>
-              <UpgradeReport note={t('The Tender Evaluation Agent is only available on Pro and Teams plans.')} />
+              <UpgradeReport note={t('Tender Evaluation is included from Starter.')} />
             </section>
           )}
           {changes && changes.length > 0 && (

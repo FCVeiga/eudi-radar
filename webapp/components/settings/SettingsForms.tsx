@@ -53,7 +53,7 @@ type Doc = { id: string; name: string; size_bytes: number | null; chars: number 
 const kb = (n: number | null, locale: string) => (!n ? '' : n > 1e6 ? `${(n / 1e6).toLocaleString(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} MB` : `${Math.max(1, Math.round(n / 1e3))} KB`);
 
 /** One kind of company material: its files, an upload button, delete. */
-export function DocumentGroup({ scopeId, kind, label, hint, docs }: { scopeId: string; kind: string; label: string; hint: string; docs: Doc[] }) {
+export function DocumentGroup({ scopeId, kind, label, hint, docs, readOnly = false, workspaceId = null }: { scopeId: string; kind: string; label: string; hint: string; docs: Doc[]; readOnly?: boolean; workspaceId?: string | null }) {
   const router = useRouter();
   const input = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState<string | null>(null);
@@ -66,7 +66,7 @@ export function DocumentGroup({ scopeId, kind, label, hint, docs }: { scopeId: s
     setError(null);
     for (const [i, file] of Array.from(files).entries()) {
       setStatus(t('Uploading {name}…', { name: `${file.name}${files.length > 1 ? ` (${i + 1}/${files.length})` : ''}` }));
-      const target = await createCompanyUpload(scopeId, kind, file.name, file.size);
+      const target = await createCompanyUpload(scopeId, kind, file.name, file.size, workspaceId);
       if ('error' in target) { setError(`${file.name}: ${target.error}`); continue; }
       // Straight to storage, so large decks don't pass through the web server.
       const body = new FormData();
@@ -75,7 +75,7 @@ export function DocumentGroup({ scopeId, kind, label, hint, docs }: { scopeId: s
       const res = await fetch(target.url!, { method: 'PUT', body, headers: { 'x-upsert': 'false' } });
       if (!res.ok) { setError(`${file.name}: ${t('upload failed ({status})', { status: res.status })}`); continue; }
       setStatus(t('Reading {name}…', { name: file.name }));
-      const done = await registerCompanyDocument(scopeId, kind, target.path!, file.name, file.size);
+      const done = await registerCompanyDocument(scopeId, kind, target.path!, file.name, file.size, workspaceId);
       if ('error' in done && done.error) setError(`${file.name}: ${done.error}`);
     }
     setStatus(null);
@@ -87,9 +87,9 @@ export function DocumentGroup({ scopeId, kind, label, hint, docs }: { scopeId: s
     <div className="doc-kind">
       <div className="doc-kind-head">
         <div><h3>{t(label)} <span className="uc-count">{docs.length}</span></h3><p>{t(hint)}</p></div>
-        <button type="button" className="btn" onClick={() => input.current?.click()} disabled={!!status}>{t('Upload')}</button>
-        <input ref={input} type="file" multiple hidden accept=".pdf,.docx,.pptx,.xlsx,.txt,.md,.csv"
-          onChange={(e) => e.target.files?.length && upload(e.target.files)} />
+        {!readOnly && <button type="button" className="btn" onClick={() => input.current?.click()} disabled={!!status}>{t('Upload')}</button>}
+        {!readOnly && <input ref={input} type="file" multiple hidden accept=".pdf,.docx,.pptx,.xlsx,.txt,.md,.csv"
+          onChange={(e) => e.target.files?.length && upload(e.target.files)} />}
       </div>
       {docs.length > 0 && (
         <ul className="doc-files">
@@ -97,8 +97,8 @@ export function DocumentGroup({ scopeId, kind, label, hint, docs }: { scopeId: s
             <li key={d.id}>
               <span className="doc-file-name">{d.name}</span>
               <span className="doc-file-meta">{kb(d.size_bytes, locale)}{d.chars ? ` · ${t('{n} characters read', { n: d.chars.toLocaleString(locale) })}` : ` · ${t('no text found (scanned?)')}`}</span>
-              <button type="button" className="doc-file-del" aria-label={t('Remove {name}', { name: d.name })}
-                onClick={() => { if (confirm(t('Remove {name}?', { name: d.name }))) deleteCompanyDocument(d.id).then(() => router.refresh()); }}>×</button>
+              {!readOnly && <button type="button" className="doc-file-del" aria-label={t('Remove {name}', { name: d.name })}
+                onClick={() => { if (confirm(t('Remove {name}?', { name: d.name }))) deleteCompanyDocument(d.id).then(() => router.refresh()); }}>×</button>}
             </li>
           ))}
         </ul>

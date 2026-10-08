@@ -809,6 +809,7 @@ th.num .sort-head { justify-content: flex-end; }
 .working-agents .agent-face { filter: none; }
 .wa-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #22C55E; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18); flex-shrink: 0; }
+.live-dot.blocked { background: var(--bad); box-shadow: 0 0 0 3px rgba(194, 65, 58, 0.18); }
 .agent-scan { animation: scan 2.4s ease-in-out infinite alternate; }
 @keyframes scan { from { transform: translateX(0); } to { transform: translateX(9px); } }
 @media (prefers-reduced-motion: reduce) { .agent-scan { animation: none; } }
@@ -1518,6 +1519,21 @@ a.profile-post:hover { border-color: var(--border-strong); }
 .scope-card-text { font-size: 13px; color: var(--muted); line-height: 1.5; margin: 0; }
 .scope-card-meta { display: flex; flex-wrap: wrap; gap: 6px 12px; font-family: var(--font-mono-stack); font-size: 11px; color: var(--subtle); }
 .scope-open { align-self: flex-start; }
+.scope-card.is-link { position: relative; cursor: pointer; }
+.scope-card.is-link:hover { border-color: var(--border-strong); }
+.scope-card-hit { position: absolute; inset: 0; z-index: 1; border-radius: inherit; }
+.scope-card.is-link .switch, .scope-card.is-link .scope-badge { position: relative; z-index: 2; }
+.scope-rail-block { position: relative; margin-top: 18px; }
+.scope-rail-block:first-of-type { margin-top: 0; }
+.scope-rail-label { font-family: var(--font-mono-stack); font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--subtle); margin: 0 0 8px; }
+.scope-rail { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 2px; padding: 2px 36px 14px 2px; scrollbar-width: thin; align-items: stretch; }
+.scope-rail .scope-card { flex: 0 0 340px; scroll-snap-align: start; }
+.scope-rail .scope-card-meta { margin-top: auto; }
+.scope-rail-block::after { content: ""; position: absolute; top: 22px; right: 0; bottom: 14px; width: 40px; background: linear-gradient(to right, transparent, var(--surface)); pointer-events: none; }
+.scope-readonly-text { white-space: pre-wrap; font-size: 14px; line-height: 1.55; color: var(--text); margin: 0; }
+@media (max-width: 700px) {
+  .scope-rail .scope-card { flex-basis: min(340px, 86vw); }
+}
 .scope-page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
 .scope-page-switch .scope-card { padding: 10px 14px; min-width: 260px; }
 .scope-page-switch .scope-card-text, .scope-page-switch .scope-card-meta, .scope-page-switch .scope-open { display: none; }

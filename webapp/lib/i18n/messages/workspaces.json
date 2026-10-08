@@ -34,6 +34,13 @@
   "de": "Inhaber",
   "it": "Proprietario"
  },
+ "Custom": {
+  "pt": "Personalizados",
+  "es": "Personalizados",
+  "fr": "Personnalisés",
+  "de": "Eigene",
+  "it": "Personalizzati"
+ },
  "Scopes": {
   "pt": "Âmbitos",
   "es": "Ámbitos",
@@ -341,6 +348,20 @@
   "fr": "Enregistré — les agents du périmètre l'utiliseront dès leur prochaine exécution.",
   "de": "Gespeichert — die Agenten des Bereichs verwenden es ab ihrem nächsten Lauf.",
   "it": "Salvato — gli agenti dell'ambito lo useranno dalla prossima esecuzione."
+ },
+ "This scope is shared with every account — it can’t be deleted.": {
+  "pt": "Este âmbito é partilhado por todas as contas — não pode ser apagado.",
+  "es": "Este ámbito se comparte con todas las cuentas; no se puede eliminar.",
+  "fr": "Ce périmètre est partagé avec chaque compte — il ne peut pas être supprimé.",
+  "de": "Dieser Bereich gilt für jedes Konto und kann nicht gelöscht werden.",
+  "it": "Questo ambito è condiviso con ogni account e non può essere eliminato."
+ },
+ "Switch this scope on from the workspace.": {
+  "pt": "Ative este âmbito na página do espaço de trabalho.",
+  "es": "Activa este ámbito desde el espacio de trabajo.",
+  "fr": "Activez ce périmètre depuis l’espace de travail.",
+  "de": "Schalte diesen Bereich auf der Arbeitsbereichsseite ein.",
+  "it": "Attiva questo ambito dalla pagina dell’area di lavoro."
  },
  "This is the platform’s default scope (what visitors see) — it can’t be deleted.": {
   "pt": "Este é o âmbito predefinido da plataforma (o que os visitantes veem) — não pode ser eliminado.",

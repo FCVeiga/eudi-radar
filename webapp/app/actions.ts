@@ -100,27 +100,24 @@ export async function startNewsReport(newsId: string, scopeId: string) {
   return result;
 }
 
-/** Running on-click agents is for the workspace's admins (on a plan that allows it); members see the results. */
-async function ownsScope(scopeId: string) {
-  return !!(await getEditableScope(scopeId));
-}
-
-/** The tender page's "Run" button: starts the Tender Evaluation Agent for one of your scopes. */
-async function evaluationAllowed(scopeId: string) {
-  const scope = await getEditableScope(scopeId);
-  if (!scope) return false;
-  const { getWorkspaceContext } = await import('@/lib/accounts');
-  const ctx = await getWorkspaceContext(scope.workspaceId);
-  return !!ctx?.plan.evaluation;
+/** Running on-click agents is for the active workspace's admins, on a plan that includes evaluation. */
+async function evaluationTarget(scopeId: string): Promise<{ workspaceId: string | null } | { error: string }> {
+  const t = await getT();
+  const { getContext } = await import('@/lib/accounts');
+  const ctx = await getContext();
+  const { scopes } = await getViewScopes();
+  const scope = scopes.find((s) => s.id === scopeId);
+  if (!ctx?.isAdmin || !scope) return { error: t('only the workspace’s admins can run this agent') };
+  return { workspaceId: scope.isDefault || scope.catalog ? ctx.workspace.id : null };
 }
 
 export async function startTenderEvaluation(opportunityId: string, scopeId: string) {
   const t = await getT();
-  if (!(await ownsScope(scopeId))) return { status: 'error' as const, message: t('only the workspace’s admins can run this agent') };
-  if (!(await evaluationAllowed(scopeId))) return { status: 'error' as const, message: t('The Tender Evaluation Agent is only available on Pro and Teams plans.') };
+  const target = await evaluationTarget(scopeId);
+  if ('error' in target) return { status: 'error' as const, message: target.error };
   if (!/^[0-9a-f]{12,40}$/.test(opportunityId)) return { status: 'error' as const, message: t('unknown opportunity') };
   const { ensureEvaluation } = await import('@/lib/tenderEvaluation');
-  const result = await ensureEvaluation(opportunityId, scopeId);
+  const result = await ensureEvaluation(opportunityId, scopeId, target.workspaceId);
   if (result.status === 'done') revalidatePath(`/tenders/${opportunityId}`);
   return result;
 }
@@ -128,11 +125,11 @@ export async function startTenderEvaluation(opportunityId: string, scopeId: stri
 /** The tender page's "Prepare proposal brief" button: starts the Proposal Manager Agent for one of your scopes. */
 export async function startProposalBrief(opportunityId: string, scopeId: string) {
   const t = await getT();
-  if (!(await ownsScope(scopeId))) return { status: 'error' as const, message: t('log in, and pick one of your scopes') };
-  if (!(await evaluationAllowed(scopeId))) return { status: 'error' as const, message: t('The Tender Evaluation Agent is only available on Pro and Teams plans.') };
+  const target = await evaluationTarget(scopeId);
+  if ('error' in target) return { status: 'error' as const, message: target.error };
   if (!/^[0-9a-f]{12,40}$/.test(opportunityId)) return { status: 'error' as const, message: t('unknown tender') };
   const { ensureProposal } = await import('@/lib/proposalManager');
-  const result = await ensureProposal(opportunityId, scopeId);
+  const result = await ensureProposal(opportunityId, scopeId, target.workspaceId);
   if (result.status === 'done') revalidatePath(`/tenders/${opportunityId}`);
   return result;
 }

@@ -27,9 +27,12 @@ export async function getAgentDefaults() {
   return new Map(((data || []) as AgentSetting[]).map((a) => [a.agent_key, a]));
 }
 
-export async function getScopeDocs(scopeId: string): Promise<ScopeDoc[]> {
-  const { data } = await getSupabaseServerClient().from('company_documents').select('id, kind, name, size_bytes, chars, uploaded_at')
+/** `workspaceId` set: that workspace's files on a shared scope. Omit it for a custom scope's own files. */
+export async function getScopeDocs(scopeId: string, workspaceId?: string | null): Promise<ScopeDoc[]> {
+  let q = getSupabaseServerClient().from('company_documents').select('id, kind, name, size_bytes, chars, uploaded_at')
     .eq('scope_id', scopeId).order('uploaded_at', { ascending: false });
+  q = workspaceId ? q.eq('workspace_id', workspaceId) : q.is('workspace_id', null);
+  const { data } = await q;
   return (data || []) as ScopeDoc[];
 }
 
@@ -84,14 +87,17 @@ const BRIEF_CHARS = { context: 30_000, docs: 160_000 };
  * back on agents/company_brief.md while it has none), plus — for the Tender
  * Evaluation and Proposal Manager agents — the text of its context documents.
  */
-export async function companyBrief({ withDocuments, scopeId }: { withDocuments: boolean; scopeId: string }) {
+export async function companyBrief({ withDocuments, scopeId, workspaceId }: { withDocuments: boolean; scopeId: string; workspaceId?: string | null }) {
   const db = getSupabaseServerClient();
   const scope = await getScope(scopeId);
   const instructions = scope?.instructions?.trim()
     || (scope?.isDefault ? await readFile(path.join(process.cwd(), 'agents', 'company_brief.md'), 'utf8') : '');
   const parts = [`# Scope: ${scope?.name ?? 'Untitled'}`, instructions.slice(0, BRIEF_CHARS.context) || '(No scope instructions yet.)'];
-  if (withDocuments) {
-    const { data: docs } = await db.from('company_documents').select('kind, name, text_content').eq('scope_id', scopeId).order('kind');
+  const shared = !!(scope?.isDefault || scope?.catalog);
+  if (withDocuments && (!shared || workspaceId)) {
+    let q = db.from('company_documents').select('kind, name, text_content').eq('scope_id', scopeId).order('kind');
+    q = shared && workspaceId ? q.eq('workspace_id', workspaceId) : q.is('workspace_id', null);
+    const { data: docs } = await q;
     let budget = BRIEF_CHARS.docs;
     for (const k of DOC_KINDS) {
       const items = (docs || []).filter((d: any) => d.kind === k.kind && d.text_content);

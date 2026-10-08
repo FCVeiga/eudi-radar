@@ -15,10 +15,10 @@ const CADENCE: Record<number, string> = {
   6: 'Six times a day',
 };
 
-function reports(plan: Plan, t: (key: string, vars?: { n: number }) => string) {
-  if (plan.newsReportsPerMonth == null) return t('Unlimited');
-  if (plan.newsReportsPerMonth === 0) return t('Not included');
-  return t('{n} a month', { n: plan.newsReportsPerMonth });
+function monthCount(n: number | null, t: (key: string, vars?: { n: number }) => string) {
+  if (n == null) return t('Unlimited');
+  if (n === 0) return t('Not included');
+  return t('{n} a month', { n });
 }
 
 const ROWS: { label: string; cell: (plan: Plan, t: (key: string, vars?: { n: number }) => string) => string }[] = [
@@ -27,8 +27,9 @@ const ROWS: { label: string; cell: (plan: Plan, t: (key: string, vars?: { n: num
   { label: 'Members', cell: (p, t) => (p.members == null ? t('Unlimited') : String(p.members)) },
   { label: 'Agent updates', cell: (p, t) => t(CADENCE[p.runsPerDay] ?? `${p.runsPerDay}`) },
   { label: 'Tender requirements', cell: (p, t) => (p.requirementViewsPerMonth == null ? t('Every tender') : t('{n} tenders a month', { n: p.requirementViewsPerMonth })) },
-  { label: 'Tender evaluation and proposal briefs', cell: (p, t) => (p.evaluation ? t('Included') : t('Not included')) },
-  { label: 'News Report Agent', cell: reports },
+  { label: 'Tender Evaluation', cell: (p, t) => monthCount(p.evaluationsPerMonth, t) },
+  { label: 'Proposal briefs', cell: (p, t) => monthCount(p.proposalsPerMonth, t) },
+  { label: 'News Report Agent', cell: (p, t) => monthCount(p.newsReportsPerMonth, t) },
   { label: 'Your own instructions and context', cell: (p, t) => (p.customize ? t('Included') : t('Not included')) },
 ];
 

@@ -8,8 +8,8 @@ import { getSupabaseServerClient } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 import { AGENTS, agentByKey } from '@/lib/agents';
 import { DOC_KINDS } from '@/lib/settings';
-import { PLATFORM_AGENT_KEYS, SCOPE_AGENT_KEYS, getEditableScope } from '@/lib/scopes';
-import { getMembership, getWorkspaceContext, getMyWorkspaces, getPersonalAccount, isPlatformAdmin } from '@/lib/accounts';
+import { PLATFORM_AGENT_KEYS, SCOPE_AGENT_KEYS, getEditableScope, getViewableScope, workspaceScopeUse } from '@/lib/scopes';
+import { getContext, getMembership, getWorkspaceContext, getMyWorkspaces, getPersonalAccount, isPlatformAdmin } from '@/lib/accounts';
 import { randomBytes } from 'crypto';
 import { siteOrigin } from '@/lib/auth';
 import { getT } from '@/lib/i18n/server';
@@ -47,8 +47,8 @@ export async function createScope(workspaceId: string) {
   const ctx = await getWorkspaceContext(workspaceId);
   if (!ctx) redirect('/workspaces');
   if (!ctx.canCustomize) redirect('/settings/account?plan=1');
-  const { count } = await db().from('scopes').select('id', { count: 'exact', head: true }).eq('workspace_id', ctx.workspace.id);
-  if (!ctx.isDefault && (count ?? 0) >= ctx.plan.scopes) redirect('/settings/account?plan=1');
+  const use = await workspaceScopeUse(ctx.workspace.id);
+  if (!ctx.isDefault && use.custom + use.pickIds.length >= ctx.plan.scopes) redirect('/settings/account?plan=1');
   const { data, error } = await db().from('scopes').insert({ owner_id: (await getCurrentUser())!.id, workspace_id: ctx.workspace.id, name: 'New scope', active: true })
     .select('id').single();
   if (error || !data) throw new Error(error?.message || 'Could not create the scope.');
@@ -60,8 +60,31 @@ export async function setScopeActive(scopeId: string, active: boolean): Promise<
   const o = await own(scopeId);
   const t = await getT();
   if (!o) return { error: t(NOT_YOURS_MESSAGE) };
+  if (o.scope.catalog) return { error: t('Switch this scope on from the workspace.') };
   if (o.scope.isDefault && !active) return { error: t('Turn on another scope before switching off the default.') };
   await db().from('scopes').update({ active, updated_at: new Date().toISOString() }).eq('id', scopeId);
+  revalidatePath('/', 'layout');
+  return {};
+}
+
+/** Turn a shared catalog scope on or off for this workspace. Counts toward the plan, like a scope they create. */
+export async function setCatalogPick(workspaceId: string, scopeId: string, on: boolean): Promise<{ error?: string; upgrade?: boolean }> {
+  const ctx = await getWorkspaceContext(workspaceId);
+  const t = await getT();
+  if (!ctx?.isAdmin) return { error: t(NOT_YOURS_MESSAGE) };
+  const { data: scope } = await db().from('scopes').select('id, catalog, active').eq('id', scopeId).maybeSingle();
+  if (!scope?.catalog || !scope.active) return { error: t(NOT_YOURS_MESSAGE) };
+  if (!on) {
+    await db().from('workspace_scope_picks').delete().eq('workspace_id', workspaceId).eq('scope_id', scopeId);
+    revalidatePath('/', 'layout');
+    return {};
+  }
+  const use = await workspaceScopeUse(workspaceId);
+  const limit = ctx.isDefault ? 1000 : ctx.plan.scopes;
+  if (use.custom + use.pickIds.length >= limit) return { upgrade: true };
+  const { error } = await db().from('workspace_scope_picks').upsert(
+    { workspace_id: workspaceId, scope_id: scopeId }, { onConflict: 'workspace_id,scope_id', ignoreDuplicates: true });
+  if (error) return { error: error.message };
   revalidatePath('/', 'layout');
   return {};
 }
@@ -72,9 +95,12 @@ export async function setShowDefault(workspaceId: string, show: boolean): Promis
   const t = await getT();
   if (!ctx?.isAdmin) return { error: t(NOT_YOURS_MESSAGE) };
   if (!show) {
-    const { count } = await db().from('scopes').select('id', { count: 'exact', head: true })
-      .eq('workspace_id', workspaceId).eq('active', true).eq('is_default', false);
-    if (!count) return { error: t('Turn on another scope before switching off the default.') };
+    const [{ count }, use] = await Promise.all([
+      db().from('scopes').select('id', { count: 'exact', head: true })
+        .eq('workspace_id', workspaceId).eq('active', true).eq('is_default', false).eq('catalog', false),
+      workspaceScopeUse(workspaceId),
+    ]);
+    if (!count && !use.pickIds.length) return { error: t('Turn on another scope before switching off the default.') };
   }
   const { error } = await db().from('workspaces').update({ show_default: show }).eq('id', workspaceId);
   if (error) return { error: error.message };
@@ -101,6 +127,7 @@ export async function deleteScope(_prev: FormState, form: FormData): Promise<For
   if (!o) return notYours();
   const t = await getT();
   if (o.scope.isDefault) return { ok: false, message: t('This is the platform’s default scope (what visitors see) — it can’t be deleted.') };
+  if (o.scope.catalog) return { ok: false, message: t('This scope is shared with every account — it can’t be deleted.') };
   if (String(form.get('confirm') || '').trim() !== o.scope.name) return { ok: false, message: t('Type {name} to confirm.', { name: o.scope.name }) };
   const { data: docs } = await db().from('company_documents').select('storage_path').eq('scope_id', scopeId);
   if (docs?.length) await db().storage.from(BUCKET).remove(docs.map((d: any) => d.storage_path));
@@ -111,32 +138,53 @@ export async function deleteScope(_prev: FormState, form: FormData): Promise<For
 
 /* ---------------- Scope context (documents) ---------------- */
 
+/**
+ * Who may add context files. A custom scope: its workspace admins. A shared scope:
+ * an admin of the workspace the files belong to. The files never land on the shared row.
+ */
+async function docAccess(scopeId: string, workspaceId?: string | null) {
+  const scope = await getViewableScope(scopeId);
+  if (!scope) return null;
+  if (scope.isDefault || scope.catalog) {
+    if (!workspaceId) return null;
+    const member = await getMembership(workspaceId);
+    if (!member || member.role !== 'admin') return null;
+    return { workspaceId };
+  }
+  if (workspaceId || !scope.editable) return null;
+  return { workspaceId: null as string | null };
+}
+
 /** Step 1 of an upload: a one-time URL the browser sends the file to, straight to storage. */
-export async function createCompanyUpload(scopeId: string, kind: string, filename: string, size: number) {
+export async function createCompanyUpload(scopeId: string, kind: string, filename: string, size: number, workspaceId?: string | null) {
   const t = await getT();
-  if (!(await own(scopeId))) return { error: t('not your scope') };
+  const access = await docAccess(scopeId, workspaceId);
+  if (!access) return { error: t('not your scope') };
   if (!DOC_KINDS.some((k) => k.kind === kind)) return { error: t('unknown document type') };
   if (!FILE_TYPES.test(filename)) return { error: t('use PDF, Word, PowerPoint, Excel or text files') };
   if (size > MAX_BYTES) return { error: t('files up to 50 MB') };
   const safe = filename.normalize('NFKD').replace(/[^\w.\-]+/g, '_').slice(-120);
-  const storagePath = `${scopeId}/${kind}/${crypto.randomUUID()}-${safe}`;
+  const folder = access.workspaceId ? `${scopeId}/ws/${access.workspaceId}` : scopeId;
+  const storagePath = `${folder}/${kind}/${crypto.randomUUID()}-${safe}`;
   const { data, error } = await db().storage.from(BUCKET).createSignedUploadUrl(storagePath);
   if (error || !data) return { error: error?.message || t('could not start the upload') };
   return { path: storagePath, url: data.signedUrl };
 }
 
 /** Step 2: read the uploaded file's text for the agents and list it. */
-export async function registerCompanyDocument(scopeId: string, kind: string, storagePath: string, name: string, size: number) {
+export async function registerCompanyDocument(scopeId: string, kind: string, storagePath: string, name: string, size: number, workspaceId?: string | null) {
   const t = await getT();
-  if (!(await own(scopeId))) return { error: t('not your scope') };
-  if (!DOC_KINDS.some((k) => k.kind === kind) || !storagePath.startsWith(`${scopeId}/${kind}/`)) return { error: t('unknown upload') };
+  const access = await docAccess(scopeId, workspaceId);
+  if (!access) return { error: t('not your scope') };
+  const folder = access.workspaceId ? `${scopeId}/ws/${access.workspaceId}` : scopeId;
+  if (!DOC_KINDS.some((k) => k.kind === kind) || !storagePath.startsWith(`${folder}/${kind}/`)) return { error: t('unknown upload') };
   const { data: blob, error } = await db().storage.from(BUCKET).download(storagePath);
   if (error || !blob) return { error: error?.message || t('upload not found') };
   let text = '';
   try { text = (await fileText(name, Buffer.from(await blob.arrayBuffer()))).replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim(); }
   catch { /* stored anyway; listed as unreadable */ }
   const { error: insertError } = await db().from('company_documents').insert({
-    scope_id: scopeId, kind, name: name.slice(0, 300), storage_path: storagePath, size_bytes: size,
+    scope_id: scopeId, workspace_id: access.workspaceId, kind, name: name.slice(0, 300), storage_path: storagePath, size_bytes: size,
     text_content: text.slice(0, 400_000) || null, chars: text.length,
   });
   if (insertError) return { error: insertError.message };
@@ -145,8 +193,8 @@ export async function registerCompanyDocument(scopeId: string, kind: string, sto
 }
 
 export async function deleteCompanyDocument(id: string) {
-  const { data } = await db().from('company_documents').select('storage_path, scope_id').eq('id', id).maybeSingle();
-  if (!data?.scope_id || !(await own(data.scope_id))) return;
+  const { data } = await db().from('company_documents').select('storage_path, scope_id, workspace_id').eq('id', id).maybeSingle();
+  if (!data?.scope_id || !(await docAccess(data.scope_id, data.workspace_id))) return;
   await db().storage.from(BUCKET).remove([data.storage_path]);
   await db().from('company_documents').delete().eq('id', id);
   refresh(data.scope_id);
@@ -215,6 +263,9 @@ export async function setAgentEnabled(key: string, enabled: boolean, scopeId: st
   const t = await target(key, scopeId);
   if (!t) return;
   if (key === 'news_report' && enabled && (await newsReportAllowance()).block === 'plan') return;
+  const plan = (await getContext())?.plan;
+  if (key === 'tender_evaluation' && enabled && (plan?.evaluationsPerMonth ?? 0) === 0) return;
+  if (key === 'proposal_manager' && enabled && (plan?.proposalsPerMonth ?? 0) === 0) return;
   await t.write({ enabled });
   revalidatePath('/', 'layout');
 }

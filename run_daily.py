@@ -40,10 +40,7 @@ CONFIG_DIR = os.path.join(os.path.dirname(__file__), "config")
 # TED full-text search is phrase-matched and free, so it gets a fixed,
 # high-precision list every day.
 TED_PHRASES = [
-    "EUDI Wallet", "European Digital Identity Wallet", "digital identity wallet",
-    "identity wallet", "digital identity", "verifiable credentials",
-    "electronic attestation of attributes", "person identification data",
-    "mobile driving licence", "OpenID4VC", "SD-JWT", "ISO 18013-5",
+    "EUDI Wallet", "European Digital Identity Wallet", "digital identity wallet", "EUDIW",
 ]
 
 def _local_ted_phrases() -> list:
@@ -53,7 +50,7 @@ def _local_ted_phrases() -> list:
     like bare 'eIDAS', they match e-signature boilerplate in unrelated notices."""
     with open(os.path.join(CONFIG_DIR, "languages.yaml")) as f:
         phrases = yaml.safe_load(f)["phrases"]
-    return [p for lang, ps in phrases.items() if lang != "en" for p in ps[:2]]
+    return [p for lang, ps in phrases.items() if lang != "en" for p in ps[:1]]
 
 
 TED_PHRASES = list(dict.fromkeys(TED_PHRASES + _local_ted_phrases()))
@@ -71,14 +68,10 @@ PROMOTE_THRESHOLD = 50
 # vendor product pages. Triage relevance is bid-oriented, so news only needs
 # relevance > 0 (0 = off-topic / suppressed).
 NEWS_QUERIES = [
-    # market: adopters (governments, banks, …)
-    "EUDI Wallet", "European Digital Identity Wallet rollout",
-    "national digital identity wallet launch",
-    "mobile driving licence digital wallet government",
-    # regulation
-    "eIDAS 2 implementing acts", "European Commission digital identity regulation wallet certification",
-    # industry: vendors / competitors
-    "digital identity wallet company funding acquisition partnership",
+    "EUDI Wallet rollout",
+    "European Digital Identity Wallet certification",
+    "national EUDI wallet procurement",
+    "EUDI Wallet relying party",
 ]
 
 
@@ -401,7 +394,7 @@ def main():
 
     # Settings page: scopes (each with its search, triage and agents), platform agents.
     S.load(session, search_defaults={
-        "topic": "EUDI Wallet & digital identity", "ted_phrases": TED_PHRASES,
+        "topic": "EUDI Wallet", "ted_phrases": TED_PHRASES,
         "web_queries": tavily_queries_for_today(10_000), "news_queries": NEWS_QUERIES,
         "site_query": "EUDI eIDAS " + SITE_QUERY,
     })

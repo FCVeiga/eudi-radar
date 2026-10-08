@@ -398,6 +398,27 @@
     "de": "Der Standardbereich (EUDI Wallet & digitale Identität)",
     "it": "L’ambito predefinito (EUDI Wallet e identità digitale)"
   },
+  "The default scope (General)": {
+    "pt": "O âmbito predefinido (General)",
+    "es": "El ámbito predeterminado (General)",
+    "fr": "Le périmètre par défaut (General)",
+    "de": "Der Standardbereich (General)",
+    "it": "L’ambito predefinito (General)"
+  },
+  "One scope besides General": {
+    "pt": "Um âmbito para além do General",
+    "es": "Un ámbito además de General",
+    "fr": "Un périmètre en plus de General",
+    "de": "Ein Bereich neben General",
+    "it": "Un ambito oltre a General"
+  },
+  "Up to 5 scopes besides General": {
+    "pt": "Até 5 âmbitos para além do General",
+    "es": "Hasta 5 ámbitos además de General",
+    "fr": "Jusqu’à 5 périmètres en plus de General",
+    "de": "Bis zu 5 Bereiche neben General",
+    "it": "Fino a 5 ambiti oltre a General"
+  },
   "Agents update tenders and news once a day": {
     "pt": "Os agentes atualizam concursos e notícias uma vez por dia",
     "es": "Los agentes actualizan licitaciones y noticias una vez al día",
@@ -453,6 +474,34 @@
     "fr": "Exigences sur chaque appel d’offres",
     "de": "Anforderungen zu jeder Ausschreibung",
     "it": "Requisiti su ogni gara"
+  },
+  "1 tender evaluation a month": {
+    "pt": "1 avaliação de concurso por mês",
+    "es": "1 evaluación de licitación al mes",
+    "fr": "1 évaluation d’appel d’offres par mois",
+    "de": "1 Ausschreibungsbewertung pro Monat",
+    "it": "1 valutazione di gara al mese"
+  },
+  "5 tender evaluations a month": {
+    "pt": "5 avaliações de concurso por mês",
+    "es": "5 evaluaciones de licitación al mes",
+    "fr": "5 évaluations d’appels d’offres par mois",
+    "de": "5 Ausschreibungsbewertungen pro Monat",
+    "it": "5 valutazioni di gara al mese"
+  },
+  "Unlimited tender evaluations": {
+    "pt": "Avaliações de concurso ilimitadas",
+    "es": "Evaluaciones de licitación ilimitadas",
+    "fr": "Évaluations d’appels d’offres illimitées",
+    "de": "Unbegrenzte Ausschreibungsbewertungen",
+    "it": "Valutazioni di gara illimitate"
+  },
+  "Proposal briefs": {
+    "pt": "Resumos de proposta",
+    "es": "Resúmenes de propuesta",
+    "fr": "Notes de proposition",
+    "de": "Angebotsbriefings",
+    "it": "Brief di offerta"
   },
   "Tender Evaluation Agent on Pro and Teams": {
     "pt": "Agente de Avaliação de Concursos nos planos Pro e Teams",
@@ -1174,6 +1223,13 @@
     "fr": "Un espace de travail regroupe vos périmètres — les configurations du radar avec lesquelles vous travaillez. Free suit le périmètre par défaut ; Starter et Pro vous permettent de créer vos propres périmètres ; Teams ajoute des espaces de travail illimités, chacun avec ses membres (les administrateurs configurent, les membres voient les résultats). Créez des espaces de travail et ajoutez des membres dans <workspaces>Espaces de travail</workspaces>, changez d’offre dans <settings>Paramètres</settings> et passez d’un espace de travail à l’autre depuis le menu de votre compte.",
     "de": "Ein Arbeitsbereich enthält deine Bereiche – die Konfigurationen des Radars, mit denen du arbeitest. Free folgt dem Standardbereich; mit Starter und Pro erstellst du eigene Bereiche; Teams bietet unbegrenzte Arbeitsbereiche mit jeweils eigenen Teammitgliedern (Admins konfigurieren, Mitglieder sehen die Ergebnisse). Arbeitsbereiche erstellen und Mitglieder hinzufügen kannst du unter <workspaces>Arbeitsbereiche</workspaces>, deinen Tarif änderst du in den <settings>Einstellungen</settings>, und zwischen Arbeitsbereichen wechselst du im Kontomenü.",
     "it": "Un’area di lavoro raccoglie i tuoi ambiti, cioè le configurazioni del radar con cui lavori. Free segue l’ambito predefinito; Starter e Pro ti permettono di creare i tuoi ambiti; Teams aggiunge aree di lavoro illimitate, ognuna con i propri membri (gli amministratori configurano, i membri vedono i risultati). Crea aree di lavoro e aggiungi membri in <workspaces>Aree di lavoro</workspaces>, cambia piano nelle <settings>Impostazioni</settings> e passa da un’area di lavoro all’altra dal menu dell’account."
+  },
+  "A workspace holds your scopes. Every account has General and ready-made scopes; Free keeps only General on, and other plans turn more on up to their number of scopes. Teams adds unlimited workspaces, each with its own team members (admins configure, members see the results). Create workspaces and add members on <workspaces>Workspaces</workspaces>, change your plan in <settings>Settings</settings>, and switch workspaces from your account menu.": {
+    "pt": "Um espaço de trabalho reúne os seus âmbitos. Todas as contas têm o General e âmbitos prontos; o Free mantém só o General ativo, e os outros planos ligam mais até ao número do plano. O Teams acrescenta espaços de trabalho ilimitados, cada um com os seus membros (os administradores configuram, os membros veem os resultados). Crie espaços de trabalho e adicione membros em <workspaces>Espaços de trabalho</workspaces>, mude de plano nas <settings>Definições</settings> e alterne entre espaços de trabalho no menu da conta.",
+    "es": "Un espacio de trabajo agrupa tus ámbitos. Todas las cuentas tienen General y ámbitos listos; Free mantiene solo General activo, y los demás planes activan más hasta el número de su plan. Teams añade espacios de trabajo ilimitados, cada uno con sus miembros (los administradores configuran, los miembros ven los resultados). Crea espacios de trabajo y añade miembros en <workspaces>Espacios de trabajo</workspaces>, cambia de plan en <settings>Configuración</settings> y cambia de espacio de trabajo desde el menú de tu cuenta.",
+    "fr": "Un espace de travail regroupe vos périmètres. Chaque compte a General et des périmètres prêts à l’emploi ; Free ne laisse activé que General, et les autres offres en activent d’autres dans la limite de leur nombre. Teams ajoute des espaces de travail illimités, chacun avec ses membres (les administrateurs configurent, les membres voient les résultats). Créez des espaces de travail et ajoutez des membres dans <workspaces>Espaces de travail</workspaces>, changez d’offre dans <settings>Paramètres</settings> et passez d’un espace de travail à l’autre depuis le menu de votre compte.",
+    "de": "Ein Arbeitsbereich enthält deine Bereiche. Jedes Konto hat General und fertige Bereiche; Free lässt nur General an, andere Tarife schalten weitere bis zu ihrer Anzahl ein. Teams bietet unbegrenzte Arbeitsbereiche mit jeweils eigenen Teammitgliedern (Admins konfigurieren, Mitglieder sehen die Ergebnisse). Arbeitsbereiche erstellen und Mitglieder hinzufügen kannst du unter <workspaces>Arbeitsbereiche</workspaces>, deinen Tarif änderst du in den <settings>Einstellungen</settings>, und zwischen Arbeitsbereichen wechselst du im Kontomenü.",
+    "it": "Un’area di lavoro raccoglie i tuoi ambiti. Ogni account ha General e ambiti pronti; Free tiene acceso solo General, e gli altri piani ne accendono altri fino al numero del piano. Teams aggiunge aree di lavoro illimitate, ognuna con i propri membri (gli amministratori configurano, i membri vedono i risultati). Crea aree di lavoro e aggiungi membri in <workspaces>Aree di lavoro</workspaces>, cambia piano nelle <settings>Impostazioni</settings> e passa da un’area di lavoro all’altra dal menu dell’account."
   },
   "I forgot my password.": {
     "pt": "Esqueci-me da palavra-passe.",

@@ -12,8 +12,8 @@ const PAGE = 12;
 type Modal = { kind: 'edit'; source: Source } | { kind: 'add' } | null;
 
 /** Scope page → Following: the sources this scope follows; follow more from the registry, add new ones, unfollow. */
-export default function FollowingSection({ scopeId, sources, followed, countries }: {
-  scopeId: string; sources: Source[]; followed: string[]; countries: Country[];
+export default function FollowingSection({ scopeId, sources, followed, countries, readOnly = false }: {
+  scopeId: string; sources: Source[]; followed: string[]; countries: Country[]; readOnly?: boolean;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [modal, setModal] = useState<Modal>(null);
@@ -48,7 +48,7 @@ export default function FollowingSection({ scopeId, sources, followed, countries
     <section className="detail-block" id="following">
       <div className="section-head">
         <h2>{t('Following')} <span className="uc-count" title={t('Monitored of followed')}>{monitored}/{mine.length}</span></h2>
-        <button type="button" className="btn primary" onClick={() => setModal({ kind: 'add' })}>{t('Add source')}</button>
+        {!readOnly && <button type="button" className="btn primary" onClick={() => setModal({ kind: 'add' })}>{t('Add source')}</button>}
       </div>
 
       <div className="follow-toolbar">
@@ -71,17 +71,28 @@ export default function FollowingSection({ scopeId, sources, followed, countries
             const h = health(s, t, locale);
             return (
               <li key={s.source_id} className="follow-item">
-                <button type="button" className="follow-row" onClick={() => setModal({ kind: 'edit', source: s })}>
-                  <SourceIcon type={s.source_type} size={28} />
-                  <span className="follow-main">
-                    <strong>{s.name.replace(/ — national procurement portal$/, '')}</strong>
-                    <em>{t(typeMeta(s.source_type).label)} · {country(s.country)}</em>
+                {readOnly ? (
+                  <span className="follow-row static">
+                    <SourceIcon type={s.source_type} size={28} />
+                    <span className="follow-main">
+                      <strong>{s.name.replace(/ — national procurement portal$/, '')}</strong>
+                      <em>{t(typeMeta(s.source_type).label)} · {country(s.country)}</em>
+                    </span>
+                    <span className={`follow-status ${h.cls}`}><span className={`account-state ${h.cls}`} />{h.note}</span>
                   </span>
-                  <span className={`follow-status ${h.cls}`}><span className={`account-state ${h.cls}`} />{h.note}</span>
-                </button>
-                <button type="button" className="follow-unfollow" aria-label={t('Unfollow {name}', { name: s.name })} title={t('Unfollow')} onClick={() => toggle(s.source_id, false)}>
+                ) : (
+                  <button type="button" className="follow-row" onClick={() => setModal({ kind: 'edit', source: s })}>
+                    <SourceIcon type={s.source_type} size={28} />
+                    <span className="follow-main">
+                      <strong>{s.name.replace(/ — national procurement portal$/, '')}</strong>
+                      <em>{t(typeMeta(s.source_type).label)} · {country(s.country)}</em>
+                    </span>
+                    <span className={`follow-status ${h.cls}`}><span className={`account-state ${h.cls}`} />{h.note}</span>
+                  </button>
+                )}
+                {!readOnly && <button type="button" className="follow-unfollow" aria-label={t('Unfollow {name}', { name: s.name })} title={t('Unfollow')} onClick={() => toggle(s.source_id, false)}>
                   <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" /></svg>
-                </button>
+                </button>}
               </li>
             );
           })}

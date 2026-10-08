@@ -9,7 +9,10 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { agentPrompt, companyBrief, isAgentEnabled } from '@/lib/settings';
-import { friendly, lockRow, unlockRow } from '@/lib/scopeWork';
+import { friendly, lockEvaluation, unlockEvaluation } from '@/lib/scopeWork';
+import { getScope } from '@/lib/scopes';
+import { agentRunAllowance, recordAgentRun } from '@/lib/agentQuota';
+import { getT } from '@/lib/i18n/server';
 
 export const EVALUATION_AGENT = 'Tender Evaluation Agent';
 const MODEL = 'claude-opus-5-5';
@@ -22,9 +25,22 @@ export type EvaluationStatus = 'done' | 'running' | 'error';
 
 // Its fine-tuned prompt from Settings (or agents/tender_evaluation.md), with the company's
 // context and uploaded material in place of {company_brief}.
-async function systemPrompt(scopeId: string) {
-  const [prompt, brief] = await Promise.all([agentPrompt('tender_evaluation', 'tender_evaluation.md', scopeId), companyBrief({ withDocuments: true, scopeId })]);
+async function systemPrompt(scopeId: string, workspaceId: string | null) {
+  const [prompt, brief] = await Promise.all([
+    agentPrompt('tender_evaluation', 'tender_evaluation.md', scopeId),
+    companyBrief({ withDocuments: true, scopeId, workspaceId }),
+  ]);
   return prompt.replace('{company_brief}', brief);
+}
+
+/** A shared scope uses one evaluation until this workspace has its own documents. */
+async function evaluationWorkspace(scopeId: string, workspaceId: string | null): Promise<string | null> {
+  if (!workspaceId) return null;
+  const scope = await getScope(scopeId);
+  if (!scope?.isDefault && !scope?.catalog) return null;
+  const { count } = await getSupabaseServerClient().from('company_documents').select('id', { count: 'exact', head: true })
+    .eq('scope_id', scopeId).eq('workspace_id', workspaceId);
+  return (count ?? 0) > 0 ? workspaceId : null;
 }
 
 function parseJson(text: string) {
@@ -39,22 +55,34 @@ function parseJson(text: string) {
  * Run the evaluation unless one is already running (two clicks, or two
  * people, share one run: the second gets 'running' and waits for the page).
  */
-export async function ensureEvaluation(opportunityId: string, scopeId: string): Promise<{ status: EvaluationStatus; message?: string }> {
+export async function ensureEvaluation(opportunityId: string, scopeId: string, workspaceId: string | null = null): Promise<{ status: EvaluationStatus; message?: string }> {
   if (!(await isAgentEnabled('tender_evaluation', scopeId))) return { status: 'error', message: 'the Tender Evaluation Agent is switched off for this scope' };
-  const key = { scope_id: scopeId, opportunity_id: opportunityId };
-  if (!(await lockRow('scope_evaluations', key, 'evaluation_started_at', 'evaluation_error', LOCK_MINUTES))) return { status: 'running' };
+  const allowance = await agentRunAllowance('tender_evaluation');
+  const t = await getT();
+  if (allowance.block === 'plan') return { status: 'error', message: t('Tender Evaluation is included from Starter.') };
+  if (allowance.block === 'quota') return { status: 'error', message: t('This workspace has used its {n} tender evaluations for this month.', { n: allowance.limit ?? 0 }) };
+  const owner = await evaluationWorkspace(scopeId, workspaceId);
+  if (workspaceId && !owner) {
+    const db = getSupabaseServerClient();
+    await db.from('scope_evaluations').delete().match({ scope_id: scopeId, opportunity_id: opportunityId, workspace_id: workspaceId });
+    const { data: reqs } = await db.from('requirements').select('requirement_id').eq('opportunity_id', opportunityId);
+    const reqIds = (reqs || []).map((r: any) => r.requirement_id);
+    if (reqIds.length) await db.from('requirement_matches').delete().eq('scope_id', scopeId).eq('workspace_id', workspaceId).in('requirement_id', reqIds);
+  }
+  if (!(await lockEvaluation(scopeId, opportunityId, owner, 'evaluation_started_at', 'evaluation_error', LOCK_MINUTES))) return { status: 'running' };
   try {
-    await runEvaluation(opportunityId, scopeId);
-    await unlockRow('scope_evaluations', key, 'evaluation_started_at', 'evaluation_error', null);
+    await runEvaluation(opportunityId, scopeId, owner);
+    if (allowance.accountId && allowance.limit != null) await recordAgentRun(allowance.accountId, 'tender_evaluation');
+    await unlockEvaluation(scopeId, opportunityId, owner, 'evaluation_started_at', 'evaluation_error', null);
     return { status: 'done' };
   } catch (e: any) {
     const message = friendly(e);
-    await unlockRow('scope_evaluations', key, 'evaluation_started_at', 'evaluation_error', message);
+    await unlockEvaluation(scopeId, opportunityId, owner, 'evaluation_started_at', 'evaluation_error', message);
     return { status: 'error', message };
   }
 }
 
-async function runEvaluation(opportunityId: string, scopeId: string) {
+async function runEvaluation(opportunityId: string, scopeId: string, workspaceId: string | null) {
   if (!process.env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY is not configured on the server.');
   const db = getSupabaseServerClient();
   const [{ data: o }, { data: reqs }, { data: award }] = await Promise.all([
@@ -89,7 +117,7 @@ async function runEvaluation(opportunityId: string, scopeId: string) {
   const response: any = await client.beta.messages.create({
     model: MODEL,
     max_tokens: 16000,
-    system: await systemPrompt(scopeId),
+    system: await systemPrompt(scopeId, workspaceId),
     messages: [{ role: 'user', content: tender }],
     betas: ['server-side-fallback-2026-07-01'],
     output_config: { effort: 'medium' },
@@ -101,13 +129,15 @@ async function runEvaluation(opportunityId: string, scopeId: string) {
   const matches = (Array.isArray(out.matches) ? out.matches : [])
     .filter((m: any) => ids.has(m?.id))
     .map((m: any) => ({
-      requirement_id: ids.get(m.id)!, scope_id: scopeId,
+      requirement_id: ids.get(m.id)!, scope_id: scopeId, workspace_id: workspaceId,
       match_status: MATCHES.includes(String(m.match).toUpperCase()) ? String(m.match).toUpperCase() : 'UNKNOWN',
       notes: m.note ? String(m.note).slice(0, 1000) : null,
     }));
   const reqIds = Array.from(ids.values());
   if (reqIds.length) {
-    const { error } = await db.from('requirement_matches').delete().eq('scope_id', scopeId).in('requirement_id', reqIds);
+    let del = db.from('requirement_matches').delete().eq('scope_id', scopeId).in('requirement_id', reqIds);
+    del = workspaceId ? del.eq('workspace_id', workspaceId) : del.is('workspace_id', null);
+    const { error } = await del;
     if (error) throw new Error(error.message);
   }
   if (matches.length) {
@@ -128,8 +158,10 @@ async function runEvaluation(opportunityId: string, scopeId: string) {
     next_steps: list(out.next_steps).filter((s: any) => s?.title).slice(0, 8),
     model: response.model ?? MODEL,
   };
-  const { error } = await db.from('scope_evaluations').update({
+  let saved = db.from('scope_evaluations').update({
     evaluation, evaluated_at: new Date().toISOString(), evaluation_error: null,
-  }).match({ scope_id: scopeId, opportunity_id: opportunityId });
+  }).eq('scope_id', scopeId).eq('opportunity_id', opportunityId);
+  saved = workspaceId ? saved.eq('workspace_id', workspaceId) : saved.is('workspace_id', null);
+  const { error } = await saved;
   if (error) throw new Error(error.message);
 }

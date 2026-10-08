@@ -7,7 +7,7 @@ import { SCOPE_AGENT_KEYS, getWorkspaceScopes } from '@/lib/scopes';
 import ScopeCard from '@/components/settings/ScopeCard';
 import { AddMemberButton, DeleteWorkspace, MemberRow, RevokeInviteButton, WorkspaceName } from '@/components/settings/WorkspaceControls';
 import { createScope, switchWorkspace } from '../actions';
-import { UpgradeReport } from '@/components/UpgradeReport';
+import { UpgradeOnClick, UpgradeReport } from '@/components/UpgradeReport';
 import SignUpGate from '@/components/SignUpGate';
 import { getLocale, getT } from '@/lib/i18n/server';
 
@@ -94,13 +94,15 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
       <section className="detail-block" id="scopes">
         <div className="section-head">
           <h2>{t('Scopes')} <span className="uc-count">{scopes.length}{Number.isFinite(limit) && plan.customize ? `/${limit}` : ''}</span></h2>
-          {canAdd && scopes.length > 0 && <form action={addScope}><button type="submit" className="btn primary">{t('New scope')}</button></form>}
+          {scopes.length > 0 && (canAdd
+            ? <form action={addScope}><button type="submit" className="btn primary">{t('New scope')}</button></form>
+            : ctx.isAdmin && <UpgradeOnClick label={t('New scope')} />)}
         </div>
         {scopes.length === 0 ? (
           <div className="profile-empty">
             <p className="profile-empty-title">{t('No scopes in this workspace')}</p>
             {canAdd ? <form action={addScope}><button type="submit" className="btn primary profile-empty-cta">{t('Create the first scope')}</button></form>
-              : ctx.isAdmin && <Link href="/settings/account?plan=1" className="btn primary profile-empty-cta">{t('See plans')}</Link>}
+              : ctx.isAdmin && <UpgradeOnClick label={t('Create the first scope')} />}
           </div>
         ) : (
           <div className="scope-grid">
@@ -116,9 +118,6 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
               );
             })}
           </div>
-        )}
-        {ctx.canCustomize && !canAdd && Number.isFinite(limit) && (
-          <p className="field-hint">{t('Scope limit reached.')}{ctx.isOwner && <> <Link href="/settings/account?plan=1">{t('Upgrade')}</Link></>}</p>
         )}
       </section>
 

@@ -22,7 +22,7 @@ import re
 import sys
 import uuid
 import zipfile
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import text
 
@@ -207,7 +207,11 @@ def analyse_tenders(session, errors: list, limit: int = 40) -> dict:
     for o in opps:
         ted = "ted.europa.eu" in o.official_url
         xml, crit = "", {"selection": [], "tenderer": [], "award": []}
-        active = o.status in ("OPEN", "SIGNAL", "UNVERIFIED") and (o.deadline is None or o.deadline >= datetime.utcnow())
+        now = datetime.now(timezone.utc)
+        deadline = o.deadline
+        if deadline is not None and deadline.tzinfo is None:
+            deadline = deadline.replace(tzinfo=timezone.utc)
+        active = o.status in ("OPEN", "SIGNAL", "UNVERIFIED") and (deadline is None or deadline >= now)
         if ted:
             pub = o.official_url.rstrip("/").split("/")[-1]
             try:

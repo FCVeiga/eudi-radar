@@ -26,9 +26,10 @@ def _get_client() -> "anthropic.Anthropic":
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
         raise ValueError("ANTHROPIC_API_KEY environment variable is not set.")
-    # Keys not scoped to a workspace must name one on every request.
-    workspace_id = os.environ.get("ANTHROPIC_WORKSPACE_ID")
-    headers = {"anthropic-workspace-id": workspace_id} if workspace_id else None
+    # This key is not scoped to a workspace, so every request names one.
+    # ANTHROPIC_WORKSPACE_ID overrides the account default.
+    workspace_id = os.environ.get("ANTHROPIC_WORKSPACE_ID") or "wrkspc_01GhKEdHEnDVCp3qUpqTrN8U"
+    headers = {"anthropic-workspace-id": workspace_id}
     return anthropic.Anthropic(api_key=api_key, default_headers=headers)
 
 

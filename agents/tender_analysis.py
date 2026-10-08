@@ -159,8 +159,65 @@ def document_texts(session, opportunity_id: str) -> list:
     return picked
 
 
-def extract_requirements(description: str, criteria: dict, doc_names: list, docs: list) -> dict:
+def _fetch_xml(publication_number: str) -> str:
+    import requests
+    r = requests.get(f"https://ted.europa.eu/en/notice/{publication_number}/xml", timeout=40,
+                     headers={"User-Agent": "Mozilla/5.0 TenderTown/1.0"})
+    r.raise_for_status()
+    return r.text
+
+
+def load_procedure(official_url: str, reference: str) -> dict:
+    """One procurement, from the notice that opened it.
+
+    A deadline extension is a new TED notice of the same procedure. The page
+    has to describe the tender as first published (RFI, RFP, grant, contract
+    notice) and then every later notice. The body comes from the first notice;
+    a later notice supplies criteria only when the first has none.
+    """
+    from agents.tender_documents import _procedure_notices, notice_label
+    from agents.updates import note_source
+    from adapters.ted import TedSearchProvider
+    pub = official_url.rstrip("/").split("/")[-1]
+    proc = reference[4:] if (reference or "").startswith("TED:") and len(reference) > 4 else None
+    notices = []
+    if proc:
+        try:
+            notices = _procedure_notices(proc)
+        except Exception:
+            notices = []
+    if not notices:
+        notices = [{"publication-number": pub, "publication-date": "", "notice-type": ""}]
+    xml = _fetch_xml(notices[0]["publication-number"])
+    description = notice_description(xml)
+    crit = notice_criteria(xml)
+    if not (crit["selection"] or crit["tenderer"] or crit["award"]) and len(notices) > 1:
+        try:
+            latest = notice_criteria(_fetch_xml(notices[-1]["publication-number"]))
+            if latest["selection"] or latest["tenderer"] or latest["award"]:
+                crit = latest
+        except Exception:
+            pass
+    ted = TedSearchProvider()
+    lines = []
+    for i, n in enumerate(notices[:12]):
+        extra = ""
+        if i > 0:
+            try:
+                extra = note_source(ted.notice_changes(n["publication-number"])) or ""
+            except Exception:
+                extra = ""
+        lines.append(f"- {(n.get('publication-date') or '')[:10]} {notice_label(n.get('notice-type') or '', i)} "
+                     f"TED {n['publication-number']}" + (f" — {extra[:500]}" if extra else ""))
+    return {"description": description, "criteria": crit, "timeline": "\n".join(lines)}
+
+
+def extract_requirements(description: str, criteria: dict, doc_names: list, docs: list, timeline: str = "") -> dict:
     listing = "\n".join([
+        "## Procedure history",
+        "Every official notice of this procedure, from the first publication to the latest update.",
+        "Describe the tender as first published, then the changes that still stand.",
+        timeline or "(single notice)",
         "## Notice", "Procurement description:", description or "(none)",
         "Selection criteria:", *[f"- {s[:2000]}" for s in criteria["selection"]],
         "Other tenderer requirements:", *[f"- {s[:2000]}" for s in criteria["tenderer"]],
@@ -198,9 +255,9 @@ def analyse_tenders(session, errors: list, limit: int = 40) -> dict:
     Q&A / specifications since its last analysis — so a page never has a
     summary without its requirements."""
     import requests
-    opps = session.execute(text("""select opportunity_id, official_url, status, deadline, tender_analysed_at,
+    opps = session.execute(text("""select opportunity_id, official_url, reference, status, deadline, tender_analysed_at,
             exists (select 1 from documents d where d.opportunity_id = o.opportunity_id and d.downloaded_at > o.tender_analysed_at
-                    and d.document_type in ('CLARIFICATION','Q_AND_A','CORRIGENDUM','TENDER_SPECIFICATIONS','TECHNICAL_SPECIFICATIONS')) as new_docs
+                    and d.document_type in ('CONTRACT_NOTICE','CLARIFICATION','Q_AND_A','CORRIGENDUM','TENDER_SPECIFICATIONS','TECHNICAL_SPECIFICATIONS')) as new_docs
             from opportunities o where official_url is not null""")).fetchall()
     done = {"award": 0, "requirements": 0}
     llm_budget = limit
@@ -212,7 +269,18 @@ def analyse_tenders(session, errors: list, limit: int = 40) -> dict:
         if deadline is not None and deadline.tzinfo is None:
             deadline = deadline.replace(tzinfo=timezone.utc)
         active = o.status in ("OPEN", "SIGNAL", "UNVERIFIED") and (deadline is None or deadline >= now)
-        if ted:
+        due = active and (not o.tender_analysed_at or o.new_docs) and llm_budget > 0
+        timeline = ""
+        if ted and due:
+            try:
+                bundle = load_procedure(o.official_url, o.reference)
+            except Exception as e:
+                errors.append(f"tender analysis {o.opportunity_id}: {e}"[:200]); continue
+            crit = bundle["criteria"]
+            description = bundle["description"]
+            timeline = bundle["timeline"]
+            done["award"] += store_award_criteria(session, o.opportunity_id, crit["award"])
+        elif ted:
             pub = o.official_url.rstrip("/").split("/")[-1]
             try:
                 xml = requests.get(f"https://ted.europa.eu/en/notice/{pub}/xml", timeout=40).text
@@ -220,18 +288,20 @@ def analyse_tenders(session, errors: list, limit: int = 40) -> dict:
                 errors.append(f"tender analysis {o.opportunity_id}: {e}"[:200]); continue
             crit = notice_criteria(xml)
             done["award"] += store_award_criteria(session, o.opportunity_id, crit["award"])
-        if not active or (o.tender_analysed_at and not o.new_docs) or llm_budget <= 0:
+        if not due:
             continue
-        llm_budget -= 1
         names = [r.name for r in session.execute(text("select name from documents where opportunity_id = :o"), {"o": o.opportunity_id})]
+        if ted and not names:
+            continue  # the dossier is not in yet; don't freeze a summary that says there are no documents
+        llm_budget -= 1
         docs = document_texts(session, o.opportunity_id)
-        description = notice_description(xml) if ted else ""
         if not ted:
+            description = ""
             body = page_text(o.official_url)
             if body:
                 docs = [("Opportunity page " + o.official_url, body)] + docs
         try:
-            out = extract_requirements(description, crit, names, docs)
+            out = extract_requirements(description, crit, names, docs, timeline)
         except Exception as e:
             errors.append(f"requirements {o.opportunity_id}: {e}"[:300])
             if "credit" in str(e).lower():

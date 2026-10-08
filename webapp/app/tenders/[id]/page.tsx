@@ -171,6 +171,28 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
             </div>
           )}
 
+          {(() => {
+            const notices = ((documents || []) as Doc[])
+              .filter((d) => d.document_type === 'CONTRACT_NOTICE' || d.document_type === 'CORRIGENDUM')
+              .sort((a, b) => (a.publication_date || '').localeCompare(b.publication_date || '') || (a.name || '').localeCompare(b.name || ''));
+            if (!notices.length) return null;
+            return (
+              <div className="detail-block" id="timeline">
+                <h2>{t('Timeline')} <span className="uc-count">{notices.length}</span></h2>
+                <ol className="timeline">
+                  {notices.map((d) => (
+                    <li key={d.document_id}>
+                      <time>{d.publication_date ? new Date(d.publication_date).toLocaleDateString(getLocale(), { day: 'numeric', month: 'short', year: 'numeric' }) : ''}</time>
+                      {d.url
+                        ? <a href={d.url} target="_blank" rel="noopener noreferrer">{firstInLanguage(d.name_en) ?? d.name}</a>
+                        : <span>{firstInLanguage(d.name_en) ?? d.name}</span>}
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            );
+          })()}
+
           {evaluationAllowed ? viewScopes.map((scope) => (
             <TenderScopeEvaluation key={scope.id} opportunityId={o.opportunity_id} scope={{ id: scope.id, name: scope.name }}
               row={evalOf(scope.id)} showName={viewScopes.length > 1 || !own} canRun={canRun && (!scope.isDefault || !!ctx?.isPlatformAdmin)} signedIn locked={locked}

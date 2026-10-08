@@ -6,12 +6,13 @@
  * requirement, a fit score and a bid report (scope_evaluations).
  * (prompt: agents/tender_evaluation.md, or the scope's fine-tuned version.)
  */
-import { complete } from '@/lib/llm';
+import Anthropic from '@anthropic-ai/sdk';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { agentPrompt, companyBrief, isAgentEnabled } from '@/lib/settings';
 import { friendly, lockRow, unlockRow } from '@/lib/scopeWork';
 
 export const EVALUATION_AGENT = 'Tender Evaluation Agent';
+const MODEL = 'claude-opus-5-5';
 const MATCHES = ['MATCH', 'PARTIAL_MATCH', 'PARTNER_NEEDED', 'NO_MATCH', 'UNKNOWN'];
 const VERDICTS = ['bid', 'bid_with_partner', 'consider', 'no_bid'];
 // A run that started longer ago than this is presumed dead and may be retried.
@@ -54,6 +55,7 @@ export async function ensureEvaluation(opportunityId: string, scopeId: string): 
 }
 
 async function runEvaluation(opportunityId: string, scopeId: string) {
+  if (!process.env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY is not configured on the server.');
   const db = getSupabaseServerClient();
   const [{ data: o }, { data: reqs }, { data: award }] = await Promise.all([
     db.from('opportunities').select('*').eq('opportunity_id', opportunityId).single(),
@@ -81,14 +83,20 @@ async function runEvaluation(opportunityId: string, scopeId: string) {
     `\nRequirements:\n${reqLines.join('\n') || '(none extracted)'}`,
   ].filter(Boolean).join('\n');
 
-  const response = await complete({
-    system: await systemPrompt(scopeId),
-    user: tender,
-    maxTokens: 16000,
-    effort: 'medium',
+  const client = new Anthropic({
+    defaultHeaders: process.env.ANTHROPIC_WORKSPACE_ID ? { 'anthropic-workspace-id': process.env.ANTHROPIC_WORKSPACE_ID } : undefined,
   });
-  if (!response.text.trim()) throw new Error('The agent declined to evaluate this tender.');
-  const out = parseJson(response.text);
+  const response: any = await client.beta.messages.create({
+    model: MODEL,
+    max_tokens: 16000,
+    system: await systemPrompt(scopeId),
+    messages: [{ role: 'user', content: tender }],
+    betas: ['server-side-fallback-2026-07-01'],
+    output_config: { effort: 'medium' },
+    fallbacks: 'default',
+  } as any);
+  if (response.stop_reason === 'refusal') throw new Error('The agent declined to evaluate this tender.');
+  const out = parseJson((response.content as any[]).filter((b) => b.type === 'text').map((b) => b.text).join(''));
 
   const matches = (Array.isArray(out.matches) ? out.matches : [])
     .filter((m: any) => ids.has(m?.id))
@@ -118,7 +126,7 @@ async function runEvaluation(opportunityId: string, scopeId: string) {
     gaps: list(out.gaps).map(String).slice(0, 10),
     partners: list(out.partners).filter((p: any) => p?.role).slice(0, 6),
     next_steps: list(out.next_steps).filter((s: any) => s?.title).slice(0, 8),
-    model: response.model,
+    model: response.model ?? MODEL,
   };
   const { error } = await db.from('scope_evaluations').update({
     evaluation, evaluated_at: new Date().toISOString(), evaluation_error: null,

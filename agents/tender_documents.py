@@ -117,7 +117,7 @@ def _epps_documents(url: str) -> list:
     if table:
         for p in range(2, 30):
             page = _get(f"{base}/epps/cft/listContractDocuments.do?resourceId={resource.group(1)}&d-{table.group(1)}-p={p}").text
-            if page in pages or "downloadDocForAnonymous" not in page:
+            if page in pages or not re.search(r"downloadDocForAnonymous\('\d+'\)", page):
                 break
             pages.append(page)
     docs = {}
@@ -153,20 +153,46 @@ def _dtvp_documents(url: str) -> list:
     return list({n: (n, h, u) for n, h, u in out}.values())
 
 
+def notice_label(kind: str, index: int) -> str:
+    """What a notice is in the procedure's timeline. The first contract notice is
+    the publication itself; a later cn- is a change (deadline, corrigendum)."""
+    kind = kind or ""
+    if kind.startswith(("can-", "veat")):
+        return "Contract award notice"
+    if kind.startswith("pin-"):
+        return "Prior information notice"
+    if kind == "pmc":
+        return "Market consultation notice"
+    if index > 0 and kind.startswith("cn-"):
+        return "Change notice"
+    return "Contract notice"
+
+
 def collect_documents(session, opportunity_id: str, procedure_id: str) -> dict:
     """Refresh one opportunity's document list. Returns {'documents': n, 'new': [names]}."""
     notices = _procedure_notices(procedure_id)
     rows = []  # (name, type, url, published, version)
     for i, n in enumerate(notices):
         pn, kind = n["publication-number"], n.get("notice-type") or ""
-        label = ("Contract award notice" if kind.startswith(("can-", "veat")) else
-                 "Change notice" if i > 0 and kind.startswith("cn-") else
-                 "Prior information notice" if kind.startswith("pin-") else
-                 "Market consultation notice" if kind == "pmc" else "Contract notice")
+        label = notice_label(kind, i)
         rows.append((f"{label} — TED {pn}", "CORRIGENDUM" if label == "Change notice" else "CONTRACT_NOTICE",
                      f"https://ted.europa.eu/en/notice/{pn}/pdf", n["publication-date"][:10], str(i + 1)))
+    if notices:
+        # Day one of the procedure, even when the radar first saw a later notice.
+        session.execute(text("""update opportunities set publication_date = cast(:d as timestamp)
+                                where opportunity_id = :o
+                                  and (publication_date is null or publication_date > cast(:d as timestamp))"""),
+                        {"d": notices[0]["publication-date"][:10], "o": opportunity_id})
 
-    portal_urls = _notice_document_urls(notices[-1]["publication-number"]) if notices else []
+    # Document links live on the original notice. A deadline extension often
+    # repeats them, and sometimes doesn't, so read every notice.
+    portal_urls = []
+    for n in notices:
+        try:
+            portal_urls += _notice_document_urls(n["publication-number"])
+        except Exception:
+            continue
+    portal_urls = list(dict.fromkeys(portal_urls))
     for url in portal_urls:
         host = urlparse(url).netloc
         try:
@@ -213,6 +239,26 @@ def collect_documents(session, opportunity_id: str, procedure_id: str) -> dict:
         session.execute(text("update opportunities set last_change = :now where opportunity_id = :o"), {"now": now, "o": opportunity_id})
     session.commit()
     return {"documents": len(rows), "new": new_names}
+
+
+def collect_missing(session, errors: list) -> dict:
+    """Collect documents for TED tenders that have none yet.
+
+    The full portal refresh runs once a day. A tender found later the same day
+    would otherwise be summarised from the notice alone — often a deadline
+    extension with no dossier. Those are collected on the next pipeline run.
+    """
+    opps = session.execute(text("""select opportunity_id, reference from opportunities
+            where reference like 'TED:%'
+              and not exists (select 1 from documents d where d.opportunity_id = opportunities.opportunity_id)""")).fetchall()
+    total = 0
+    for o in opps:
+        try:
+            total += collect_documents(session, o.opportunity_id, o.reference[4:])["documents"]
+        except Exception as e:
+            session.rollback()
+            errors.append(f"documents {o.opportunity_id}: {e}"[:300])
+    return {"opportunities": len(opps), "documents": total, "new": 0}
 
 
 def collect_all(session, errors: list, only_active: bool = None) -> dict:

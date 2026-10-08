@@ -597,6 +597,11 @@ def main():
         session.commit()
         docs = collect_all(session, errors)
         print(f"Documents: {docs['documents']} across {docs['opportunities']} active tenders, {docs['new']} new")
+    elif S.enabled("tender_documents"):
+        from agents.tender_documents import collect_missing
+        missing = collect_missing(session, errors)
+        if missing["opportunities"]:
+            print(f"Documents: {missing['documents']} for {missing['opportunities']} tenders that had none yet")
     if S.enabled("tender_analysis"):
         analysed = analyse_tenders(session, errors)
         print(f"Tender analysis: award criteria for {analysed['award']} criteria, requirements for {analysed['requirements']} tenders")

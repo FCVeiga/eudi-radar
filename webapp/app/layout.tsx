@@ -1,7 +1,7 @@
 import './globals.css';
 import { Suspense } from 'react';
 import Link from 'next/link';
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Outfit, JetBrains_Mono } from 'next/font/google';
 import SearchBox from '@/components/SearchBox';
 import SideNav from '@/components/SideNav';
 import SourcesSidebar from '@/components/SourcesSidebar';
@@ -24,17 +24,30 @@ import { BottomNav, MenuBackdrop, MenuButton } from '@/components/MobileNav';
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
 
-const sans = Inter({ subsets: ['latin', 'latin-ext', 'greek'], variable: '--font-sans', display: 'swap' });
+const sans = Outfit({ subsets: ['latin', 'latin-ext'], variable: '--font-sans', display: 'swap' });
 const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' });
 
 // viewport-fit=cover: the layout pads itself for the notch and home indicator.
-export const viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover', themeColor: '#ffffff' };
+export const viewport = {
+  width: 'device-width', initialScale: 1, viewportFit: 'cover',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#000000' },
+  ],
+};
 
 export async function generateMetadata() {
   const t = await getT();
   return {
     title: 'Tender Town',
     description: t('Public tenders, funding and market news across Europe — and a community of the people who bid on them.'),
+    icons: {
+      icon: [
+        { url: '/brand/favicon.png', media: '(prefers-color-scheme: light)', type: 'image/png' },
+        { url: '/brand/favicon-white.png', media: '(prefers-color-scheme: dark)', type: 'image/png' },
+      ],
+      apple: '/brand/favicon.png',
+    },
   };
 }
 

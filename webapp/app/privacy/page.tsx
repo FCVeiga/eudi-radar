@@ -9,16 +9,17 @@ export async function generateMetadata() {
 export default function PrivacyPage() {
   const t = getTSync();
   return (
-    <LegalPage title={t('Privacy Policy')} updated="2026-10-02" draft englishOnly>
+    <LegalPage title={t('Privacy Policy')} updated="2026-10-08" draft englishOnly>
       <h2>Who is responsible</h2>
       <p>[Operator legal entity name], [registered address], is the controller of the personal data described here. Contact: [privacy contact email]{' '}[and Data Protection Officer, if appointed].</p>
       <h2>What we collect</h2>
       <ul>
-        <li><strong>Account:</strong> your email address and password (stored only as a secure hash by our authentication provider), username and sign-up date.</li>
+        <li><strong>Account:</strong> your email address, and either a password (stored only as a secure hash by our authentication provider) or a sign-in with Google, which shares that email with us. Also your username and sign-up date.</li>
         <li><strong>Profile:</strong> display name, picture and the description you write — shown on your public profile.</li>
-        <li><strong>Activity:</strong> the tenders and news you follow (visible only to you), and — when community features launch — your posts and comments.</li>
+        <li><strong>Activity:</strong> the tenders and news you follow (visible only to you); your posts, comments and likes (visible to other people); and your chat messages.</li>
+        <li><strong>Billing:</strong> if you take a paid plan, Stripe processes the payment. We store a customer reference and your plan, not your card number.</li>
         <li><strong>Scope context:</strong> files uploaded to a workspace’s scopes (such as presentations, references and team CVs, which can contain other people’s personal data). Upload only what you’re entitled to share.</li>
-        <li><strong>Technical:</strong> a session cookie that keeps you signed in. We don’t use advertising or tracking cookies.</li>
+        <li><strong>Technical:</strong> a session cookie that keeps you signed in, and cookies that remember your interface language and display mode (light, dark or automatic). We don’t use advertising or tracking cookies.</li>
       </ul>
       <h2>Why we use it</h2>
       <p>To provide your account and the platform’s features (performance of our contract with you), to keep the service secure, and to improve it (our legitimate interests). We don’t sell your data.</p>
@@ -28,10 +29,12 @@ export default function PrivacyPage() {
         <li><strong>Vercel</strong> — website hosting.</li>
         <li><strong>Anthropic</strong> — AI models behind the agents; tender and company material is sent to them when an agent runs.</li>
         <li><strong>Tavily</strong> — web search and page reading for the search agents (no account data).</li>
+        <li><strong>Stripe</strong> — subscription payments, when you choose a paid plan.</li>
+        <li><strong>Google</strong> — only if you choose to sign in with Google. It authenticates you and shares your email address.</li>
       </ul>
       <p>[To be completed: transfers outside the EEA and the safeguards used, e.g. Standard Contractual Clauses.]</p>
       <h2>How long we keep it</h2>
-      <p>For as long as your account exists. Deleting your account (Edit profile → Delete account) removes your profile, picture, follows, posts and comments. [Backup retention period to be completed.]</p>
+      <p>For as long as your account exists. Deleting your account (Edit profile → Delete account) removes your profile, picture, follows, posts, comments and chat. [Backup retention period to be completed.]</p>
       <h2>Your rights</h2>
       <p>You can access, correct or delete your data, object to or restrict its use, and ask for a copy (portability) — most of it directly in Edit profile, or by writing to [privacy contact email]. You can also complain to your data protection authority.</p>
     </LegalPage>

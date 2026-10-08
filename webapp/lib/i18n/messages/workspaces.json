@@ -181,6 +181,13 @@
   "de": "Upgrade den Plan, um den Agentenbericht zu sehen",
   "it": "Passa a un piano superiore per vedere il rapporto dell’agente"
  },
+ "Upgrade Plan to add team members": {
+  "pt": "Melhore o plano para adicionar membros da equipa",
+  "es": "Mejora el plan para añadir miembros del equipo",
+  "fr": "Passez à un plan supérieur pour ajouter des membres",
+  "de": "Upgrade den Plan, um Teammitglieder hinzuzufügen",
+  "it": "Passa a un piano superiore per aggiungere membri del team"
+ },
  "Upgrade plan": {
   "pt": "Melhorar plano",
   "es": "Mejorar plan",

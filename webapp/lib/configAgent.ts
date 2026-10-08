@@ -83,12 +83,12 @@ function validateGenericConfig(out: any) {
   const news = out.news_queries && typeof out.news_queries === 'object' && !Array.isArray(out.news_queries) ? out.news_queries : {};
   const config = {
     mode: 'generic', topic: String(out.topic || 'General').slice(0, 80),
-    min_value_eur: num(out.min_value_eur ?? 5_000_000, 0, 1e10, 'min_value_eur'),
+    min_value_eur: num(out.min_value_eur ?? 1_000_000, 0, 1e10, 'min_value_eur'),
     lookback_days: num(out.lookback_days ?? 4, 1, 30, 'lookback_days'),
     max_tenders: num(out.max_tenders ?? 25, 1, 100, 'max_tenders'),
     min_tender_score: num(out.min_tender_score ?? 55, 0, 100, 'min_tender_score'),
     max_news: num(out.max_news ?? 15, 0, 50, 'max_news'),
-    min_news_score: num(out.min_news_score ?? 40, 0, 100, 'min_news_score'),
+    min_news_score: num(out.min_news_score ?? 55, 0, 100, 'min_news_score'),
     news_queries: Object.fromEntries(['market', 'regulation', 'industry'].map((k) => [k, list(news[k], 10)])),
   };
   return config;

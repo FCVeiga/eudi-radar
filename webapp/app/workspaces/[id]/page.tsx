@@ -1,13 +1,14 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
-import { getContext, getMyWorkspaces, getWorkspaceContext } from '@/lib/accounts';
+import { getContext, getMyWorkspaces, getPersonalAccount, getWorkspaceContext } from '@/lib/accounts';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { SCOPE_AGENT_KEYS, getWorkspaceScopes } from '@/lib/scopes';
 import ScopeCard from '@/components/settings/ScopeCard';
 import { AddMemberButton, DeleteWorkspace, MemberRow, RevokeInviteButton, WorkspaceName } from '@/components/settings/WorkspaceControls';
 import { createScope, switchWorkspace } from '../actions';
-import { UpgradeOnClick, UpgradeReport } from '@/components/UpgradeReport';
+import { UpgradeReport } from '@/components/UpgradeReport';
+import { PlanUpgradeButton } from '@/components/settings/PlanPanel';
 import SignUpGate from '@/components/SignUpGate';
 import { getLocale, getT } from '@/lib/i18n/server';
 
@@ -43,9 +44,10 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
   const scopes = sharedDefault ? [sharedDefault, ...ownScopes] : ownScopes;
   const ids = scopes.map((s) => s.id);
   const teams = ctx.plan.key === 'teams';
-  const [mine, current, { data: docs }, { data: agentRows }, { data: items }, { data: memberRows }, { data: invites }] = await Promise.all([
+  const [mine, current, account, { data: docs }, { data: agentRows }, { data: items }, { data: memberRows }, { data: invites }] = await Promise.all([
     getMyWorkspaces(),
     getContext(),
+    getPersonalAccount(user.id),
     ids.length ? db.from('company_documents').select('scope_id').in('scope_id', ids) : Promise.resolve({ data: [] as any[] }),
     ids.length ? db.from('scope_agent_settings').select('scope_id, agent_key, enabled').in('scope_id', ids) : Promise.resolve({ data: [] as any[] }),
     ids.length ? db.from('scope_items').select('scope_id').in('scope_id', ids).limit(50000) : Promise.resolve({ data: [] as any[] }),
@@ -66,6 +68,7 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
   const limit = ctx.isDefault ? Infinity : plan.scopes;
   const customCount = ownScopes.filter((s) => !s.isDefault).length;
   const canAdd = ctx.canCustomize && customCount < limit;
+  const viewerPlan = { key: account?.planKey ?? 'free', status: account?.planStatus ?? 'active', periodEnd: account?.periodEnd ?? null, hasBilling: !!account?.stripeCustomerId };
   const owned = mine.filter((m) => m.workspace.ownerId === user.id && !m.isDefault);
   const addScope = createScope.bind(null, wsId);
   const onSite = current?.workspace.id === wsId;
@@ -84,11 +87,6 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
       </div>
 
       {!ctx.isAdmin && <p className="callout">{t('View only — admins configure this workspace.')}</p>}
-      {ctx.isAdmin && !ctx.canCustomize && (
-        <p className="callout">
-          {t('Free plan: default scope only.')}{ctx.isOwner && <> <Link href="/settings/account?plan=1">{t('Upgrade')}</Link> {t('to create your own.')}</>}
-        </p>
-      )}
 
       {/* ---------- Scopes ---------- */}
       <section className="detail-block" id="scopes">
@@ -96,13 +94,13 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
           <h2>{t('Scopes')} <span className="uc-count">{scopes.length}{Number.isFinite(limit) && plan.customize ? `/${limit}` : ''}</span></h2>
           {scopes.length > 0 && (canAdd
             ? <form action={addScope}><button type="submit" className="btn primary">{t('New scope')}</button></form>
-            : ctx.isAdmin && <UpgradeOnClick label={t('New scope')} />)}
+            : ctx.isAdmin && <PlanUpgradeButton label={t('New scope')} userId={user.id} admin={ctx.isPlatformAdmin} plan={viewerPlan} />)}
         </div>
         {scopes.length === 0 ? (
           <div className="profile-empty">
             <p className="profile-empty-title">{t('No scopes in this workspace')}</p>
             {canAdd ? <form action={addScope}><button type="submit" className="btn primary profile-empty-cta">{t('Create the first scope')}</button></form>
-              : ctx.isAdmin && <UpgradeOnClick label={t('Create the first scope')} />}
+              : ctx.isAdmin && <PlanUpgradeButton label={t('Create the first scope')} className="btn primary profile-empty-cta" userId={user.id} admin={ctx.isPlatformAdmin} plan={viewerPlan} />}
           </div>
         ) : (
           <div className="scope-grid">
@@ -147,7 +145,7 @@ export default async function WorkspaceDetailPage({ params }: { params: { id: st
             )}
           </>
         ) : (
-          <UpgradeReport />
+          <UpgradeReport title="Upgrade Plan to add team members" />
         )}
       </section>
 

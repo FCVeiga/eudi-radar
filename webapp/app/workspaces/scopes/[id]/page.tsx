@@ -10,6 +10,7 @@ import { DeleteScopeForm, DocumentGroup, ScopeForm } from '@/components/settings
 import FollowingSection from '@/components/settings/FollowingSection';
 import { getCountryOptions, getFollowedSourceIds, getSources } from '@/lib/sources';
 import { getT } from '@/lib/i18n/server';
+import { newsReportAllowance } from '@/lib/newsQuota';
 
 // The Config Agent runs inside this page's server actions: give it time.
 export const maxDuration = 300;
@@ -21,8 +22,8 @@ export default async function ScopePage({ params }: { params: { id: string } }) 
   const scope = await getEditableScope(params.id);
   if (!scope) notFound();
   const t = await getT();
-  const [agents, defaults, docs, sources, countries] = await Promise.all([
-    getScopeAgents(scope.id), getAgentDefaults(), getScopeDocs(scope.id), getSources(), getCountryOptions(),
+  const [agents, defaults, docs, sources, countries, allowance] = await Promise.all([
+    getScopeAgents(scope.id), getAgentDefaults(), getScopeDocs(scope.id), getSources(), getCountryOptions(), newsReportAllowance(),
   ]);
   const followed = Array.from(await getFollowedSourceIds([scope.id]));
   const cfg = scope.searchConfig;
@@ -56,6 +57,7 @@ export default async function ScopePage({ params }: { params: { id: string } }) 
         <div className="agent-grid">
           {AGENTS.filter((a) => SCOPE_AGENT_KEYS.includes(a.key)).map((a) => {
             const s = agents.get(a.key);
+            const locked = a.key === 'news_report' && allowance.block === 'plan';
             if (a.key === 'search') {
               return (
                 <AgentCard key={a.key} scopeId={scope.id} agent={a} enabled={s?.enabled ?? true} instructions={scope.searchScope}
@@ -64,9 +66,9 @@ export default async function ScopePage({ params }: { params: { id: string } }) 
               );
             }
             return (
-              <AgentCard key={a.key} scopeId={scope.id} agent={a} enabled={s?.enabled ?? true} instructions={s?.instructions ?? null}
+              <AgentCard key={a.key} scopeId={scope.id} agent={a} enabled={locked ? false : (s?.enabled ?? true)} instructions={s?.instructions ?? null}
                 config={s?.prompt_override || defaults.get(a.key)?.default_prompt || null} custom={!!s?.prompt_override}
-                status={s?.status ?? null} error={s?.error ?? null} />
+                status={s?.status ?? null} error={s?.error ?? null} locked={locked} />
             );
           })}
         </div>

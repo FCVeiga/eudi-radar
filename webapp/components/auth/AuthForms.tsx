@@ -12,7 +12,7 @@ function Submit({ label, busy }: { label: string; busy: string }) {
 }
 const Msg = ({ state }: { state: AuthState }) => state && <p className={`form-msg ${state.ok ? 'ok' : 'err'}`} role="status">{state.message}</p>;
 
-function GoogleButton({ next }: { next: string }) {
+export function GoogleButton({ next, bare = false }: { next: string; bare?: boolean }) {
   const [pending, start] = useTransition();
   const [msg, setMsg] = useState<AuthState>(null);
   const t = useT();
@@ -24,7 +24,7 @@ function GoogleButton({ next }: { next: string }) {
         {t('Continue with Google')}
       </button>
       <Msg state={msg} />
-      <div className="auth-or"><span>{t('or')}</span></div>
+      {!bare && <div className="auth-or"><span>{t('or')}</span></div>}
     </>
   );
 }

@@ -9,6 +9,7 @@ import HeartButton from '@/components/HeartButton';
 import CommentsSection from '@/components/social/CommentsSection';
 import { getLikes } from '@/lib/likes';
 import { isAgentEnabled } from '@/lib/settings';
+import { newsReportAllowance } from '@/lib/newsQuota';
 import { getPlatformLanguage } from '@/lib/language';
 import { getViewScopes } from '@/lib/scopes';
 import { getLocale, getT } from '@/lib/i18n/server';
@@ -68,10 +69,11 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
   const facts: string[] = Array.isArray(n.key_facts) ? n.key_facts.filter((f: string) => firstInLanguage(f)) : [];
   // One report per scope the viewer looks through (their active scopes, or the default scope).
   const { scopes: viewScopes } = await getViewScopes();
-  const [likes, { data: reports }, agentFlags] = await Promise.all([
+  const [likes, { data: reports }, agentFlags, allowance] = await Promise.all([
     getLikes('news', [n.news_id]),
     supabase.from('scope_news_reports').select('*').eq('news_id', n.news_id).in('scope_id', viewScopes.map((sc) => sc.id)),
     Promise.all(viewScopes.map(async (sc) => [sc.id, await isAgentEnabled('news_report', sc.id)] as const)),
+    newsReportAllowance(),
   ]);
   const agentOnFor = new Map(agentFlags);
   const domain = n.source_url ? new URL(n.source_url).hostname.replace(/^www\./, '') : n.source_name;
@@ -119,17 +121,23 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
         return (
           <section key={scope.id} className="detail-block analysis-block">
             <div className="agent-head">
-              <AgentAvatar agent="news_report" working={!analysis && agentOn} off={!agentOn && !analysis} />
+              <AgentAvatar agent="news_report" working={!analysis && agentOn && !allowance.block} off={allowance.block === 'plan' || (!agentOn && !analysis)} />
               <div className="agent-id">
                 <h2>{t('News Report Agent Analysis')}{viewScopes.length > 1 && <span className="scope-name-chip">{scope.name}</span>}</h2>
                 {r?.analysed_at && <span className="agent-name">{t('Report from {date}', { date: fmtDate(r.analysed_at) })}</span>}
               </div>
-              {analysis && <span className={`verdict ${analysis.verdict}`} title={VERDICTS[analysis.verdict] ? t(VERDICTS[analysis.verdict].note) : undefined}>{VERDICTS[analysis.verdict] ? t(VERDICTS[analysis.verdict].label) : null}</span>}
+              {analysis && allowance.block !== 'plan' && <span className={`verdict ${analysis.verdict}`} title={VERDICTS[analysis.verdict] ? t(VERDICTS[analysis.verdict].note) : undefined}>{VERDICTS[analysis.verdict] ? t(VERDICTS[analysis.verdict].label) : null}</span>}
             </div>
-            {!analysis && (agentOn
-              ? <NewsReportRunner newsId={n.news_id} scopeId={scope.id} lastError={r?.error ?? null} />
+            {allowance.block === 'plan' && (
+              <p className="muted">{t('The News Report Agent is included on Pro and Teams.')} <Link href="/pricing">{t('Pricing')}</Link></p>
+            )}
+            {allowance.block !== 'plan' && !analysis && allowance.block === 'quota' && (
+              <p className="muted">{t('This workspace has used its 50 news reports for this month.')}</p>
+            )}
+            {allowance.block !== 'plan' && !analysis && allowance.block !== 'quota' && (agentOn
+              ? <NewsReportRunner newsId={n.news_id} scopeId={scope.id} lastError={r?.error === 'plan' || r?.error === 'quota' ? null : r?.error ?? null} />
               : <p className="muted">{t('Agent off for this scope.')}</p>)}
-            {analysis && (
+            {allowance.block !== 'plan' && analysis && (
               <>
                 {firstInLanguage(analysis.take) && <p className="analysis-take">{analysis.take}</p>}
                 <div className="actions">

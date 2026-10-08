@@ -1,22 +1,22 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
-import { getContext, getMyWorkspaces, getPersonalAccount } from '@/lib/accounts';
+import { getContext, getMyWorkspaces, getPersonalAccount, isPlatformAdmin } from '@/lib/accounts';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { PLANS } from '@/lib/plans';
-import { AddMemberButton, MemberRow, NewWorkspaceButton } from '@/components/settings/WorkspaceControls';
+import { NewWorkspaceButton } from '@/components/settings/WorkspaceControls';
 import { WorkspaceMark } from '@/components/WorkspaceSwitcher';
 import { switchWorkspace } from './actions';
 import { getT } from '@/lib/i18n/server';
 import SignUpGate from '@/components/SignUpGate';
-import { UpgradeOnClick, UpgradeReport } from '@/components/UpgradeReport';
+import { PlanUpgradeButton } from '@/components/settings/PlanPanel';
 
 export async function generateMetadata() {
   const t = await getT();
   return { title: `${t('Workspaces')} — Tender Town` };
 }
 
-/** Workspace: your workspaces (each opens its scopes and members). Plans are on Settings. */
+/** Workspace list. Members live on each workspace page, under its scopes. */
 export default async function WorkspacesPage({ searchParams }: { searchParams: { new?: string } }) {
   const user = await getCurrentUser();
   const t = await getT();
@@ -31,7 +31,7 @@ export default async function WorkspacesPage({ searchParams }: { searchParams: {
   const ctx = await getContext();
   if (!ctx) redirect('/login?next=/workspaces');
   const db = getSupabaseServerClient();
-  const [mine, account] = await Promise.all([getMyWorkspaces(), getPersonalAccount(user.id)]);
+  const [mine, account, admin] = await Promise.all([getMyWorkspaces(), getPersonalAccount(user.id), isPlatformAdmin()]);
   const wsIds = mine.map((m) => m.workspace.id);
   const [{ data: scopeRows }, { data: memberRows }, { data: defaultScope }] = await Promise.all([
     db.from('scopes').select('workspace_id, is_default').in('workspace_id', wsIds),
@@ -45,18 +45,6 @@ export default async function WorkspacesPage({ searchParams }: { searchParams: {
   };
   const myPlan = account?.plan ?? PLANS[0];
   const teams = myPlan.key === 'teams';
-  const activeId = ctx.workspace.id;
-  const { data: activeMemberRows } = teams
-    ? await db.from('workspace_members').select('user_id, role').eq('workspace_id', activeId)
-    : { data: [] as any[] };
-  const { data: profiles } = (activeMemberRows || []).length
-    ? await db.from('profiles').select('id, username, display_name, avatar_url').in('id', (activeMemberRows || []).map((m: any) => m.user_id))
-    : { data: [] as any[] };
-  const members = (activeMemberRows || []).map((m: any) => {
-    const p = (profiles || []).find((x: any) => x.id === m.user_id);
-    return { userId: m.user_id, role: m.role, username: p?.username ?? 'user', displayName: p?.display_name || p?.username || 'user', avatarUrl: p?.avatar_url ?? null };
-  }).sort((a, b) => Number(b.userId === ctx.workspace.ownerId) - Number(a.userId === ctx.workspace.ownerId)
-    || (a.role === b.role ? a.username.localeCompare(b.username) : a.role === 'admin' ? -1 : 1));
 
   return (
     <div className="settings">
@@ -66,7 +54,10 @@ export default async function WorkspacesPage({ searchParams }: { searchParams: {
       <section className="detail-block" id="workspaces">
         <div className="section-head">
           <h2>{t('Your workspaces')} <span className="uc-count">{mine.length}</span></h2>
-          {teams ? <NewWorkspaceButton autoOpen={searchParams.new === '1'} /> : <UpgradeOnClick label={t('New workspace')} autoOpen={searchParams.new === '1'} />}
+          {teams ? <NewWorkspaceButton autoOpen={searchParams.new === '1'} /> : (
+            <PlanUpgradeButton label={t('New workspace')} autoOpen={searchParams.new === '1'} userId={user.id} admin={admin}
+              plan={{ key: account?.planKey ?? 'free', status: account?.planStatus ?? 'active', periodEnd: account?.periodEnd ?? null, hasBilling: !!account?.stripeCustomerId }} />
+          )}
         </div>
         <div className="table-wrap">
           <table className="data-table ws-table">
@@ -91,23 +82,6 @@ export default async function WorkspacesPage({ searchParams }: { searchParams: {
             </tbody>
           </table>
         </div>
-      </section>
-
-      <section className="detail-block" id="members">
-        <div className="section-head">
-          <h2>{t('Team members')} {teams && <span className="uc-count">{members.length}</span>}</h2>
-          {ctx.canAddMembers && <AddMemberButton workspaceId={activeId} />}
-        </div>
-        {teams ? (
-          <ul className="member-list">
-            {members.map((m) => (
-              <MemberRow key={m.userId} workspaceId={activeId} member={m} canManage={ctx.isAdmin}
-                isSelf={m.userId === user.id} isOwner={m.userId === ctx.workspace.ownerId} />
-            ))}
-          </ul>
-        ) : (
-          <UpgradeReport />
-        )}
       </section>
     </div>
   );

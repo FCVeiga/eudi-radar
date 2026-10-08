@@ -34,12 +34,13 @@ export function MenuBackdrop() {
 }
 
 /** Phones: the app's sections as a bottom tab bar (Workspace is in the menu drawer). */
-export function BottomNav() {
+export function BottomNav({ guest = false }: { guest?: boolean }) {
   const t = useT();
   const path = usePathname() || '/';
+  const links = LINKS.filter((l) => l.href !== '/workspaces' && (!guest || l.href !== '/history'));
   return (
-    <nav className="bottom-nav" aria-label={t('Sections')}>
-      {LINKS.filter((l) => l.href !== '/workspaces').map((l) => {
+    <nav className={`bottom-nav${guest ? ' guest' : ''}`} aria-label={t('Sections')}>
+      {links.map((l) => {
         const active = isActive(l.href, path);
         return (
           <Link key={l.href} href={l.href} className={`bottom-link ${active ? 'active' : ''}`} aria-current={active ? 'page' : undefined}>

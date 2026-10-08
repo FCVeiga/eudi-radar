@@ -20,6 +20,20 @@
     "de": "Registrieren",
     "it": "Registrati"
   },
+  "Tender signals, analysis and community.": {
+    "pt": "Sinais de concursos, análise e comunidade.",
+    "es": "Señales de licitaciones, análisis y comunidad.",
+    "fr": "Signaux d'appels d'offres, analyse et communauté.",
+    "de": "Ausschreibungssignale, Analyse und Community.",
+    "it": "Segnali di gara, analisi e community."
+  },
+  "Continue with email": {
+    "pt": "Continuar com e-mail",
+    "es": "Continuar con el correo",
+    "fr": "Continuer avec l'e-mail",
+    "de": "Weiter mit E-Mail",
+    "it": "Continua con l'email"
+  },
   "Sources and agents": {
     "pt": "Fontes e agentes",
     "es": "Fuentes y agentes",
@@ -1020,5 +1034,607 @@
     "fr": "Appels d'offres publics, financements et actualités du marché dans toute l'Europe — et une communauté de ceux qui y répondent.",
     "de": "Öffentliche Ausschreibungen, Förderungen und Marktnachrichten aus ganz Europa – und eine Community der Menschen, die sich darauf bewerben.",
     "it": "Gare pubbliche, finanziamenti e notizie di mercato in tutta Europa, e una community di chi vi partecipa."
+  },
+  "More": {
+    "pt": "Mais",
+    "es": "Más",
+    "fr": "Plus",
+    "de": "Mehr",
+    "it": "Altro"
+  },
+  "Blog": {
+    "pt": "Blogue",
+    "es": "Blog",
+    "fr": "Blog",
+    "de": "Blog",
+    "it": "Blog"
+  },
+  "Pricing": {
+    "pt": "Preços",
+    "es": "Precios",
+    "fr": "Tarifs",
+    "de": "Preise",
+    "it": "Prezzi"
+  },
+  "No posts yet.": {
+    "pt": "Ainda não há publicações.",
+    "es": "Aún no hay publicaciones.",
+    "fr": "Pas encore de publications.",
+    "de": "Noch keine Beiträge.",
+    "it": "Ancora nessun post."
+  },
+  "What Tender Town is": {
+    "pt": "O que é o Tender Town",
+    "es": "Qué es Tender Town",
+    "fr": "Ce qu’est Tender Town",
+    "de": "Was Tender Town ist",
+    "it": "Cos’è Tender Town"
+  },
+  "Tender Town is a platform for public procurement across Europe. It tracks open tenders — requests for proposals, requests for information, grants and funding calls — with their documents and requirements, plus regulation, industry and market news.": {
+    "pt": "O Tender Town é uma plataforma de contratação pública na Europa. Acompanha concursos abertos — pedidos de proposta, pedidos de informação, subvenções e avisos de financiamento — com os seus documentos e requisitos, e notícias de regulação, setor e mercado.",
+    "es": "Tender Town es una plataforma de contratación pública en Europa. Sigue licitaciones abiertas — solicitudes de oferta, solicitudes de información, subvenciones y convocatorias de financiación — con sus documentos y requisitos, y noticias de regulación, sector y mercado.",
+    "fr": "Tender Town est une plateforme de marchés publics en Europe. Elle suit les appels d’offres ouverts — demandes de propositions, demandes d’information, subventions et appels à financement — avec leurs documents et exigences, ainsi que l’actualité réglementaire, sectorielle et de marché.",
+    "de": "Tender Town ist eine Plattform für das öffentliche Beschaffungswesen in Europa. Sie verfolgt offene Ausschreibungen — Angebotsaufforderungen, Auskunftsersuchen, Zuschüsse und Förderaufrufe — mit ihren Unterlagen und Anforderungen, sowie Regulierungs-, Branchen- und Marktnachrichten.",
+    "it": "Tender Town è una piattaforma per gli appalti pubblici in Europa. Segue gare aperte — richieste di proposta, richieste di informazioni, contributi e bandi di finanziamento — con documenti e requisiti, e notizie su regolazione, settore e mercato."
+  },
+  "Posts, comments, chat and profiles sit on the same site, for the people who find and bid on this work.": {
+    "pt": "Publicações, comentários, chat e perfis estão no mesmo site, para quem procura e concorre a este trabalho.",
+    "es": "Publicaciones, comentarios, chat y perfiles están en el mismo sitio, para quienes buscan y se presentan a este trabajo.",
+    "fr": "Publications, commentaires, messagerie et profils sont sur le même site, pour celles et ceux qui cherchent et répondent à ces marchés.",
+    "de": "Beiträge, Kommentare, Chat und Profile liegen auf derselben Website, für die Menschen, die diese Aufträge suchen und sich darauf bewerben.",
+    "it": "Post, commenti, chat e profili stanno sullo stesso sito, per chi cerca e partecipa a questi lavori."
+  },
+  "How it works": {
+    "pt": "Como funciona",
+    "es": "Cómo funciona",
+    "fr": "Comment ça marche",
+    "de": "So funktioniert es",
+    "it": "Come funziona"
+  },
+  "Where the material comes from": {
+    "pt": "De onde vem o material",
+    "es": "De dónde sale el material",
+    "fr": "D’où vient le contenu",
+    "de": "Woher das Material kommt",
+    "it": "Da dove arriva il materiale"
+  },
+  "Agents search TED (Tenders Electronic Daily), national procurement portals, EU funding programmes, development-bank notices and news, and the sources a workspace follows.": {
+    "pt": "Os agentes pesquisam o TED (Tenders Electronic Daily), portais nacionais de contratação, programas de financiamento da UE, avisos de bancos de desenvolvimento e notícias, e as fontes que um espaço de trabalho segue.",
+    "es": "Los agentes buscan en TED (Tenders Electronic Daily), portales nacionales de contratación, programas de financiación de la UE, anuncios de bancos de desarrollo y noticias, y en las fuentes que sigue un espacio de trabajo.",
+    "fr": "Les agents interrogent TED (Tenders Electronic Daily), les portails nationaux de marchés, les programmes de financement de l’UE, les avis des banques de développement et l’actualité, ainsi que les sources suivies par un espace de travail.",
+    "de": "Die Agenten durchsuchen TED (Tenders Electronic Daily), nationale Vergabeportale, EU-Förderprogramme, Bekanntmachungen von Entwicklungsbanken und Nachrichten sowie die Quellen, denen ein Arbeitsbereich folgt.",
+    "it": "Gli agenti cercano su TED (Tenders Electronic Daily), sui portali nazionali degli appalti, nei programmi di finanziamento UE, negli avvisi delle banche di sviluppo e nelle notizie, e nelle fonti seguite da un’area di lavoro."
+  },
+  "How items are chosen": {
+    "pt": "Como os itens são escolhidos",
+    "es": "Cómo se eligen los elementos",
+    "fr": "Comment les éléments sont choisis",
+    "de": "Wie Einträge ausgewählt werden",
+    "it": "Come vengono scelti gli elementi"
+  },
+  "Each result is scored. Visitors and new accounts see the General scope. It ranks tenders by contract value, the standing of the buyer, how widely the opportunity applies and the time left to bid, without a language model. News is ranked by the outlet, how widely the story is covered and how recent it is. A custom scope scores results against the instructions of that workspace.": {
+    "pt": "Cada resultado recebe uma pontuação. Visitantes e contas novas veem o âmbito Geral. Ordena os concursos pelo valor do contrato, a relevância do comprador, a abrangência da oportunidade e o tempo que falta para concorrer, sem um modelo de linguagem. As notícias ordenam-se pelo meio, pela cobertura e pela atualidade. Um âmbito personalizado pontua os resultados face às instruções desse espaço de trabalho.",
+    "es": "Cada resultado recibe una puntuación. Quienes visitan y las cuentas nuevas ven el ámbito General. Ordena las licitaciones por el valor del contrato, el peso del comprador, la amplitud de la oportunidad y el tiempo que queda para presentarse, sin un modelo de lenguaje. Las noticias se ordenan por el medio, la cobertura y lo recientes que son. Un ámbito personalizado puntúa los resultados según las instrucciones de ese espacio de trabajo.",
+    "fr": "Chaque résultat reçoit un score. Les visiteurs et les nouveaux comptes voient le périmètre Général. Il classe les appels d’offres selon la valeur du contrat, le poids de l’acheteur, l’étendue de l’opportunité et le délai restant pour répondre, sans modèle de langage. L’actualité est classée selon le média, l’ampleur de la couverture et la fraîcheur. Un périmètre personnalisé note les résultats d’après les instructions de cet espace de travail.",
+    "de": "Jedes Ergebnis wird bewertet. Besucher und neue Konten sehen den Bereich Allgemein. Er sortiert Ausschreibungen nach Auftragswert, Bedeutung des Auftraggebers, Reichweite der Chance und verbleibender Angebotsfrist, ohne Sprachmodell. Nachrichten werden nach Medium, Verbreitung und Aktualität sortiert. Ein eigener Bereich bewertet Ergebnisse nach den Anweisungen dieses Arbeitsbereichs.",
+    "it": "Ogni risultato riceve un punteggio. Chi visita e i nuovi account vedono l’ambito Generale. Ordina le gare per valore del contratto, peso del committente, ampiezza dell’opportunità e tempo rimasto per partecipare, senza un modello linguistico. Le notizie si ordinano per testata, copertura e attualità. Un ambito personalizzato valuta i risultati secondo le istruzioni di quell’area di lavoro."
+  },
+  "From the first notice to the latest update": {
+    "pt": "Do primeiro anúncio à última atualização",
+    "es": "Del primer anuncio a la última actualización",
+    "fr": "Du premier avis à la dernière mise à jour",
+    "de": "Von der ersten Bekanntmachung bis zur letzten Aktualisierung",
+    "it": "Dal primo avviso all’ultimo aggiornamento"
+  },
+  "A tender page starts from the first publication of the procedure — the original request, grant or contract notice — and then the changes since, including deadline extensions. Agents write a summary and list the requirements from those documents.": {
+    "pt": "A página de um concurso começa na primeira publicação do procedimento — o pedido, a subvenção ou o anúncio de contrato original — e segue com as alterações posteriores, incluindo prorrogações de prazo. Os agentes escrevem um resumo e extraem os requisitos desses documentos.",
+    "es": "La página de una licitación empieza en la primera publicación del procedimiento — la solicitud, la subvención o el anuncio de contrato original — y sigue con los cambios posteriores, incluidas las prórrogas de plazo. Los agentes escriben un resumen y extraen los requisitos de esos documentos.",
+    "fr": "La page d’un appel d’offres part de la première publication de la procédure — la demande, la subvention ou l’avis de marché d’origine — puis des changements ultérieurs, y compris les reports de date limite. Les agents rédigent un résumé et extraient les exigences de ces documents.",
+    "de": "Eine Ausschreibungsseite beginnt bei der ersten Veröffentlichung des Verfahrens — dem ursprünglichen Ersuchen, der Förderung oder der Auftragsbekanntmachung — und danach den späteren Änderungen, einschließlich Fristverlängerungen. Die Agenten schreiben eine Zusammenfassung und ziehen die Anforderungen aus diesen Unterlagen.",
+    "it": "La pagina di una gara parte dalla prima pubblicazione della procedura — la richiesta, il contributo o l’avviso di contratto originale — e poi dalle modifiche successive, comprese le proroghe dei termini. Gli agenti scrivono un riepilogo ed estraggono i requisiti da quei documenti."
+  },
+  "Workspaces and scopes": {
+    "pt": "Espaços de trabalho e âmbitos",
+    "es": "Espacios de trabajo y ámbitos",
+    "fr": "Espaces de travail et périmètres",
+    "de": "Arbeitsbereiche und Bereiche",
+    "it": "Aree di lavoro e ambiti"
+  },
+  "A scope is one configuration of the radar: its instructions, context documents, search and agents. A workspace holds scopes and members. The workspace you have open decides what Home, Tenders, News, History and Community show.": {
+    "pt": "Um âmbito é uma configuração do radar: instruções, documentos de contexto, pesquisa e agentes. Um espaço de trabalho reúne âmbitos e membros. O espaço aberto decide o que mostram Início, Concursos, Notícias, Histórico e Comunidade.",
+    "es": "Un ámbito es una configuración del radar: instrucciones, documentos de contexto, búsqueda y agentes. Un espacio de trabajo reúne ámbitos y miembros. El espacio abierto decide lo que muestran Inicio, Licitaciones, Noticias, Historial y Comunidad.",
+    "fr": "Un périmètre est une configuration du radar : instructions, documents de contexte, recherche et agents. Un espace de travail regroupe des périmètres et des membres. L’espace ouvert décide de ce que montrent Accueil, Appels d’offres, Actualités, Historique et Communauté.",
+    "de": "Ein Bereich ist eine Konfiguration des Radars: Anweisungen, Kontextdokumente, Suche und Agenten. Ein Arbeitsbereich enthält Bereiche und Mitglieder. Der geöffnete Arbeitsbereich bestimmt, was Start, Ausschreibungen, Nachrichten, Verlauf und Community zeigen.",
+    "it": "Un ambito è una configurazione del radar: istruzioni, documenti di contesto, ricerca e agenti. Un’area di lavoro riunisce ambiti e membri. L’area aperta decide cosa mostrano Home, Gare, Notizie, Cronologia e Community."
+  },
+  "Accounts and plans": {
+    "pt": "Contas e planos",
+    "es": "Cuentas y planes",
+    "fr": "Comptes et formules",
+    "de": "Konten und Pläne",
+    "it": "Account e piani"
+  },
+  "Tenders, news and community posts can be read without an account. An account lets you follow items, keep a profile, post, comment and chat. Paid plans add your own scopes, tender evaluations against your context, and proposal briefs.": {
+    "pt": "Concursos, notícias e publicações da comunidade podem ser lidos sem conta. Uma conta permite seguir itens, ter um perfil, publicar, comentar e conversar. Os planos pagos acrescentam âmbitos próprios, avaliações de concursos face ao seu contexto e resumos de proposta.",
+    "es": "Las licitaciones, las noticias y las publicaciones de la comunidad se pueden leer sin cuenta. Una cuenta permite seguir elementos, tener un perfil, publicar, comentar y chatear. Los planes de pago añaden ámbitos propios, evaluaciones de licitaciones según tu contexto y resúmenes de propuesta.",
+    "fr": "Les appels d’offres, l’actualité et les publications de la communauté se lisent sans compte. Un compte permet de suivre des éléments, de tenir un profil, de publier, de commenter et d’écrire. Les formules payantes ajoutent vos propres périmètres, des évaluations d’appels d’offres selon votre contexte et des notes d’offre.",
+    "de": "Ausschreibungen, Nachrichten und Community-Beiträge lassen sich ohne Konto lesen. Ein Konto erlaubt Folgen, ein Profil, Beiträge, Kommentare und Chat. Bezahlte Pläne ergänzen eigene Bereiche, Ausschreibungsbewertungen anhand Ihres Kontexts und Angebotsbriefings.",
+    "it": "Gare, notizie e post della community si leggono senza account. Un account permette di seguire elementi, avere un profilo, pubblicare, commentare e chattare. I piani a pagamento aggiungono ambiti propri, valutazioni delle gare sul tuo contesto e brief di offerta."
+  },
+  "Questions": {
+    "pt": "Perguntas",
+    "es": "Preguntas",
+    "fr": "Questions",
+    "de": "Fragen",
+    "it": "Domande"
+  },
+  "What is Tender Town?": {
+    "pt": "O que é o Tender Town?",
+    "es": "¿Qué es Tender Town?",
+    "fr": "Qu’est-ce que Tender Town ?",
+    "de": "Was ist Tender Town?",
+    "it": "Cos’è Tender Town?"
+  },
+  "A platform for public tenders, grants and market news across Europe, and a community of the people who bid on them.": {
+    "pt": "Uma plataforma de concursos públicos, subvenções e notícias de mercado na Europa, e uma comunidade de quem concorre a eles.",
+    "es": "Una plataforma de licitaciones públicas, subvenciones y noticias del mercado en Europa, y una comunidad de quienes se presentan a ellas.",
+    "fr": "Une plateforme d’appels d’offres publics, de subventions et d’actualités du marché en Europe, et une communauté de ceux qui y répondent.",
+    "de": "Eine Plattform für öffentliche Ausschreibungen, Förderungen und Marktnachrichten in Europa, und eine Community der Menschen, die sich darauf bewerben.",
+    "it": "Una piattaforma per gare pubbliche, contributi e notizie di mercato in Europa, e una community di chi vi partecipa."
+  },
+  "Who is Tender Town for?": {
+    "pt": "Para quem é o Tender Town?",
+    "es": "¿Para quién es Tender Town?",
+    "fr": "À qui s’adresse Tender Town ?",
+    "de": "Für wen ist Tender Town?",
+    "it": "Per chi è Tender Town?"
+  },
+  "Companies, consultants and teams that look for and bid on public contracts in Europe.": {
+    "pt": "Empresas, consultores e equipas que procuram e concorrem a contratos públicos na Europa.",
+    "es": "Empresas, consultores y equipos que buscan y se presentan a contratos públicos en Europa.",
+    "fr": "Entreprises, consultants et équipes qui cherchent et répondent à des marchés publics en Europe.",
+    "de": "Unternehmen, Berater und Teams, die öffentliche Aufträge in Europa suchen und sich darauf bewerben.",
+    "it": "Aziende, consulenti e team che cercano e partecipano a contratti pubblici in Europa."
+  },
+  "Is an account required?": {
+    "pt": "É precisa uma conta?",
+    "es": "¿Hace falta una cuenta?",
+    "fr": "Un compte est-il nécessaire ?",
+    "de": "Ist ein Konto nötig?",
+    "it": "Serve un account?"
+  },
+  "No. Tenders, news and posts can be read without one. An account is for following items, posting, chat and, on a paid plan, your own scopes.": {
+    "pt": "Não. Concursos, notícias e publicações podem ser lidos sem conta. A conta serve para seguir itens, publicar, conversar e, num plano pago, ter âmbitos próprios.",
+    "es": "No. Las licitaciones, las noticias y las publicaciones se pueden leer sin ella. La cuenta sirve para seguir elementos, publicar, chatear y, en un plan de pago, tener ámbitos propios.",
+    "fr": "Non. Appels d’offres, actualités et publications se lisent sans compte. Le compte sert à suivre des éléments, publier, écrire et, avec une formule payante, avoir vos propres périmètres.",
+    "de": "Nein. Ausschreibungen, Nachrichten und Beiträge lassen sich ohne Konto lesen. Das Konto ist zum Folgen, Beitragen, Chatten und, mit einem bezahlten Plan, für eigene Bereiche.",
+    "it": "No. Gare, notizie e post si leggono senza account. L’account serve per seguire elementi, pubblicare, chattare e, con un piano a pagamento, avere ambiti propri."
+  },
+  "How often does Tender Town update?": {
+    "pt": "Com que frequência o Tender Town atualiza?",
+    "es": "¿Con qué frecuencia se actualiza Tender Town?",
+    "fr": "À quelle fréquence Tender Town se met-il à jour ?",
+    "de": "Wie oft aktualisiert sich Tender Town?",
+    "it": "Ogni quanto si aggiorna Tender Town?"
+  },
+  "A pipeline runs every four hours. Each scope refreshes as often as its plan allows: once a day on Free, twice on Starter, three times on Pro and six times on Teams.": {
+    "pt": "Um pipeline corre de quatro em quatro horas. Cada âmbito atualiza-se tantas vezes quanto o plano permite: uma vez por dia no Free, duas no Starter, três no Pro e seis no Teams.",
+    "es": "Un proceso se ejecuta cada cuatro horas. Cada ámbito se actualiza tantas veces como permite su plan: una vez al día en Free, dos en Starter, tres en Pro y seis en Teams.",
+    "fr": "Un pipeline tourne toutes les quatre heures. Chaque périmètre se rafraîchit aussi souvent que sa formule le permet : une fois par jour en Free, deux fois en Starter, trois fois en Pro et six fois en Teams.",
+    "de": "Eine Pipeline läuft alle vier Stunden. Jeder Bereich aktualisiert sich so oft, wie es sein Plan erlaubt: einmal täglich bei Free, zweimal bei Starter, dreimal bei Pro und sechsmal bei Teams.",
+    "it": "Una pipeline gira ogni quattro ore. Ogni ambito si aggiorna tutte le volte che il piano consente: una volta al giorno con Free, due con Starter, tre con Pro e sei con Teams."
+  },
+  "Plans for public tenders, funding and market news.": {
+    "pt": "Planos para concursos públicos, financiamento e notícias de mercado.",
+    "es": "Planes para licitaciones públicas, financiación y noticias del mercado.",
+    "fr": "Formules pour les appels d’offres publics, les financements et l’actualité du marché.",
+    "de": "Pläne für öffentliche Ausschreibungen, Förderungen und Marktnachrichten.",
+    "it": "Piani per gare pubbliche, finanziamenti e notizie di mercato."
+  },
+  "Feature": {
+    "pt": "Característica",
+    "es": "Característica",
+    "fr": "Caractéristique",
+    "de": "Merkmal",
+    "it": "Caratteristica"
+  },
+  "Custom scopes": {
+    "pt": "Âmbitos personalizados",
+    "es": "Ámbitos personalizados",
+    "fr": "Périmètres personnalisés",
+    "de": "Eigene Bereiche",
+    "it": "Ambiti personalizzati"
+  },
+  "Members": {
+    "pt": "Membros",
+    "es": "Miembros",
+    "fr": "Membres",
+    "de": "Mitglieder",
+    "it": "Membri"
+  },
+  "Agent updates": {
+    "pt": "Atualizações dos agentes",
+    "es": "Actualizaciones de los agentes",
+    "fr": "Mises à jour des agents",
+    "de": "Agenten-Aktualisierungen",
+    "it": "Aggiornamenti degli agenti"
+  },
+  "Tender requirements": {
+    "pt": "Requisitos dos concursos",
+    "es": "Requisitos de las licitaciones",
+    "fr": "Exigences des appels d’offres",
+    "de": "Anforderungen der Ausschreibungen",
+    "it": "Requisiti delle gare"
+  },
+  "Tender evaluation and proposal briefs": {
+    "pt": "Avaliação de concursos e resumos de proposta",
+    "es": "Evaluación de licitaciones y resúmenes de propuesta",
+    "fr": "Évaluation des appels d’offres et notes d’offre",
+    "de": "Ausschreibungsbewertung und Angebotsbriefings",
+    "it": "Valutazione delle gare e brief di offerta"
+  },
+  "Your own instructions and context": {
+    "pt": "As suas instruções e contexto",
+    "es": "Tus instrucciones y contexto",
+    "fr": "Vos instructions et votre contexte",
+    "de": "Ihre Anweisungen und Ihr Kontext",
+    "it": "Le tue istruzioni e il tuo contesto"
+  },
+  "General scope": {
+    "pt": "Âmbito Geral",
+    "es": "Ámbito General",
+    "fr": "Périmètre Général",
+    "de": "Bereich Allgemein",
+    "it": "Ambito Generale"
+  },
+  "Unlimited": {
+    "pt": "Ilimitado",
+    "es": "Ilimitado",
+    "fr": "Illimité",
+    "de": "Unbegrenzt",
+    "it": "Illimitato"
+  },
+  "Every tender": {
+    "pt": "Todos os concursos",
+    "es": "Todas las licitaciones",
+    "fr": "Tous les appels d’offres",
+    "de": "Jede Ausschreibung",
+    "it": "Ogni gara"
+  },
+  "Once a day": {
+    "pt": "Uma vez por dia",
+    "es": "Una vez al día",
+    "fr": "Une fois par jour",
+    "de": "Einmal täglich",
+    "it": "Una volta al giorno"
+  },
+  "Twice a day": {
+    "pt": "Duas vezes por dia",
+    "es": "Dos veces al día",
+    "fr": "Deux fois par jour",
+    "de": "Zweimal täglich",
+    "it": "Due volte al giorno"
+  },
+  "Three times a day": {
+    "pt": "Três vezes por dia",
+    "es": "Tres veces al día",
+    "fr": "Trois fois par jour",
+    "de": "Dreimal täglich",
+    "it": "Tre volte al giorno"
+  },
+  "Six times a day": {
+    "pt": "Seis vezes por dia",
+    "es": "Seis veces al día",
+    "fr": "Six fois par jour",
+    "de": "Sechsmal täglich",
+    "it": "Sei volte al giorno"
+  },
+  "{n} tenders a month": {
+    "pt": "{n} concursos por mês",
+    "es": "{n} licitaciones al mes",
+    "fr": "{n} appels d’offres par mois",
+    "de": "{n} Ausschreibungen im Monat",
+    "it": "{n} gare al mese"
+  },
+  "Included": {
+    "pt": "Incluído",
+    "es": "Incluido",
+    "fr": "Inclus",
+    "de": "Enthalten",
+    "it": "Incluso"
+  },
+  "Not included": {
+    "pt": "Não incluído",
+    "es": "No incluido",
+    "fr": "Non inclus",
+    "de": "Nicht enthalten",
+    "it": "Non incluso"
+  },
+  "Subscribe": {
+    "pt": "Subscrever",
+    "es": "Suscribirse",
+    "fr": "S'abonner",
+    "de": "Abonnieren",
+    "it": "Abbonati"
+  },
+  "Monthly": {
+    "pt": "Mensal",
+    "es": "Mensual",
+    "fr": "Mensuel",
+    "de": "Monatlich",
+    "it": "Mensile"
+  },
+  "Yearly": {
+    "pt": "Anual",
+    "es": "Anual",
+    "fr": "Annuel",
+    "de": "Jährlich",
+    "it": "Annuale"
+  },
+  "One month free": {
+    "pt": "Um mês grátis",
+    "es": "Un mes gratis",
+    "fr": "Un mois offert",
+    "de": "Ein Monat gratis",
+    "it": "Un mese gratis"
+  },
+  "Prices exclude VAT.": {
+    "pt": "Os preços não incluem IVA.",
+    "es": "Los precios no incluyen el IVA.",
+    "fr": "Prix hors TVA.",
+    "de": "Preise zuzüglich MwSt.",
+    "it": "Prezzi IVA esclusa."
+  },
+  "Billing period": {
+    "pt": "Período de faturação",
+    "es": "Periodo de facturación",
+    "fr": "Période de facturation",
+    "de": "Abrechnungszeitraum",
+    "it": "Periodo di fatturazione"
+  },
+  "year": {
+    "pt": "ano",
+    "es": "año",
+    "fr": "an",
+    "de": "Jahr",
+    "it": "anno"
+  },
+  "{n} a month": {
+    "pt": "{n} por mês",
+    "es": "{n} al mes",
+    "fr": "{n} par mois",
+    "de": "{n} im Monat",
+    "it": "{n} al mese"
+  },
+  "News Report Agent": {
+    "pt": "Agente de relatórios de notícias",
+    "es": "Agente de informes de noticias",
+    "fr": "Agent de rapports d'actualité",
+    "de": "Nachrichtenbericht-Agent",
+    "it": "Agente di report sulle notizie"
+  },
+  "News Report Agent, 50 reports a month": {
+    "pt": "Agente de relatórios de notícias, 50 relatórios por mês",
+    "es": "Agente de informes de noticias, 50 informes al mes",
+    "fr": "Agent de rapports d'actualité, 50 rapports par mois",
+    "de": "Nachrichtenbericht-Agent, 50 Berichte im Monat",
+    "it": "Agente di report sulle notizie, 50 report al mese"
+  },
+  "News Report Agent, unlimited reports": {
+    "pt": "Agente de relatórios de notícias, relatórios ilimitados",
+    "es": "Agente de informes de noticias, informes ilimitados",
+    "fr": "Agent de rapports d'actualité, rapports illimités",
+    "de": "Nachrichtenbericht-Agent, unbegrenzte Berichte",
+    "it": "Agente di report sulle notizie, report illimitati"
+  },
+  "The News Report Agent is included on Pro and Teams.": {
+    "pt": "O agente de relatórios de notícias está incluído no Pro e no Teams.",
+    "es": "El agente de informes de noticias está incluido en Pro y Teams.",
+    "fr": "L'agent de rapports d'actualité est inclus dans Pro et Teams.",
+    "de": "Der Nachrichtenbericht-Agent ist in Pro und Teams enthalten.",
+    "it": "L'agente di report sulle notizie è incluso in Pro e Teams."
+  },
+  "This workspace has used its 50 news reports for this month.": {
+    "pt": "Este espaço de trabalho já usou os 50 relatórios de notícias deste mês.",
+    "es": "Este espacio de trabajo ya ha usado sus 50 informes de noticias de este mes.",
+    "fr": "Cet espace de travail a utilisé ses 50 rapports d'actualité ce mois-ci.",
+    "de": "Dieser Arbeitsbereich hat seine 50 Nachrichtenberichte für diesen Monat verbraucht.",
+    "it": "Quest'area di lavoro ha usato i suoi 50 report sulle notizie di questo mese."
+  },
+  "Agents you configure": {
+    "pt": "Agentes que configura",
+    "es": "Agentes que configuras",
+    "fr": "Des agents que vous configurez",
+    "de": "Agenten, die Sie einstellen",
+    "it": "Agenti che configuri"
+  },
+  "Each scope has its own agents, and you set them in plain language: what to look for, how to score it, and what to do with it. They fetch tenders and news, summarise them, pull the documents, list the requirements, judge how well a tender fits your context, and outline how you could approach a proposal.": {
+    "pt": "Cada âmbito tem os seus agentes, e define-os em linguagem corrente: o que procurar, como pontuar e o que fazer com isso. Eles recolhem concursos e notícias, resumem-nos, obtêm os documentos, listam os requisitos, avaliam o encaixe de um concurso no seu contexto e esboçam como poderia abordar uma proposta.",
+    "es": "Cada ámbito tiene sus agentes, y los configuras en lenguaje llano: qué buscar, cómo puntuarlo y qué hacer con ello. Recogen licitaciones y noticias, las resumen, obtienen los documentos, listan los requisitos, juzgan si una licitación encaja en tu contexto y esbozan cómo abordar una propuesta.",
+    "fr": "Chaque périmètre a ses agents, et vous les réglez en langage clair : quoi chercher, comment le noter et qu'en faire. Ils récupèrent les appels d'offres et l'actualité, les résument, récupèrent les documents, listent les exigences, jugent l'adéquation d'un appel d'offres à votre contexte et esquissent comment aborder une offre.",
+    "de": "Jeder Bereich hat eigene Agenten, und Sie stellen sie in Klartext ein: wonach gesucht wird, wie es bewertet wird und was damit geschehen soll. Sie holen Ausschreibungen und Nachrichten, fassen sie zusammen, ziehen die Unterlagen, listen die Anforderungen, beurteilen die Passung und skizzieren, wie ein Angebot angegangen werden könnte.",
+    "it": "Ogni ambito ha i suoi agenti, e li imposti in linguaggio semplice: cosa cercare, come valutarlo e cosa farne. Recuperano gare e notizie, le riassumono, scaricano i documenti, elencano i requisiti, giudicano quanto una gara si adatta al tuo contesto e delineano come affrontare un'offerta."
+  },
+  "Fetch and summarise": {
+    "pt": "Recolher e resumir",
+    "es": "Recoger y resumir",
+    "fr": "Collecter et résumer",
+    "de": "Einholen und zusammenfassen",
+    "it": "Raccogliere e riassumere"
+  },
+  "The Search Agent collects notices and stories from TED, national portals, funding programmes, development banks, news, and the sources a workspace follows. The Triage Agent scores them. Visitors see the General scope, which ranks without a language model. A custom scope scores against your instructions.": {
+    "pt": "O agente de pesquisa recolhe anúncios e notícias do TED, de portais nacionais, de programas de financiamento, de bancos de desenvolvimento, de notícias e das fontes que um espaço de trabalho segue. O agente de triagem pontua-os. Os visitantes veem o âmbito Geral, que ordena sem um modelo de linguagem. Um âmbito personalizado pontua face às suas instruções.",
+    "es": "El agente de búsqueda recoge anuncios e historias de TED, portales nacionales, programas de financiación, bancos de desarrollo, noticias y las fuentes que sigue un espacio de trabajo. El agente de triaje las puntúa. Quienes visitan ven el ámbito General, que ordena sin un modelo de lenguaje. Un ámbito personalizado puntúa según tus instrucciones.",
+    "fr": "L'agent de recherche collecte les avis et les articles de TED, des portails nationaux, des programmes de financement, des banques de développement, de l'actualité et des sources suivies par un espace de travail. L'agent de tri les note. Les visiteurs voient le périmètre Général, qui classe sans modèle de langage. Un périmètre personnalisé note selon vos instructions.",
+    "de": "Der Suchagent sammelt Bekanntmachungen und Meldungen von TED, nationalen Portalen, Förderprogrammen, Entwicklungsbanken, Nachrichten und den Quellen eines Arbeitsbereichs. Der Triage-Agent bewertet sie. Besucher sehen den Bereich Allgemein, der ohne Sprachmodell sortiert. Ein eigener Bereich bewertet nach Ihren Anweisungen.",
+    "it": "L'agente di ricerca raccoglie avvisi e notizie da TED, dai portali nazionali, dai programmi di finanziamento, dalle banche di sviluppo, dalle notizie e dalle fonti seguite da un'area di lavoro. L'agente di triage li valuta. Chi visita vede l'ambito Generale, che ordina senza un modello linguistico. Un ambito personalizzato valuta secondo le tue istruzioni."
+  },
+  "Documents and requirements": {
+    "pt": "Documentos e requisitos",
+    "es": "Documentos y requisitos",
+    "fr": "Documents et exigences",
+    "de": "Unterlagen und Anforderungen",
+    "it": "Documenti e requisiti"
+  },
+  "A tender page starts from the first publication of the procedure — the original request, grant or contract notice — and then the changes since, including deadline extensions. Agents pull the documents, write a summary and list the requirements.": {
+    "pt": "A página de um concurso começa na primeira publicação do procedimento — o pedido, a subvenção ou o anúncio de contrato original — e segue com as alterações posteriores, incluindo prorrogações de prazo. Os agentes obtêm os documentos, escrevem um resumo e listam os requisitos.",
+    "es": "La página de una licitación empieza en la primera publicación del procedimiento — la solicitud, la subvención o el anuncio de contrato original — y sigue con los cambios posteriores, incluidas las prórrogas. Los agentes obtienen los documentos, escriben un resumen y listan los requisitos.",
+    "fr": "La page d'un appel d'offres part de la première publication de la procédure — la demande, la subvention ou l'avis de marché d'origine — puis des changements ultérieurs, y compris les reports de date. Les agents récupèrent les documents, rédigent un résumé et listent les exigences.",
+    "de": "Eine Ausschreibungsseite beginnt bei der ersten Veröffentlichung des Verfahrens — dem ursprünglichen Ersuchen, der Förderung oder der Auftragsbekanntmachung — und danach den späteren Änderungen, einschließlich Fristverlängerungen. Die Agenten ziehen die Unterlagen, schreiben eine Zusammenfassung und listen die Anforderungen.",
+    "it": "La pagina di una gara parte dalla prima pubblicazione della procedura — la richiesta, il contributo o l'avviso di contratto originale — e poi dalle modifiche successive, comprese le proroghe. Gli agenti scaricano i documenti, scrivono un riepilogo ed elencano i requisiti."
+  },
+  "Fit and the proposal": {
+    "pt": "Encaixe e proposta",
+    "es": "Encaje y propuesta",
+    "fr": "Adéquation et offre",
+    "de": "Passung und Angebot",
+    "it": "Adattamento e offerta"
+  },
+  "On Pro and Teams, the Tender Evaluation Agent checks those requirements against the instructions and context of your scope. The Proposal Manager then outlines how a proposal could be approached: what you already have, what is missing, and the steps to take.": {
+    "pt": "No Pro e no Teams, o agente de avaliação de concursos confronta esses requisitos com as instruções e o contexto do seu âmbito. O gestor de propostas esboça depois como uma proposta poderia ser abordada: o que já tem, o que falta e os passos a dar.",
+    "es": "En Pro y Teams, el agente de evaluación de licitaciones contrasta esos requisitos con las instrucciones y el contexto de tu ámbito. El gestor de propuestas esboza después cómo abordar una propuesta: lo que ya tienes, lo que falta y los pasos.",
+    "fr": "Dans Pro et Teams, l'agent d'évaluation des appels d'offres confronte ces exigences aux instructions et au contexte de votre périmètre. Le gestionnaire d'offres esquisse ensuite comment aborder une offre : ce que vous avez déjà, ce qui manque et les étapes.",
+    "de": "Bei Pro und Teams prüft der Bewertungsagent diese Anforderungen gegen die Anweisungen und den Kontext Ihres Bereichs. Der Angebotsmanager skizziert dann, wie ein Angebot angegangen werden könnte: was schon da ist, was fehlt und welche Schritte folgen.",
+    "it": "In Pro e Teams, l'agente di valutazione delle gare confronta quei requisiti con le istruzioni e il contesto del tuo ambito. Il gestore delle offerte delinea poi come affrontare un'offerta: cosa hai già, cosa manca e i passi da fare."
+  },
+  "News reports": {
+    "pt": "Relatórios de notícias",
+    "es": "Informes de noticias",
+    "fr": "Rapports d'actualité",
+    "de": "Nachrichtenberichte",
+    "it": "Report sulle notizie"
+  },
+  "The News Report Agent reads an article and writes a full summary and a report on what to do: publish, take part, announce, reach out, bid, or watch. It is included on Pro, up to 50 reports a month, and unlimited on Teams.": {
+    "pt": "O agente de relatórios de notícias lê um artigo e escreve um resumo completo e um relatório sobre o que fazer: publicar, participar, anunciar, contactar, concorrer ou acompanhar. Está incluído no Pro, até 50 relatórios por mês, e é ilimitado no Teams.",
+    "es": "El agente de informes de noticias lee un artículo y escribe un resumen completo y un informe sobre qué hacer: publicar, participar, anunciar, contactar, presentarse o seguir. Está incluido en Pro, hasta 50 informes al mes, e ilimitado en Teams.",
+    "fr": "L'agent de rapports d'actualité lit un article et rédige un résumé complet et un rapport sur quoi faire : publier, participer, annoncer, contacter, répondre ou surveiller. Il est inclus dans Pro, jusqu'à 50 rapports par mois, et illimité dans Teams.",
+    "de": "Der Nachrichtenbericht-Agent liest einen Artikel und schreibt eine vollständige Zusammenfassung und einen Bericht, was zu tun ist: veröffentlichen, mitmachen, ankündigen, zugehen, anbieten oder beobachten. Er ist in Pro enthalten, bis zu 50 Berichte im Monat, und in Teams unbegrenzt.",
+    "it": "L'agente di report sulle notizie legge un articolo e scrive un riepilogo completo e un report su cosa fare: pubblicare, partecipare, annunciare, contattare, partecipare a una gara o monitorare. È incluso in Pro, fino a 50 report al mese, e illimitato in Teams."
+  },
+  "Tenders, news and community posts can be read without an account. An account lets you follow items, keep a profile, post, comment and chat. Starter adds a scope you configure. Pro and Teams add fit evaluations, proposal briefs and the News Report Agent.": {
+    "pt": "Concursos, notícias e publicações da comunidade podem ser lidos sem conta. Uma conta permite seguir itens, ter um perfil, publicar, comentar e conversar. O Starter acrescenta um âmbito que configura. O Pro e o Teams acrescentam avaliações de encaixe, resumos de proposta e o agente de relatórios de notícias.",
+    "es": "Las licitaciones, las noticias y las publicaciones de la comunidad se pueden leer sin cuenta. Una cuenta permite seguir elementos, tener un perfil, publicar, comentar y chatear. Starter añade un ámbito que configuras. Pro y Teams añaden evaluaciones de encaje, resúmenes de propuesta y el agente de informes de noticias.",
+    "fr": "Les appels d'offres, l'actualité et les publications de la communauté se lisent sans compte. Un compte permet de suivre des éléments, de tenir un profil, de publier, de commenter et d'écrire. Starter ajoute un périmètre que vous configurez. Pro et Teams ajoutent les évaluations d'adéquation, les notes d'offre et l'agent de rapports d'actualité.",
+    "de": "Ausschreibungen, Nachrichten und Community-Beiträge lassen sich ohne Konto lesen. Ein Konto erlaubt Folgen, ein Profil, Beiträge, Kommentare und Chat. Starter ergänzt einen Bereich, den Sie einstellen. Pro und Teams ergänzen Passungsbewertungen, Angebotsbriefings und den Nachrichtenbericht-Agenten.",
+    "it": "Gare, notizie e post della community si leggono senza account. Un account permette di seguire elementi, avere un profilo, pubblicare, commentare e chattare. Starter aggiunge un ambito che configuri. Pro e Teams aggiungono valutazioni di adattamento, brief di offerta e l'agente di report sulle notizie."
+  },
+  "What do the agents do?": {
+    "pt": "O que fazem os agentes?",
+    "es": "¿Qué hacen los agentes?",
+    "fr": "Que font les agents ?",
+    "de": "Was tun die Agenten?",
+    "it": "Cosa fanno gli agenti?"
+  },
+  "They fetch tenders and news, summarise them, pull the documents, and list the requirements. On Pro and Teams they also judge how well a tender fits your context and outline how you could approach a proposal. You configure each agent, per scope, in plain language.": {
+    "pt": "Recolhem concursos e notícias, resumem-nos, obtêm os documentos e listam os requisitos. No Pro e no Teams também avaliam o encaixe de um concurso no seu contexto e esboçam como poderia abordar uma proposta. Configura cada agente, por âmbito, em linguagem corrente.",
+    "es": "Recogen licitaciones y noticias, las resumen, obtienen los documentos y listan los requisitos. En Pro y Teams también juzgan si una licitación encaja en tu contexto y esbozan cómo abordar una propuesta. Configuras cada agente, por ámbito, en lenguaje llano.",
+    "fr": "Ils récupèrent les appels d'offres et l'actualité, les résument, récupèrent les documents et listent les exigences. Dans Pro et Teams, ils jugent aussi l'adéquation d'un appel d'offres à votre contexte et esquissent comment aborder une offre. Vous configurez chaque agent, par périmètre, en langage clair.",
+    "de": "Sie holen Ausschreibungen und Nachrichten, fassen sie zusammen, ziehen die Unterlagen und listen die Anforderungen. Bei Pro und Teams beurteilen sie außerdem die Passung und skizzieren, wie ein Angebot angegangen werden könnte. Sie stellen jeden Agenten je Bereich in Klartext ein.",
+    "it": "Recuperano gare e notizie, le riassumono, scaricano i documenti ed elencano i requisiti. In Pro e Teams giudicano anche quanto una gara si adatta al tuo contesto e delineano come affrontare un'offerta. Configuri ogni agente, per ambito, in linguaggio semplice."
+  },
+  "Can I configure the agents?": {
+    "pt": "Posso configurar os agentes?",
+    "es": "¿Puedo configurar los agentes?",
+    "fr": "Puis-je configurer les agents ?",
+    "de": "Kann ich die Agenten einstellen?",
+    "it": "Posso configurare gli agenti?"
+  },
+  "Yes, on Starter, Pro and Teams. Each scope has its own agents. You switch them on or off and tell them, in plain language, what to look for and how to work. Search, triage, document collection and requirements are on those plans. Fit, proposal briefs and the News Report Agent are on Pro and Teams.": {
+    "pt": "Sim, no Starter, Pro e Teams. Cada âmbito tem os seus agentes. Liga-os ou desliga-os e diz-lhes, em linguagem corrente, o que procurar e como trabalhar. Pesquisa, triagem, recolha de documentos e requisitos estão nesses planos. O encaixe, os resumos de proposta e o agente de relatórios de notícias estão no Pro e no Teams.",
+    "es": "Sí, en Starter, Pro y Teams. Cada ámbito tiene sus agentes. Los activas o desactivas y les dices, en lenguaje llano, qué buscar y cómo trabajar. Búsqueda, triaje, documentos y requisitos están en esos planes. El encaje, los resúmenes de propuesta y el agente de informes de noticias están en Pro y Teams.",
+    "fr": "Oui, dans Starter, Pro et Teams. Chaque périmètre a ses agents. Vous les activez ou les désactivez et leur dites, en langage clair, quoi chercher et comment travailler. Recherche, tri, documents et exigences sont dans ces formules. L'adéquation, les notes d'offre et l'agent de rapports d'actualité sont dans Pro et Teams.",
+    "de": "Ja, bei Starter, Pro und Teams. Jeder Bereich hat eigene Agenten. Sie schalten sie ein oder aus und sagen ihnen in Klartext, wonach sie suchen und wie sie arbeiten sollen. Suche, Triage, Unterlagen und Anforderungen gibt es in diesen Plänen. Passung, Angebotsbriefings und der Nachrichtenbericht-Agent sind in Pro und Teams.",
+    "it": "Sì, in Starter, Pro e Teams. Ogni ambito ha i suoi agenti. Li accendi o li spegni e dici loro, in linguaggio semplice, cosa cercare e come lavorare. Ricerca, triage, documenti e requisiti sono in quei piani. Adattamento, brief di offerta e l'agente di report sulle notizie sono in Pro e Teams."
+  },
+  "Does Tender Town pull the tender documents?": {
+    "pt": "O Tender Town obtém os documentos do concurso?",
+    "es": "¿Tender Town obtiene los documentos de la licitación?",
+    "fr": "Tender Town récupère-t-il les documents de l'appel d'offres ?",
+    "de": "Holt Tender Town die Ausschreibungsunterlagen?",
+    "it": "Tender Town scarica i documenti della gara?"
+  },
+  "Yes. The documents agent collects the notices and files, starting from the first publication of the procedure and including later updates such as deadline extensions.": {
+    "pt": "Sim. O agente de documentos recolhe os anúncios e os ficheiros, a partir da primeira publicação do procedimento e incluindo atualizações posteriores, como prorrogações de prazo.",
+    "es": "Sí. El agente de documentos recoge los anuncios y los archivos, desde la primera publicación del procedimiento e incluyendo actualizaciones posteriores, como prórrogas de plazo.",
+    "fr": "Oui. L'agent documents collecte les avis et les fichiers, à partir de la première publication de la procédure et y compris les mises à jour ultérieures, comme les reports de date limite.",
+    "de": "Ja. Der Dokumentenagent sammelt die Bekanntmachungen und Dateien, beginnend bei der ersten Veröffentlichung des Verfahrens und einschließlich späterer Änderungen wie Fristverlängerungen.",
+    "it": "Sì. L'agente documenti raccoglie avvisi e file, a partire dalla prima pubblicazione della procedura e comprese le modifiche successive, come le proroghe dei termini."
+  },
+  "Can it list the requirements?": {
+    "pt": "Pode listar os requisitos?",
+    "es": "¿Puede listar los requisitos?",
+    "fr": "Peut-il lister les exigences ?",
+    "de": "Kann es die Anforderungen auflisten?",
+    "it": "Può elencare i requisiti?"
+  },
+  "Yes. The analysis agent reads those documents and lists the requirements. Free includes this on 2 tender pages a month, Starter on 10, and Pro and Teams on every tender.": {
+    "pt": "Sim. O agente de análise lê esses documentos e lista os requisitos. O Free inclui isto em 2 páginas de concurso por mês, o Starter em 10, e o Pro e o Teams em todos os concursos.",
+    "es": "Sí. El agente de análisis lee esos documentos y lista los requisitos. Free lo incluye en 2 páginas de licitación al mes, Starter en 10, y Pro y Teams en todas las licitaciones.",
+    "fr": "Oui. L'agent d'analyse lit ces documents et liste les exigences. Free l'inclut sur 2 pages d'appel d'offres par mois, Starter sur 10, et Pro et Teams sur chaque appel d'offres.",
+    "de": "Ja. Der Analyseagent liest diese Unterlagen und listet die Anforderungen. Free enthält das auf 2 Ausschreibungsseiten im Monat, Starter auf 10, und Pro und Teams auf jeder Ausschreibung.",
+    "it": "Sì. L'agente di analisi legge quei documenti ed elenca i requisiti. Free lo include su 2 pagine di gara al mese, Starter su 10, e Pro e Teams su ogni gara."
+  },
+  "Can it judge whether a tender fits us?": {
+    "pt": "Pode avaliar se um concurso nos serve?",
+    "es": "¿Puede juzgar si una licitación nos encaja?",
+    "fr": "Peut-il juger si un appel d'offres nous convient ?",
+    "de": "Kann es beurteilen, ob eine Ausschreibung zu uns passt?",
+    "it": "Può giudicare se una gara fa per noi?"
+  },
+  "On Pro and Teams, the Tender Evaluation Agent checks the requirements against the instructions and context of your scope and scores the fit.": {
+    "pt": "No Pro e no Teams, o agente de avaliação de concursos confronta os requisitos com as instruções e o contexto do seu âmbito e pontua o encaixe.",
+    "es": "En Pro y Teams, el agente de evaluación de licitaciones contrasta los requisitos con las instrucciones y el contexto de tu ámbito y puntúa el encaje.",
+    "fr": "Dans Pro et Teams, l'agent d'évaluation des appels d'offres confronte les exigences aux instructions et au contexte de votre périmètre et note l'adéquation.",
+    "de": "Bei Pro und Teams prüft der Bewertungsagent die Anforderungen gegen die Anweisungen und den Kontext Ihres Bereichs und bewertet die Passung.",
+    "it": "In Pro e Teams, l'agente di valutazione delle gare confronta i requisiti con le istruzioni e il contesto del tuo ambito e assegna un punteggio di adattamento."
+  },
+  "Can it suggest how to approach a proposal?": {
+    "pt": "Pode sugerir como abordar uma proposta?",
+    "es": "¿Puede sugerir cómo abordar una propuesta?",
+    "fr": "Peut-il suggérer comment aborder une offre ?",
+    "de": "Kann es vorschlagen, wie ein Angebot angegangen wird?",
+    "it": "Può suggerire come affrontare un'offerta?"
+  },
+  "On Pro and Teams, the Proposal Manager turns that evaluation into a brief: the requirements, the references you already have, the gaps, and the steps.": {
+    "pt": "No Pro e no Teams, o gestor de propostas transforma essa avaliação num resumo: os requisitos, as referências que já tem, as lacunas e os passos.",
+    "es": "En Pro y Teams, el gestor de propuestas convierte esa evaluación en un resumen: los requisitos, las referencias que ya tienes, las carencias y los pasos.",
+    "fr": "Dans Pro et Teams, le gestionnaire d'offres transforme cette évaluation en une note : les exigences, les références que vous avez déjà, les lacunes et les étapes.",
+    "de": "Bei Pro und Teams macht der Angebotsmanager aus dieser Bewertung ein Briefing: die Anforderungen, die Referenzen, die Sie schon haben, die Lücken und die Schritte.",
+    "it": "In Pro e Teams, il gestore delle offerte trasforma quella valutazione in un brief: i requisiti, le referenze che hai già, le lacune e i passi."
+  },
+  "What is the News Report Agent?": {
+    "pt": "O que é o agente de relatórios de notícias?",
+    "es": "¿Qué es el agente de informes de noticias?",
+    "fr": "Qu'est-ce que l'agent de rapports d'actualité ?",
+    "de": "Was ist der Nachrichtenbericht-Agent?",
+    "it": "Cos'è l'agente di report sulle notizie?"
+  },
+  "It reads a news story and writes a full summary plus what your team should do about it. Pro includes 50 reports a month. Teams includes unlimited reports. It is not on Free or Starter.": {
+    "pt": "Lê uma notícia e escreve um resumo completo e o que a sua equipa deve fazer. O Pro inclui 50 relatórios por mês. O Teams inclui relatórios ilimitados. Não está no Free nem no Starter.",
+    "es": "Lee una noticia y escribe un resumen completo y lo que tu equipo debería hacer. Pro incluye 50 informes al mes. Teams incluye informes ilimitados. No está en Free ni en Starter.",
+    "fr": "Il lit un article et rédige un résumé complet ainsi que ce que votre équipe devrait faire. Pro inclut 50 rapports par mois. Teams inclut des rapports illimités. Il n'est pas dans Free ni Starter.",
+    "de": "Er liest eine Meldung und schreibt eine vollständige Zusammenfassung sowie was Ihr Team tun sollte. Pro enthält 50 Berichte im Monat. Teams enthält unbegrenzte Berichte. Er ist nicht in Free oder Starter.",
+    "it": "Legge una notizia e scrive un riepilogo completo e cosa dovrebbe fare il tuo team. Pro include 50 report al mese. Teams include report illimitati. Non è in Free né in Starter."
+  },
+  "No. Tenders, news and posts can be read without one. An account is for following items, posting, chat and, on Starter and above, your own scopes.": {
+    "pt": "Não. Concursos, notícias e publicações podem ser lidos sem conta. A conta serve para seguir itens, publicar, conversar e, a partir do Starter, ter âmbitos próprios.",
+    "es": "No. Las licitaciones, las noticias y las publicaciones se pueden leer sin ella. La cuenta sirve para seguir elementos, publicar, chatear y, desde Starter, tener ámbitos propios.",
+    "fr": "Non. Appels d'offres, actualités et publications se lisent sans compte. Le compte sert à suivre des éléments, publier, écrire et, à partir de Starter, avoir vos propres périmètres.",
+    "de": "Nein. Ausschreibungen, Nachrichten und Beiträge lassen sich ohne Konto lesen. Das Konto ist zum Folgen, Beitragen, Chatten und, ab Starter, für eigene Bereiche.",
+    "it": "No. Gare, notizie e post si leggono senza account. L'account serve per seguire elementi, pubblicare, chattare e, da Starter in su, avere ambiti propri."
+  },
+  "Which plan should I choose?": {
+    "pt": "Que plano devo escolher?",
+    "es": "¿Qué plan debería elegir?",
+    "fr": "Quelle formule choisir ?",
+    "de": "Welchen Plan soll ich wählen?",
+    "it": "Quale piano scegliere?"
+  },
+  "Free follows the General scope. Starter adds one scope you configure. Pro adds up to five scopes, fit evaluations, proposal briefs and 50 news reports a month, at €89 a month. Teams is for several workspaces and members, with unlimited news reports, at €139 a month. A year costs eleven months.": {
+    "pt": "O Free segue o âmbito Geral. O Starter acrescenta um âmbito que configura. O Pro acrescenta até cinco âmbitos, avaliações de encaixe, resumos de proposta e 50 relatórios de notícias por mês, a 89 € por mês. O Teams é para vários espaços de trabalho e membros, com relatórios de notícias ilimitados, a 139 € por mês. Um ano custa onze meses.",
+    "es": "Free sigue el ámbito General. Starter añade un ámbito que configuras. Pro añade hasta cinco ámbitos, evaluaciones de encaje, resúmenes de propuesta y 50 informes de noticias al mes, a 89 € al mes. Teams es para varios espacios de trabajo y miembros, con informes de noticias ilimitados, a 139 € al mes. Un año cuesta once meses.",
+    "fr": "Free suit le périmètre Général. Starter ajoute un périmètre que vous configurez. Pro ajoute jusqu'à cinq périmètres, des évaluations d'adéquation, des notes d'offre et 50 rapports d'actualité par mois, à 89 € par mois. Teams est pour plusieurs espaces de travail et membres, avec des rapports d'actualité illimités, à 139 € par mois. Une année coûte onze mois.",
+    "de": "Free folgt dem Bereich Allgemein. Starter ergänzt einen Bereich, den Sie einstellen. Pro ergänzt bis zu fünf Bereiche, Passungsbewertungen, Angebotsbriefings und 50 Nachrichtenberichte im Monat, für 89 € im Monat. Teams ist für mehrere Arbeitsbereiche und Mitglieder, mit unbegrenzten Nachrichtenberichten, für 139 € im Monat. Ein Jahr kostet elf Monate.",
+    "it": "Free segue l'ambito Generale. Starter aggiunge un ambito che configuri. Pro aggiunge fino a cinque ambiti, valutazioni di adattamento, brief di offerta e 50 report sulle notizie al mese, a 89 € al mese. Teams è per più aree di lavoro e membri, con report sulle notizie illimitati, a 139 € al mese. Un anno costa undici mesi."
   }
 }

@@ -1,0 +1,16 @@
+# Tender Town
+
+> Public tenders, funding and market news across Europe — and a community of the people who bid on them.
+
+Tender Town tracks open public procurement across Europe: requests for proposals, requests for information, grants and funding calls, with their documents, summaries and requirements, plus regulation, industry and market news. Visitors see the General scope, ranked without a language model. Each scope has configurable agents that fetch and summarise tenders and news, pull documents, and list requirements. On Pro and Teams they also judge the fit and outline how a proposal could be approached, and the News Report Agent writes what to do about a story (50 a month on Pro, unlimited on Teams). Accounts can follow items, post, comment and chat. Paid plans add custom scopes.
+
+The pipeline runs every four hours. It searches TED (Tenders Electronic Daily), national procurement portals, EU funding programmes, development-bank notices, news, and the sources a workspace follows. A tender page starts from the first publication of the procedure and includes later updates.
+
+## Pages
+
+- [About](https://tender-town.vercel.app/about): what the platform is and how it works
+- [Pricing](https://tender-town.vercel.app/pricing): Free, Starter (€49/month), Pro (€89/month), Teams (€139/month). A year is eleven months. The News Report Agent is on Pro (50 reports a month) and Teams (unlimited). Pro and Teams also judge tender fit and outline how to approach a proposal.
+- [Privacy Policy](https://tender-town.vercel.app/privacy): how personal data is handled
+- [Tenders](https://tender-town.vercel.app/tenders): open tenders
+- [News](https://tender-town.vercel.app/news): regulation, industry and market news
+- [Community](https://tender-town.vercel.app/community): posts from members

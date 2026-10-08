@@ -6,9 +6,10 @@ import { useT, useLocale } from '@/lib/i18n/client';
 import type { Plan } from '@/lib/plans';
 import { DeleteAccountForm } from '@/components/auth/ProfileForms';
 import { ActionRow, Choices, LinkRow, ModalActions, Row, Section, useSave } from '../SettingsUI';
+import { PlanPanel } from '../PlanPanel';
 import {
-  SettingsState, adminSetPlan, changeEmail, changePassword, connectGoogle, disconnectGoogle, logOutEverywhere,
-  openBillingPortal, setBirthday, setGender, startCheckout,
+  SettingsState, changeEmail, changePassword, connectGoogle, disconnectGoogle, logOutEverywhere,
+  setBirthday, setGender,
 } from '@/app/settings/actions';
 
 const GENDERS = [
@@ -43,7 +44,7 @@ export default function AccountTab(p: {
 
       <Section title="Subscription">
         <Row label="Plan" value={`${current.name}${p.plan.status === 'comped' ? ` · ${t('complimentary')}` : ''}`} autoOpen={p.openPlan} wide>
-          {() => <PlanPanel {...p} current={current} date={date} />}
+          {() => <PlanPanel userId={p.userId} plan={p.plan} plans={p.plans} admin={p.admin} current={current} />}
         </Row>
         <LinkRow label="Invoice history" href="/settings/account/invoices" />
       </Section>
@@ -135,50 +136,5 @@ function LogOutButton() {
       onClick={() => { if (confirm(t('Log out on every device, including this one?'))) start(() => logOutEverywhere()); }}>
       {t('Log out')}
     </button>
-  );
-}
-
-function PlanPanel(p: {
-  userId: string; plan: { key: string; status: string; periodEnd: string | null; hasBilling: boolean };
-  plans: Plan[]; billingReady: boolean; admin: boolean; current: Plan; date: (d: string | number) => string;
-}) {
-  const t = useT();
-  const [pending, start] = useTransition();
-  const [error, setError] = useState<string | null>(null);
-  const run = (fn: () => Promise<{ error?: string }>) => { setError(null); start(async () => { const r = await fn(); if (r?.error) setError(r.error); }); };
-  return (
-    <div className="st-plan">
-      {p.plan.periodEnd && <p className="field-hint">{t('Renews {date}', { date: p.date(p.plan.periodEnd) })}</p>}
-      <div className="plan-grid">
-        {p.plans.map((pl) => {
-          const on = pl.key === p.current.key;
-          return (
-            <div key={pl.key} className={`plan-card ${on ? 'current' : ''}`}>
-              <div className="plan-head"><h3>{pl.name}</h3>{on && <span className="scope-badge">{t('Current')}</span>}</div>
-              <p className="plan-price">€{pl.priceEur}<span>/{t('month')}</span></p>
-              <p className="plan-blurb">{t(pl.blurb)}</p>
-              <ul>{pl.features.map((f) => <li key={f}>{t(f)}</li>)}</ul>
-              {!on && pl.key !== 'free' && (
-                <button type="button" className="btn primary" disabled={pending} onClick={() => run(() => startCheckout(pl.key))}>
-                  {pl.priceEur > p.current.priceEur ? t('Upgrade to {plan}', { plan: pl.name }) : t('Switch to {plan}', { plan: pl.name })}
-                </button>
-              )}
-            </div>
-          );
-        })}
-      </div>
-      {error && <p className="form-msg err">{error}</p>}
-      <div className="billing-actions">
-        {p.plan.hasBilling && <button type="button" className="btn" disabled={pending} onClick={() => run(openBillingPortal)}>{t('Manage billing')}</button>}
-        {p.admin && (
-          <label className="filter-select admin-plan">
-            <span>{t('Set plan')}</span>
-            <select defaultValue={p.current.key} onChange={(e) => run(() => adminSetPlan(p.userId, e.target.value))}>
-              {p.plans.map((pl) => <option key={pl.key} value={pl.key}>{pl.name}</option>)}
-            </select>
-          </label>
-        )}
-      </div>
-    </div>
   );
 }

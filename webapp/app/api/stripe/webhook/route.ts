@@ -21,12 +21,14 @@ export async function POST(req: Request) {
     else if (customer) await db.from('accounts').update(values).eq('stripe_customer_id', customer);
   };
 
-  if (event.type === 'checkout.session.completed') {
+  if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') {
     const session = event.data.object as Stripe.Checkout.Session;
-    await byAccount(session.metadata?.account_id, session.customer as string | null, {
-      plan: session.metadata?.plan || 'free', plan_status: 'active',
-      stripe_subscription_id: session.subscription as string | null, stripe_customer_id: session.customer as string | null,
-    });
+    if (session.payment_status === 'paid' || session.payment_status === 'no_payment_required') {
+      await byAccount(session.metadata?.account_id, session.customer as string | null, {
+        plan: session.metadata?.plan || 'free', plan_status: 'active',
+        stripe_subscription_id: session.subscription as string | null, stripe_customer_id: session.customer as string | null,
+      });
+    }
   } else if (event.type === 'customer.subscription.created' || event.type === 'customer.subscription.updated') {
     const sub = event.data.object as Stripe.Subscription;
     const item = sub.items.data[0];

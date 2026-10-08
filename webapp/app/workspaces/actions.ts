@@ -13,6 +13,7 @@ import { getMembership, getWorkspaceContext, getMyWorkspaces, getPersonalAccount
 import { randomBytes } from 'crypto';
 import { siteOrigin } from '@/lib/auth';
 import { getT } from '@/lib/i18n/server';
+import { newsReportAllowance } from '@/lib/newsQuota';
 import { fileText } from '@/lib/fileText';
 import {
   friendlyError, parseSearchScope, tuneJson, tunePrompt, validateDocumentsConfig, validatePrompt, validateSearchConfig,
@@ -213,6 +214,7 @@ async function target(key: string, scopeId: string | null) {
 export async function setAgentEnabled(key: string, enabled: boolean, scopeId: string | null = null) {
   const t = await target(key, scopeId);
   if (!t) return;
+  if (key === 'news_report' && enabled && (await newsReportAllowance()).block === 'plan') return;
   await t.write({ enabled });
   revalidatePath('/', 'layout');
 }

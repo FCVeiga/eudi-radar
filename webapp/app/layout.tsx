@@ -1,11 +1,12 @@
 import './globals.css';
 import { Suspense } from 'react';
 import Link from 'next/link';
-import { Outfit, JetBrains_Mono } from 'next/font/google';
+import { Nunito, JetBrains_Mono } from 'next/font/google';
 import SearchBox from '@/components/SearchBox';
 import SideNav from '@/components/SideNav';
 import SourcesSidebar from '@/components/SourcesSidebar';
 import WorkingAgents from '@/components/WorkingAgents';
+import GuestPromo from '@/components/auth/GuestPromo';
 import { getPlatformLanguage } from '@/lib/language';
 import { getCurrentUser } from '@/lib/auth';
 import { I18nProvider } from '@/lib/i18n/client';
@@ -13,6 +14,7 @@ import { getLang, getT, getTheme, messagesFor } from '@/lib/i18n/server';
 import BrandLogo from '@/components/BrandLogo';
 import WorkspaceSwitcher from '@/components/WorkspaceSwitcher';
 import UserMenu, { type WorkspaceItem } from '@/components/auth/UserMenu';
+import GuestMenu from '@/components/auth/GuestMenu';
 import { getContext, getMyWorkspaces } from '@/lib/accounts';
 import NavActions from '@/components/social/NavActions';
 import UserAvatar from '@/components/UserAvatar';
@@ -24,7 +26,7 @@ import { BottomNav, MenuBackdrop, MenuButton } from '@/components/MobileNav';
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
 
-const sans = Outfit({ subsets: ['latin', 'latin-ext'], variable: '--font-sans', display: 'swap' });
+const sans = Nunito({ subsets: ['latin', 'latin-ext'], variable: '--font-sans', display: 'swap' });
 const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' });
 
 // viewport-fit=cover: the layout pads itself for the notch and home indicator.
@@ -70,11 +72,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </Link>
           <Suspense fallback={<div className="search-box" />}><SearchBox /></Suspense>
           {user && <NavActions />}
-          <div className="auth-buttons">
+          <div className={user ? 'auth-buttons' : 'auth-buttons guest'}>
             {user ? <UserMenu user={{ username: user.username, displayName: user.displayName, avatarUrl: user.avatarUrl }} workspaces={workspaces} currentWorkspace={ctx?.workspace.id ?? null} /> : (
               <>
                 <Link href="/login" className="btn">{t('Log in')}</Link>
                 <Link href="/signup" className="btn primary">{t('Sign up')}</Link>
+                <GuestMenu />
               </>
             )}
           </div>
@@ -82,16 +85,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </header>
         <div className="shell">
           <MenuBackdrop />
-          <aside className="sidebar" aria-label={t('Sources and agents')}>
+          <aside className={user ? 'sidebar' : 'sidebar guest'} aria-label={t('Sources and agents')}>
             {ctx && <WorkspaceSwitcher activeId={ctx.workspace.id} workspaces={mine.map((m) => ({
               id: m.workspace.id, name: m.workspace.name, role: m.role, sharedBy: m.workspace.ownerId === user?.id ? null : m.owner.username,
             }))} />}
-            <SideNav />
+            <SideNav guest={!user} />
+            {user ? (
+              <>
             <div className="sidebar-rule" />
             <SourcesSidebar />
             <div className="sidebar-rule" />
             <WorkingAgents />
-            {user ? (
               <div className="sidebar-user">
                 <Link href={`/u/${user.username}`} className="sidebar-user-card">
                   <UserAvatar name={user.username} src={user.avatarUrl} size={40} />
@@ -103,16 +107,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 </nav>
                 <form action={logOut}><button type="submit" className="btn">{t('Log out')}</button></form>
               </div>
+              </>
             ) : (
-              <div className="sidebar-auth">
-                <Link href="/login" className="btn">{t('Log in')}</Link>
-                <Link href="/signup" className="btn primary">{t('Sign up')}</Link>
-              </div>
+              <GuestPromo />
             )}
           </aside>
           <main className="content">{children}</main>
         </div>
-        <BottomNav />
+        <BottomNav guest={!user} />
         </I18nProvider>
       </body>
     </html>

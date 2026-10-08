@@ -11,6 +11,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { agentPrompt, companyBrief, isAgentEnabled } from '@/lib/settings';
 import { friendly, lockRow, unlockRow } from '@/lib/scopeWork';
+import { newsReportAllowance, recordNewsReport } from '@/lib/newsQuota';
 
 export const AGENT_NAME = 'News Report Agent';
 const MODEL = 'claude-opus-5-5';
@@ -67,9 +68,12 @@ export async function ensureNewsReport(newsId: string, scopeId: string): Promise
   const key = { scope_id: scopeId, news_id: newsId };
   const { data: existing } = await db.from('scope_news_reports').select('analysed_at').match(key).maybeSingle();
   if (existing?.analysed_at) return { status: 'done' };
+  const allowance = await newsReportAllowance();
+  if (allowance.block) return { status: 'error', message: allowance.block };
   if (!(await lockRow('scope_news_reports', key, 'started_at', 'error', LOCK_MINUTES))) return { status: 'running' };
   try {
     await runNewsReport(newsId, scopeId);
+    if (allowance.accountId && allowance.limit != null) await recordNewsReport(allowance.accountId);
     await unlockRow('scope_news_reports', key, 'started_at', 'error', null);
     return { status: 'done' };
   } catch (e: any) {

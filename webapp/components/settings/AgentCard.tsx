@@ -20,11 +20,12 @@ function Submit({ label, busy, primary }: { label: string; busy: string; primary
  * (for the Search Agent: the search scope), and its configuration — shown
  * and editable under "Open config"; what is saved there is what it runs on.
  */
-export default function AgentCard({ agent, enabled, instructions, config, custom, status, error, scopeId = null, readOnly = false }: {
+export default function AgentCard({ agent, enabled, instructions, config, custom, status, error, scopeId = null, readOnly = false, locked = false }: {
   agent: AgentDef; enabled: boolean; instructions: string | null; config: string | null;
   custom: boolean; status: string | null; error: string | null;
   scopeId?: string | null;   // scope agents: the scope they belong to; workspace agents: null
   readOnly?: boolean;        // members, Free plan, and workspace agents for non–platform admins
+  locked?: boolean;          // plan does not include this agent
 }) {
   const router = useRouter();
   const t = useT();
@@ -46,13 +47,14 @@ export default function AgentCard({ agent, enabled, instructions, config, custom
           <h3>{t(agent.name)}</h3>
           <span className="agent-runs">{agent.runs === 'pipeline' ? t('Daily pipeline') : agent.runs === 'on click' ? t('On click') : t('When a story is opened')}{custom ? ` · ${t('customised')}` : ''}</span>
         </div>
-        <button type="button" role="switch" aria-checked={on} aria-label={`${t(agent.name)} ${on ? t('on') : t('off')}`}
-          className={`switch ${on ? 'on' : ''}`} disabled={readOnly}
+        <button type="button" role="switch" aria-checked={locked ? false : on} aria-label={`${t(agent.name)} ${locked ? t('off') : on ? t('on') : t('off')}`}
+          className={`switch ${!locked && on ? 'on' : ''}`} disabled={readOnly || locked}
           onClick={() => { const next = !on; setOn(next); start(() => setAgentEnabled(agent.key, next, scopeId)); }}>
           <span />
         </button>
       </div>
       <p className="agent-role">{t(agent.role)}</p>
+      {locked && <p className="field-hint">{t('The News Report Agent is included on Pro and Teams.')}</p>}
 
       {config && (
         <div className="agent-card-actions">

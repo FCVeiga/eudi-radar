@@ -7,7 +7,7 @@ import { getSupabaseServerClient } from '@/lib/supabase';
 import { authClient, getCurrentUser, safeNext, siteOrigin } from '@/lib/auth';
 import { getPersonalAccount, isPlatformAdmin } from '@/lib/accounts';
 import { PLANS, planOf } from '@/lib/plans';
-import { PRICE_ENV, billingReady, stripe } from '@/lib/billing';
+import { billingReady, priceId, stripe, type BillingInterval } from '@/lib/billing';
 import { getT, setPrefCookies } from '@/lib/i18n/server';
 import { isTheme, isUiLang } from '@/lib/i18n/languages';
 
@@ -203,15 +203,18 @@ export async function setTheme(value: string): Promise<Result> {
 
 /* ---------------- Plan & billing ---------------- */
 
-export async function startCheckout(plan: string): Promise<Result> {
+export async function startCheckout(plan: string, interval: BillingInterval = 'month'): Promise<Result> {
   const t = await getT();
   const user = await getCurrentUser();
-  if (!user) return { error: t('Your session expired — log in again.') };
+  if (!user) {
+    redirect(`/signup?next=${encodeURIComponent(`/checkout?plan=${plan}&interval=${interval}`)}`);
+  }
   const account = await getPersonalAccount(user.id);
   const p = planOf(plan);
-  if (!account || p.key === 'free') return { error: t('That plan isn’t available.') };
+  if (!account || p.key === 'free' || (interval !== 'month' && interval !== 'year')) return { error: t('That plan isn’t available.') };
   const s = stripe();
-  if (!s || !billingReady()) return { error: t('Online payments aren’t set up yet — contact us to change your plan.') };
+  const price = priceId(p.key, interval);
+  if (!s || !billingReady(p.key, interval) || !price) return { error: t('Online payments aren’t set up yet — contact us to change your plan.') };
   let customer = account.stripeCustomerId;
   if (!customer) {
     const c = await s.customers.create({ email: user.email, name: user.displayName, metadata: { account_id: account.id } });
@@ -220,19 +223,31 @@ export async function startCheckout(plan: string): Promise<Result> {
   }
   // Already subscribed: plan changes and cancellations go through the billing portal.
   if (account.planKey !== 'free' && account.planStatus !== 'comped' && account.planStatus !== 'canceled') {
-    const portal = await s.billingPortal.sessions.create({ customer, return_url: `${siteOrigin()}/settings/account` });
+    const portal = await s.billingPortal.sessions.create({ customer, return_url: `${siteOrigin()}/pricing` });
     redirect(portal.url);
   }
   const session = await s.checkout.sessions.create({
     mode: 'subscription', customer,
-    line_items: [{ price: process.env[PRICE_ENV[p.key]]!, quantity: 1 }],
+    customer_update: { address: 'auto', name: 'auto' },
+    billing_address_collection: 'required',
+    tax_id_collection: { enabled: true },
+    automatic_tax: { enabled: true },
+    line_items: [{ price, quantity: 1 }],
     success_url: `${siteOrigin()}/settings/account?billing=success`,
-    cancel_url: `${siteOrigin()}/settings/account`,
+    cancel_url: `${siteOrigin()}/pricing`,
     metadata: { account_id: account.id, plan: p.key },
     subscription_data: { metadata: { account_id: account.id, plan: p.key } },
     allow_promotion_codes: true,
   });
-  redirect(session.url!);
+  if (!session.url) return { error: t('Online payments aren’t set up yet — contact us to change your plan.') };
+  redirect(session.url);
+}
+
+/** Pricing-page subscribe button. Guests go through sign-up, then Stripe. */
+export async function subscribeFromPricing(_prev: Result | null, form: FormData): Promise<Result> {
+  const plan = String(form.get('plan') || '');
+  const interval: BillingInterval = form.get('interval') === 'year' ? 'year' : 'month';
+  return startCheckout(plan, interval);
 }
 
 export async function openBillingPortal(): Promise<Result> {

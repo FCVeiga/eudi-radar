@@ -1,20 +1,20 @@
 """
 Generic scopes (search_config.mode == "generic") — the "General" default scope.
 
-Not tied to an industry: it publishes the most significant tenders and news
-on any subject. Relevance is computed here from structured signals, with no
-LLM, so it works at any volume and costs nothing per item:
+Software development in the European public market: open tenders a software
+company could bid, grant calls, and the news around that market. Relevance is
+computed here from structured signals, with no LLM.
 
-Tenders (TED contract notices published in the last few days):
+Tenders (TED contract notices for software, published in the last few days):
+  - only CPV division 48 (software packages) or group 722 (software programming)
   - value       — bigger contracts matter more (log scale, in EUR)
   - buyer       — EU institutions and central government above regional and
-                  local buyers; central purchasing bodies (frameworks many
-                  suppliers bid on) get a bonus
-  - audience    — markets with many potential bidders (IT, consulting,
-                  construction, health, …) and multi-lot procedures
+                  local buyers; central purchasing bodies get a bonus
+  - lots        — multi-lot procedures score a little higher
   - time left   — open long enough to act on
 
-News (Tavily news search on broad queries):
+News (Tavily news search, plus followed sources):
+  - the story has to be about software, a digital system, or a grant
   - source      — reputable outlets above unknown sites
   - coverage    — the same story reported by several outlets
   - freshness   — newer is better
@@ -41,21 +41,24 @@ TED_FIELDS = [
 ]
 
 DEFAULTS = {
-    "min_value_eur": 5_000_000,   # smaller contracts are left to industry scopes
+    "min_value_eur": 1_000_000,
     "lookback_days": 4,
     "max_tenders": 25,            # promoted per run
     "min_tender_score": 55,
     "max_news": 15,
-    "min_news_score": 45,
+    "min_news_score": 55,
     "news_queries": {
-        "market": ["largest public contracts awarded Europe", "major government tender launched",
-                   "public procurement framework agreement billion"],
-        "regulation": ["European Commission adopts regulation", "EU public procurement rules reform",
-                       "new EU directive agreed Parliament Council"],
-        "industry": ["European company wins government contract", "public sector technology acquisition Europe",
-                     "EU funding programme call launched"],
+        "market": ["EU public tender software development", "government software contract awarded Europe",
+                   "framework agreement software services Europe"],
+        "regulation": ["EU software procurement rules", "Interoperable Europe public sector software",
+                       "EU digital government regulation software"],
+        "industry": ["Digital Europe Programme call for proposals", "Horizon Europe digital call for proposals",
+                     "European software company public sector contract"],
     },
 }
+
+# TED CPV: 48 software packages and information systems; 722 software programming and consultancy.
+SOFTWARE_CPV = ("48", "722")
 
 # Rough EUR rates for TED currencies (only used to rank by size).
 EUR_PER = {"EUR": 1, "SEK": 0.087, "DKK": 0.134, "NOK": 0.085, "PLN": 0.233, "CZK": 0.04, "HUF": 0.0025,
@@ -123,8 +126,14 @@ def _deadline(values):
 
 # ----------------------------------------------------------------- tenders
 
+def software_notice(n: dict) -> bool:
+    return any(str(c).startswith(SOFTWARE_CPV) for c in (n.get("classification-cpv") or []))
+
+
 def score_tender(n: dict, now: datetime, min_eur: float = 0):
     """(score 0-100, facts) for one TED notice, or None if it doesn't qualify."""
+    if not software_notice(n):
+        return None
     try:
         raw = float(n.get("estimated-value-proc") or 0)
     except (TypeError, ValueError):
@@ -171,7 +180,8 @@ def _money(eur):
 
 def fetch_ted(cfg: dict, ted_session, errors: list) -> list:
     since = (datetime.utcnow() - timedelta(days=int(cfg["lookback_days"]))).strftime("%Y%m%d")
-    query = f"PD>={since} AND notice-type=cn-standard AND estimated-value-proc>={int(cfg['min_value_eur'])}"
+    query = (f"PD>={since} AND notice-type=cn-standard AND estimated-value-proc>={int(cfg['min_value_eur'])} "
+             "AND (classification-cpv=48* OR classification-cpv=722*)")
     notices = []
     for page in range(1, 5):
         try:
@@ -203,10 +213,21 @@ SUBSTANCE = re.compile(r"\b(contract|tender|procure\w*|award\w*|fund\w*|grant|in
                        r"regulation|directive|law|act|rules|ban|sanction\w*|tariff\w*|agreement|framework)\b", re.I)
 ROUTINE = re.compile(r"^(remarks|speech|keynote|opening remarks|statement|daily news|agenda|weekly|read-?out|video message|"
                      r"press conference|interview|op-?ed|podcast|live|watch|opinion)\b|megathread", re.I)
+# A story has to be about software, a digital system, or a grant a software company could bid for.
+SOFTWARE_STORY = re.compile(
+    r"\b(software|govtech|saas|devops|interoperab\w*|open[- ]source|information systems?|it services|cyber\w*|"
+    r"cloud|digital (?:service|platform|transformation|europe|public|government)|artificial intelligence|"
+    r"machine learning|data space|application development|programming)\b|\bAI\b", re.I)
+GRANT_STORY = re.compile(r"\b(call for proposals|grant|horizon europe|digital europe programme|funding call)\b", re.I)
+DIGITAL_STORY = re.compile(r"\b(digital|software|tech|innovation|data)\b|\bIT\b", re.I)
 EN_WORDS = {"the", "to", "of", "and", "in", "for", "on", "with", "as", "by", "at", "from", "is", "are", "will", "new",
             "over", "after", "its", "how", "what", "why", "says", "into", "up", "back"}
 NOT_EN_WORDS = {"und", "der", "die", "das", "mit", "für", "les", "des", "pour", "avec", "une", "el", "los", "las",
                 "del", "para", "il", "della", "per", "che", "zur", "vor", "auf"}
+
+
+def is_software_story(text: str) -> bool:
+    return bool(SOFTWARE_STORY.search(text) or (GRANT_STORY.search(text) and DIGITAL_STORY.search(text)))
 
 
 def is_english(title: str) -> bool:
@@ -264,7 +285,8 @@ def score_news(results: list, now: datetime, followed_domains=()) -> list:
       story (0-45) + freshness (0-15) + substance (0-15: money, contracts,
       funding, law) − routine items (speeches, agendas, live blogs).
     Stories are grouped by title overlap; the best article represents the group."""
-    items = [(cat, r, _words(clean_title(r.title)), _domain(r.url)) for cat, r in results if is_article(r)]
+    items = [(cat, r, _words(clean_title(r.title)), _domain(r.url)) for cat, r in results
+             if is_article(r) and is_software_story(f"{clean_title(r.title)} {(r.snippet or '')[:300]}")]
     # Group articles about the same story.
     groups = []
     for it in items:

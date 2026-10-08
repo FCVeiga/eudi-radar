@@ -15,12 +15,15 @@ export const LINKS = [
 
 export const isActive = (href: string, path: string) => (href === '/' ? path === '/' : path === href || path.startsWith(href + '/'));
 
-export default function SideNav() {
+const GUEST = new Set(['/', '/community', '/tenders', '/news']);
+
+export default function SideNav({ guest = false }: { guest?: boolean }) {
   const t = useT();
   const path = usePathname() || '/';
+  const links = guest ? LINKS.filter((l) => GUEST.has(l.href)) : LINKS;
   return (
     <nav className="side-nav" aria-label={t('Sections')}>
-      {LINKS.map((l) => {
+      {links.map((l) => {
         const active = isActive(l.href, path);
         return (
           <Link key={l.href} href={l.href} className={`side-link ${active ? 'active' : ''}`} aria-current={active ? 'page' : undefined}>

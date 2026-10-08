@@ -37,6 +37,12 @@ export default function NewsReportRunner({ newsId, scopeId, lastError }: { newsI
     return () => { if (poll) clearInterval(poll); };
   }, [newsId, router]);
 
+  if (state === 'error' && (message === 'plan' || lastError === 'plan')) {
+    return <p className="muted">{t('The News Report Agent is included on Pro and Teams.')}</p>;
+  }
+  if (state === 'error' && (message === 'quota' || lastError === 'quota')) {
+    return <p className="muted">{t('This workspace has used its 50 news reports for this month.')}</p>;
+  }
   if (state === 'error') {
     return (
       <p className="form-msg err">

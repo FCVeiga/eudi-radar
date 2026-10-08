@@ -37,13 +37,14 @@ _LANG = None
 
 # Generic scopes (General): what to look for on a source's site, by kind of source.
 GENERIC_QUERIES = {
-    "NEWS": "EU policy public procurement contract funding announcement",
-    "INDUSTRY_SOURCE": "contract awarded public sector announcement",
-    "DEVELOPMENT_BANK": "procurement notice tender project approved",
-    "FUNDING_PORTAL": "call for proposals funding opportunity open",
-    "EU_PROGRAMME": "call for proposals funding opportunity open",
-    "STANDARDS_BODY": "new standard published announcement",
-    "PROCUREMENT_PORTAL": "tender contract notice procurement",
+    "NEWS": "software development public sector contract tender Europe",
+    "INDUSTRY_SOURCE": "software company public contract awarded Europe",
+    "DEVELOPMENT_BANK": "digital software procurement project",
+    "FUNDING_PORTAL": "software digital call for proposals grant open",
+    "EU_PROGRAMME": "software digital call for proposals grant",
+    "DIGITAL_AGENCY": "software digital public service tender",
+    "STANDARDS_BODY": "software interoperability standard",
+    "PROCUREMENT_PORTAL": "software development tender contract notice",
 }
 
 

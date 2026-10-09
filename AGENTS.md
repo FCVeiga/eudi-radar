@@ -56,4 +56,4 @@ web app, `MIGRATION.md` for accounts and deployment.
 
 - Type-check and build before committing: `cd webapp && npx tsc --noEmit && npx next build`.
 - Verify UI changes in a browser (light and dark, desktop and phone width) before calling them done.
-- Commit to `main`; pushes deploy to Vercel. Production: https://tender-town.vercel.app.
+- Commit to `main`; pushes deploy to Vercel. Production: https://tendertown.io.

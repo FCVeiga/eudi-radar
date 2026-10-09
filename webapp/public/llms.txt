@@ -12,20 +12,20 @@ Signed-out visitors see one preset scope. Presets are ranked from what the brows
 
 ## For agents and search
 
-- [Sitemap](https://tender-town.vercel.app/sitemap.xml): every public page, with last-modified dates
-- [Feed](https://tender-town.vercel.app/feed.xml): the latest tenders, news and posts (RSS)
-- [Tenders](https://tender-town.vercel.app/tenders): open procedures
-- [News](https://tender-town.vercel.app/news): regulation, industry and market news
-- [Community](https://tender-town.vercel.app/community): posts from members
-- [MCP guide](https://tender-town.vercel.app/mcp.md): how to operate an account. The server is `https://tender-town.vercel.app/api/mcp` (Streamable HTTP, `Authorization: Bearer tt_…`). Reading the public pages does not need a token. A token is for creating workspaces and scopes and for plan-limited reports.
+- [Sitemap](https://tendertown.io/sitemap.xml): every public page, with last-modified dates
+- [Feed](https://tendertown.io/feed.xml): the latest tenders, news and posts (RSS)
+- [Tenders](https://tendertown.io/tenders): open procedures
+- [News](https://tendertown.io/news): regulation, industry and market news
+- [Community](https://tendertown.io/community): posts from members
+- [MCP guide](https://tendertown.io/mcp.md): how to operate an account. The server is `https://tendertown.io/api/mcp` (Streamable HTTP, `Authorization: Bearer tt_…`). Reading the public pages does not need a token. A token is for creating workspaces and scopes and for plan-limited reports.
 
 ## Pages
 
-- [About](https://tender-town.vercel.app/about): what the platform is and how it works
-- [Pricing](https://tender-town.vercel.app/pricing): Free, Starter (€49/month), Pro (€89/month), Teams (€139/month). A year is eleven months. The News Report Agent is on Pro (50 reports a month) and Teams (unlimited). Pro and Teams also judge tender fit and outline how to approach a proposal.
-- [Privacy Policy](https://tender-town.vercel.app/privacy): how personal data is handled
-- [Terms](https://tender-town.vercel.app/terms): the terms for using the platform
-- [Help](https://tender-town.vercel.app/help): how the platform works
-- [Tenders](https://tender-town.vercel.app/tenders): open tenders. One page per procedure, at `/tenders/{id}`
-- [News](https://tender-town.vercel.app/news): regulation, industry and market news. One page per story, at `/news/{id}`
-- [Community](https://tender-town.vercel.app/community): posts from members. One page per post, at `/posts/{id}`
+- [About](https://tendertown.io/about): what the platform is and how it works
+- [Pricing](https://tendertown.io/pricing): Free, Starter (€49/month), Pro (€89/month), Teams (€139/month). A year is eleven months. The News Report Agent is on Pro (50 reports a month) and Teams (unlimited). Pro and Teams also judge tender fit and outline how to approach a proposal.
+- [Privacy Policy](https://tendertown.io/privacy): how personal data is handled
+- [Terms](https://tendertown.io/terms): the terms for using the platform
+- [Help](https://tendertown.io/help): how the platform works
+- [Tenders](https://tendertown.io/tenders): open tenders. One page per procedure, at `/tenders/{id}`
+- [News](https://tendertown.io/news): regulation, industry and market news. One page per story, at `/news/{id}`
+- [Community](https://tendertown.io/community): posts from members. One page per post, at `/posts/{id}`

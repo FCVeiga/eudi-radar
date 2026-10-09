@@ -1,7 +1,7 @@
 # Tender Town
 
 **Public tenders, funding and market news across Europe — and a community of
-the people who bid on them.** Live at https://tender-town.vercel.app.
+the people who bid on them.** Live at https://tendertown.io.
 
 Tender Town started as a radar for EUDI Wallet opportunities and grew into a
 platform for every kind of public procurement: national and EU tenders, grants

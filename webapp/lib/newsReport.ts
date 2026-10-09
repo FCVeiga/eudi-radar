@@ -38,7 +38,7 @@ async function articleText(url: string) {
       if (text && text.length > 300) return String(text).slice(0, 20_000);
     } catch { /* fall back to the raw page */ }
   }
-  const res = await fetch(url, { signal: ctrl, cache: 'no-store', headers: { 'User-Agent': 'TenderTown/1.0 (+https://tender-town.vercel.app; news report)' } });
+  const res = await fetch(url, { signal: ctrl, cache: 'no-store', headers: { 'User-Agent': 'TenderTown/1.0 (+https://tendertown.io; news report)' } });
   const html = await res.text();
   return html.replace(/<(script|style|noscript)[^>]*>[\s\S]*?<\/\1>/gi, ' ').replace(/<[^>]+>/g, ' ')
     .replace(/\s+/g, ' ').trim().slice(0, 20_000);

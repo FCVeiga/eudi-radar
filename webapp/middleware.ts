@@ -98,7 +98,24 @@ async function personalizeGuest(request: NextRequest) {
   }
 }
 
+const LEGACY_HOSTS = new Set(['tender-town.vercel.app', 'eudi-radar.vercel.app']);
+
+function legacyHostRedirect(request: NextRequest) {
+  const host = (request.headers.get('x-forwarded-host') || request.headers.get('host') || '')
+    .split(',')[0].trim().split(':')[0].toLowerCase();
+  if (!LEGACY_HOSTS.has(host)) return null;
+  // Stripe does not follow redirects. New events post to tendertown.io; this
+  // path stays so a retry addressed to the previous host still lands.
+  if (request.nextUrl.pathname === '/api/stripe/webhook') return null;
+  const url = request.nextUrl.clone();
+  url.protocol = 'https:';
+  url.host = 'tendertown.io';
+  return NextResponse.redirect(url, 308);
+}
+
 export async function middleware(request: NextRequest) {
+  const moved = legacyHostRedirect(request);
+  if (moved) return moved;
   // A leftover login verifier is not a session. Only the auth token means someone is signed in.
   const hasSession = request.cookies.getAll().some((c) => c.name.startsWith('sb-') && !c.name.includes('code-verifier'));
   if (!hasSession) return personalizeGuest(request);

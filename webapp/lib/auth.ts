@@ -47,10 +47,22 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   };
 });
 
-/** This site's origin, for auth redirect links. */
+/** Public production origin. Preview hosts and localhost keep their own. */
+export const PRODUCTION_ORIGIN = 'https://tendertown.io';
+
+const CANONICAL_HOSTS = new Set([
+  'tendertown.io',
+  'www.tendertown.io',
+  'tender-town.vercel.app',
+  'eudi-radar.vercel.app',
+]);
+
+/** This site's origin, for auth redirect links, canonicals and agent URLs. */
 export function siteOrigin() {
   const h = headers();
-  const host = h.get('x-forwarded-host') || h.get('host') || 'localhost:3000';
+  const host = (h.get('x-forwarded-host') || h.get('host') || 'localhost:3000').split(',')[0].trim();
+  const hostname = host.split(':')[0].toLowerCase();
+  if (CANONICAL_HOSTS.has(hostname)) return PRODUCTION_ORIGIN;
   const proto = h.get('x-forwarded-proto') || (host.startsWith('localhost') ? 'http' : 'https');
   return `${proto}://${host}`;
 }

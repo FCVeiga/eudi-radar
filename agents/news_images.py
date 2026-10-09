@@ -11,7 +11,7 @@ from urllib.parse import urljoin
 import requests
 from sqlalchemy import text
 
-UA = {"User-Agent": "TenderTown/1.0 (+https://tender-town.vercel.app; link preview)"}
+UA = {"User-Agent": "TenderTown/1.0 (+https://tendertown.io; link preview)"}
 _META = re.compile(r"<meta\b[^>]*>", re.I)
 
 

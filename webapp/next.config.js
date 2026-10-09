@@ -13,7 +13,7 @@ const nextConfig = {
       { source: '/opportunities', destination: '/tenders', permanent: true },
       { source: '/opportunities/:path*', destination: '/tenders/:path*', permanent: true },
       // The site's old address (EUDI Radar) → Tender Town.
-      { source: '/:path*', has: [{ type: 'host', value: 'eudi-radar.vercel.app' }], destination: 'https://tender-town.vercel.app/:path*', permanent: true },
+      { source: '/:path*', has: [{ type: 'host', value: 'eudi-radar.vercel.app' }], destination: 'https://tendertown.io/:path*', permanent: true },
       { source: '/database', destination: '/history', permanent: true },
       { source: '/landscape', destination: '/workspaces', permanent: false },
       { source: '/workspace', destination: '/workspaces', permanent: true },

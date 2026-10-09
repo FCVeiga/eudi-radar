@@ -85,8 +85,8 @@ same email and password; your platform-admin flag and Teams plan come along.
 ## 4. Supabase Auth settings
 
 **Authentication → URL Configuration**
-- Site URL: `https://tender-town.vercel.app` (or your new domain)
-- Redirect URLs: `https://tender-town.vercel.app/auth/callback`, `http://localhost:3000/**`
+- Site URL: `https://tendertown.io`
+- Redirect URLs: `https://tendertown.io/auth/callback`, `https://tendertown.io/**`, `http://localhost:3000/**`
 
 **Authentication → Providers**
 - Email: enabled. Sign-ups create confirmed users from the server, so "Confirm email" doesn't matter.
@@ -133,7 +133,7 @@ gh workflow run daily.yml           # one run now; then check: gh run list --wor
 
 ## 8. Check, then retire the old accounts
 
-1. Open https://tender-town.vercel.app: tenders and news show, you can log in,
+1. Open https://tendertown.io: tenders and news show, you can log in,
    Workspaces lists your workspaces, Settings opens.
 2. After a pipeline run, Home shows new General items.
 3. Then: pause or delete the old Supabase project, revoke the old Tavily key,

@@ -1,4 +1,7 @@
 import Link from 'next/link';
+import { siteOrigin } from '@/lib/auth';
+import { pageMeta } from '@/lib/seo';
+import JsonLd from '@/components/JsonLd';
 import { FEED_VIEWS, FeedView, getFeed } from '@/lib/feed';
 import { getActivity } from '@/lib/sources';
 import FeedCard from '@/components/FeedCard';
@@ -12,6 +15,12 @@ const likeOf = (likes: { signedIn: boolean; liked: Set<string> }, href: string) 
 };
 
 const PAGE = 30;
+const LEAD = 'Public tenders, funding and market news across Europe — and a community of the people who bid on them.';
+
+export async function generateMetadata() {
+  const t = await getT();
+  return pageMeta({ title: 'Tender Town', description: t(LEAD), path: '/' });
+}
 
 // 16px line icons for the sort pills.
 const VIEW_ICONS: Record<FeedView, JSX.Element> = {
@@ -37,8 +46,17 @@ export default async function FeedPage({ searchParams }: { searchParams: { view?
 
   // Grid: the sort bar sits above the feed column only, so the Live activity
   // panel lines up with the first post card.
+  const origin = siteOrigin();
   return (
     <div className="home-layout">
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'Tender Town',
+        url: origin,
+        description: t(LEAD),
+        potentialAction: { '@type': 'SearchAction', target: `${origin}/search?q={search_term_string}`, 'query-input': 'required name=search_term_string' },
+      }} />
       <nav className="feed-sort" aria-label={t('Sort the feed')}>
         {FEED_VIEWS.map((v) => (
           <Link key={v.slug} href={href(v.slug)} className={`feed-sort-link ${v.slug === view ? 'active' : ''}`}

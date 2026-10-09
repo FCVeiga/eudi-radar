@@ -11,6 +11,7 @@ import 'server-only';
 import { cache } from 'react';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
+import { getActor } from '@/lib/actor';
 import { planOf, type Plan } from '@/lib/plans';
 
 export type Workspace = { id: string; name: string; ownerId: string; createdAt: string };
@@ -86,6 +87,11 @@ export const getContext = cache(async (): Promise<Context | null> => {
   if (!user) return null;
   const mine = await getMyWorkspaces();
   if (!mine.length) return null;
+  const forced = getActor()?.workspaceId;
+  if (forced) {
+    const chosen = mine.find((m) => m.workspace.id === forced);
+    return chosen ? contextFor(chosen, user.id) : null;
+  }
   const { data: profile } = await db().from('profiles').select('current_workspace_id').eq('id', user.id).maybeSingle();
   const current = mine.find((m) => m.workspace.id === profile?.current_workspace_id) ?? mine.find((m) => m.workspace.ownerId === user.id) ?? mine[0];
   return contextFor(current, user.id);

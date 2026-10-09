@@ -10,7 +10,7 @@ import { PLANS, planOf } from '@/lib/plans';
 import { Modal } from './SettingsUI';
 
 /** A scope card: name, what it holds, active switch. `href` makes the card open that scope. */
-export default function ScopeCard({ scope, docs, agentsOn, agentsTotal, items, readOnly = false, canToggle, showDefaultFor, catalogFor, atLimit, upgrade, href }: {
+export default function ScopeCard({ scope, docs, agentsOn, agentsTotal, items, readOnly = false, canToggle, showDefaultFor, catalogFor, atLimit, upgrade, href, bare = false }: {
   scope: { id: string; name: string; instructions: string | null; active: boolean; isDefault: boolean; catalog?: boolean; topic: string | null };
   docs: number; agentsOn: number; agentsTotal: number; items: number; readOnly?: boolean;
   /** Opens the scope page. The switch stays clickable on top of the card. */
@@ -22,6 +22,8 @@ export default function ScopeCard({ scope, docs, agentsOn, agentsTotal, items, r
   /** No scope slots left. Turning it on opens the plan. */
   atLimit?: boolean;
   upgrade?: { userId: string; admin: boolean; plan: PlanState } | null;
+  /** Only the switch, for the scope page title. */
+  bare?: boolean;
 }) {
   const [on, setOn] = useState(scope.active);
   const [error, setError] = useState<string | null>(null);
@@ -50,6 +52,15 @@ export default function ScopeCard({ scope, docs, agentsOn, agentsTotal, items, r
       <PlanPanel userId={upgrade.userId} admin={upgrade.admin} plan={upgrade.plan} plans={PLANS} current={planOf(upgrade.plan.key)} />
     </Modal>
   );
+  if (bare) {
+    return (
+      <div className="scope-title-switch">
+        {switchBtn}
+        {plan}
+        {error && <p className="form-msg err">{error}</p>}
+      </div>
+    );
+  }
   return (
     <div className={`scope-card ${on ? '' : 'off'}${href ? ' is-link' : ''}`}>
       {href && <Link href={href} className="scope-card-hit" aria-label={scope.name} />}

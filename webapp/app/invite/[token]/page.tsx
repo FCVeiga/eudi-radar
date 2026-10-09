@@ -2,13 +2,14 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { getT } from '@/lib/i18n/server';
+import { NOINDEX } from '@/lib/seo';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import AuthCard from '@/components/auth/AuthCard';
 import { acceptInvite } from '@/app/workspaces/actions';
 
 export async function generateMetadata() {
   const t = await getT();
-  return { title: `${t('Join a workspace')} — Tender Town` };
+  return { title: `${t('Join a workspace')} — Tender Town`, ...NOINDEX };
 }
 
 /** An invitation link: shows the workspace and role; joining needs an account (log in or sign up first). */

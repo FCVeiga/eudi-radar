@@ -7,8 +7,9 @@ import SideNav from '@/components/SideNav';
 import SourcesSidebar from '@/components/SourcesSidebar';
 import WorkingAgents from '@/components/WorkingAgents';
 import GuestPromo from '@/components/auth/GuestPromo';
+import GuestScopeHint from '@/components/auth/GuestScopeHint';
 import { getPlatformLanguage } from '@/lib/language';
-import { getCurrentUser } from '@/lib/auth';
+import { getCurrentUser, siteOrigin } from '@/lib/auth';
 import { I18nProvider } from '@/lib/i18n/client';
 import { getLang, getT, getTheme, messagesFor } from '@/lib/i18n/server';
 import BrandLogo from '@/components/BrandLogo';
@@ -16,6 +17,7 @@ import WorkspaceSwitcher from '@/components/WorkspaceSwitcher';
 import UserMenu, { type WorkspaceItem } from '@/components/auth/UserMenu';
 import GuestMenu from '@/components/auth/GuestMenu';
 import { getContext, getMyWorkspaces } from '@/lib/accounts';
+import { getViewScopes } from '@/lib/scopes';
 import NavActions from '@/components/social/NavActions';
 import UserAvatar from '@/components/UserAvatar';
 import { logOut } from '@/app/auth/actions';
@@ -40,9 +42,14 @@ export const viewport = {
 
 export async function generateMetadata() {
   const t = await getT();
+  const description = t('Public tenders, funding and market news across Europe — and a community of the people who bid on them.');
   return {
-    title: 'Tender Town',
-    description: t('Public tenders, funding and market news across Europe — and a community of the people who bid on them.'),
+    metadataBase: new URL(siteOrigin()),
+    title: { default: 'Tender Town', template: '%s' },
+    description,
+    alternates: { types: { 'application/rss+xml': `${siteOrigin()}/feed.xml` } },
+    openGraph: { siteName: 'Tender Town', type: 'website', description },
+    twitter: { card: 'summary' },
     icons: {
       icon: [
         { url: '/brand/favicon.png', media: '(prefers-color-scheme: light)', type: 'image/png' },
@@ -60,7 +67,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const uiLang = getLang();
   const theme = getTheme();
   const t = await getT();
-  const [mine, ctx] = user ? await Promise.all([getMyWorkspaces(), getContext()]) : [[], null];
+  const [mine, ctx, guestView] = user
+    ? [...await Promise.all([getMyWorkspaces(), getContext()]), null] as const
+    : [[], null, await getViewScopes()] as const;
+  const guestScope = guestView?.scopes.find((scope) => scope.catalog) ?? null;
   const workspaces: WorkspaceItem[] = mine.map((m) => ({ id: m.workspace.id, name: m.workspace.name, sharedBy: m.workspace.ownerId === user?.id ? null : m.owner.username }));
   return (
     <html lang={uiLang} data-theme={theme} className={`${sans.variable} ${mono.variable}`}>
@@ -90,6 +100,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               id: m.workspace.id, name: m.workspace.name, role: m.role, sharedBy: m.workspace.ownerId === user?.id ? null : m.owner.username,
             }))} />}
             <SideNav guest={!user} />
+            {guestScope && <p className="sidebar-guest-scope">{t(guestScope.name)}</p>}
+            {!user && <GuestScopeHint />}
+            {!user && (
+              <nav className="sidebar-site-links" aria-label={t('More')}>
+                <Link href="/about">{t('About')}</Link>
+                <Link href="/blog">{t('Blog')}</Link>
+                <Link href="/pricing">{t('Pricing')}</Link>
+              </nav>
+            )}
             {user ? (
               <>
             <div className="sidebar-rule" />
@@ -103,7 +122,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 </Link>
                 <nav className="sidebar-user-links">
                   <Link href="/posts/new">{t('New post')}</Link><Link href="/notifications">{t('Notifications')}</Link><Link href="/chat">{t('Chat')}</Link><Link href="/workspaces">{t('Workspaces')}</Link><Link href="/settings">{t('Settings')}</Link>
-                  <Link href="/help">{t('Help')}</Link><Link href="/terms">{t('Terms & Conditions')}</Link><Link href="/privacy">{t('Privacy policy')}</Link>
+                  <Link href="/help">{t('Help')}</Link><Link href="/about">{t('About')}</Link><Link href="/blog">{t('Blog')}</Link><Link href="/pricing">{t('Pricing')}</Link><Link href="/terms">{t('Terms & Conditions')}</Link><Link href="/privacy">{t('Privacy policy')}</Link>
                 </nav>
                 <form action={logOut}><button type="submit" className="btn">{t('Log out')}</button></form>
               </div>

@@ -1,11 +1,12 @@
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { getT } from '@/lib/i18n/server';
+import { NOINDEX } from '@/lib/seo';
 import { SettingsTabs } from '@/components/settings/SettingsUI';
 
 export async function generateMetadata() {
   const t = await getT();
-  return { title: `${t('Settings')} — Tender Town` };
+  return { title: `${t('Settings')} — Tender Town`, ...NOINDEX };
 }
 
 /** Settings: title, tabs (each a sub-page), and the selected page below. */

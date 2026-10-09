@@ -1,6 +1,9 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { getCurrentUser } from '@/lib/auth';
+import { getCurrentUser, siteOrigin } from '@/lib/auth';
+import { mcpConnectPrompt } from '@/lib/mcp/guide';
+import McpLink from '@/components/workspaces/McpPrompt';
+import { maskMcpToken, mcpLinksForUser } from '@/lib/mcpTokens';
 import { getContext, getMyWorkspaces, getPersonalAccount, isPlatformAdmin } from '@/lib/accounts';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { PLANS } from '@/lib/plans';
@@ -8,12 +11,13 @@ import { NewWorkspaceButton } from '@/components/settings/WorkspaceControls';
 import { WorkspaceMark } from '@/components/WorkspaceSwitcher';
 import { switchWorkspace } from './actions';
 import { getT } from '@/lib/i18n/server';
+import { NOINDEX } from '@/lib/seo';
 import SignUpGate from '@/components/SignUpGate';
 import { PlanUpgradeButton } from '@/components/settings/PlanPanel';
 
 export async function generateMetadata() {
   const t = await getT();
-  return { title: `${t('Workspaces')} — Tender Town` };
+  return { title: `${t('Workspaces')} — Tender Town`, ...NOINDEX };
 }
 
 /** Workspace list. Members live on each workspace page, under its scopes. */
@@ -45,6 +49,12 @@ export default async function WorkspacesPage({ searchParams }: { searchParams: {
   };
   const myPlan = account?.plan ?? PLANS[0];
   const teams = myPlan.key === 'teams';
+  const origin = siteOrigin();
+  const link = await mcpLinksForUser(user.id);
+  const linkTokens = 'error' in link ? [] : link.map((tk) => ({
+    id: tk.id, name: tk.name, hint: maskMcpToken(tk.token), prompt: mcpConnectPrompt(t, origin, tk.token),
+  }));
+  const linkError = 'error' in link ? t(link.error) : null;
 
   return (
     <div className="settings">
@@ -81,6 +91,18 @@ export default async function WorkspacesPage({ searchParams }: { searchParams: {
               })}
             </tbody>
           </table>
+        </div>
+      </section>
+
+      <section className="detail-block" id="mcp">
+        <div className="mcp-card">
+          <div className="mcp-card-head">
+            <h2>{t('Remote MCP')}</h2>
+            <p className="mcp-docs"><Link href="/mcp">{t('Documentation')}<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 11.5 11.5 4.5M6.5 4.5h5v5" /></svg></Link></p>
+          </div>
+          <p className="mcp-lead">{t('Copy the link into your agent. It includes this access token and acts as you, inside your plan.')}</p>
+          <p className="mcp-label">{t('Access token')}</p>
+          <McpLink tokens={linkTokens} error={linkError} />
         </div>
       </section>
     </div>

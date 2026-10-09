@@ -2,10 +2,11 @@ import Link from 'next/link';
 import { Fragment } from 'react';
 import LegalPage from '@/components/LegalPage';
 import { getT, getTSync } from '@/lib/i18n/server';
+import { pageMeta } from '@/lib/seo';
 
 export async function generateMetadata() {
   const t = await getT();
-  return { title: `${t('Help')} — Tender Town` };
+  return pageMeta({ title: `${t('Help')} — Tender Town`, description: t('How Tender Town works, and how to read tenders, news and posts.'), path: '/help' });
 }
 
 /** Turns <b>…</b> and <a1>…</a1>-style tags in a translated string into elements. */

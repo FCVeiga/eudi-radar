@@ -10,9 +10,10 @@ import people from './people.json';
 import tenders from './tenders.json';
 import news from './news.json';
 import shell from './shell.json';
+import mcp from './mcp.json';
 
 // Later files win where two define the same key differently: the most visible wording last.
-const FILES: Record<string, Partial<Record<UiLang, string>>>[] = [settings, workspaces, people, tenders, news, shell];
+const FILES: Record<string, Partial<Record<UiLang, string>>>[] = [settings, workspaces, people, tenders, news, shell, mcp];
 
 const cache = new Map<UiLang, Messages>();
 export function messagesFor(lang: UiLang): Messages {

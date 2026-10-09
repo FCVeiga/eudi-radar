@@ -2,8 +2,9 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { AGENTS } from '@/lib/agents';
 import { getCurrentUser } from '@/lib/auth';
-import { SCOPE_AGENT_KEYS, getScopeAgents, getViewableScope } from '@/lib/scopes';
+import { SCOPE_AGENT_KEYS, getScopeAgents, getViewableScope, workspaceScopeUse } from '@/lib/scopes';
 import { getContext, getPersonalAccount, getWorkspaceContext } from '@/lib/accounts';
+import { getSupabaseServerClient } from '@/lib/supabase';
 import { DOC_KINDS, getAgentDefaults, getScopeDocs } from '@/lib/settings';
 import AgentCard from '@/components/settings/AgentCard';
 import ScopeCard from '@/components/settings/ScopeCard';
@@ -23,10 +24,12 @@ export default async function ScopePage({ params, searchParams }: { params: { id
   const scope = await getViewableScope(params.id);
   if (!scope) notFound();
   const from = searchParams.from && /^[0-9a-f-]{36}$/.test(searchParams.from) ? searchParams.from : null;
-  const back = from && await getWorkspaceContext(from) ? `/workspaces/${from}` : '/workspaces';
+  const ctx = await getContext();
+  const opened = from ? await getWorkspaceContext(from) : null;
+  const back = opened ? `/workspaces/${from}` : '/workspaces';
+  const ws = opened ?? ctx;
   const locked = !scope.editable;
   const shared = scope.isDefault || scope.catalog;
-  const ctx = await getContext();
   const docWorkspace = shared ? ctx?.workspace.id ?? null : null;
   const docsEditable = shared ? !!ctx?.isAdmin && !!docWorkspace : !locked;
   const account = await getPersonalAccount(user.id);
@@ -38,19 +41,40 @@ export default async function ScopePage({ params, searchParams }: { params: { id
   ]);
   const followed = Array.from(await getFollowedSourceIds([scope.id]));
   const cfg = scope.searchConfig;
+  let scopeOn = scope.active;
+  let canToggle = scope.editable;
+  let showDefaultFor: string | null = null;
+  let catalogFor: string | null = null;
+  let atLimit = false;
+  if (ws && (scope.isDefault || scope.catalog)) {
+    const db = getSupabaseServerClient();
+    const use = await workspaceScopeUse(ws.workspace.id);
+    const { count } = await db.from('scopes').select('id', { count: 'exact', head: true })
+      .eq('workspace_id', ws.workspace.id).eq('active', true).eq('is_default', false).eq('catalog', false);
+    const otherActive = (count ?? 0) > 0 || use.pickIds.length > 0;
+    if (scope.isDefault) {
+      const { data: wsRow } = await db.from('workspaces').select('show_default').eq('id', ws.workspace.id).maybeSingle();
+      scopeOn = wsRow?.show_default !== false || !otherActive;
+      canToggle = ws.isAdmin && otherActive;
+      showDefaultFor = ws.workspace.id;
+    } else {
+      scopeOn = use.pickIds.includes(scope.id);
+      canToggle = ws.isAdmin;
+      catalogFor = ws.workspace.id;
+      const limit = ws.isDefault ? Infinity : ws.plan.scopes;
+      atLimit = !scopeOn && use.custom + use.pickIds.length >= limit;
+    }
+  }
 
   return (
     <div className="settings">
       <Link className="back-link" href={back}>← {t('Workspace')}</Link>
       <div className="scope-page-head">
         <h1 className="opps-h1">{scope.name}</h1>
-        {!scope.isDefault && !scope.catalog && (
-          <div className="scope-page-switch">
-            <ScopeCard scope={{ id: scope.id, name: scope.name, instructions: scope.instructions, active: scope.active, isDefault: scope.isDefault, catalog: scope.catalog, topic: cfg?.topic ?? null }}
-              docs={docs.length} agentsOn={SCOPE_AGENT_KEYS.filter((k) => agents.get(k)?.enabled ?? true).length} agentsTotal={SCOPE_AGENT_KEYS.length} items={0}
-              readOnly={locked} canToggle={!locked} />
-          </div>
-        )}
+        <ScopeCard bare scope={{ id: scope.id, name: scope.name, instructions: scope.instructions, active: scopeOn, isDefault: scope.isDefault, catalog: scope.catalog, topic: cfg?.topic ?? null }}
+          docs={0} agentsOn={0} agentsTotal={0} items={0}
+          canToggle={canToggle} showDefaultFor={showDefaultFor} catalogFor={catalogFor} atLimit={atLimit}
+          upgrade={ws?.isAdmin ? upgrade : null} />
       </div>
 
       <section className="detail-block" id="scope">

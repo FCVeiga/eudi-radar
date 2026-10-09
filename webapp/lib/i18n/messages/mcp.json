@@ -1,0 +1,975 @@
+{
+  "Connect to my Tender Town account.": {
+    "pt": "Ligue à minha conta Tender Town.",
+    "es": "Conéctate a mi cuenta de Tender Town.",
+    "fr": "Connectez-vous à mon compte Tender Town.",
+    "de": "Verbinde dich mit meinem Tender-Town-Konto.",
+    "it": "Collegati al mio account Tender Town."
+  },
+  "MCP server: {server}": {
+    "pt": "Servidor MCP: {server}",
+    "es": "Servidor MCP: {server}",
+    "fr": "Serveur MCP : {server}",
+    "de": "MCP-Server: {server}",
+    "it": "Server MCP: {server}"
+  },
+  "Transport: Streamable HTTP": {
+    "pt": "Transporte: Streamable HTTP",
+    "es": "Transporte: Streamable HTTP",
+    "fr": "Transport : Streamable HTTP",
+    "de": "Transport: Streamable HTTP",
+    "it": "Trasporto: Streamable HTTP"
+  },
+  "Authorization: Bearer <paste your token>": {
+    "pt": "Authorization: Bearer <cole o token>",
+    "es": "Authorization: Bearer <pega tu token>",
+    "fr": "Authorization: Bearer <collez votre jeton>",
+    "de": "Authorization: Bearer <Token einfügen>",
+    "it": "Authorization: Bearer <incolla il token>"
+  },
+  "Authorization: Bearer {token}": {
+    "pt": "Authorization: Bearer {token}",
+    "es": "Authorization: Bearer {token}",
+    "fr": "Authorization: Bearer {token}",
+    "de": "Authorization: Bearer {token}",
+    "it": "Authorization: Bearer {token}"
+  },
+  "Fetch and follow {guide} before calling any tool. Then call get_account.": {
+    "pt": "Obtenha e siga {guide} antes de chamar qualquer ferramenta. Depois chame get_account.",
+    "es": "Obtén y sigue {guide} antes de llamar a ninguna herramienta. Después llama a get_account.",
+    "fr": "Récupérez et suivez {guide} avant d’appeler un outil. Appelez ensuite get_account.",
+    "de": "Rufe {guide} ab und folge der Anleitung, bevor du ein Tool aufrufst. Rufe danach get_account auf.",
+    "it": "Recupera e segui {guide} prima di chiamare qualsiasi strumento. Poi chiama get_account."
+  },
+  "Paste this to your agent.": {
+    "pt": "Cole isto no seu agente.",
+    "es": "Pega esto en tu agente.",
+    "fr": "Collez ceci dans votre agent.",
+    "de": "Füge dies bei deinem Agenten ein.",
+    "it": "Incolla questo nel tuo agente."
+  },
+  "Create the token in Account.": {
+    "pt": "Crie o token na Conta.",
+    "es": "Crea el token en Cuenta.",
+    "fr": "Créez le jeton dans Compte.",
+    "de": "Erstelle das Token unter Konto.",
+    "it": "Crea il token in Account."
+  },
+  "Documentation": {
+    "pt": "Documentação",
+    "es": "Documentación",
+    "fr": "Documentation",
+    "de": "Dokumentation",
+    "it": "Documentazione"
+  },
+  "Copy prompt": {
+    "pt": "Copiar prompt",
+    "es": "Copiar el prompt",
+    "fr": "Copier le prompt",
+    "de": "Prompt kopieren",
+    "it": "Copia il prompt"
+  },
+  "Copy the prompt below to your agent.": {
+    "pt": "Copie o prompt abaixo para o seu agente.",
+    "es": "Copia el prompt de abajo en tu agente.",
+    "fr": "Copiez le prompt ci-dessous dans votre agent.",
+    "de": "Kopiere den Prompt unten in deinen Agenten.",
+    "it": "Copia il prompt qui sotto nel tuo agente."
+  },
+  "Copy the prompt below to your agent. It connects with an access token and acts as you, inside your plan.": {
+    "pt": "Copie o prompt abaixo para o seu agente. Liga-se com um token de acesso e age como si, dentro do seu plano.",
+    "es": "Copia el prompt de abajo en tu agente. Se conecta con un token de acceso y actúa como tú, dentro de tu plan.",
+    "fr": "Copiez le prompt ci-dessous dans votre agent. Il se connecte avec un jeton d’accès et agit comme vous, dans votre forfait.",
+    "de": "Kopiere den Prompt unten in deinen Agenten. Er verbindet sich mit einem Zugriffstoken und handelt als du, innerhalb deines Tarifs.",
+    "it": "Copia il prompt qui sotto nel tuo agente. Si collega con un token di accesso e agisce come te, dentro il tuo piano."
+  },
+  "Remote MCP": {
+    "pt": "MCP remoto",
+    "es": "MCP remoto",
+    "fr": "MCP distant",
+    "de": "Remote-MCP",
+    "it": "MCP remoto"
+  },
+  "Copy MCP link": {
+    "pt": "Copiar ligação MCP",
+    "es": "Copiar enlace MCP",
+    "fr": "Copier le lien MCP",
+    "de": "MCP-Link kopieren",
+    "it": "Copia il link MCP"
+  },
+  "Copy the link into your agent. It includes this access token and acts as you, inside your plan.": {
+    "pt": "Copie a ligação para o seu agente. Inclui este token de acesso e age como si, dentro do seu plano.",
+    "es": "Copia el enlace en tu agente. Incluye este token de acceso y actúa como tú, dentro de tu plan.",
+    "fr": "Copiez le lien dans votre agent. Il contient ce jeton d’accès et agit comme vous, dans votre forfait.",
+    "de": "Kopiere den Link in deinen Agenten. Er enthält dieses Zugriffstoken und handelt als du, innerhalb deines Tarifs.",
+    "it": "Copia il link nel tuo agente. Include questo token di accesso e agisce come te, dentro il tuo piano."
+  },
+  "Access token": {
+    "pt": "Token de acesso",
+    "es": "Token de acceso",
+    "fr": "Jeton d’accès",
+    "de": "Zugriffstoken",
+    "it": "Token di accesso"
+  },
+  "An external agent connects with a bearer token and acts as that account, inside the plan.": {
+    "pt": "Um agente externo liga-se com um token e age como essa conta, dentro do plano.",
+    "es": "Un agente externo se conecta con un token y actúa como esa cuenta, dentro del plan.",
+    "fr": "Un agent externe se connecte avec un jeton et agit comme ce compte, dans les limites du forfait.",
+    "de": "Ein externer Agent verbindet sich mit einem Token und handelt als dieses Konto, innerhalb des Tarifs.",
+    "it": "Un agente esterno si collega con un token e agisce come quell’account, entro il piano."
+  },
+  "Connection": {
+    "pt": "Ligação",
+    "es": "Conexión",
+    "fr": "Connexion",
+    "de": "Verbindung",
+    "it": "Connessione"
+  },
+  "The server speaks Streamable HTTP and answers with JSON.": {
+    "pt": "O servidor fala Streamable HTTP e responde com JSON.",
+    "es": "El servidor habla Streamable HTTP y responde con JSON.",
+    "fr": "Le serveur parle Streamable HTTP et répond en JSON.",
+    "de": "Der Server spricht Streamable HTTP und antwortet mit JSON.",
+    "it": "Il server parla Streamable HTTP e risponde con JSON."
+  },
+  "Send Authorization: Bearer and a token that starts with tt_. This site’s server is {server}.": {
+    "pt": "Envie Authorization: Bearer e um token que começa por tt_. O servidor deste site é {server}.",
+    "es": "Envía Authorization: Bearer y un token que empiece por tt_. El servidor de este sitio es {server}.",
+    "fr": "Envoyez Authorization: Bearer et un jeton qui commence par tt_. Le serveur de ce site est {server}.",
+    "de": "Sende Authorization: Bearer und ein Token, das mit tt_ beginnt. Der Server dieser Seite ist {server}.",
+    "it": "Invia Authorization: Bearer e un token che inizia con tt_. Il server di questo sito è {server}."
+  },
+  "No token, or a revoked token, is rejected.": {
+    "pt": "Sem token, ou com um token revogado, o pedido é recusado.",
+    "es": "Sin token, o con un token revocado, la petición se rechaza.",
+    "fr": "Sans jeton, ou avec un jeton révoqué, la demande est refusée.",
+    "de": "Ohne Token, oder mit einem widerrufenen Token, wird die Anfrage abgelehnt.",
+    "it": "Senza token, o con un token revocato, la richiesta viene rifiutata."
+  },
+  "The user creates the token in Account, under External agents. It is shown once. Do not ask for it where other people can see it.": {
+    "pt": "O utilizador cria o token na Conta, em Agentes externos. Só é mostrado uma vez. Não o peça onde outras pessoas o possam ver.",
+    "es": "El usuario crea el token en Cuenta, en Agentes externos. Solo se muestra una vez. No lo pidas donde otras personas puedan verlo.",
+    "fr": "L’utilisateur crée le jeton dans Compte, sous Agents externes. Il n’est affiché qu’une fois. Ne le demandez pas là où d’autres personnes peuvent le voir.",
+    "de": "Die Nutzerin oder der Nutzer erstellt das Token unter Konto, bei Externe Agenten. Es wird nur einmal angezeigt. Frage nicht danach, wo andere es sehen können.",
+    "it": "L’utente crea il token in Account, sotto Agenti esterni. Viene mostrato una sola volta. Non chiederlo dove altre persone possono vederlo."
+  },
+  "First call": {
+    "pt": "Primeira chamada",
+    "es": "Primera llamada",
+    "fr": "Premier appel",
+    "de": "Erster Aufruf",
+    "it": "Prima chiamata"
+  },
+  "Call get_account before anything else. It returns the plan, what is left this month, and the workspaces.": {
+    "pt": "Chame get_account antes de tudo. Devolve o plano, o que resta este mês e os espaços de trabalho.",
+    "es": "Llama a get_account antes que a nada. Devuelve el plan, lo que queda este mes y los espacios de trabajo.",
+    "fr": "Appelez get_account avant toute chose. Il renvoie le forfait, ce qu’il reste ce mois-ci et les espaces de travail.",
+    "de": "Rufe get_account zuerst auf. Es liefert den Tarif, was diesen Monat noch übrig ist, und die Arbeitsbereiche.",
+    "it": "Chiama get_account prima di tutto. Restituisce il piano, quanto resta questo mese e le aree di lavoro."
+  },
+  "Pass workspace_id from that list on later calls. If you omit it, the account’s current workspace is used.": {
+    "pt": "Passe workspace_id dessa lista nas chamadas seguintes. Se o omitir, usa-se o espaço de trabalho atual da conta.",
+    "es": "Pasa workspace_id de esa lista en las llamadas siguientes. Si lo omites, se usa el espacio de trabajo actual de la cuenta.",
+    "fr": "Passez workspace_id de cette liste dans les appels suivants. Si vous l’omettez, l’espace de travail actuel du compte est utilisé.",
+    "de": "Gib workspace_id aus dieser Liste bei späteren Aufrufen mit. Wenn du es weglässt, wird der aktuelle Arbeitsbereich des Kontos verwendet.",
+    "it": "Passa workspace_id di quell’elenco nelle chiamate successive. Se lo ometti, si usa l’area di lavoro attuale dell’account."
+  },
+  "In the limits, null means unlimited and 0 means the plan does not include it.": {
+    "pt": "Nos limites, null significa ilimitado e 0 significa que o plano não inclui isso.",
+    "es": "En los límites, null significa ilimitado y 0 significa que el plan no lo incluye.",
+    "fr": "Dans les limites, null signifie illimité et 0 signifie que le forfait ne l’inclut pas.",
+    "de": "In den Limits bedeutet null unbegrenzt und 0, dass der Tarif es nicht enthält.",
+    "it": "Nei limiti, null significa illimitato e 0 significa che il piano non lo include."
+  },
+  "Plans": {
+    "pt": "Planos",
+    "es": "Planes",
+    "fr": "Forfaits",
+    "de": "Tarife",
+    "it": "Piani"
+  },
+  "Limits follow the workspace owner’s plan.": {
+    "pt": "Os limites seguem o plano do dono do espaço de trabalho.",
+    "es": "Los límites siguen el plan del propietario del espacio de trabajo.",
+    "fr": "Les limites suivent le forfait du propriétaire de l’espace de travail.",
+    "de": "Die Limits folgen dem Tarif der Person, der der Arbeitsbereich gehört.",
+    "it": "I limiti seguono il piano del proprietario dell’area di lavoro."
+  },
+  "Free: 1 workspace, no custom scopes, no evaluations, no proposal briefs, no news reports, requirements on 2 tenders a month.": {
+    "pt": "Free: 1 espaço de trabalho, sem âmbitos personalizados, sem avaliações, sem briefs de proposta, sem relatórios de notícias, requisitos em 2 concursos por mês.",
+    "es": "Free: 1 espacio de trabajo, sin ámbitos personalizados, sin evaluaciones, sin briefs de propuesta, sin informes de noticias, requisitos en 2 licitaciones al mes.",
+    "fr": "Free : 1 espace de travail, pas de périmètres personnalisés, pas d’évaluations, pas de briefs de proposition, pas de rapports d’actualité, exigences sur 2 appels d’offres par mois.",
+    "de": "Free: 1 Arbeitsbereich, keine eigenen Scopes, keine Bewertungen, keine Angebotsbriefs, keine Nachrichtenberichte, Anforderungen auf 2 Ausschreibungen im Monat.",
+    "it": "Free: 1 area di lavoro, nessun ambito personalizzato, nessuna valutazione, nessun brief di proposta, nessun report di notizie, requisiti su 2 gare al mese."
+  },
+  "Starter: 1 workspace, 1 scope besides General, 1 evaluation a month, requirements on 10 tenders a month.": {
+    "pt": "Starter: 1 espaço de trabalho, 1 âmbito além do General, 1 avaliação por mês, requisitos em 10 concursos por mês.",
+    "es": "Starter: 1 espacio de trabajo, 1 ámbito además de General, 1 evaluación al mes, requisitos en 10 licitaciones al mes.",
+    "fr": "Starter : 1 espace de travail, 1 périmètre en plus de General, 1 évaluation par mois, exigences sur 10 appels d’offres par mois.",
+    "de": "Starter: 1 Arbeitsbereich, 1 Scope neben General, 1 Bewertung im Monat, Anforderungen auf 10 Ausschreibungen im Monat.",
+    "it": "Starter: 1 area di lavoro, 1 ambito oltre General, 1 valutazione al mese, requisiti su 10 gare al mese."
+  },
+  "Pro: 1 workspace, 5 scopes besides General, 5 evaluations a month, 50 news reports a month, requirements on every tender.": {
+    "pt": "Pro: 1 espaço de trabalho, 5 âmbitos além do General, 5 avaliações por mês, 50 relatórios de notícias por mês, requisitos em todos os concursos.",
+    "es": "Pro: 1 espacio de trabajo, 5 ámbitos además de General, 5 evaluaciones al mes, 50 informes de noticias al mes, requisitos en todas las licitaciones.",
+    "fr": "Pro : 1 espace de travail, 5 périmètres en plus de General, 5 évaluations par mois, 50 rapports d’actualité par mois, exigences sur chaque appel d’offres.",
+    "de": "Pro: 1 Arbeitsbereich, 5 Scopes neben General, 5 Bewertungen im Monat, 50 Nachrichtenberichte im Monat, Anforderungen auf jeder Ausschreibung.",
+    "it": "Pro: 1 area di lavoro, 5 ambiti oltre General, 5 valutazioni al mese, 50 report di notizie al mese, requisiti su ogni gara."
+  },
+  "Teams: unlimited workspaces, members, scopes, evaluations, proposal briefs and news reports.": {
+    "pt": "Teams: espaços de trabalho, membros, âmbitos, avaliações, briefs de proposta e relatórios de notícias ilimitados.",
+    "es": "Teams: espacios de trabajo, miembros, ámbitos, evaluaciones, briefs de propuesta e informes de noticias ilimitados.",
+    "fr": "Teams : espaces de travail, membres, périmètres, évaluations, briefs de proposition et rapports d’actualité illimités.",
+    "de": "Teams: unbegrenzte Arbeitsbereiche, Mitglieder, Scopes, Bewertungen, Angebotsbriefs und Nachrichtenberichte.",
+    "it": "Teams: aree di lavoro, membri, ambiti, valutazioni, brief di proposta e report di notizie illimitati."
+  },
+  "A catalog scope that is switched on uses a scope slot. General does not. Inviting a member needs Teams, and an admin of that workspace.": {
+    "pt": "Um âmbito de catálogo ligado ocupa um lugar de âmbito. O General não. Convidar um membro exige Teams e um administrador desse espaço de trabalho.",
+    "es": "Un ámbito de catálogo activado ocupa un hueco de ámbito. General no. Invitar a un miembro exige Teams y un administrador de ese espacio de trabajo.",
+    "fr": "Un périmètre du catalogue activé occupe un emplacement. General n’en occupe pas. Inviter un membre exige Teams, et un administrateur de cet espace de travail.",
+    "de": "Ein eingeschalteter Katalog-Scope belegt einen Scope-Platz. General nicht. Jemanden einzuladen braucht Teams und eine Admin-Rolle in diesem Arbeitsbereich.",
+    "it": "Un ambito di catalogo attivo occupa un posto. General no. Invitare un membro richiede Teams e un amministratore di quell’area di lavoro."
+  },
+  "Tools": {
+    "pt": "Ferramentas",
+    "es": "Herramientas",
+    "fr": "Outils",
+    "de": "Tools",
+    "it": "Strumenti"
+  },
+  "get_account — the plan, what is left this month, and the workspaces.": {
+    "pt": "get_account — o plano, o que resta este mês e os espaços de trabalho.",
+    "es": "get_account — el plan, lo que queda este mes y los espacios de trabajo.",
+    "fr": "get_account — le forfait, ce qu’il reste ce mois-ci et les espaces de travail.",
+    "de": "get_account — der Tarif, was diesen Monat noch übrig ist, und die Arbeitsbereiche.",
+    "it": "get_account — il piano, quanto resta questo mese e le aree di lavoro."
+  },
+  "list_workspaces — each workspace and the caller’s role.": {
+    "pt": "list_workspaces — cada espaço de trabalho e o papel de quem chama.",
+    "es": "list_workspaces — cada espacio de trabajo y el rol de quien llama.",
+    "fr": "list_workspaces — chaque espace de travail et le rôle de l’appelant.",
+    "de": "list_workspaces — jeder Arbeitsbereich und die Rolle der aufrufenden Person.",
+    "it": "list_workspaces — ogni area di lavoro e il ruolo di chi chiama."
+  },
+  "create_workspace — name. Does not change the workspace open in the browser.": {
+    "pt": "create_workspace — nome. Não muda o espaço de trabalho aberto no navegador.",
+    "es": "create_workspace — nombre. No cambia el espacio de trabajo abierto en el navegador.",
+    "fr": "create_workspace — nom. Ne change pas l’espace de travail ouvert dans le navigateur.",
+    "de": "create_workspace — Name. Ändert nicht den im Browser geöffneten Arbeitsbereich.",
+    "it": "create_workspace — nome. Non cambia l’area di lavoro aperta nel browser."
+  },
+  "invite_member — workspace_id, optional email, role admin or member.": {
+    "pt": "invite_member — workspace_id, email opcional, papel admin ou member.",
+    "es": "invite_member — workspace_id, email opcional, rol admin o member.",
+    "fr": "invite_member — workspace_id, e-mail facultatif, rôle admin ou member.",
+    "de": "invite_member — workspace_id, optionale E-Mail, Rolle admin oder member.",
+    "it": "invite_member — workspace_id, email facoltativa, ruolo admin o member."
+  },
+  "list_scopes — General, catalog scopes and custom scopes, and how many slots are used.": {
+    "pt": "list_scopes — General, âmbitos de catálogo e âmbitos personalizados, e quantos lugares estão usados.",
+    "es": "list_scopes — General, ámbitos de catálogo y ámbitos personalizados, y cuántos huecos están usados.",
+    "fr": "list_scopes — General, périmètres du catalogue et périmètres personnalisés, et combien d’emplacements sont utilisés.",
+    "de": "list_scopes — General, Katalog-Scopes und eigene Scopes, und wie viele Plätze belegt sind.",
+    "it": "list_scopes — General, ambiti di catalogo e ambiti personalizzati, e quanti posti sono usati."
+  },
+  "create_scope — workspace_id, name, optional instructions. Not included on Free.": {
+    "pt": "create_scope — workspace_id, nome, instruções opcionais. Não está incluído no Free.",
+    "es": "create_scope — workspace_id, nombre, instrucciones opcionales. No está incluido en Free.",
+    "fr": "create_scope — workspace_id, nom, instructions facultatives. Pas inclus dans Free.",
+    "de": "create_scope — workspace_id, Name, optionale Anweisungen. Nicht in Free enthalten.",
+    "it": "create_scope — workspace_id, nome, istruzioni facoltative. Non incluso in Free."
+  },
+  "update_scope — rename a custom scope, change its instructions, or switch it on or off.": {
+    "pt": "update_scope — mudar o nome de um âmbito personalizado, as instruções, ou ligá-lo ou desligá-lo.",
+    "es": "update_scope — renombrar un ámbito personalizado, cambiar sus instrucciones, o activarlo o desactivarlo.",
+    "fr": "update_scope — renommer un périmètre personnalisé, changer ses instructions, ou l’activer ou le désactiver.",
+    "de": "update_scope — einen eigenen Scope umbenennen, seine Anweisungen ändern oder ihn ein- oder ausschalten.",
+    "it": "update_scope — rinominare un ambito personalizzato, cambiarne le istruzioni, o attivarlo o disattivarlo."
+  },
+  "set_catalog_scope — workspace_id, scope_id, enabled. Turning one on uses a scope slot.": {
+    "pt": "set_catalog_scope — workspace_id, scope_id, enabled. Ligar um ocupa um lugar de âmbito.",
+    "es": "set_catalog_scope — workspace_id, scope_id, enabled. Activar uno ocupa un hueco de ámbito.",
+    "fr": "set_catalog_scope — workspace_id, scope_id, enabled. En activer un occupe un emplacement.",
+    "de": "set_catalog_scope — workspace_id, scope_id, enabled. Einen einzuschalten belegt einen Scope-Platz.",
+    "it": "set_catalog_scope — workspace_id, scope_id, enabled. Attivarne uno occupa un posto."
+  },
+  "list_scope_agents — whether the plan includes each agent, and whether it is on.": {
+    "pt": "list_scope_agents — se o plano inclui cada agente e se está ligado.",
+    "es": "list_scope_agents — si el plan incluye cada agente y si está activado.",
+    "fr": "list_scope_agents — si le forfait inclut chaque agent, et s’il est activé.",
+    "de": "list_scope_agents — ob der Tarif jeden Agenten enthält und ob er eingeschaltet ist.",
+    "it": "list_scope_agents — se il piano include ogni agente e se è attivo."
+  },
+  "configure_scope_agent — agent is search, triage, tender_evaluation, proposal_manager or news_report. Send plain-language instructions. A gated agent cannot be switched on unless the plan includes it.": {
+    "pt": "configure_scope_agent — o agente é search, triage, tender_evaluation, proposal_manager ou news_report. Envie instruções em linguagem simples. Um agente limitado não se liga se o plano não o incluir.",
+    "es": "configure_scope_agent — el agente es search, triage, tender_evaluation, proposal_manager o news_report. Envía instrucciones en lenguaje claro. Un agente restringido no se activa si el plan no lo incluye.",
+    "fr": "configure_scope_agent — l’agent est search, triage, tender_evaluation, proposal_manager ou news_report. Envoyez des instructions en langage clair. Un agent réservé ne s’active pas si le forfait ne l’inclut pas.",
+    "de": "configure_scope_agent — der Agent ist search, triage, tender_evaluation, proposal_manager oder news_report. Sende Anweisungen in einfacher Sprache. Ein gesperrter Agent lässt sich nicht einschalten, wenn der Tarif ihn nicht enthält.",
+    "it": "configure_scope_agent — l’agente è search, triage, tender_evaluation, proposal_manager o news_report. Invia istruzioni in linguaggio semplice. Un agente limitato non si attiva se il piano non lo include."
+  },
+  "list_tenders and get_tender — tenders from the workspace’s active scopes. get_tender includes requirements while the plan has views left, and evaluations or proposal briefs only when the plan has them.": {
+    "pt": "list_tenders e get_tender — concursos dos âmbitos ativos do espaço de trabalho. get_tender inclui requisitos enquanto o plano tiver vistas, e avaliações ou briefs de proposta só quando o plano os tiver.",
+    "es": "list_tenders y get_tender — licitaciones de los ámbitos activos del espacio de trabajo. get_tender incluye requisitos mientras al plan le queden vistas, y evaluaciones o briefs de propuesta solo cuando el plan los tenga.",
+    "fr": "list_tenders et get_tender — appels d’offres des périmètres actifs de l’espace de travail. get_tender inclut les exigences tant qu’il reste des consultations au forfait, et les évaluations ou briefs de proposition seulement si le forfait les inclut.",
+    "de": "list_tenders und get_tender — Ausschreibungen der aktiven Scopes des Arbeitsbereichs. get_tender enthält Anforderungen, solange der Tarif noch Aufrufe hat, und Bewertungen oder Angebotsbriefs nur, wenn der Tarif sie enthält.",
+    "it": "list_tenders e get_tender — gare degli ambiti attivi dell’area di lavoro. get_tender include i requisiti finché al piano restano visualizzazioni, e valutazioni o brief di proposta solo se il piano li include."
+  },
+  "list_news and get_news — news from the active scopes. News reports are included on Pro and Teams.": {
+    "pt": "list_news e get_news — notícias dos âmbitos ativos. Os relatórios de notícias estão no Pro e no Teams.",
+    "es": "list_news y get_news — noticias de los ámbitos activos. Los informes de noticias están en Pro y Teams.",
+    "fr": "list_news et get_news — actualités des périmètres actifs. Les rapports d’actualité sont sur Pro et Teams.",
+    "de": "list_news und get_news — Nachrichten der aktiven Scopes. Nachrichtenberichte gibt es auf Pro und Teams.",
+    "it": "list_news e get_news — notizie degli ambiti attivi. I report di notizie sono su Pro e Teams."
+  },
+  "list_posts, get_post and get_comments — community posts and comments. get_comments takes item_type post, news or tender, and item_id.": {
+    "pt": "list_posts, get_post e get_comments — publicações e comentários da comunidade. get_comments recebe item_type post, news ou tender, e item_id.",
+    "es": "list_posts, get_post y get_comments — publicaciones y comentarios de la comunidad. get_comments recibe item_type post, news o tender, e item_id.",
+    "fr": "list_posts, get_post et get_comments — publications et commentaires de la communauté. get_comments prend item_type post, news ou tender, et item_id.",
+    "de": "list_posts, get_post und get_comments — Beiträge und Kommentare der Community. get_comments nimmt item_type post, news oder tender, und item_id.",
+    "it": "list_posts, get_post e get_comments — post e commenti della community. get_comments riceve item_type post, news o tender, e item_id."
+  },
+  "get_scope_report — a stored tender evaluation, proposal brief or news report. Reading it does not use a monthly run.": {
+    "pt": "get_scope_report — uma avaliação de concurso, um brief de proposta ou um relatório de notícias já guardado. Lê-lo não gasta uma execução mensal.",
+    "es": "get_scope_report — una evaluación de licitación, un brief de propuesta o un informe de noticias ya guardado. Leerlo no gasta una ejecución mensual.",
+    "fr": "get_scope_report — une évaluation d’appel d’offres, un brief de proposition ou un rapport d’actualité déjà enregistré. Le lire ne consomme pas d’exécution mensuelle.",
+    "de": "get_scope_report — eine gespeicherte Ausschreibungsbewertung, ein Angebotsbrief oder ein Nachrichtenbericht. Lesen verbraucht keinen monatlichen Lauf.",
+    "it": "get_scope_report — una valutazione di gara, un brief di proposta o un report di notizie già salvato. Leggerlo non consuma un’esecuzione mensile."
+  },
+  "run_scope_agent — runs Tender Evaluation, the Proposal Manager or the News Report Agent on one item. Uses one monthly run.": {
+    "pt": "run_scope_agent — corre a Avaliação de Concursos, o Gestor de Propostas ou o Agente de Relatório de Notícias sobre um item. Gasta uma execução mensal.",
+    "es": "run_scope_agent — ejecuta Tender Evaluation, el Proposal Manager o el News Report Agent sobre un elemento. Gasta una ejecución mensual.",
+    "fr": "run_scope_agent — lance Tender Evaluation, le Proposal Manager ou le News Report Agent sur un élément. Consomme une exécution mensuelle.",
+    "de": "run_scope_agent — startet Tender Evaluation, den Proposal Manager oder den News Report Agent für einen Eintrag. Verbraucht einen monatlichen Lauf.",
+    "it": "run_scope_agent — esegue Tender Evaluation, il Proposal Manager o il News Report Agent su un elemento. Consuma un’esecuzione mensile."
+  },
+  "Rules": {
+    "pt": "Regras",
+    "es": "Reglas",
+    "fr": "Règles",
+    "de": "Regeln",
+    "it": "Regole"
+  },
+  "Do not invent ids. List or get them first.": {
+    "pt": "Não invente ids. Liste-os ou obtenha-os primeiro.",
+    "es": "No inventes ids. Lístalos u obténlos primero.",
+    "fr": "N’inventez pas d’identifiants. Listez-les ou récupérez-les d’abord.",
+    "de": "Erfinde keine Ids. Liste sie zuerst oder rufe sie ab.",
+    "it": "Non inventare gli id. Elencali o recuperali prima."
+  },
+  "General can only be shown or hidden, and only while another scope is on. Catalog scopes cannot be renamed.": {
+    "pt": "O General só pode ser mostrado ou escondido, e só enquanto outro âmbito estiver ligado. Os âmbitos de catálogo não mudam de nome.",
+    "es": "General solo se puede mostrar u ocultar, y solo mientras otro ámbito esté activado. Los ámbitos de catálogo no se renombran.",
+    "fr": "General ne peut être affiché ou masqué que pendant qu’un autre périmètre est actif. Les périmètres du catalogue ne se renomment pas.",
+    "de": "General kann nur ein- oder ausgeblendet werden, und nur solange ein anderer Scope an ist. Katalog-Scopes lassen sich nicht umbenennen.",
+    "it": "General si può solo mostrare o nascondere, e solo mentre un altro ambito è attivo. Gli ambiti di catalogo non si rinominano."
+  },
+  "run_scope_agent spends a monthly run. A re-run counts. A failed run does not. get_scope_report does not spend a run.": {
+    "pt": "run_scope_agent gasta uma execução mensal. Voltar a correr conta. Uma execução falhada não. get_scope_report não gasta uma execução.",
+    "es": "run_scope_agent gasta una ejecución mensual. Volver a ejecutarla cuenta. Una ejecución fallida no. get_scope_report no gasta una ejecución.",
+    "fr": "run_scope_agent consomme une exécution mensuelle. Une nouvelle exécution compte. Une exécution échouée non. get_scope_report n’en consomme pas.",
+    "de": "run_scope_agent verbraucht einen monatlichen Lauf. Ein erneuter Lauf zählt. Ein fehlgeschlagener nicht. get_scope_report verbraucht keinen Lauf.",
+    "it": "run_scope_agent consuma un’esecuzione mensile. Una nuova esecuzione conta. Una esecuzione fallita no. get_scope_report non ne consuma una."
+  },
+  "get_tender spends a requirement view when the plan counts them. Past the limit, the tender comes back without requirements.": {
+    "pt": "get_tender gasta uma vista de requisitos quando o plano as conta. Acima do limite, o concurso volta sem requisitos.",
+    "es": "get_tender gasta una vista de requisitos cuando el plan las cuenta. Pasado el límite, la licitación vuelve sin requisitos.",
+    "fr": "get_tender consomme une consultation d’exigences quand le forfait les compte. Au-delà de la limite, l’appel d’offres revient sans exigences.",
+    "de": "get_tender verbraucht einen Anforderungsaufruf, wenn der Tarif sie zählt. Über dem Limit kommt die Ausschreibung ohne Anforderungen zurück.",
+    "it": "get_tender consuma una visualizzazione dei requisiti quando il piano le conta. Oltre il limite, la gara torna senza requisiti."
+  },
+  "A tool error is JSON with an error string. Stop on a plan or quota error and tell the user. Do not retry it.": {
+    "pt": "Um erro de ferramenta é JSON com uma frase de erro. Pare num erro de plano ou de quota e diga-o ao utilizador. Não volte a tentar.",
+    "es": "Un error de herramienta es JSON con una frase de error. Detente ante un error de plan o de cupo y díselo al usuario. No lo reintentes.",
+    "fr": "Une erreur d’outil est du JSON avec une phrase d’erreur. Arrêtez-vous sur une erreur de forfait ou de quota et dites-le à l’utilisateur. Ne réessayez pas.",
+    "de": "Ein Tool-Fehler ist JSON mit einem Fehlertext. Halte bei einem Tarif- oder Kontingentfehler an und sag es der Person. Versuche es nicht erneut.",
+    "it": "Un errore di strumento è JSON con una frase di errore. Fermati su un errore di piano o di quota e dillo all’utente. Non riprovare."
+  },
+  "Send one tool per request.": {
+    "pt": "Envie uma ferramenta por pedido.",
+    "es": "Envía una herramienta por petición.",
+    "fr": "Envoyez un outil par requête.",
+    "de": "Sende ein Tool pro Anfrage.",
+    "it": "Invia uno strumento per richiesta."
+  },
+  "An agent can create workspaces and scopes, configure the scope agents, invite teammates, and read tenders, news, community posts and the reports those agents write. It acts as you, inside your plan.": {
+    "pt": "Um agente pode criar espaços de trabalho e âmbitos, configurar os agentes do âmbito, convidar colegas e ler concursos, notícias, publicações da comunidade e os relatórios que esses agentes escrevem. Age como o utilizador, dentro do plano.",
+    "es": "Un agente puede crear espacios de trabajo y ámbitos, configurar los agentes del ámbito, invitar a compañeros y leer licitaciones, noticias, publicaciones de la comunidad y los informes que esos agentes escriben. Actúa como tú, dentro de tu plan.",
+    "fr": "Un agent peut créer des espaces de travail et des périmètres, configurer les agents du périmètre, inviter des collègues et lire les appels d’offres, les actualités, les publications de la communauté et les rapports que ces agents rédigent. Il agit comme vous, dans votre forfait.",
+    "de": "Ein Agent kann Arbeitsbereiche und Scopes anlegen, die Scope-Agenten einrichten, Teammitglieder einladen und Ausschreibungen, Nachrichten, Community-Beiträge und die Berichte lesen, die diese Agenten schreiben. Er handelt als du, innerhalb deines Tarifs.",
+    "it": "Un agente può creare aree di lavoro e ambiti, configurare gli agenti dell’ambito, invitare colleghi e leggere gare, notizie, post della community e i report che quegli agenti scrivono. Agisce come te, dentro il tuo piano."
+  },
+  "The guide for connecting an external agent, and for operating Tender Town through it.": {
+    "pt": "O guia para ligar um agente externo e para operar o Tender Town através dele.",
+    "es": "La guía para conectar un agente externo y para operar Tender Town a través de él.",
+    "fr": "Le guide pour connecter un agent externe et pour faire fonctionner Tender Town par son intermédiaire.",
+    "de": "Die Anleitung, um einen externen Agenten zu verbinden und Tender Town damit zu bedienen.",
+    "it": "La guida per collegare un agente esterno e per usare Tender Town attraverso di lui."
+  },
+  "What you can do": {
+    "pt": "O que pode fazer",
+    "es": "Qué puedes hacer",
+    "fr": "Ce que vous pouvez faire",
+    "de": "Was du tun kannst",
+    "it": "Cosa puoi fare"
+  },
+  "Tender Town tracks public tenders, grants and market news across Europe. This server lets an external agent do the work a person does in the product: set the radar up, and read what it found.": {
+    "pt": "O Tender Town acompanha concursos públicos, subvenções e notícias de mercado na Europa. Este servidor deixa um agente externo fazer o trabalho de uma pessoa no produto: preparar o radar e ler o que ele encontrou.",
+    "es": "Tender Town sigue licitaciones públicas, subvenciones y noticias de mercado en Europa. Este servidor permite que un agente externo haga el trabajo de una persona en el producto: preparar el radar y leer lo que encontró.",
+    "fr": "Tender Town suit les appels d’offres publics, les subventions et l’actualité du marché en Europe. Ce serveur permet à un agent externe de faire le travail d’une personne dans le produit : préparer le radar et lire ce qu’il a trouvé.",
+    "de": "Tender Town verfolgt öffentliche Ausschreibungen, Förderungen und Marktnachrichten in Europa. Dieser Server lässt einen externen Agenten die Arbeit einer Person im Produkt erledigen: das Radar einrichten und lesen, was es gefunden hat.",
+    "it": "Tender Town segue gare pubbliche, finanziamenti e notizie di mercato in Europa. Questo server permette a un agente esterno di fare il lavoro di una persona nel prodotto: preparare il radar e leggere ciò che ha trovato."
+  },
+  "The agent acts as the account that owns the token. Every call is checked against that account and against the workspace owner’s plan. A call the plan does not include is refused, with the reason.": {
+    "pt": "O agente age como a conta dona do token. Cada chamada é verificada contra essa conta e contra o plano do dono do espaço de trabalho. Uma chamada que o plano não inclui é recusada, com o motivo.",
+    "es": "El agente actúa como la cuenta dueña del token. Cada llamada se comprueba contra esa cuenta y contra el plan del propietario del espacio de trabajo. Una llamada que el plan no incluye se rechaza, con el motivo.",
+    "fr": "L’agent agit comme le compte qui possède le jeton. Chaque appel est vérifié pour ce compte et pour le forfait du propriétaire de l’espace de travail. Un appel que le forfait n’inclut pas est refusé, avec la raison.",
+    "de": "Der Agent handelt als das Konto, dem das Token gehört. Jeder Aufruf wird gegen dieses Konto und gegen den Tarif der Person geprüft, der der Arbeitsbereich gehört. Ein Aufruf, den der Tarif nicht enthält, wird abgelehnt, mit dem Grund.",
+    "it": "L’agente agisce come l’account a cui appartiene il token. Ogni chiamata è verificata su quell’account e sul piano del proprietario dell’area di lavoro. Una chiamata che il piano non include viene rifiutata, con il motivo."
+  },
+  "How the product is organised": {
+    "pt": "Como o produto está organizado",
+    "es": "Cómo está organizado el producto",
+    "fr": "Comment le produit est organisé",
+    "de": "Wie das Produkt aufgebaut ist",
+    "it": "Come è organizzato il prodotto"
+  },
+  "A workspace holds scopes and members. The workspace open in the browser decides what Home, Tenders, News, History and Community show. Creating a workspace from here does not switch that.": {
+    "pt": "Um espaço de trabalho contém âmbitos e membros. O espaço de trabalho aberto no navegador decide o que Início, Concursos, Notícias, Histórico e Comunidade mostram. Criar um espaço de trabalho a partir daqui não muda isso.",
+    "es": "Un espacio de trabajo contiene ámbitos y miembros. El espacio de trabajo abierto en el navegador decide qué muestran Inicio, Licitaciones, Noticias, Historial y Comunidad. Crear un espacio de trabajo desde aquí no cambia eso.",
+    "fr": "Un espace de travail contient des périmètres et des membres. L’espace de travail ouvert dans le navigateur décide de ce que Accueil, Appels d’offres, Actualités, Historique et Communauté affichent. En créer un ici ne change pas cela.",
+    "de": "Ein Arbeitsbereich enthält Scopes und Mitglieder. Der im Browser geöffnete Arbeitsbereich entscheidet, was Start, Ausschreibungen, Nachrichten, Verlauf und Community zeigen. Einen Arbeitsbereich von hier aus anzulegen ändert das nicht.",
+    "it": "Un’area di lavoro contiene ambiti e membri. L’area di lavoro aperta nel browser decide cosa mostrano Home, Gare, Notizie, Cronologia e Community. Creare un’area di lavoro da qui non cambia questo."
+  },
+  "Limits follow the workspace owner’s plan, not a member’s own plan. Pass workspace_id to choose one. If you omit it, the account’s current workspace is used.": {
+    "pt": "Os limites seguem o plano do dono do espaço de trabalho, não o plano de um membro. Passe workspace_id para escolher um. Se o omitir, usa-se o espaço de trabalho atual da conta.",
+    "es": "Los límites siguen el plan del propietario del espacio de trabajo, no el de un miembro. Pasa workspace_id para elegir uno. Si lo omites, se usa el espacio de trabajo actual de la cuenta.",
+    "fr": "Les limites suivent le forfait du propriétaire de l’espace de travail, pas celui d’un membre. Passez workspace_id pour en choisir un. Si vous l’omettez, l’espace de travail actuel du compte est utilisé.",
+    "de": "Die Limits folgen dem Tarif der Person, der der Arbeitsbereich gehört, nicht dem Tarif eines Mitglieds. Gib workspace_id mit, um einen zu wählen. Wenn du es weglässt, wird der aktuelle Arbeitsbereich des Kontos verwendet.",
+    "it": "I limiti seguono il piano del proprietario dell’area di lavoro, non quello di un membro. Passa workspace_id per sceglierne una. Se lo ometti, si usa l’area di lavoro attuale dell’account."
+  },
+  "What a scope is": {
+    "pt": "O que é um âmbito",
+    "es": "Qué es un ámbito",
+    "fr": "Ce qu’est un périmètre",
+    "de": "Was ein Scope ist",
+    "it": "Cos’è un ambito"
+  },
+  "A scope is one configuration of the radar: what to look for, and how its agents behave. There are three kinds.": {
+    "pt": "Um âmbito é uma configuração do radar: o que procurar e como os seus agentes se comportam. Há três tipos.",
+    "es": "Un ámbito es una configuración del radar: qué buscar y cómo se comportan sus agentes. Hay tres tipos.",
+    "fr": "Un périmètre est une configuration du radar : quoi chercher, et comment ses agents se comportent. Il y en a trois sortes.",
+    "de": "Ein Scope ist eine Konfiguration des Radars: wonach gesucht wird und wie sich seine Agenten verhalten. Es gibt drei Arten.",
+    "it": "Un ambito è una configurazione del radar: cosa cercare e come si comportano i suoi agenti. Ce ne sono di tre tipi."
+  },
+  "General is the shared default. Every account can read it. A workspace can hide it only while another scope is switched on. It cannot be renamed or given new instructions.": {
+    "pt": "General é a predefinição partilhada. Todas as contas o podem ler. Um espaço de trabalho só o pode esconder enquanto outro âmbito estiver ligado. Não pode mudar de nome nem receber instruções novas.",
+    "es": "General es el predeterminado compartido. Todas las cuentas pueden leerlo. Un espacio de trabajo solo puede ocultarlo mientras otro ámbito esté activado. No se puede renombrar ni darle instrucciones nuevas.",
+    "fr": "General est le périmètre partagé par défaut. Chaque compte peut le lire. Un espace de travail ne peut le masquer que pendant qu’un autre périmètre est activé. Il ne se renomme pas et n’accepte pas de nouvelles instructions.",
+    "de": "General ist der gemeinsame Standard. Jedes Konto kann ihn lesen. Ein Arbeitsbereich kann ihn nur ausblenden, solange ein anderer Scope eingeschaltet ist. Er lässt sich nicht umbenennen und bekommt keine neuen Anweisungen.",
+    "it": "General è la predefinita condivisa. Ogni account può leggerla. Un’area di lavoro può nasconderla solo mentre un altro ambito è attivo. Non si rinomina e non riceve istruzioni nuove."
+  },
+  "A catalog scope is a shared scope Tender Town publishes. Turning it on for a workspace uses one scope slot. It cannot be renamed.": {
+    "pt": "Um âmbito de catálogo é um âmbito partilhado que o Tender Town publica. Ligá-lo num espaço de trabalho ocupa um lugar de âmbito. Não pode mudar de nome.",
+    "es": "Un ámbito de catálogo es un ámbito compartido que publica Tender Town. Activarlo en un espacio de trabajo ocupa un hueco de ámbito. No se puede renombrar.",
+    "fr": "Un périmètre du catalogue est un périmètre partagé que Tender Town publie. L’activer pour un espace de travail occupe un emplacement. Il ne se renomme pas.",
+    "de": "Ein Katalog-Scope ist ein gemeinsamer Scope, den Tender Town veröffentlicht. Ihn für einen Arbeitsbereich einzuschalten belegt einen Scope-Platz. Er lässt sich nicht umbenennen.",
+    "it": "Un ambito di catalogo è un ambito condiviso pubblicato da Tender Town. Attivarlo per un’area di lavoro occupa un posto. Non si rinomina."
+  },
+  "A custom scope belongs to one workspace. Starter includes 1 besides General, Pro includes 5, Teams is unlimited. Free includes none.": {
+    "pt": "Um âmbito personalizado pertence a um espaço de trabalho. O Starter inclui 1 além do General, o Pro inclui 5, o Teams é ilimitado. O Free não inclui nenhum.",
+    "es": "Un ámbito personalizado pertenece a un espacio de trabajo. Starter incluye 1 además de General, Pro incluye 5, Teams es ilimitado. Free no incluye ninguno.",
+    "fr": "Un périmètre personnalisé appartient à un espace de travail. Starter en inclut 1 en plus de General, Pro en inclut 5, Teams est illimité. Free n’en inclut aucun.",
+    "de": "Ein eigener Scope gehört zu einem Arbeitsbereich. Starter enthält 1 neben General, Pro enthält 5, Teams ist unbegrenzt. Free enthält keinen.",
+    "it": "Un ambito personalizzato appartiene a un’area di lavoro. Starter ne include 1 oltre General, Pro ne include 5, Teams è illimitato. Free non ne include nessuno."
+  },
+  "Scope agents": {
+    "pt": "Agentes do âmbito",
+    "es": "Agentes del ámbito",
+    "fr": "Agents du périmètre",
+    "de": "Scope-Agenten",
+    "it": "Agenti dell’ambito"
+  },
+  "Each scope has five agents you can configure. Search and triage run on the platform’s schedule. The other three run only when you ask, and each run is counted.": {
+    "pt": "Cada âmbito tem cinco agentes que pode configurar. Pesquisa e triagem correm no horário da plataforma. Os outros três só correm quando os pede, e cada execução é contada.",
+    "es": "Cada ámbito tiene cinco agentes que puedes configurar. Búsqueda y triaje se ejecutan en el horario de la plataforma. Los otros tres solo se ejecutan cuando los pides, y cada ejecución cuenta.",
+    "fr": "Chaque périmètre a cinq agents que vous pouvez configurer. La recherche et le tri s’exécutent selon l’horaire de la plateforme. Les trois autres ne s’exécutent que lorsque vous le demandez, et chaque exécution est comptée.",
+    "de": "Jeder Scope hat fünf Agenten, die du einrichten kannst. Suche und Triage laufen nach dem Zeitplan der Plattform. Die anderen drei laufen nur, wenn du sie anstößt, und jeder Lauf wird gezählt.",
+    "it": "Ogni ambito ha cinque agenti che puoi configurare. Ricerca e triage girano secondo il calendario della piattaforma. Gli altri tre girano solo quando li chiedi, e ogni esecuzione viene contata."
+  },
+  "Search Agent finds tenders and news on TED, the web and the sources the workspace follows. Plain-language instructions are turned into its search configuration. Saving them does not fetch results immediately. Search runs with the pipeline, as often as the plan allows: once a day on Free, twice on Starter, three times on Pro, six times on Teams.": {
+    "pt": "O Agente de Pesquisa encontra concursos e notícias no TED, na web e nas fontes que o espaço de trabalho segue. Instruções em linguagem simples transformam-se na configuração de pesquisa. Guardá-las não vai buscar resultados de imediato. A pesquisa corre com o pipeline, tantas vezes quanto o plano permite: uma vez por dia no Free, duas no Starter, três no Pro, seis no Teams.",
+    "es": "El Search Agent encuentra licitaciones y noticias en TED, en la web y en las fuentes que sigue el espacio de trabajo. Las instrucciones en lenguaje claro se convierten en su configuración de búsqueda. Guardarlas no trae resultados al momento. La búsqueda corre con el pipeline, tantas veces como permite el plan: una vez al día en Free, dos en Starter, tres en Pro, seis en Teams.",
+    "fr": "Le Search Agent trouve des appels d’offres et des actualités sur TED, sur le web et sur les sources que l’espace de travail suit. Des instructions en langage clair deviennent sa configuration de recherche. Les enregistrer ne récupère pas les résultats tout de suite. La recherche tourne avec le pipeline, aussi souvent que le forfait le permet : une fois par jour sur Free, deux fois sur Starter, trois fois sur Pro, six fois sur Teams.",
+    "de": "Der Search Agent findet Ausschreibungen und Nachrichten auf TED, im Web und in den Quellen, denen der Arbeitsbereich folgt. Anweisungen in einfacher Sprache werden zu seiner Suchkonfiguration. Sie zu speichern holt die Ergebnisse nicht sofort. Die Suche läuft mit der Pipeline, so oft der Tarif es erlaubt: einmal am Tag auf Free, zweimal auf Starter, dreimal auf Pro, sechsmal auf Teams.",
+    "it": "Il Search Agent trova gare e notizie su TED, sul web e sulle fonti che l’area di lavoro segue. Le istruzioni in linguaggio semplice diventano la sua configurazione di ricerca. Salvarle non recupera i risultati subito. La ricerca gira con la pipeline, tutte le volte che il piano consente: una volta al giorno su Free, due su Starter, tre su Pro, sei su Teams."
+  },
+  "Triage Agent scores each find and sorts tenders, grants and news. Instructions rewrite its prompt. It runs on the same schedule as search.": {
+    "pt": "O Agente de Triagem pontua cada resultado e ordena concursos, subvenções e notícias. As instruções reescrevem o prompt. Corre no mesmo horário que a pesquisa.",
+    "es": "El Triage Agent puntúa cada hallazgo y ordena licitaciones, subvenciones y noticias. Las instrucciones reescriben su prompt. Se ejecuta en el mismo horario que la búsqueda.",
+    "fr": "Le Triage Agent note chaque trouvaille et trie appels d’offres, subventions et actualités. Les instructions réécrivent son prompt. Il s’exécute au même horaire que la recherche.",
+    "de": "Der Triage Agent bewertet jeden Fund und sortiert Ausschreibungen, Förderungen und Nachrichten. Anweisungen schreiben seinen Prompt um. Er läuft im selben Rhythmus wie die Suche.",
+    "it": "Il Triage Agent assegna un punteggio a ogni risultato e ordina gare, finanziamenti e notizie. Le istruzioni riscrivono il prompt. Gira con lo stesso calendario della ricerca."
+  },
+  "Tender Evaluation Agent checks one tender against the scope, scores the fit and advises. Starter includes 1 run a month, Pro 5, Teams unlimited. Not on Free.": {
+    "pt": "O Agente de Avaliação de Concursos verifica um concurso contra o âmbito, pontua o encaixe e aconselha. O Starter inclui 1 execução por mês, o Pro 5, o Teams é ilimitado. Não está no Free.",
+    "es": "El Tender Evaluation Agent comprueba una licitación contra el ámbito, puntúa el encaje y aconseja. Starter incluye 1 ejecución al mes, Pro 5, Teams ilimitado. No está en Free.",
+    "fr": "Le Tender Evaluation Agent vérifie un appel d’offres par rapport au périmètre, note l’adéquation et conseille. Starter inclut 1 exécution par mois, Pro 5, Teams est illimité. Pas sur Free.",
+    "de": "Der Tender Evaluation Agent prüft eine Ausschreibung gegen den Scope, bewertet die Passung und rät. Starter enthält 1 Lauf im Monat, Pro 5, Teams unbegrenzt. Nicht auf Free.",
+    "it": "Il Tender Evaluation Agent controlla una gara rispetto all’ambito, valuta l’aderenza e consiglia. Starter include 1 esecuzione al mese, Pro 5, Teams illimitato. Non è su Free."
+  },
+  "Proposal Manager Agent writes a proposal brief from that evaluation: the requirements, the references the scope already has, the gaps and the steps. Teams only, and only after an evaluation exists for that scope.": {
+    "pt": "O Agente Gestor de Propostas escreve um brief de proposta a partir dessa avaliação: os requisitos, as referências que o âmbito já tem, as lacunas e os passos. Só no Teams, e só depois de existir uma avaliação para esse âmbito.",
+    "es": "El Proposal Manager Agent escribe un brief de propuesta a partir de esa evaluación: los requisitos, las referencias que el ámbito ya tiene, los huecos y los pasos. Solo en Teams, y solo después de que exista una evaluación para ese ámbito.",
+    "fr": "Le Proposal Manager Agent rédige un brief de proposition à partir de cette évaluation : les exigences, les références que le périmètre a déjà, les manques et les étapes. Teams seulement, et seulement après qu’une évaluation existe pour ce périmètre.",
+    "de": "Der Proposal Manager Agent schreibt aus dieser Bewertung einen Angebotsbrief: die Anforderungen, die Referenzen, die der Scope schon hat, die Lücken und die Schritte. Nur auf Teams, und nur nachdem eine Bewertung für diesen Scope existiert.",
+    "it": "Il Proposal Manager Agent scrive un brief di proposta a partire da quella valutazione: i requisiti, i riferimenti che l’ambito ha già, i vuoti e i passi. Solo su Teams, e solo dopo che esiste una valutazione per quell’ambito."
+  },
+  "News Report Agent reads one story and writes what the team should do about it. Pro includes 50 a month, Teams unlimited. Not on Free or Starter.": {
+    "pt": "O Agente de Relatório de Notícias lê uma notícia e escreve o que a equipa deve fazer. O Pro inclui 50 por mês, o Teams é ilimitado. Não está no Free nem no Starter.",
+    "es": "El News Report Agent lee una noticia y escribe qué debe hacer el equipo. Pro incluye 50 al mes, Teams es ilimitado. No está en Free ni en Starter.",
+    "fr": "Le News Report Agent lit un article et écrit ce que l’équipe devrait en faire. Pro en inclut 50 par mois, Teams est illimité. Pas sur Free ni sur Starter.",
+    "de": "Der News Report Agent liest eine Meldung und schreibt, was das Team damit tun sollte. Pro enthält 50 im Monat, Teams unbegrenzt. Nicht auf Free oder Starter.",
+    "it": "Il News Report Agent legge una notizia e scrive cosa dovrebbe fare il team. Pro ne include 50 al mese, Teams è illimitato. Non è su Free né su Starter."
+  },
+  "Documents and the requirement list are written by the platform’s own agents. This server can read them. It cannot configure those agents, upload documents, post, comment, change the plan, or delete a workspace or a scope.": {
+    "pt": "Os documentos e a lista de requisitos são escritos pelos agentes da própria plataforma. Este servidor pode lê-los. Não pode configurar esses agentes, carregar documentos, publicar, comentar, mudar o plano, nem apagar um espaço de trabalho ou um âmbito.",
+    "es": "Los documentos y la lista de requisitos los escriben los agentes de la propia plataforma. Este servidor puede leerlos. No puede configurar esos agentes, subir documentos, publicar, comentar, cambiar el plan ni borrar un espacio de trabajo o un ámbito.",
+    "fr": "Les documents et la liste des exigences sont rédigés par les agents de la plateforme. Ce serveur peut les lire. Il ne peut pas configurer ces agents, téléverser des documents, publier, commenter, changer le forfait, ni supprimer un espace de travail ou un périmètre.",
+    "de": "Dokumente und die Anforderungsliste schreiben die Agenten der Plattform. Dieser Server kann sie lesen. Er kann diese Agenten nicht einrichten, keine Dokumente hochladen, nicht veröffentlichen, nicht kommentieren, den Tarif nicht ändern und keinen Arbeitsbereich oder Scope löschen.",
+    "it": "I documenti e l’elenco dei requisiti li scrivono gli agenti della piattaforma. Questo server può leggerli. Non può configurare quegli agenti, caricare documenti, pubblicare, commentare, cambiare il piano, né eliminare un’area di lavoro o un ambito."
+  },
+  "What you read": {
+    "pt": "O que se lê",
+    "es": "Qué lees",
+    "fr": "Ce que vous lisez",
+    "de": "Was du liest",
+    "it": "Cosa leggi"
+  },
+  "Tenders and news are the items the workspace’s active scopes have found, highest relevance first. A tender has a summary and, while the plan has requirement views left, its requirements. Community posts and comments are the public discussion. A report is the stored writing of Tender Evaluation, the Proposal Manager or the News Report Agent. Reading a stored report does not spend a run. Asking for a new one does.": {
+    "pt": "Concursos e notícias são os itens que os âmbitos ativos do espaço de trabalho encontraram, primeiro os de maior relevância. Um concurso tem um resumo e, enquanto o plano tiver vistas de requisitos, os seus requisitos. As publicações e os comentários da comunidade são a discussão pública. Um relatório é o texto guardado da Avaliação de Concursos, do Gestor de Propostas ou do Agente de Relatório de Notícias. Ler um relatório guardado não gasta uma execução. Pedir um novo gasta.",
+    "es": "Las licitaciones y las noticias son los elementos que han encontrado los ámbitos activos del espacio de trabajo, primero los de mayor relevancia. Una licitación tiene un resumen y, mientras al plan le queden vistas de requisitos, sus requisitos. Las publicaciones y los comentarios de la comunidad son la discusión pública. Un informe es el texto guardado de Tender Evaluation, del Proposal Manager o del News Report Agent. Leer un informe guardado no gasta una ejecución. Pedir uno nuevo sí.",
+    "fr": "Les appels d’offres et les actualités sont les éléments trouvés par les périmètres actifs de l’espace de travail, les plus pertinents d’abord. Un appel d’offres a un résumé et, tant qu’il reste des consultations d’exigences au forfait, ses exigences. Les publications et les commentaires de la communauté sont la discussion publique. Un rapport est le texte enregistré de Tender Evaluation, du Proposal Manager ou du News Report Agent. Lire un rapport enregistré ne consomme pas d’exécution. En demander un nouveau en consomme une.",
+    "de": "Ausschreibungen und Nachrichten sind die Einträge, die die aktiven Scopes des Arbeitsbereichs gefunden haben, die relevantesten zuerst. Eine Ausschreibung hat eine Zusammenfassung und, solange der Tarif noch Anforderungsaufrufe hat, ihre Anforderungen. Beiträge und Kommentare der Community sind die öffentliche Diskussion. Ein Bericht ist der gespeicherte Text von Tender Evaluation, vom Proposal Manager oder vom News Report Agent. Einen gespeicherten Bericht zu lesen verbraucht keinen Lauf. Einen neuen anzufordern verbraucht einen.",
+    "it": "Gare e notizie sono gli elementi trovati dagli ambiti attivi dell’area di lavoro, prima quelli più rilevanti. Una gara ha un riassunto e, finché al piano restano visualizzazioni dei requisiti, i suoi requisiti. I post e i commenti della community sono la discussione pubblica. Un report è il testo salvato di Tender Evaluation, del Proposal Manager o del News Report Agent. Leggere un report salvato non consuma un’esecuzione. Chiederne uno nuovo sì."
+  },
+  "How to connect": {
+    "pt": "Como ligar",
+    "es": "Cómo conectar",
+    "fr": "Comment se connecter",
+    "de": "So verbindest du dich",
+    "it": "Come collegarti"
+  },
+  "The server speaks Streamable HTTP and answers with JSON. Send Accept: application/json, text/event-stream.": {
+    "pt": "O servidor fala Streamable HTTP e responde com JSON. Envie Accept: application/json, text/event-stream.",
+    "es": "El servidor habla Streamable HTTP y responde con JSON. Envía Accept: application/json, text/event-stream.",
+    "fr": "Le serveur parle Streamable HTTP et répond en JSON. Envoyez Accept: application/json, text/event-stream.",
+    "de": "Der Server spricht Streamable HTTP und antwortet mit JSON. Sende Accept: application/json, text/event-stream.",
+    "it": "Il server parla Streamable HTTP e risponde con JSON. Invia Accept: application/json, text/event-stream."
+  },
+  "The server for this site is {server}.": {
+    "pt": "O servidor deste site é {server}.",
+    "es": "El servidor de este sitio es {server}.",
+    "fr": "Le serveur de ce site est {server}.",
+    "de": "Der Server dieser Website ist {server}.",
+    "it": "Il server di questo sito è {server}."
+  },
+  "Send the header Authorization: Bearer and a token that starts with tt_. The user creates it in Account, under External agents. It is shown once. An account can keep 8 live tokens. No token, or a revoked token, is rejected with HTTP 401. Do not ask for the token where other people can see it.": {
+    "pt": "Envie o cabeçalho Authorization: Bearer e um token que começa por tt_. O utilizador cria-o na Conta, em Agentes externos. Só é mostrado uma vez. Uma conta pode ter 8 tokens ativos. Sem token, ou com um token revogado, a resposta é HTTP 401. Não peça o token onde outras pessoas o possam ver.",
+    "es": "Envía la cabecera Authorization: Bearer y un token que empiece por tt_. El usuario lo crea en Cuenta, en Agentes externos. Solo se muestra una vez. Una cuenta puede tener 8 tokens activos. Sin token, o con un token revocado, la respuesta es HTTP 401. No pidas el token donde otras personas puedan verlo.",
+    "fr": "Envoyez l’en-tête Authorization: Bearer et un jeton qui commence par tt_. L’utilisateur le crée dans Compte, sous Agents externes. Il n’est affiché qu’une fois. Un compte peut garder 8 jetons actifs. Sans jeton, ou avec un jeton révoqué, la réponse est HTTP 401. Ne demandez pas le jeton là où d’autres personnes peuvent le voir.",
+    "de": "Sende den Header Authorization: Bearer und ein Token, das mit tt_ beginnt. Die Person erstellt es unter Konto, bei Externe Agenten. Es wird nur einmal angezeigt. Ein Konto kann 8 aktive Tokens behalten. Ohne Token, oder mit einem widerrufenen Token, kommt HTTP 401. Frage nicht nach dem Token, wo andere es sehen können.",
+    "it": "Invia l’header Authorization: Bearer e un token che inizia con tt_. L’utente lo crea in Account, sotto Agenti esterni. Viene mostrato una sola volta. Un account può tenere 8 token attivi. Senza token, o con un token revocato, la risposta è HTTP 401. Non chiedere il token dove altre persone possono vederlo."
+  },
+  "Add a remote MCP server. In mcp.json, paste the token in place of tt_YOUR_TOKEN.": {
+    "pt": "Adicione um servidor MCP remoto. Em mcp.json, cole o token no lugar de tt_YOUR_TOKEN.",
+    "es": "Añade un servidor MCP remoto. En mcp.json, pega el token en el lugar de tt_YOUR_TOKEN.",
+    "fr": "Ajoutez un serveur MCP distant. Dans mcp.json, collez le jeton à la place de tt_YOUR_TOKEN.",
+    "de": "Füge einen entfernten MCP-Server hinzu. In mcp.json fügst du das Token anstelle von tt_YOUR_TOKEN ein.",
+    "it": "Aggiungi un server MCP remoto. In mcp.json, incolla il token al posto di tt_YOUR_TOKEN."
+  },
+  "In Claude Code or Claude Desktop, add a remote HTTP server at {server} and send the header Authorization: Bearer tt_YOUR_TOKEN. In Claude Code’s settings that is:": {
+    "pt": "No Claude Code ou no Claude Desktop, adicione um servidor HTTP remoto em {server} e envie o cabeçalho Authorization: Bearer tt_YOUR_TOKEN. Nas definições do Claude Code é isto:",
+    "es": "En Claude Code o Claude Desktop, añade un servidor HTTP remoto en {server} y envía la cabecera Authorization: Bearer tt_YOUR_TOKEN. En los ajustes de Claude Code es esto:",
+    "fr": "Dans Claude Code ou Claude Desktop, ajoutez un serveur HTTP distant à {server} et envoyez l’en-tête Authorization: Bearer tt_YOUR_TOKEN. Dans les réglages de Claude Code, c’est :",
+    "de": "In Claude Code oder Claude Desktop fügst du einen entfernten HTTP-Server unter {server} hinzu und sendest den Header Authorization: Bearer tt_YOUR_TOKEN. In den Einstellungen von Claude Code ist das:",
+    "it": "In Claude Code o Claude Desktop, aggiungi un server HTTP remoto su {server} e invia l’header Authorization: Bearer tt_YOUR_TOKEN. Nelle impostazioni di Claude Code è questo:"
+  },
+  "Other clients": {
+    "pt": "Outros clientes",
+    "es": "Otros clientes",
+    "fr": "Autres clients",
+    "de": "Andere Clients",
+    "it": "Altri client"
+  },
+  "A client that only talks to a local program can bridge to this server with mcp-remote:": {
+    "pt": "Um cliente que só fala com um programa local pode chegar a este servidor com mcp-remote:",
+    "es": "Un cliente que solo habla con un programa local puede llegar a este servidor con mcp-remote:",
+    "fr": "Un client qui ne parle qu’à un programme local peut joindre ce serveur avec mcp-remote :",
+    "de": "Ein Client, der nur mit einem lokalen Programm spricht, erreicht diesen Server mit mcp-remote:",
+    "it": "Un client che parla solo con un programma locale può raggiungere questo server con mcp-remote:"
+  },
+  "Start here": {
+    "pt": "Comece aqui",
+    "es": "Empieza aquí",
+    "fr": "Commencez ici",
+    "de": "Fang hier an",
+    "it": "Inizia qui"
+  },
+  "Call get_account before you change anything. It returns the plan, what is left this month, and the workspaces you belong to, each with an id, a name, your role and the owner’s plan.": {
+    "pt": "Chame get_account antes de mudar o que quer que seja. Devolve o plano, o que resta este mês e os espaços de trabalho a que pertence, cada um com um id, um nome, o seu papel e o plano do dono.",
+    "es": "Llama a get_account antes de cambiar nada. Devuelve el plan, lo que queda este mes y los espacios de trabajo a los que perteneces, cada uno con un id, un nombre, tu rol y el plan del propietario.",
+    "fr": "Appelez get_account avant de rien modifier. Il renvoie le forfait, ce qu’il reste ce mois-ci et les espaces de travail auxquels vous appartenez, chacun avec un id, un nom, votre rôle et le forfait du propriétaire.",
+    "de": "Rufe get_account auf, bevor du etwas änderst. Es liefert den Tarif, was diesen Monat noch übrig ist, und die Arbeitsbereiche, zu denen du gehörst, jeweils mit einer Id, einem Namen, deiner Rolle und dem Tarif der Eigentümerin oder des Eigentümers.",
+    "it": "Chiama get_account prima di cambiare qualsiasi cosa. Restituisce il piano, quanto resta questo mese e le aree di lavoro a cui appartieni, ciascuna con un id, un nome, il tuo ruolo e il piano del proprietario."
+  },
+  "In the limits, null means unlimited and 0 means the plan does not include it. remaining is null when the limit is unlimited. Pass a workspace id from that list on later calls.": {
+    "pt": "Nos limites, null significa ilimitado e 0 significa que o plano não inclui isso. remaining é null quando o limite é ilimitado. Passe um id de espaço de trabalho dessa lista nas chamadas seguintes.",
+    "es": "En los límites, null significa ilimitado y 0 significa que el plan no lo incluye. remaining es null cuando el límite es ilimitado. Pasa un id de espacio de trabajo de esa lista en las llamadas siguientes.",
+    "fr": "Dans les limites, null signifie illimité et 0 signifie que le forfait ne l’inclut pas. remaining est null quand la limite est illimitée. Passez un id d’espace de travail de cette liste dans les appels suivants.",
+    "de": "In den Limits bedeutet null unbegrenzt und 0, dass der Tarif es nicht enthält. remaining ist null, wenn das Limit unbegrenzt ist. Gib eine Arbeitsbereich-Id aus dieser Liste bei späteren Aufrufen mit.",
+    "it": "Nei limiti, null significa illimitato e 0 significa che il piano non lo include. remaining è null quando il limite è illimitato. Passa un id di area di lavoro di quell’elenco nelle chiamate successive."
+  },
+  "A catalog scope that is switched on uses a scope slot. General does not. Inviting a member needs Teams, and an admin of that workspace. Editing scopes and agents needs an admin, on a plan that allows customizing. A member can read.": {
+    "pt": "Um âmbito de catálogo ligado ocupa um lugar de âmbito. O General não. Convidar um membro exige Teams e um administrador desse espaço de trabalho. Editar âmbitos e agentes exige um administrador, num plano que permita personalizar. Um membro pode ler.",
+    "es": "Un ámbito de catálogo activado ocupa un hueco de ámbito. General no. Invitar a un miembro exige Teams y un administrador de ese espacio de trabajo. Editar ámbitos y agentes exige un administrador, en un plan que permita personalizar. Un miembro puede leer.",
+    "fr": "Un périmètre du catalogue activé occupe un emplacement. General n’en occupe pas. Inviter un membre exige Teams, et un administrateur de cet espace de travail. Modifier les périmètres et les agents exige un administrateur, sur un forfait qui autorise la personnalisation. Un membre peut lire.",
+    "de": "Ein eingeschalteter Katalog-Scope belegt einen Scope-Platz. General nicht. Jemanden einzuladen braucht Teams und eine Admin-Rolle in diesem Arbeitsbereich. Scopes und Agenten zu bearbeiten braucht eine Admin-Rolle, auf einem Tarif, der Anpassen erlaubt. Ein Mitglied kann lesen.",
+    "it": "Un ambito di catalogo attivo occupa un posto. General no. Invitare un membro richiede Teams e un amministratore di quell’area di lavoro. Modificare ambiti e agenti richiede un amministratore, su un piano che consente la personalizzazione. Un membro può leggere."
+  },
+  "A normal job": {
+    "pt": "Um trabalho habitual",
+    "es": "Un trabajo habitual",
+    "fr": "Un travail courant",
+    "de": "Ein normaler Ablauf",
+    "it": "Un lavoro normale"
+  },
+  "Call get_account and pick a workspace_id.": {
+    "pt": "Chame get_account e escolha um workspace_id.",
+    "es": "Llama a get_account y elige un workspace_id.",
+    "fr": "Appelez get_account et choisissez un workspace_id.",
+    "de": "Rufe get_account auf und wähle eine workspace_id.",
+    "it": "Chiama get_account e scegli un workspace_id."
+  },
+  "Call list_scopes. Decide whether to create a custom scope or turn a catalog scope on.": {
+    "pt": "Chame list_scopes. Decida se cria um âmbito personalizado ou se liga um âmbito de catálogo.",
+    "es": "Llama a list_scopes. Decide si creas un ámbito personalizado o si activas un ámbito de catálogo.",
+    "fr": "Appelez list_scopes. Décidez s’il faut créer un périmètre personnalisé ou activer un périmètre du catalogue.",
+    "de": "Rufe list_scopes auf. Entscheide, ob du einen eigenen Scope anlegst oder einen Katalog-Scope einschaltest.",
+    "it": "Chiama list_scopes. Decidi se creare un ambito personalizzato o attivare un ambito di catalogo."
+  },
+  "Call list_scope_agents, then configure_scope_agent with plain-language instructions. Switch a gated agent on only when included is true.": {
+    "pt": "Chame list_scope_agents e depois configure_scope_agent com instruções em linguagem simples. Ligue um agente limitado só quando included for true.",
+    "es": "Llama a list_scope_agents y después a configure_scope_agent con instrucciones en lenguaje claro. Activa un agente restringido solo cuando included sea true.",
+    "fr": "Appelez list_scope_agents, puis configure_scope_agent avec des instructions en langage clair. N’activez un agent réservé que lorsque included est true.",
+    "de": "Rufe list_scope_agents auf und danach configure_scope_agent mit Anweisungen in einfacher Sprache. Schalte einen gesperrten Agenten nur ein, wenn included true ist.",
+    "it": "Chiama list_scope_agents e poi configure_scope_agent con istruzioni in linguaggio semplice. Attiva un agente limitato solo quando included è true."
+  },
+  "Call list_tenders or list_news, then get_tender or get_news for one id from that list.": {
+    "pt": "Chame list_tenders ou list_news e depois get_tender ou get_news para um id dessa lista.",
+    "es": "Llama a list_tenders o list_news y después a get_tender o get_news para un id de esa lista.",
+    "fr": "Appelez list_tenders ou list_news, puis get_tender ou get_news pour un id de cette liste.",
+    "de": "Rufe list_tenders oder list_news auf und danach get_tender oder get_news für eine Id aus dieser Liste.",
+    "it": "Chiama list_tenders o list_news e poi get_tender o get_news per un id di quell’elenco."
+  },
+  "Call get_scope_report to read a report that already exists. Call run_scope_agent only when the user wants a new run and the plan has runs left.": {
+    "pt": "Chame get_scope_report para ler um relatório que já existe. Chame run_scope_agent só quando a pessoa quiser uma execução nova e o plano ainda tiver execuções.",
+    "es": "Llama a get_scope_report para leer un informe que ya existe. Llama a run_scope_agent solo cuando la persona quiera una ejecución nueva y al plan le queden ejecuciones.",
+    "fr": "Appelez get_scope_report pour lire un rapport qui existe déjà. N’appelez run_scope_agent que lorsque la personne veut une nouvelle exécution et qu’il en reste au forfait.",
+    "de": "Rufe get_scope_report auf, um einen Bericht zu lesen, der schon existiert. Rufe run_scope_agent nur auf, wenn die Person einen neuen Lauf will und der Tarif noch Läufe hat.",
+    "it": "Chiama get_scope_report per leggere un report che esiste già. Chiama run_scope_agent solo quando la persona vuole una nuova esecuzione e al piano ne restano."
+  },
+  "Examples": {
+    "pt": "Exemplos",
+    "es": "Ejemplos",
+    "fr": "Exemples",
+    "de": "Beispiele",
+    "it": "Esempi"
+  },
+  "List the tenders in my current workspace and tell me which ones close this month.": {
+    "pt": "Liste os concursos do meu espaço de trabalho atual e diga-me quais fecham este mês.",
+    "es": "Lista las licitaciones de mi espacio de trabajo actual y dime cuáles cierran este mes.",
+    "fr": "Listez les appels d’offres de mon espace de travail actuel et dites-moi lesquels se terminent ce mois-ci.",
+    "de": "Liste die Ausschreibungen in meinem aktuellen Arbeitsbereich und sag mir, welche diesen Monat enden.",
+    "it": "Elenca le gare della mia area di lavoro attuale e dimmi quali chiudono questo mese."
+  },
+  "Create a scope for hospital IT tenders in Portugal, and set the Search Agent to follow that.": {
+    "pt": "Crie um âmbito para concursos de informática hospitalar em Portugal e ponha o Agente de Pesquisa a seguir isso.",
+    "es": "Crea un ámbito para licitaciones de informática hospitalaria en Portugal y pon el Search Agent a seguir eso.",
+    "fr": "Créez un périmètre pour les appels d’offres d’informatique hospitalière au Portugal, et réglez le Search Agent pour les suivre.",
+    "de": "Lege einen Scope für Krankenhaus-IT-Ausschreibungen in Portugal an und stell den Search Agent darauf ein.",
+    "it": "Crea un ambito per le gare di informatica ospedaliera in Portogallo e imposta il Search Agent perché le segua."
+  },
+  "Read the stored news report for this story. If there is none, and the plan has runs left, write one.": {
+    "pt": "Leia o relatório de notícias guardado desta notícia. Se não houver, e o plano ainda tiver execuções, escreva um.",
+    "es": "Lee el informe de noticias guardado de esta noticia. Si no hay, y al plan le quedan ejecuciones, escribe uno.",
+    "fr": "Lisez le rapport d’actualité enregistré pour cet article. S’il n’y en a pas, et qu’il reste des exécutions au forfait, rédigez-en un.",
+    "de": "Lies den gespeicherten Nachrichtenbericht zu dieser Meldung. Wenn es keinen gibt und der Tarif noch Läufe hat, schreib einen.",
+    "it": "Leggi il report di notizie salvato di questa notizia. Se non c’è, e al piano restano esecuzioni, scrivine uno."
+  },
+  "Purpose: know who you are acting as, and what the plan still allows, before you create or run anything.": {
+    "pt": "Finalidade: saber como quem está a agir, e o que o plano ainda permite, antes de criar ou executar o que quer que seja.",
+    "es": "Para qué: saber como quién actúas y qué permite todavía el plan, antes de crear o ejecutar nada.",
+    "fr": "À quoi ça sert : savoir pour quel compte vous agissez, et ce que le forfait autorise encore, avant de créer ou de lancer quoi que ce soit.",
+    "de": "Wozu: wissen, als wen du handelst und was der Tarif noch erlaubt, bevor du etwas anlegst oder startest.",
+    "it": "A cosa serve: sapere come chi stai agendo e cosa il piano consente ancora, prima di creare o eseguire qualsiasi cosa."
+  },
+  "How: no arguments. You get the plan, the month’s usage and the workspaces.": {
+    "pt": "Como: sem argumentos. Recebe o plano, o uso do mês e os espaços de trabalho.",
+    "es": "Cómo: sin argumentos. Obtienes el plan, el uso del mes y los espacios de trabajo.",
+    "fr": "Comment : aucun argument. Vous obtenez le forfait, l’usage du mois et les espaces de travail.",
+    "de": "So: keine Argumente. Du bekommst den Tarif, den Verbrauch des Monats und die Arbeitsbereiche.",
+    "it": "Come: nessun argomento. Ottieni il piano, l’uso del mese e le aree di lavoro."
+  },
+  "Purpose: choose where to work when the account has more than one workspace.": {
+    "pt": "Finalidade: escolher onde trabalhar quando a conta tem mais do que um espaço de trabalho.",
+    "es": "Para qué: elegir dónde trabajar cuando la cuenta tiene más de un espacio de trabajo.",
+    "fr": "À quoi ça sert : choisir où travailler quand le compte a plus d’un espace de travail.",
+    "de": "Wozu: wählen, wo du arbeitest, wenn das Konto mehr als einen Arbeitsbereich hat.",
+    "it": "A cosa serve: scegliere dove lavorare quando l’account ha più di un’area di lavoro."
+  },
+  "How: no arguments. You get each workspace’s id, name, your role, the owner and the plan.": {
+    "pt": "Como: sem argumentos. Recebe o id, o nome, o seu papel, o dono e o plano de cada espaço de trabalho.",
+    "es": "Cómo: sin argumentos. Obtienes el id, el nombre, tu rol, el propietario y el plan de cada espacio de trabajo.",
+    "fr": "Comment : aucun argument. Vous obtenez l’id, le nom, votre rôle, le propriétaire et le forfait de chaque espace de travail.",
+    "de": "So: keine Argumente. Du bekommst Id, Name, deine Rolle, die Eigentümerin oder den Eigentümer und den Tarif jedes Arbeitsbereichs.",
+    "it": "Come: nessun argomento. Ottieni id, nome, il tuo ruolo, il proprietario e il piano di ogni area di lavoro."
+  },
+  "Purpose: open another place for scopes and members, when the plan includes another workspace.": {
+    "pt": "Finalidade: abrir outro sítio para âmbitos e membros, quando o plano inclui outro espaço de trabalho.",
+    "es": "Para qué: abrir otro sitio para ámbitos y miembros, cuando el plan incluye otro espacio de trabajo.",
+    "fr": "À quoi ça sert : ouvrir un autre endroit pour des périmètres et des membres, quand le forfait inclut un autre espace de travail.",
+    "de": "Wozu: einen weiteren Ort für Scopes und Mitglieder öffnen, wenn der Tarif einen weiteren Arbeitsbereich enthält.",
+    "it": "A cosa serve: aprire un altro posto per ambiti e membri, quando il piano include un’altra area di lavoro."
+  },
+  "How: name, at least 2 characters. You get the new id and name. The workspace open in the browser does not change. Free, Starter and Pro include one workspace. Teams is unlimited.": {
+    "pt": "Como: name, com pelo menos 2 caracteres. Recebe o id e o nome novos. O espaço de trabalho aberto no navegador não muda. Free, Starter e Pro incluem um espaço de trabalho. O Teams é ilimitado.",
+    "es": "Cómo: name, de al menos 2 caracteres. Obtienes el id y el nombre nuevos. El espacio de trabajo abierto en el navegador no cambia. Free, Starter y Pro incluyen un espacio de trabajo. Teams es ilimitado.",
+    "fr": "Comment : name, au moins 2 caractères. Vous obtenez le nouvel id et le nom. L’espace de travail ouvert dans le navigateur ne change pas. Free, Starter et Pro incluent un espace de travail. Teams est illimité.",
+    "de": "So: name, mindestens 2 Zeichen. Du bekommst die neue Id und den Namen. Der im Browser geöffnete Arbeitsbereich ändert sich nicht. Free, Starter und Pro enthalten einen Arbeitsbereich. Teams ist unbegrenzt.",
+    "it": "Come: name, almeno 2 caratteri. Ottieni il nuovo id e il nome. L’area di lavoro aperta nel browser non cambia. Free, Starter e Pro includono un’area di lavoro. Teams è illimitato."
+  },
+  "Purpose: add a person to a workspace.": {
+    "pt": "Finalidade: acrescentar uma pessoa a um espaço de trabalho.",
+    "es": "Para qué: añadir a una persona a un espacio de trabajo.",
+    "fr": "À quoi ça sert : ajouter une personne à un espace de travail.",
+    "de": "Wozu: eine Person zu einem Arbeitsbereich hinzufügen.",
+    "it": "A cosa serve: aggiungere una persona a un’area di lavoro."
+  },
+  "How: workspace_id, an optional email, and role admin or member. You must be an admin, and the workspace owner must be on Teams. You get a link that works for 14 days.": {
+    "pt": "Como: workspace_id, um email opcional e role admin ou member. Tem de ser administrador, e o dono do espaço de trabalho tem de estar no Teams. Recebe uma ligação válida durante 14 dias.",
+    "es": "Cómo: workspace_id, un email opcional y role admin o member. Tienes que ser administrador, y el propietario del espacio de trabajo tiene que estar en Teams. Obtienes un enlace válido durante 14 días.",
+    "fr": "Comment : workspace_id, un e-mail facultatif et role admin ou member. Vous devez être administrateur, et le propriétaire de l’espace de travail doit être sur Teams. Vous obtenez un lien valable 14 jours.",
+    "de": "So: workspace_id, eine optionale E-Mail und role admin oder member. Du musst Admin sein, und die Person, der der Arbeitsbereich gehört, muss auf Teams sein. Du bekommst einen Link, der 14 Tage gilt.",
+    "it": "Come: workspace_id, un’email facoltativa e role admin o member. Devi essere amministratore, e il proprietario dell’area di lavoro deve essere su Teams. Ottieni un link valido per 14 giorni."
+  },
+  "Purpose: see General, the catalog and this workspace’s own scopes, and how many scope slots are used.": {
+    "pt": "Finalidade: ver o General, o catálogo e os âmbitos deste espaço de trabalho, e quantos lugares de âmbito estão usados.",
+    "es": "Para qué: ver General, el catálogo y los ámbitos de este espacio de trabajo, y cuántos huecos de ámbito están usados.",
+    "fr": "À quoi ça sert : voir General, le catalogue et les périmètres de cet espace de travail, et combien d’emplacements sont utilisés.",
+    "de": "Wozu: General, den Katalog und die eigenen Scopes dieses Arbeitsbereichs sehen, und wie viele Scope-Plätze belegt sind.",
+    "it": "A cosa serve: vedere General, il catalogo e gli ambiti di questa area di lavoro, e quanti posti sono usati."
+  },
+  "How: optional workspace_id. You get planScopes (null when unlimited), used, canCustomize, and each scope’s id, name, kind (general, catalog or custom), whether it is active, and whether you can edit it.": {
+    "pt": "Como: workspace_id opcional. Recebe planScopes (null quando é ilimitado), used, canCustomize, e o id, o nome, o kind (general, catalog ou custom), se está ativo e se o pode editar, de cada âmbito.",
+    "es": "Cómo: workspace_id opcional. Obtienes planScopes (null cuando es ilimitado), used, canCustomize, y el id, el nombre, el kind (general, catalog o custom), si está activo y si puedes editarlo, de cada ámbito.",
+    "fr": "Comment : workspace_id facultatif. Vous obtenez planScopes (null s’il est illimité), used, canCustomize, et pour chaque périmètre l’id, le nom, le kind (general, catalog ou custom), s’il est actif et si vous pouvez le modifier.",
+    "de": "So: optionale workspace_id. Du bekommst planScopes (null, wenn unbegrenzt), used, canCustomize und für jeden Scope Id, Name, kind (general, catalog oder custom), ob er aktiv ist und ob du ihn bearbeiten kannst.",
+    "it": "Come: workspace_id facoltativo. Ottieni planScopes (null quando è illimitato), used, canCustomize, e per ogni ambito id, nome, kind (general, catalog o custom), se è attivo e se puoi modificarlo."
+  },
+  "Purpose: make a custom radar for this workspace.": {
+    "pt": "Finalidade: fazer um radar personalizado para este espaço de trabalho.",
+    "es": "Para qué: hacer un radar personalizado para este espacio de trabajo.",
+    "fr": "À quoi ça sert : faire un radar personnalisé pour cet espace de travail.",
+    "de": "Wozu: ein eigenes Radar für diesen Arbeitsbereich anlegen.",
+    "it": "A cosa serve: fare un radar personalizzato per questa area di lavoro."
+  },
+  "How: workspace_id, name, and optional instructions describing what it should follow. It uses one scope slot. Not included on Free. You must be an admin on a plan that allows customizing.": {
+    "pt": "Como: workspace_id, name e instructions opcionais a descrever o que deve seguir. Ocupa um lugar de âmbito. Não está incluído no Free. Tem de ser administrador num plano que permita personalizar.",
+    "es": "Cómo: workspace_id, name e instructions opcionales que describen qué debe seguir. Ocupa un hueco de ámbito. No está incluido en Free. Tienes que ser administrador en un plan que permita personalizar.",
+    "fr": "Comment : workspace_id, name, et instructions facultatives décrivant ce qu’il doit suivre. Il occupe un emplacement. Pas inclus dans Free. Vous devez être administrateur sur un forfait qui autorise la personnalisation.",
+    "de": "So: workspace_id, name und optionale instructions, die beschreiben, was er verfolgen soll. Er belegt einen Scope-Platz. Nicht in Free enthalten. Du musst Admin auf einem Tarif sein, der Anpassen erlaubt.",
+    "it": "Come: workspace_id, name e instructions facoltative che descrivono cosa deve seguire. Occupa un posto. Non è incluso in Free. Devi essere amministratore su un piano che consente la personalizzazione."
+  },
+  "Purpose: rename a custom scope, change what it is about, or switch it on or off.": {
+    "pt": "Finalidade: mudar o nome de um âmbito personalizado, mudar o assunto, ou ligá-lo ou desligá-lo.",
+    "es": "Para qué: renombrar un ámbito personalizado, cambiar de qué trata, o activarlo o desactivarlo.",
+    "fr": "À quoi ça sert : renommer un périmètre personnalisé, changer son sujet, ou l’activer ou le désactiver.",
+    "de": "Wozu: einen eigenen Scope umbenennen, ändern, worum es geht, oder ihn ein- oder ausschalten.",
+    "it": "A cosa serve: rinominare un ambito personalizzato, cambiare di cosa tratta, o attivarlo o disattivarlo."
+  },
+  "How: scope_id, and any of name, instructions and active. For General, the only change allowed is active, and only while another scope is on. Pass workspace_id so the right workspace shows or hides General. Catalog scopes cannot be edited here.": {
+    "pt": "Como: scope_id e qualquer um de name, instructions e active. No General, a única mudança permitida é active, e só enquanto outro âmbito estiver ligado. Passe workspace_id para o espaço de trabalho certo mostrar ou esconder o General. Os âmbitos de catálogo não se editam aqui.",
+    "es": "Cómo: scope_id y cualquiera de name, instructions y active. En General, el único cambio permitido es active, y solo mientras otro ámbito esté activado. Pasa workspace_id para que el espacio de trabajo correcto muestre u oculte General. Los ámbitos de catálogo no se editan aquí.",
+    "fr": "Comment : scope_id, et n’importe lequel de name, instructions et active. Pour General, le seul changement permis est active, et seulement pendant qu’un autre périmètre est activé. Passez workspace_id pour que le bon espace de travail affiche ou masque General. Les périmètres du catalogue ne s’éditent pas ici.",
+    "de": "So: scope_id und eines von name, instructions und active. Bei General ist die einzige erlaubte Änderung active, und nur solange ein anderer Scope an ist. Gib workspace_id mit, damit der richtige Arbeitsbereich General ein- oder ausblendet. Katalog-Scopes lassen sich hier nicht bearbeiten.",
+    "it": "Come: scope_id e uno qualsiasi tra name, instructions e active. Per General, l’unica modifica consentita è active, e solo mentre un altro ambito è attivo. Passa workspace_id perché l’area di lavoro giusta mostri o nasconda General. Gli ambiti di catalogo non si modificano qui."
+  },
+  "Purpose: follow or stop following a shared catalog scope.": {
+    "pt": "Finalidade: seguir ou deixar de seguir um âmbito de catálogo partilhado.",
+    "es": "Para qué: seguir o dejar de seguir un ámbito de catálogo compartido.",
+    "fr": "À quoi ça sert : suivre ou ne plus suivre un périmètre partagé du catalogue.",
+    "de": "Wozu: einem gemeinsamen Katalog-Scope folgen oder nicht mehr folgen.",
+    "it": "A cosa serve: seguire o smettere di seguire un ambito di catalogo condiviso."
+  },
+  "How: workspace_id, scope_id and enabled. Turning one on uses a scope slot. You must be an admin.": {
+    "pt": "Como: workspace_id, scope_id e enabled. Ligar um ocupa um lugar de âmbito. Tem de ser administrador.",
+    "es": "Cómo: workspace_id, scope_id y enabled. Activar uno ocupa un hueco de ámbito. Tienes que ser administrador.",
+    "fr": "Comment : workspace_id, scope_id et enabled. En activer un occupe un emplacement. Vous devez être administrateur.",
+    "de": "So: workspace_id, scope_id und enabled. Einen einzuschalten belegt einen Scope-Platz. Du musst Admin sein.",
+    "it": "Come: workspace_id, scope_id e enabled. Attivarne uno occupa un posto. Devi essere amministratore."
+  },
+  "Purpose: see the five scope agents, whether the plan includes each one, and whether it is switched on.": {
+    "pt": "Finalidade: ver os cinco agentes do âmbito, se o plano inclui cada um e se está ligado.",
+    "es": "Para qué: ver los cinco agentes del ámbito, si el plan incluye cada uno y si está activado.",
+    "fr": "À quoi ça sert : voir les cinq agents du périmètre, si le forfait inclut chacun, et s’il est activé.",
+    "de": "Wozu: die fünf Scope-Agenten sehen, ob der Tarif jeden enthält und ob er eingeschaltet ist.",
+    "it": "A cosa serve: vedere i cinque agenti dell’ambito, se il piano include ciascuno e se è attivo."
+  },
+  "How: scope_id and optional workspace_id. You get each agent’s key, name, role, included, enabled, instructions and whether its prompt has been customised. included is false when the plan does not have that agent. Do not try to switch it on.": {
+    "pt": "Como: scope_id e workspace_id opcional. Recebe a key, o name, o role, included, enabled, instructions e se o prompt foi personalizado, de cada agente. included é false quando o plano não tem esse agente. Não tente ligá-lo.",
+    "es": "Cómo: scope_id y workspace_id opcional. Obtienes la key, el name, el role, included, enabled, instructions y si el prompt se ha personalizado, de cada agente. included es false cuando el plan no tiene ese agente. No intentes activarlo.",
+    "fr": "Comment : scope_id et workspace_id facultatif. Vous obtenez pour chaque agent key, name, role, included, enabled, instructions et si son prompt a été personnalisé. included est false quand le forfait n’a pas cet agent. N’essayez pas de l’activer.",
+    "de": "So: scope_id und optionale workspace_id. Du bekommst für jeden Agenten key, name, role, included, enabled, instructions und ob der Prompt angepasst wurde. included ist false, wenn der Tarif diesen Agenten nicht hat. Versuche nicht, ihn einzuschalten.",
+    "it": "Come: scope_id e workspace_id facoltativo. Ottieni per ogni agente key, name, role, included, enabled, instructions e se il prompt è stato personalizzato. included è false quando il piano non ha quell’agente. Non provare ad attivarlo."
+  },
+  "Purpose: tell a scope agent how to work, or switch it on or off.": {
+    "pt": "Finalidade: dizer a um agente do âmbito como trabalhar, ou ligá-lo ou desligá-lo.",
+    "es": "Para qué: decirle a un agente del ámbito cómo trabajar, o activarlo o desactivarlo.",
+    "fr": "À quoi ça sert : dire à un agent du périmètre comment travailler, ou l’activer ou le désactiver.",
+    "de": "Wozu: einem Scope-Agenten sagen, wie er arbeiten soll, oder ihn ein- oder ausschalten.",
+    "it": "A cosa serve: dire a un agente dell’ambito come lavorare, o attivarlo o disattivarlo."
+  },
+  "How: scope_id, agent (search, triage, tender_evaluation, proposal_manager or news_report), and any of enabled, instructions and, for search only, search_config. Instructions are plain language. For search they are parsed into the search configuration. For the others they rewrite that agent’s prompt. Send instructions unless you are handing back a search_config you were given. Empty instructions clear the customisation. Switching a gated agent on fails when the plan does not include it. The call can take a while. You must be an admin of a custom scope, on a plan that allows customizing.": {
+    "pt": "Como: scope_id, agent (search, triage, tender_evaluation, proposal_manager ou news_report) e qualquer um de enabled, instructions e, só para search, search_config. As instructions são linguagem simples. Na pesquisa são interpretadas para a configuração de pesquisa. Nos outros reescrevem o prompt desse agente. Envie instructions, a menos que esteja a devolver um search_config que lhe foi dado. Instructions vazias limpam a personalização. Ligar um agente limitado falha quando o plano não o inclui. A chamada pode demorar. Tem de ser administrador de um âmbito personalizado, num plano que permita personalizar.",
+    "es": "Cómo: scope_id, agent (search, triage, tender_evaluation, proposal_manager o news_report) y cualquiera de enabled, instructions y, solo para search, search_config. Las instructions son lenguaje claro. En la búsqueda se interpretan como la configuración de búsqueda. En los demás reescriben el prompt de ese agente. Envía instructions, salvo que estés devolviendo un search_config que te dieron. Unas instructions vacías borran la personalización. Activar un agente restringido falla cuando el plan no lo incluye. La llamada puede tardar. Tienes que ser administrador de un ámbito personalizado, en un plan que permita personalizar.",
+    "fr": "Comment : scope_id, agent (search, triage, tender_evaluation, proposal_manager ou news_report), et n’importe lequel de enabled, instructions et, pour search seulement, search_config. Les instructions sont en langage clair. Pour la recherche, elles sont interprétées en configuration de recherche. Pour les autres, elles réécrivent le prompt de cet agent. Envoyez instructions, sauf si vous rendez un search_config qu’on vous a donné. Des instructions vides effacent la personnalisation. Activer un agent réservé échoue quand le forfait ne l’inclut pas. L’appel peut prendre du temps. Vous devez être administrateur d’un périmètre personnalisé, sur un forfait qui autorise la personnalisation.",
+    "de": "So: scope_id, agent (search, triage, tender_evaluation, proposal_manager oder news_report) und eines von enabled, instructions und, nur bei search, search_config. instructions sind einfache Sprache. Bei der Suche werden sie in die Suchkonfiguration übersetzt. Bei den anderen schreiben sie den Prompt dieses Agenten um. Sende instructions, außer du gibst ein search_config zurück, das du bekommen hast. Leere instructions löschen die Anpassung. Einen gesperrten Agenten einzuschalten scheitert, wenn der Tarif ihn nicht enthält. Der Aufruf kann dauern. Du musst Admin eines eigenen Scopes sein, auf einem Tarif, der Anpassen erlaubt.",
+    "it": "Come: scope_id, agent (search, triage, tender_evaluation, proposal_manager o news_report) e uno qualsiasi tra enabled, instructions e, solo per search, search_config. Le instructions sono linguaggio semplice. Per la ricerca vengono interpretate nella configurazione di ricerca. Per gli altri riscrivono il prompt di quell’agente. Invia instructions, a meno che tu non stia restituendo un search_config che ti è stato dato. Istruzioni vuote cancellano la personalizzazione. Attivare un agente limitato fallisce quando il piano non lo include. La chiamata può richiedere tempo. Devi essere amministratore di un ambito personalizzato, su un piano che consente la personalizzazione."
+  },
+  "list_tenders and get_tender": {
+    "pt": "list_tenders e get_tender",
+    "es": "list_tenders y get_tender",
+    "fr": "list_tenders et get_tender",
+    "de": "list_tenders und get_tender",
+    "it": "list_tenders e get_tender"
+  },
+  "Purpose: read the tenders the workspace’s active scopes have found. This does not run an agent.": {
+    "pt": "Finalidade: ler os concursos que os âmbitos ativos do espaço de trabalho encontraram. Isto não corre um agente.",
+    "es": "Para qué: leer las licitaciones que han encontrado los ámbitos activos del espacio de trabajo. Esto no ejecuta un agente.",
+    "fr": "À quoi ça sert : lire les appels d’offres trouvés par les périmètres actifs de l’espace de travail. Cela ne lance pas d’agent.",
+    "de": "Wozu: die Ausschreibungen lesen, die die aktiven Scopes des Arbeitsbereichs gefunden haben. Das startet keinen Agenten.",
+    "it": "A cosa serve: leggere le gare trovate dagli ambiti attivi dell’area di lavoro. Questo non esegue un agente."
+  },
+  "How: list_tenders takes optional workspace_id and limit (1 to 30, default 20), highest relevance first. get_tender takes the id from that list. You get the title, buyer, country, type, status, deadline, value and summary. Requirements are included while the plan has views left. Free counts 2 tender pages a month, Starter 10. Pro and Teams do not count them. Past the limit, the tender comes back with requirements null. An evaluation or a proposal brief is included only when the plan has that agent. Comments are included.": {
+    "pt": "Como: list_tenders recebe workspace_id opcional e limit (1 a 30, predefinição 20), primeiro a maior relevância. get_tender recebe o id dessa lista. Recebe o título, o comprador, o país, o tipo, o estado, o prazo, o valor e o resumo. Os requisitos entram enquanto o plano tiver vistas. O Free conta 2 páginas de concurso por mês, o Starter 10. O Pro e o Teams não as contam. Passado o limite, o concurso volta com requirements null. Uma avaliação ou um brief de proposta só entra quando o plano tem esse agente. Os comentários entram.",
+    "es": "Cómo: list_tenders recibe workspace_id opcional y limit (1 a 30, predeterminado 20), primero la mayor relevancia. get_tender recibe el id de esa lista. Obtienes el título, el comprador, el país, el tipo, el estado, el plazo, el valor y el resumen. Los requisitos entran mientras al plan le queden vistas. Free cuenta 2 páginas de licitación al mes, Starter 10. Pro y Teams no las cuentan. Pasado el límite, la licitación vuelve con requirements null. Una evaluación o un brief de propuesta solo entra cuando el plan tiene ese agente. Los comentarios entran.",
+    "fr": "Comment : list_tenders prend workspace_id facultatif et limit (1 à 30, 20 par défaut), les plus pertinents d’abord. get_tender prend l’id de cette liste. Vous obtenez le titre, l’acheteur, le pays, le type, l’état, l’échéance, la valeur et le résumé. Les exigences sont incluses tant qu’il reste des consultations au forfait. Free compte 2 pages d’appel d’offres par mois, Starter 10. Pro et Teams ne les comptent pas. Au-delà de la limite, l’appel d’offres revient avec requirements null. Une évaluation ou un brief de proposition n’est inclus que si le forfait a cet agent. Les commentaires sont inclus.",
+    "de": "So: list_tenders nimmt optionale workspace_id und limit (1 bis 30, Standard 20), die relevantesten zuerst. get_tender nimmt die Id aus dieser Liste. Du bekommst Titel, Auftraggeber, Land, Typ, Status, Frist, Wert und Zusammenfassung. Anforderungen sind dabei, solange der Tarif noch Aufrufe hat. Free zählt 2 Ausschreibungsseiten im Monat, Starter 10. Pro und Teams zählen sie nicht. Über dem Limit kommt die Ausschreibung mit requirements null zurück. Eine Bewertung oder ein Angebotsbrief ist nur dabei, wenn der Tarif diesen Agenten hat. Kommentare sind dabei.",
+    "it": "Come: list_tenders riceve workspace_id facoltativo e limit (da 1 a 30, predefinito 20), prima la rilevanza più alta. get_tender riceve l’id di quell’elenco. Ottieni titolo, acquirente, paese, tipo, stato, scadenza, valore e riassunto. I requisiti sono inclusi finché al piano restano visualizzazioni. Free conta 2 pagine di gara al mese, Starter 10. Pro e Teams non le contano. Oltre il limite, la gara torna con requirements null. Una valutazione o un brief di proposta è incluso solo quando il piano ha quell’agente. I commenti sono inclusi."
+  },
+  "list_news and get_news": {
+    "pt": "list_news e get_news",
+    "es": "list_news y get_news",
+    "fr": "list_news et get_news",
+    "de": "list_news und get_news",
+    "it": "list_news e get_news"
+  },
+  "Purpose: read the news the active scopes have found.": {
+    "pt": "Finalidade: ler as notícias que os âmbitos ativos encontraram.",
+    "es": "Para qué: leer las noticias que han encontrado los ámbitos activos.",
+    "fr": "À quoi ça sert : lire les actualités trouvées par les périmètres actifs.",
+    "de": "Wozu: die Nachrichten lesen, die die aktiven Scopes gefunden haben.",
+    "it": "A cosa serve: leggere le notizie trovate dagli ambiti attivi."
+  },
+  "How: same shape as tenders. get_news includes the News Report Agent’s stored reports, and the long summary, only on Pro and Teams. Comments are included.": {
+    "pt": "Como: a mesma forma que os concursos. get_news inclui os relatórios guardados do Agente de Relatório de Notícias, e o resumo longo, só no Pro e no Teams. Os comentários entram.",
+    "es": "Cómo: la misma forma que las licitaciones. get_news incluye los informes guardados del News Report Agent, y el resumen largo, solo en Pro y Teams. Los comentarios entran.",
+    "fr": "Comment : même forme que les appels d’offres. get_news inclut les rapports enregistrés du News Report Agent, et le résumé long, seulement sur Pro et Teams. Les commentaires sont inclus.",
+    "de": "So: gleiche Form wie die Ausschreibungen. get_news enthält die gespeicherten Berichte des News Report Agent und die lange Zusammenfassung nur auf Pro und Teams. Kommentare sind dabei.",
+    "it": "Come: la stessa forma delle gare. get_news include i report salvati del News Report Agent, e il riassunto lungo, solo su Pro e Teams. I commenti sono inclusi."
+  },
+  "list_posts, get_post and get_comments": {
+    "pt": "list_posts, get_post e get_comments",
+    "es": "list_posts, get_post y get_comments",
+    "fr": "list_posts, get_post et get_comments",
+    "de": "list_posts, get_post und get_comments",
+    "it": "list_posts, get_post e get_comments"
+  },
+  "Purpose: read the community. You cannot publish from here.": {
+    "pt": "Finalidade: ler a comunidade. Não pode publicar a partir daqui.",
+    "es": "Para qué: leer la comunidad. No puedes publicar desde aquí.",
+    "fr": "À quoi ça sert : lire la communauté. Vous ne pouvez pas publier d’ici.",
+    "de": "Wozu: die Community lesen. Von hier aus kannst du nicht veröffentlichen.",
+    "it": "A cosa serve: leggere la community. Non puoi pubblicare da qui."
+  },
+  "How: list_posts takes limit. get_post takes the post id and includes its comments. get_comments takes item_type (post, news or tender) and item_id, and returns that thread.": {
+    "pt": "Como: list_posts recebe limit. get_post recebe o id da publicação e inclui os comentários. get_comments recebe item_type (post, news ou tender) e item_id, e devolve essa conversa.",
+    "es": "Cómo: list_posts recibe limit. get_post recibe el id de la publicación e incluye los comentarios. get_comments recibe item_type (post, news o tender) e item_id, y devuelve ese hilo.",
+    "fr": "Comment : list_posts prend limit. get_post prend l’id de la publication et inclut ses commentaires. get_comments prend item_type (post, news ou tender) et item_id, et renvoie ce fil.",
+    "de": "So: list_posts nimmt limit. get_post nimmt die Beitrags-Id und enthält die Kommentare. get_comments nimmt item_type (post, news oder tender) und item_id und liefert diesen Thread.",
+    "it": "Come: list_posts riceve limit. get_post riceve l’id del post e include i commenti. get_comments riceve item_type (post, news o tender) e item_id, e restituisce quel filo."
+  },
+  "Purpose: read a report that was already written, without spending a monthly run.": {
+    "pt": "Finalidade: ler um relatório que já foi escrito, sem gastar uma execução mensal.",
+    "es": "Para qué: leer un informe que ya se escribió, sin gastar una ejecución mensual.",
+    "fr": "À quoi ça sert : lire un rapport déjà rédigé, sans consommer d’exécution mensuelle.",
+    "de": "Wozu: einen Bericht lesen, der schon geschrieben wurde, ohne einen monatlichen Lauf zu verbrauchen.",
+    "it": "A cosa serve: leggere un report già scritto, senza consumare un’esecuzione mensile."
+  },
+  "How: scope_id, item_id (a tender id or a news id), kind (tender_evaluation, proposal_brief or news_report) and optional workspace_id. The plan must include that agent. If none has been written, report is null.": {
+    "pt": "Como: scope_id, item_id (um id de concurso ou de notícia), kind (tender_evaluation, proposal_brief ou news_report) e workspace_id opcional. O plano tem de incluir esse agente. Se ainda não foi escrito, report é null.",
+    "es": "Cómo: scope_id, item_id (un id de licitación o de noticia), kind (tender_evaluation, proposal_brief o news_report) y workspace_id opcional. El plan tiene que incluir ese agente. Si todavía no se ha escrito, report es null.",
+    "fr": "Comment : scope_id, item_id (un id d’appel d’offres ou d’actualité), kind (tender_evaluation, proposal_brief ou news_report) et workspace_id facultatif. Le forfait doit inclure cet agent. Si rien n’a été rédigé, report est null.",
+    "de": "So: scope_id, item_id (eine Ausschreibungs- oder Nachrichten-Id), kind (tender_evaluation, proposal_brief oder news_report) und optionale workspace_id. Der Tarif muss diesen Agenten enthalten. Wenn noch nichts geschrieben wurde, ist report null.",
+    "it": "Come: scope_id, item_id (un id di gara o di notizia), kind (tender_evaluation, proposal_brief o news_report) e workspace_id facoltativo. Il piano deve includere quell’agente. Se non è ancora stato scritto, report è null."
+  },
+  "Purpose: write a new Tender Evaluation, proposal brief or news report.": {
+    "pt": "Finalidade: escrever uma Avaliação de Concursos, um brief de proposta ou um relatório de notícias novo.",
+    "es": "Para qué: escribir una Tender Evaluation, un brief de propuesta o un informe de noticias nuevo.",
+    "fr": "À quoi ça sert : rédiger une nouvelle Tender Evaluation, un brief de proposition ou un rapport d’actualité.",
+    "de": "Wozu: eine neue Tender Evaluation, einen Angebotsbrief oder einen Nachrichtenbericht schreiben.",
+    "it": "A cosa serve: scrivere una nuova Tender Evaluation, un brief di proposta o un report di notizie."
+  },
+  "How: scope_id, item_id and agent (tender_evaluation, proposal_manager or news_report), plus workspace_id. It uses one of the workspace’s monthly runs. A re-run counts. A failed run does not. You must be an admin, and the scope must be one this workspace is viewing. It refuses when the plan does not include the agent or the month’s runs are used up. A proposal brief needs an evaluation for that scope first.": {
+    "pt": "Como: scope_id, item_id e agent (tender_evaluation, proposal_manager ou news_report), mais workspace_id. Gasta uma das execuções mensais do espaço de trabalho. Voltar a correr conta. Uma execução falhada não. Tem de ser administrador, e o âmbito tem de ser um que este espaço de trabalho está a ver. Recusa quando o plano não inclui o agente ou as execuções do mês se esgotaram. Um brief de proposta precisa primeiro de uma avaliação para esse âmbito.",
+    "es": "Cómo: scope_id, item_id y agent (tender_evaluation, proposal_manager o news_report), más workspace_id. Gasta una de las ejecuciones mensuales del espacio de trabajo. Volver a ejecutarla cuenta. Una ejecución fallida no. Tienes que ser administrador, y el ámbito tiene que ser uno que este espacio de trabajo está viendo. Se niega cuando el plan no incluye el agente o se agotaron las ejecuciones del mes. Un brief de propuesta necesita primero una evaluación para ese ámbito.",
+    "fr": "Comment : scope_id, item_id et agent (tender_evaluation, proposal_manager ou news_report), plus workspace_id. Cela consomme une des exécutions mensuelles de l’espace de travail. Une nouvelle exécution compte. Une exécution échouée ne compte pas. Vous devez être administrateur, et le périmètre doit en être un que cet espace de travail consulte. L’appel est refusé quand le forfait n’inclut pas l’agent ou que les exécutions du mois sont épuisées. Un brief de proposition exige d’abord une évaluation pour ce périmètre.",
+    "de": "So: scope_id, item_id und agent (tender_evaluation, proposal_manager oder news_report), plus workspace_id. Es verbraucht einen der monatlichen Läufe des Arbeitsbereichs. Ein erneuter Lauf zählt. Ein fehlgeschlagener Lauf nicht. Du musst Admin sein, und der Scope muss einer sein, den dieser Arbeitsbereich ansieht. Es lehnt ab, wenn der Tarif den Agenten nicht enthält oder die Läufe des Monats aufgebraucht sind. Ein Angebotsbrief braucht zuerst eine Bewertung für diesen Scope.",
+    "it": "Come: scope_id, item_id e agent (tender_evaluation, proposal_manager o news_report), più workspace_id. Consuma una delle esecuzioni mensili dell’area di lavoro. Una nuova esecuzione conta. Un’esecuzione fallita no. Devi essere amministratore, e l’ambito deve essere uno che questa area di lavoro sta vedendo. Rifiuta quando il piano non include l’agente o le esecuzioni del mese sono esaurite. Un brief di proposta ha bisogno prima di una valutazione per quell’ambito."
+  },
+  "When something fails": {
+    "pt": "Quando algo falha",
+    "es": "Cuando algo falla",
+    "fr": "Quand quelque chose échoue",
+    "de": "Wenn etwas fehlschlägt",
+    "it": "Quando qualcosa non va"
+  },
+  "A refused tool comes back as JSON with an error string. Say that sentence to the user. Do not retry a plan or quota error. Do not invent workspace, scope, tender, news or post ids: list or get them first. Send one tool per request.": {
+    "pt": "Uma ferramenta recusada volta como JSON com uma frase de erro. Diga essa frase à pessoa. Não volte a tentar um erro de plano ou de quota. Não invente ids de espaço de trabalho, âmbito, concurso, notícia ou publicação: liste-os ou obtenha-os primeiro. Envie uma ferramenta por pedido.",
+    "es": "Una herramienta rechazada vuelve como JSON con una frase de error. Di esa frase a la persona. No reintentes un error de plan o de cuota. No inventes ids de espacio de trabajo, ámbito, licitación, noticia o publicación: lístalos u obténlos primero. Envía una herramienta por petición.",
+    "fr": "Un outil refusé revient en JSON avec une phrase d’erreur. Dites cette phrase à la personne. Ne réessayez pas une erreur de forfait ou de quota. N’inventez pas d’id d’espace de travail, de périmètre, d’appel d’offres, d’actualité ou de publication : listez-les ou récupérez-les d’abord. Envoyez un outil par requête.",
+    "de": "Ein abgelehntes Tool kommt als JSON mit einem Fehlertext zurück. Sag der Person diesen Satz. Wiederhole einen Tarif- oder Kontingentfehler nicht. Erfinde keine Ids von Arbeitsbereich, Scope, Ausschreibung, Nachricht oder Beitrag: liste sie zuerst oder rufe sie ab. Sende ein Tool pro Anfrage.",
+    "it": "Uno strumento rifiutato torna come JSON con una frase di errore. Di’ quella frase alla persona. Non riprovare un errore di piano o di quota. Non inventare id di area di lavoro, ambito, gara, notizia o post: elencali o recuperali prima. Invia uno strumento per richiesta."
+  },
+  "HTTP 401 means the token is missing, revoked, or not sent as Authorization: Bearer tt_… . The user creates a new one in Account, under External agents.": {
+    "pt": "HTTP 401 significa que o token falta, foi revogado, ou não foi enviado como Authorization: Bearer tt_… . O utilizador cria um novo na Conta, em Agentes externos.",
+    "es": "HTTP 401 significa que falta el token, está revocado, o no se envió como Authorization: Bearer tt_… . El usuario crea uno nuevo en Cuenta, en Agentes externos.",
+    "fr": "HTTP 401 signifie que le jeton manque, est révoqué, ou n’est pas envoyé comme Authorization: Bearer tt_… . L’utilisateur en crée un nouveau dans Compte, sous Agents externes.",
+    "de": "HTTP 401 heißt, das Token fehlt, ist widerrufen oder wurde nicht als Authorization: Bearer tt_… gesendet. Die Person erstellt ein neues unter Konto, bei Externe Agenten.",
+    "it": "HTTP 401 significa che il token manca, è stato revocato o non è stato inviato come Authorization: Bearer tt_… . L’utente ne crea uno nuovo in Account, sotto Agenti esterni."
+  },
+  "A plan or quota error is final for that call. Do not retry it, and do not work around it.": {
+    "pt": "Um erro de plano ou de quota é definitivo para essa chamada. Não volte a tentar, nem o contorne.",
+    "es": "Un error de plan o de cuota es definitivo para esa llamada. No lo reintentes ni lo rodees.",
+    "fr": "Une erreur de forfait ou de quota est définitive pour cet appel. Ne la réessayez pas et ne la contournez pas.",
+    "de": "Ein Tarif- oder Kontingentfehler ist für diesen Aufruf endgültig. Wiederhole ihn nicht und umgehe ihn nicht.",
+    "it": "Un errore di piano o di quota è definitivo per quella chiamata. Non riprovarlo e non aggirarlo."
+  },
+  "Saving search instructions does not fetch tenders immediately. Search and triage run on the platform’s schedule.": {
+    "pt": "Guardar instruções de pesquisa não vai buscar concursos de imediato. A pesquisa e a triagem correm no horário da plataforma.",
+    "es": "Guardar instrucciones de búsqueda no trae licitaciones al momento. La búsqueda y el triaje corren en el horario de la plataforma.",
+    "fr": "Enregistrer des instructions de recherche ne récupère pas les appels d’offres tout de suite. La recherche et le tri s’exécutent selon l’horaire de la plateforme.",
+    "de": "Suchanweisungen zu speichern holt die Ausschreibungen nicht sofort. Suche und Triage laufen nach dem Zeitplan der Plattform.",
+    "it": "Salvare le istruzioni di ricerca non recupera le gare subito. Ricerca e triage girano secondo il calendario della piattaforma."
+  }
+}

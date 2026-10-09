@@ -3,10 +3,11 @@ import AuthCard from '@/components/auth/AuthCard';
 import { NewPasswordForm } from '@/components/auth/AuthForms';
 import { getCurrentUser } from '@/lib/auth';
 import { getT } from '@/lib/i18n/server';
+import { NOINDEX } from '@/lib/seo';
 
 export async function generateMetadata() {
   const t = await getT();
-  return { title: `${t('Choose a new password')} — Tender Town` };
+  return { title: `${t('Choose a new password')} — Tender Town`, ...NOINDEX };
 }
 
 /** Reached from the reset email's link (/auth/callback signs the user in first). */

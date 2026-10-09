@@ -6,14 +6,16 @@
  * admins create them (as many as the plan allows) and switch them on or off.
  *
  * What you see on Home, Community, Tenders, News and History is the work of
- * your current workspace's active scopes (signed out, on Free, or with none
- * active: the default scope).
+ * your current workspace's active scopes. Signed out, presets are ranked from
+ * the browser and the first one that has results is shown; otherwise the default.
  */
 import 'server-only';
 import { cache } from 'react';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { canEditWorkspace, getContext, getMembership, isPlatformAdmin } from '@/lib/accounts';
 import { getCurrentUser } from '@/lib/auth';
+import { cookies, headers } from 'next/headers';
+import { CATALOG_ORDER, GUEST_GENERAL, GUEST_SCOPE_COOKIE, GUEST_SCOPE_HEADER, isBot } from '@/lib/guestScope';
 
 export const SCOPE_AGENT_KEYS = ['search', 'triage', 'tender_evaluation', 'proposal_manager', 'news_report'];
 export const PLATFORM_AGENT_KEYS = ['tender_documents', 'tender_analysis', 'feed_writer', 'translator'];
@@ -25,11 +27,7 @@ export type Scope = {
   parsedAt: string | null; createdAt: string;
 };
 
-/** Ready-made scopes, in the order their cards appear under General. */
-export const CATALOG_ORDER = [
-  'Artificial Intelligence', 'Cybersecurity', 'Digital ID & Biometrics', 'EUDI Wallet',
-  'Healthcare software', 'ERP & business software', 'Cloud platforms',
-];
+export { CATALOG_ORDER };
 
 const toScope = (r: any): Scope => ({
   id: r.id, ownerId: r.owner_id, name: r.name, instructions: r.instructions, active: r.active, isDefault: r.is_default,
@@ -108,7 +106,10 @@ export const getViewScopes = cache(async (): Promise<{ scopes: Scope[]; own: boo
   const db = getSupabaseServerClient();
   const { data: defRows } = await db.from('scopes').select('*').eq('is_default', true).limit(1);
   const defaults = (defRows || []).filter((s: any) => s.active).map(toScope);
-  if (!ctx) return { scopes: defaults, own: false, canRun: false };
+  if (!ctx) {
+    const guest = (await getCurrentUser()) ? defaults : await guestView(defaults);
+    return { scopes: guest, own: false, canRun: false };
+  }
   const limit = ctx.isDefault ? 1000 : ctx.plan.scopes;
   const [{ data: ownRows }, use, { data: ws }] = await Promise.all([
     db.from('scopes').select('*').eq('workspace_id', ctx.workspace.id).order('created_at'),
@@ -133,6 +134,15 @@ export const getViewScopes = cache(async (): Promise<{ scopes: Scope[]; own: boo
   const defaultsShown = includeDefault ? defaults.filter((d) => !seen.has(d.id)) : [];
   return { scopes: [...defaultsShown, ...extra], own: extra.length > 0, canRun: ctx.canCustomize };
 });
+
+/** Signed-out visitors: the catalog scope named by the guest cookie, else General. Bots stay on General. */
+async function guestView(defaults: Scope[]): Promise<Scope[]> {
+  if (isBot(headers().get('user-agent'))) return defaults;
+  const raw = headers().get(GUEST_SCOPE_HEADER) || cookies().get(GUEST_SCOPE_COOKIE)?.value;
+  if (!raw || raw === GUEST_GENERAL || !/^[0-9a-f-]{36}$/i.test(raw)) return defaults;
+  const { data } = await getSupabaseServerClient().from('scopes').select('*').eq('id', raw).eq('catalog', true).eq('active', true).maybeSingle();
+  return data ? [toScope(data)] : defaults;
+}
 
 export type ScopeItems = { ids: string[]; relevance: Map<string, number>; scopesOf: Map<string, string[]> };
 

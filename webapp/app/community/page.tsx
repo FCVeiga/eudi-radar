@@ -5,10 +5,11 @@ import { COMMUNITY_VIEWS, CommunityView, getCommunityFeed } from '@/lib/communit
 import { getEngagement } from '@/lib/engagement';
 import CommunityCard from '@/components/social/CommunityCard';
 import { getT } from '@/lib/i18n/server';
+import { pageMeta } from '@/lib/seo';
 
 export async function generateMetadata() {
   const t = await getT();
-  return { title: `${t('Community')} — Tender Town` };
+  return pageMeta({ title: `${t('Community')} — Tender Town`, description: t('Posts from people who find and bid on public contracts in Europe.'), path: '/community' });
 }
 const PAGE = 25;
 

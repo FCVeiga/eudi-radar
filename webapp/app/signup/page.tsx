@@ -3,10 +3,11 @@ import AuthCard from '@/components/auth/AuthCard';
 import { SignupForm } from '@/components/auth/AuthForms';
 import { getCurrentUser, safeNext } from '@/lib/auth';
 import { getT } from '@/lib/i18n/server';
+import { NOINDEX } from '@/lib/seo';
 
 export async function generateMetadata() {
   const t = await getT();
-  return { title: `${t('Sign up')} — Tender Town` };
+  return { title: `${t('Sign up')} — Tender Town`, ...NOINDEX };
 }
 
 export default async function SignupPage({ searchParams }: { searchParams: { next?: string } }) {
@@ -14,7 +15,7 @@ export default async function SignupPage({ searchParams }: { searchParams: { nex
   if (await getCurrentUser()) redirect(next);
   const t = await getT();
   return (
-    <AuthCard title={t('Sign up')} sub={t('Create your account to follow tenders and news and build your profile.')}>
+    <AuthCard title={t('Sign up')} sub={t('Stay on top of every tender, news or discussion that matters to your business')}>
       <SignupForm next={next} />
     </AuthCard>
   );

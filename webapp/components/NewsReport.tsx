@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { startNewsReport } from '@/app/actions';
 import { useT } from '@/lib/i18n/client';
+import { UpgradeReport } from '@/components/UpgradeReport';
 
 const POLL_MS = 5000;
 const GIVE_UP_MS = 4 * 60_000;
@@ -38,7 +39,7 @@ export default function NewsReportRunner({ newsId, scopeId, lastError }: { newsI
   }, [newsId, router]);
 
   if (state === 'error' && (message === 'plan' || lastError === 'plan')) {
-    return <p className="muted">{t('The News Report Agent is included on Pro and Teams.')}</p>;
+    return <UpgradeReport note={t('The News Report Agent is included on Pro and Teams.')} />;
   }
   if (state === 'error' && (message === 'quota' || lastError === 'quota')) {
     return <p className="muted">{t('This workspace has used its 50 news reports for this month.')}</p>;

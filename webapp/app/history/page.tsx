@@ -8,6 +8,12 @@ import { getPlatformLanguage } from '@/lib/language';
 import { getLocale, getT } from '@/lib/i18n/server';
 import { getCurrentUser } from '@/lib/auth';
 import SignUpGate from '@/components/SignUpGate';
+import { NOINDEX } from '@/lib/seo';
+
+export async function generateMetadata() {
+  const t = await getT();
+  return { title: `${t('History')} — Tender Town`, ...NOINDEX };
+}
 
 // Status as of now: a stored OPEN/SIGNAL whose deadline has passed is closed.
 function displayStatus(o: { status: string | null; deadline: string | null }) {

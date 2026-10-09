@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { Opportunity, buyerOf, oppCategoryLabel, titleOf } from '@/lib/data';
@@ -9,16 +10,17 @@ import AgentAvatar from '@/components/AgentAvatar';
 import { isAgentEnabled } from '@/lib/settings';
 import HeartButton from '@/components/HeartButton';
 import { getLikes } from '@/lib/likes';
-import { getCurrentUser } from '@/lib/auth';
+import { getCurrentUser, siteOrigin } from '@/lib/auth';
 import { getScopeItems, getViewScopes } from '@/lib/scopes';
 import { getContext, getPersonalAccount } from '@/lib/accounts';
 import TenderScopeEvaluation from '@/components/TenderScopeEvaluation';
 import { getPlatformLanguage } from '@/lib/language';
 import { getLocale, getT } from '@/lib/i18n/server';
-import SignUpGate from '@/components/SignUpGate';
 import { UpgradeReport } from '@/components/UpgradeReport';
 import { allowRequirements } from '@/lib/tenderViews';
 import { PLANS } from '@/lib/plans';
+import { clip, pageMeta } from '@/lib/seo';
+import JsonLd from '@/components/JsonLd';
 
 // The Tender Evaluation Agent runs inside this page's server action: give it time.
 export const maxDuration = 300;
@@ -59,6 +61,16 @@ function matchClass(m: string | null) {
   return 'unknown';
 }
 
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const { data } = await getSupabaseServerClient().from('opportunities')
+    .select('title, title_en, language, summary, tender_summary, authority, authority_en, country')
+    .eq('opportunity_id', params.id).maybeSingle();
+  if (!data) return { title: 'Not found — Tender Town', robots: { index: false, follow: false } };
+  const title = titleOf(data);
+  const description = clip(firstInLanguage(data.tender_summary, data.summary) || [title, data.authority_en || data.authority, data.country].filter(Boolean).join(' · '));
+  return pageMeta({ title: `${title} — Tender Town`, description, path: `/tenders/${params.id}`, type: 'article' });
+}
+
 export default async function OpportunityDetailPage({ params }: { params: { id: string } }) {
   await getPlatformLanguage();  // the display filter's language
   const t = await getT();
@@ -80,15 +92,6 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
   }
 
   const user = await getCurrentUser();
-  if (!user) {
-    return (
-      <div>
-        <Link className="back-link" href="/tenders">← {t('Tenders')}</Link>
-        <h1 className="opps-h1">{titleOf(o)}</h1>
-        <SignUpGate />
-      </div>
-    );
-  }
 
   const { data: requirements } = await supabase
     .from('requirements')
@@ -115,11 +118,13 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
 
   const reqs = (requirements || []).filter((r) => firstInLanguage(r.requirement_text));
   // Scopes: the viewer's active scopes (or the default scope): relevance, evaluations, match columns.
-  const [{ scopes: viewScopes, own, canRun }, ctx, account] = await Promise.all([getViewScopes(), getContext(), getPersonalAccount(user.id)]);
+  const [{ scopes: viewScopes, own, canRun }, ctx, account] = await Promise.all([
+    getViewScopes(), getContext(), user ? getPersonalAccount(user.id) : Promise.resolve(null),
+  ]);
   const plan = ctx?.plan ?? account?.plan ?? PLANS[0];
   const evaluationAllowed = (plan.evaluationsPerMonth ?? 0) !== 0;
   const proposalsAllowed = (plan.proposalsPerMonth ?? 0) !== 0;
-  const showRequirements = await allowRequirements(user.id, plan.requirementViewsPerMonth);
+  const showRequirements = user ? await allowRequirements(user.id, plan.requirementViewsPerMonth) : false;
   const locked = !ctx ? null : !ctx.canCustomize && ctx.isAdmin ? 'plan' : !ctx.isAdmin ? 'member' : null;
   const { data: scopeEvals } = await supabase.from('scope_evaluations').select('*').eq('opportunity_id', params.id)
     .in('scope_id', viewScopes.map((s) => s.id));
@@ -144,8 +149,21 @@ export default async function OpportunityDetailPage({ params }: { params: { id: 
   ]);
   const flags = new Map(agentFlags.map(([id, e, p]) => [id, { evaluator: e, proposer: p }]));
 
+  const origin = siteOrigin();
+  const headline = titleOf(o);
   return (
     <div>
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline,
+        description: clip(firstInLanguage(o.tender_summary, o.summary) || headline, 300),
+        datePublished: o.publication_date || o.first_detected,
+        dateModified: o.last_change || o.publication_date || o.first_detected,
+        author: { '@type': 'Organization', name: buyerOf(o) || 'Tender Town' },
+        publisher: { '@type': 'Organization', name: 'Tender Town', url: origin },
+        mainEntityOfPage: `${origin}/tenders/${o.opportunity_id}`,
+      }} />
       <Link className="back-link" href="/tenders">← {t('Tenders')}</Link>
 
       <div className="detail-head">

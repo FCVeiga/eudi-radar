@@ -14,7 +14,7 @@ export async function generateMetadata() {
   return {
     title,
     description,
-    alternates: { canonical: `${origin}/pricing` },
+    alternates: { canonical: `${origin}/pricing`, types: { 'application/rss+xml': `${origin}/feed.xml` } },
     openGraph: { title, description, url: `${origin}/pricing`, siteName: 'Tender Town', type: 'website' },
   };
 }

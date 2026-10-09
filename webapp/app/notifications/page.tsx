@@ -5,10 +5,11 @@ import { NOTIFICATION_TABS, listNotifications } from '@/lib/social';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { NotificationList, NotificationSettings } from '@/components/social/NotificationsPage';
 import { getT } from '@/lib/i18n/server';
+import { NOINDEX } from '@/lib/seo';
 
 export async function generateMetadata() {
   const t = await getT();
-  return { title: `${t('Notifications')} — Tender Town` };
+  return { title: `${t('Notifications')} — Tender Town`, ...NOINDEX };
 }
 
 export default async function NotificationsPage({ searchParams }: { searchParams: { tab?: string } }) {

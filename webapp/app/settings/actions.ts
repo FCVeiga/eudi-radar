@@ -10,6 +10,7 @@ import { PLANS, planOf } from '@/lib/plans';
 import { billingReady, priceId, stripe, type BillingInterval } from '@/lib/billing';
 import { getT, setPrefCookies } from '@/lib/i18n/server';
 import { isTheme, isUiLang } from '@/lib/i18n/languages';
+import { createMcpToken, revokeMcpToken } from '@/lib/mcpTokens';
 
 export type SettingsState = { ok: boolean; message: string } | null;
 export type Result = { error?: string };
@@ -268,4 +269,24 @@ export async function adminSetPlan(userId: string, plan: string): Promise<Result
   await db().from('accounts').update({ plan, plan_status: plan === 'free' ? 'active' : 'comped' }).eq('kind', 'personal').eq('owner_id', userId);
   revalidatePath('/', 'layout');
   return {};
+}
+
+export type McpTokenState = { ok: boolean; message: string; token?: string } | null;
+
+/** A bearer token for the MCP server. The secret is returned once. */
+export async function createAccessToken(_prev: McpTokenState, form: FormData): Promise<McpTokenState> {
+  const t = await getT();
+  const user = await getCurrentUser();
+  if (!user) return { ok: false, message: t('Your session expired — log in again.') };
+  const result = await createMcpToken(user.id, String(form.get('name') || ''));
+  revalidatePath('/settings/account');
+  if ('error' in result) return { ok: false, message: t(result.error) };
+  return { ok: true, message: t('Copy this token now. It is shown once.'), token: result.token };
+}
+
+export async function revokeAccessToken(id: string) {
+  const user = await getCurrentUser();
+  if (!user) return;
+  await revokeMcpToken(user.id, id);
+  revalidatePath('/settings/account');
 }

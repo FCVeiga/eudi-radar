@@ -1,6 +1,7 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getCurrentUser } from '@/lib/auth';
+import { siteOrigin } from '@/lib/auth';
 import { getPost } from '@/lib/social';
 import UserAvatar from '@/components/UserAvatar';
 import CommentsSection from '@/components/social/CommentsSection';
@@ -8,26 +9,40 @@ import PostMarkdown from '@/components/social/PostMarkdown';
 import CardActions from '@/components/social/CardActions';
 import { getEngagement } from '@/lib/engagement';
 import { getLocale, getT } from '@/lib/i18n/server';
-import SignUpGate from '@/components/SignUpGate';
+import { clip, pageMeta } from '@/lib/seo';
+import JsonLd from '@/components/JsonLd';
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const post = await getPost(params.id);
+  if (!post) return { title: 'Not found — Tender Town', robots: { index: false, follow: false } };
+  return pageMeta({
+    title: `${post.title} — Tender Town`,
+    description: clip(post.body || post.title),
+    path: `/posts/${post.id}`,
+    type: 'article',
+  });
+}
 
 export default async function PostPage({ params }: { params: { id: string } }) {
-  const [post, user] = await Promise.all([getPost(params.id), getCurrentUser()]);
+  const post = await getPost(params.id);
   if (!post) notFound();
   const t = await getT();
-  if (!user) {
-    return (
-      <div className="post-page">
-        <Link className="back-link" href="/community">← {t('Community')}</Link>
-        <h1 className="opps-h1">{post.title}</h1>
-        <SignUpGate />
-      </div>
-    );
-  }
   const locale = getLocale();
   const fmt = (iso: string) => new Date(iso).toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' });
   const eng = await getEngagement('post', [post.id]);
+  const origin = siteOrigin();
   return (
     <div className="post-page">
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'DiscussionForumPosting',
+        headline: post.title,
+        articleBody: clip(post.body || '', 5000),
+        datePublished: post.createdAt,
+        author: post.author ? { '@type': 'Person', name: post.author.username, url: `${origin}/u/${post.author.username}` } : { '@type': 'Organization', name: 'Tender Town' },
+        publisher: { '@type': 'Organization', name: 'Tender Town', url: origin },
+        url: `${origin}/posts/${post.id}`,
+      }} />
       <Link className="back-link" href="/community">← {t('Community')}</Link>
       <article className="detail-block post">
         <div className="post-author">

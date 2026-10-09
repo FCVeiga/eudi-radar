@@ -9,9 +9,10 @@ export default function GuestPromo() {
   const t = useT();
   return (
     <div className="guest-promo">
-      <img className="guest-banner" src="/brand/sidebar-banner.jpg" alt="" />
+      <img className="guest-banner light" src="/brand/sidebar-banner-light.jpg" alt="" />
+      <img className="guest-banner dark" src="/brand/sidebar-banner.jpg" alt="" />
       <div className="guest-overlay">
-        <p className="guest-lead">{t('Tender signals, analysis and community.')}</p>
+        <p className="guest-lead">{t('Join for tailored tender signals, news and community')}</p>
         <div className="guest-actions">
           <GoogleButton next="/" bare />
           <Link href="/signup" className="btn primary">

@@ -1,4 +1,151 @@
 {
+  "Artificial Intelligence": {
+    "pt": "Inteligência artificial",
+    "es": "Inteligencia artificial",
+    "fr": "Intelligence artificielle",
+    "de": "Künstliche Intelligenz",
+    "it": "Intelligenza artificiale"
+  },
+  "Cybersecurity": {
+    "pt": "Cibersegurança",
+    "es": "Ciberseguridad",
+    "fr": "Cybersécurité",
+    "de": "Cybersicherheit",
+    "it": "Cybersicurezza"
+  },
+  "Digital ID & Biometrics": {
+    "pt": "Identidade digital e biometria",
+    "es": "Identidad digital y biometría",
+    "fr": "Identité numérique et biométrie",
+    "de": "Digitale Identität und Biometrie",
+    "it": "Identità digitale e biometria"
+  },
+  "EUDI Wallet": {
+    "pt": "EUDI Wallet",
+    "es": "EUDI Wallet",
+    "fr": "EUDI Wallet",
+    "de": "EUDI Wallet",
+    "it": "EUDI Wallet"
+  },
+  "Healthcare software": {
+    "pt": "Software de saúde",
+    "es": "Software sanitario",
+    "fr": "Logiciels de santé",
+    "de": "Gesundheitssoftware",
+    "it": "Software sanitario"
+  },
+  "ERP & business software": {
+    "pt": "ERP e software empresarial",
+    "es": "ERP y software empresarial",
+    "fr": "ERP et logiciels de gestion",
+    "de": "ERP und Unternehmenssoftware",
+    "it": "ERP e software gestionale"
+  },
+  "Cloud platforms": {
+    "pt": "Plataformas cloud",
+    "es": "Plataformas cloud",
+    "fr": "Plateformes cloud",
+    "de": "Cloud-Plattformen",
+    "it": "Piattaforme cloud"
+  },
+  "Open public tenders and funding calls across Europe.": {
+    "pt": "Concursos públicos e avisos de financiamento abertos em toda a Europa.",
+    "es": "Licitaciones públicas y convocatorias de financiación abiertas en toda Europa.",
+    "fr": "Appels d’offres publics et appels à financement ouverts dans toute l’Europe.",
+    "de": "Offene öffentliche Ausschreibungen und Förderaufrufe in ganz Europa.",
+    "it": "Gare pubbliche e bandi di finanziamento aperti in tutta Europa."
+  },
+  "Regulation, industry and market news for people who bid on public contracts.": {
+    "pt": "Notícias de regulação, setor e mercado para quem concorre a contratos públicos.",
+    "es": "Noticias de regulación, sector y mercado para quien licita contratos públicos.",
+    "fr": "Actualités réglementaires, sectorielles et de marché pour celles et ceux qui répondent aux marchés publics.",
+    "de": "Regulierungs-, Branchen- und Marktnachrichten für alle, die sich auf öffentliche Aufträge bewerben.",
+    "it": "Notizie su normativa, settore e mercato per chi partecipa ai contratti pubblici."
+  },
+  "Tenders and funding calls published in the last few days.": {
+    "pt": "Concursos e avisos de financiamento publicados nos últimos dias.",
+    "es": "Licitaciones y convocatorias de financiación publicadas en los últimos días.",
+    "fr": "Appels d’offres et appels à financement publiés ces derniers jours.",
+    "de": "Ausschreibungen und Förderaufrufe der letzten Tage.",
+    "it": "Gare e bandi di finanziamento pubblicati negli ultimi giorni."
+  },
+  "Requests for proposals open across Europe.": {
+    "pt": "Pedidos de proposta abertos em toda a Europa.",
+    "es": "Solicitudes de propuesta abiertas en toda Europa.",
+    "fr": "Appels d’offres ouverts dans toute l’Europe.",
+    "de": "Offene Aufforderungen zur Angebotsabgabe in ganz Europa.",
+    "it": "Richieste di proposta aperte in tutta Europa."
+  },
+  "Requests for information open across Europe.": {
+    "pt": "Pedidos de informação abertos em toda a Europa.",
+    "es": "Solicitudes de información abiertas en toda Europa.",
+    "fr": "Demandes d’information ouvertes dans toute l’Europe.",
+    "de": "Offene Auskunftsersuchen in ganz Europa.",
+    "it": "Richieste di informazioni aperte in tutta Europa."
+  },
+  "Grants and funding calls open across Europe.": {
+    "pt": "Subvenções e avisos de financiamento abertos em toda a Europa.",
+    "es": "Subvenciones y convocatorias de financiación abiertas en toda Europa.",
+    "fr": "Subventions et appels à financement ouverts dans toute l’Europe.",
+    "de": "Offene Zuschüsse und Förderaufrufe in ganz Europa.",
+    "it": "Sovvenzioni e bandi di finanziamento aperti in tutta Europa."
+  },
+  "Regulation news for people who bid on public contracts.": {
+    "pt": "Notícias de regulação para quem concorre a contratos públicos.",
+    "es": "Noticias de regulación para quien licita contratos públicos.",
+    "fr": "Actualités réglementaires pour celles et ceux qui répondent aux marchés publics.",
+    "de": "Regulierungsnachrichten für alle, die sich auf öffentliche Aufträge bewerben.",
+    "it": "Notizie sulla normativa per chi partecipa ai contratti pubblici."
+  },
+  "Industry news for people who bid on public contracts.": {
+    "pt": "Notícias do setor para quem concorre a contratos públicos.",
+    "es": "Noticias del sector para quien licita contratos públicos.",
+    "fr": "Actualités sectorielles pour celles et ceux qui répondent aux marchés publics.",
+    "de": "Branchennachrichten für alle, die sich auf öffentliche Aufträge bewerben.",
+    "it": "Notizie di settore per chi partecipa ai contratti pubblici."
+  },
+  "Market news for people who bid on public contracts.": {
+    "pt": "Notícias de mercado para quem concorre a contratos públicos.",
+    "es": "Noticias de mercado para quien licita contratos públicos.",
+    "fr": "Actualités de marché pour celles et ceux qui répondent aux marchés publics.",
+    "de": "Marktnachrichten für alle, die sich auf öffentliche Aufträge bewerben.",
+    "it": "Notizie di mercato per chi partecipa ai contratti pubblici."
+  },
+  "Early signals that a public buyer is preparing a procurement.": {
+    "pt": "Sinais antecipados de que um comprador público prepara um procedimento.",
+    "es": "Señales tempranas de que un comprador público prepara una licitación.",
+    "fr": "Signaux précoces indiquant qu’un acheteur public prépare un marché.",
+    "de": "Frühe Signale, dass ein öffentlicher Auftraggeber eine Beschaffung vorbereitet.",
+    "it": "Segnali anticipati che un committente pubblico sta preparando una gara."
+  },
+  "How Tender Town works, and how to read tenders, news and posts.": {
+    "pt": "Como funciona o Tender Town e como ler concursos, notícias e publicações.",
+    "es": "Cómo funciona Tender Town y cómo leer licitaciones, noticias y publicaciones.",
+    "fr": "Comment Tender Town fonctionne, et comment lire les appels d’offres, les actualités et les publications.",
+    "de": "Wie Tender Town funktioniert und wie Ausschreibungen, Nachrichten und Beiträge gelesen werden.",
+    "it": "Come funziona Tender Town e come leggere gare, notizie e post."
+  },
+  "The terms for using Tender Town.": {
+    "pt": "As condições de utilização do Tender Town.",
+    "es": "Las condiciones de uso de Tender Town.",
+    "fr": "Les conditions d’utilisation de Tender Town.",
+    "de": "Die Nutzungsbedingungen von Tender Town.",
+    "it": "Le condizioni d’uso di Tender Town."
+  },
+  "How Tender Town handles personal data.": {
+    "pt": "Como o Tender Town trata os dados pessoais.",
+    "es": "Cómo Tender Town trata los datos personales.",
+    "fr": "Comment Tender Town traite les données personnelles.",
+    "de": "Wie Tender Town personenbezogene Daten behandelt.",
+    "it": "Come Tender Town tratta i dati personali."
+  },
+  "Posts from people who find and bid on public contracts in Europe.": {
+    "pt": "Publicações de quem procura e concorre a contratos públicos na Europa.",
+    "es": "Publicaciones de quienes buscan y licitan contratos públicos en Europa.",
+    "fr": "Publications de celles et ceux qui trouvent et remportent des marchés publics en Europe.",
+    "de": "Beiträge von Menschen, die in Europa öffentliche Aufträge suchen und sich darauf bewerben.",
+    "it": "Post di chi cerca e partecipa a contratti pubblici in Europa."
+  },
   "Tender Town home": {
     "pt": "Início do Tender Town",
     "es": "Inicio de Tender Town",
@@ -26,6 +173,20 @@
     "fr": "Signaux d'appels d'offres, analyse et communauté.",
     "de": "Ausschreibungssignale, Analyse und Community.",
     "it": "Segnali di gara, analisi e community."
+  },
+  "Join for tailored tender signals, news and community": {
+    "pt": "Junte-se para sinais de concursos à medida, notícias e comunidade",
+    "es": "Únete para señales de licitaciones a tu medida, noticias y comunidad",
+    "fr": "Rejoignez-nous pour des signaux d’appels d’offres sur mesure, l’actualité et la communauté",
+    "de": "Mach mit für passende Ausschreibungssignale, Nachrichten und Community",
+    "it": "Unisciti per segnali di gara su misura, notizie e community"
+  },
+  "Stay on top of every tender, news or discussion that matters to your business": {
+    "pt": "Fique a par de cada concurso, notícia ou discussão que importa ao seu negócio",
+    "es": "Mantente al día de cada licitación, noticia o conversación que importe a tu negocio",
+    "fr": "Restez au courant de chaque appel d’offres, actualité ou discussion qui compte pour votre activité",
+    "de": "Bleib bei jeder Ausschreibung, Nachricht und Diskussion auf dem Laufenden, die für dein Unternehmen zählt",
+    "it": "Resta aggiornato su ogni gara, notizia o discussione che conta per la tua attività"
   },
   "Continue with email": {
     "pt": "Continuar com e-mail",

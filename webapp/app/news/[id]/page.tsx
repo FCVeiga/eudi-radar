@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import { newsCategoryLabel, titleOf } from '@/lib/data';
@@ -13,8 +14,10 @@ import { newsReportAllowance } from '@/lib/newsQuota';
 import { getPlatformLanguage } from '@/lib/language';
 import { getViewScopes } from '@/lib/scopes';
 import { getLocale, getT } from '@/lib/i18n/server';
-import { getCurrentUser } from '@/lib/auth';
-import SignUpGate from '@/components/SignUpGate';
+import { siteOrigin } from '@/lib/auth';
+import { UpgradeReport } from '@/components/UpgradeReport';
+import { clip, pageMeta } from '@/lib/seo';
+import JsonLd from '@/components/JsonLd';
 
 // The News Report Agent runs inside this page's server action: give it time.
 export const maxDuration = 300;
@@ -32,6 +35,20 @@ const VERDICTS: Record<string, { label: string; note: string }> = {
   monitor: { label: 'Monitor', note: 'Nothing to do yet' },
 };
 
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const { data } = await getSupabaseServerClient().from('news_items')
+    .select('title, title_en, language, summary, excerpt, image_url').eq('news_id', params.id).maybeSingle();
+  if (!data) return { title: 'Not found — Tender Town', robots: { index: false, follow: false } };
+  const title = titleOf(data);
+  return pageMeta({
+    title: `${title} — Tender Town`,
+    description: clip(firstInLanguage(data.summary, data.excerpt) || title),
+    path: `/news/${params.id}`,
+    type: 'article',
+    image: data.image_url,
+  });
+}
 
 export default async function NewsDetailPage({ params }: { params: { id: string } }) {
   await getPlatformLanguage();  // the display filter's language
@@ -53,16 +70,6 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
     );
   }
 
-  if (!(await getCurrentUser())) {
-    return (
-      <div className="news-detail">
-        <Link className="back-link" href="/news">← {t('News')}</Link>
-        <h1 className="opps-h1">{titleOf(n, firstInLanguage(post?.headline))}</h1>
-        <SignUpGate />
-      </div>
-    );
-  }
-
   // The analyst's complete summary; until it has run, the best English summary we have.
   const paragraphs = (firstInLanguage(n.summary_long) ?? firstInLanguage(post?.body, n.summary) ?? '')
     .split(/\n{2,}/).map((p: string) => p.trim()).filter(Boolean);
@@ -76,10 +83,24 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
     newsReportAllowance(),
   ]);
   const agentOnFor = new Map(agentFlags);
-  const domain = n.source_url ? new URL(n.source_url).hostname.replace(/^www\./, '') : n.source_name;
+  let domain = n.source_name;
+  try { if (n.source_url) domain = new URL(n.source_url).hostname.replace(/^www\./, ''); } catch { /* keep the source name */ }
 
+  const origin = siteOrigin();
+  const headline = titleOf(n, firstInLanguage(post?.headline));
   return (
     <div className="news-detail">
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'NewsArticle',
+        headline,
+        description: clip(firstInLanguage(n.summary_long, n.summary, n.excerpt) || headline, 300),
+        datePublished: n.published_date || n.created_at,
+        image: n.image_url || undefined,
+        author: { '@type': 'Organization', name: n.source_name || 'Tender Town' },
+        publisher: { '@type': 'Organization', name: 'Tender Town', url: origin },
+        mainEntityOfPage: `${origin}/news/${n.news_id}`,
+      }} />
       <Link className="back-link" href="/news">← {t('News')}</Link>
       <div className="detail-head">
         <div className="detail-tags-row">
@@ -129,7 +150,7 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
               {analysis && allowance.block !== 'plan' && <span className={`verdict ${analysis.verdict}`} title={VERDICTS[analysis.verdict] ? t(VERDICTS[analysis.verdict].note) : undefined}>{VERDICTS[analysis.verdict] ? t(VERDICTS[analysis.verdict].label) : null}</span>}
             </div>
             {allowance.block === 'plan' && (
-              <p className="muted">{t('The News Report Agent is included on Pro and Teams.')} <Link href="/pricing">{t('Pricing')}</Link></p>
+              <UpgradeReport note={t('The News Report Agent is included on Pro and Teams.')} />
             )}
             {allowance.block !== 'plan' && !analysis && allowance.block === 'quota' && (
               <p className="muted">{t('This workspace has used its 50 news reports for this month.')}</p>

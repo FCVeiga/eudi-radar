@@ -16,6 +16,9 @@ const ITEMS = [
   { href: '/workspaces', label: 'Workspaces', icon: <><rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1" /><rect x="9" y="2.5" width="4.5" height="4.5" rx="1" /><rect x="2.5" y="9" width="4.5" height="4.5" rx="1" /><rect x="9" y="9" width="4.5" height="4.5" rx="1" /></> },
   { href: '/settings', label: 'Settings', icon: <><circle cx="8" cy="8" r="2.2" /><path d="M8 1.8v1.6M8 12.6v1.6M14.2 8h-1.6M3.4 8H1.8M12.4 3.6l-1.1 1.1M4.7 11.3l-1.1 1.1M12.4 12.4l-1.1-1.1M4.7 4.7 3.6 3.6" /></> },
   { href: '/help', label: 'Help', icon: <><circle cx="8" cy="8" r="6" /><path d="M6.3 6.3a1.8 1.8 0 1 1 2.5 1.6c-.5.3-.8.6-.8 1.2M8 11.3v.01" /></> },
+  { href: '/about', label: 'About', icon: <><circle cx="8" cy="8" r="6" /><path d="M8 7.2V11.2M8 5.1v.01" /></> },
+  { href: '/blog', label: 'Blog', icon: <><path d="M4 2.5h5.5L12 5v8.5H4z" /><path d="M9.5 2.5V5H12M6 8h4M6 10.5h3" /></> },
+  { href: '/pricing', label: 'Pricing', icon: <><path d="m8.2 2.2 5.6 5.6-5.6 5.6L2.6 7.8V2.2z" /><circle cx="6.2" cy="5.2" r=".9" /></> },
   { href: '/terms', label: 'Terms & Conditions', icon: <><path d="M4 2.5h5.5L12 5v8.5H4z" /><path d="M9.5 2.5V5H12M6 8h4M6 10.5h4" /></> },
   { href: '/privacy', label: 'Privacy policy', icon: <><path d="M8 2 3 4v4c0 3 2.2 5.2 5 6 2.8-.8 5-3 5-6V4z" /><path d="m6 8 1.5 1.5L10.5 6.5" /></> },
 ];

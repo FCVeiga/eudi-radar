@@ -1,9 +1,10 @@
 import LegalPage from '@/components/LegalPage';
 import { getT, getTSync } from '@/lib/i18n/server';
+import { pageMeta } from '@/lib/seo';
 
 export async function generateMetadata() {
   const t = await getT();
-  return { title: `${t('Privacy Policy')} — Tender Town` };
+  return pageMeta({ title: `${t('Privacy Policy')} — Tender Town`, description: t('How Tender Town handles personal data.'), path: '/privacy' });
 }
 
 export default function PrivacyPage() {

@@ -2,10 +2,11 @@ import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import ChatPanel from '@/components/social/ChatPanel';
 import { getT } from '@/lib/i18n/server';
+import { NOINDEX } from '@/lib/seo';
 
 export async function generateMetadata() {
   const t = await getT();
-  return { title: `${t('Chat')} — Tender Town` };
+  return { title: `${t('Chat')} — Tender Town`, ...NOINDEX };
 }
 
 export default async function ChatPage({ searchParams }: { searchParams: { c?: string } }) {

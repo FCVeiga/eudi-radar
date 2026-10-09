@@ -76,7 +76,6 @@ export default function LiveActivity({ initial }: { initial: Activity[] }) {
     <div className={`live-panel ${open ? 'open' : ''}`}>
       <button type="button" className="live-head" aria-expanded={open} onClick={() => setOpen(!open)}>
         <span className="live-title"><span className="live-pulse" />{t('Live activity')}</span>
-        <span className="live-sub">{t('auto-updating')}</span>
         <svg className="live-chevron" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5l3-3" /></svg>
       </button>
       <ul className="live-list">

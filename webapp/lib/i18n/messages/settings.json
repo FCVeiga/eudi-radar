@@ -1350,6 +1350,97 @@
     "de": "Rechnungen konnten nicht geladen werden.",
     "it": "Impossibile caricare le fatture."
   },
+  "External agents": {
+    "pt": "Agentes externos",
+    "es": "Agentes externos",
+    "fr": "Agents externes",
+    "de": "Externe Agenten",
+    "it": "Agenti esterni"
+  },
+  "Access tokens": {
+    "pt": "Tokens de acesso",
+    "es": "Tokens de acceso",
+    "fr": "Jetons d’accès",
+    "de": "Zugriffstoken",
+    "it": "Token di accesso"
+  },
+  "None": {
+    "pt": "Nenhum",
+    "es": "Ninguno",
+    "fr": "Aucun",
+    "de": "Keine",
+    "it": "Nessuno"
+  },
+  "An external agent connects at {url} and acts as you, inside your plan.": {
+    "pt": "Um agente externo liga-se em {url} e age como si, dentro do seu plano.",
+    "es": "Un agente externo se conecta en {url} y actúa como tú, dentro de tu plan.",
+    "fr": "Un agent externe se connecte à {url} et agit en votre nom, dans les limites de votre forfait.",
+    "de": "Ein externer Agent verbindet sich unter {url} und handelt als du, innerhalb deines Tarifs.",
+    "it": "Un agente esterno si collega a {url} e agisce come te, entro il tuo piano."
+  },
+  "Token name": {
+    "pt": "Nome do token",
+    "es": "Nombre del token",
+    "fr": "Nom du jeton",
+    "de": "Tokenname",
+    "it": "Nome del token"
+  },
+  "e.g. Claude": {
+    "pt": "ex. Claude",
+    "es": "p. ej. Claude",
+    "fr": "p. ex. Claude",
+    "de": "z. B. Claude",
+    "it": "es. Claude"
+  },
+  "Create token": {
+    "pt": "Criar token",
+    "es": "Crear token",
+    "fr": "Créer le jeton",
+    "de": "Token erstellen",
+    "it": "Crea token"
+  },
+  "Copy this token now. It is shown once.": {
+    "pt": "Copie este token agora. Só é mostrado uma vez.",
+    "es": "Copia este token ahora. Solo se muestra una vez.",
+    "fr": "Copiez ce jeton maintenant. Il n’est affiché qu’une fois.",
+    "de": "Kopiere dieses Token jetzt. Es wird nur einmal angezeigt.",
+    "it": "Copia questo token ora. Viene mostrato una sola volta."
+  },
+  "Give the token a name.": {
+    "pt": "Dê um nome ao token.",
+    "es": "Ponle un nombre al token.",
+    "fr": "Donnez un nom au jeton.",
+    "de": "Gib dem Token einen Namen.",
+    "it": "Dai un nome al token."
+  },
+  "Revoke a token before creating another.": {
+    "pt": "Revogue um token antes de criar outro.",
+    "es": "Revoca un token antes de crear otro.",
+    "fr": "Révoquez un jeton avant d’en créer un autre.",
+    "de": "Widerrufe ein Token, bevor du ein weiteres erstellst.",
+    "it": "Revoca un token prima di crearne un altro."
+  },
+  "Could not create the token.": {
+    "pt": "Não foi possível criar o token.",
+    "es": "No se pudo crear el token.",
+    "fr": "Impossible de créer le jeton.",
+    "de": "Das Token konnte nicht erstellt werden.",
+    "it": "Impossibile creare il token."
+  },
+  "Last used {date}": {
+    "pt": "Usado em {date}",
+    "es": "Usado el {date}",
+    "fr": "Utilisé le {date}",
+    "de": "Zuletzt verwendet {date}",
+    "it": "Usato il {date}"
+  },
+  "Created {date}": {
+    "pt": "Criado em {date}",
+    "es": "Creado el {date}",
+    "fr": "Créé le {date}",
+    "de": "Erstellt am {date}",
+    "it": "Creato il {date}"
+  },
   "Items in [brackets] are to be completed by the operator before this is relied on.": {
     "pt": "Os elementos entre [parênteses retos] serão completados pelo operador antes de este documento ser válido.",
     "es": "Los elementos entre [corchetes] deben ser completados por el operador antes de que este documento sea válido.",

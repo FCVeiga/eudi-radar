@@ -8,6 +8,7 @@ import { cache } from 'react';
 import { cookies, headers } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
 import { getSupabaseServerClient } from '@/lib/supabase';
+import { getActor } from '@/lib/actor';
 
 export type CurrentUser = {
   id: string; email: string; username: string; displayName: string; avatarUrl: string | null;
@@ -31,6 +32,8 @@ export function authClient() {
 
 /** The signed-in user with their profile, or null. Once per request. */
 export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
+  const actor = getActor();
+  if (actor) return actor.user;
   if (!cookies().getAll().some((c) => c.name.startsWith('sb-'))) return null;
   const { data: { user } } = await authClient().auth.getUser();
   if (!user) return null;

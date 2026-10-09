@@ -7,6 +7,7 @@ import type { Plan } from '@/lib/plans';
 import { DeleteAccountForm } from '@/components/auth/ProfileForms';
 import { ActionRow, Choices, LinkRow, ModalActions, Row, Section, useSave } from '../SettingsUI';
 import { PlanPanel } from '../PlanPanel';
+import McpTokens, { type TokenInfo } from '../McpTokens';
 import {
   SettingsState, changeEmail, changePassword, connectGoogle, disconnectGoogle, logOutEverywhere,
   setBirthday, setGender,
@@ -22,6 +23,7 @@ export default function AccountTab(p: {
   birthday: string | null; gender: string | null;
   plan: { key: string; status: string; periodEnd: string | null; hasBilling: boolean };
   plans: Plan[]; billingReady: boolean; admin: boolean; openPlan: boolean; paid: boolean;
+  tokens: TokenInfo[]; endpoint: string;
 }) {
   const t = useT();
   const locale = useLocale();
@@ -53,6 +55,10 @@ export default function AccountTab(p: {
         <ActionRow label="Google" hint={p.google ? t('Connected as {email}', { email: p.google }) : t('Log in with your Google account')}>
           <GoogleButton connected={!!p.google} />
         </ActionRow>
+      </Section>
+
+      <Section title="External agents">
+        <McpTokens tokens={p.tokens} endpoint={p.endpoint} />
       </Section>
 
       <Section title="Advanced">
